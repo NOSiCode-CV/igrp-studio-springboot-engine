@@ -1,0 +1,39 @@
+{
+  "name": "spring-engine",
+  "version": "1.0.0",
+  "description": "Spring generator api engine",
+  "main": "index.ts",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.nosi.cv:eduardo.fernando/spring-engine.git"
+  },
+  "keywords": [
+    "Spring",
+    "Engine",
+    "TypeScript",
+    "Handlebars",
+    "API",
+    "API-Rest"
+  ],
+  "author": "Eduardo - Wayvant",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "source-map-loader": "^5.0.0",
+    "ts-loader": "^9.5.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.14.11",
+    "chai": "^5.1.1",
+    "gts": "^5.3.1",
+    "handlebars": "^4.7.8",
+    "jsdom": "^24.1.1",
+    "mocha": "^10.7.0",
+    "sinon": "^18.0.0"
+  },
+  "type": "commonjs"
+}
