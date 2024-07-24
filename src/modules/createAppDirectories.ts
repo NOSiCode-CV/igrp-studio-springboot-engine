@@ -1,50 +1,45 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { OUTPUT_DIR, DIRECTORY, SUCCESS_MESSAGE, ERROR_MESSAGE } from '../utils/constants';
-import { apiconfig } from '../interfaces/types';
+import { OUTPUT_DIR, DIRECTORIES, SUCCESS_MESSAGE, ERROR_MESSAGE } from '../utils/constants';
+import { ApiConfig } from '../interfaces/types';
+import { saveFileConfig } from './saveFile';
+import { checkIfDirectoryIsEmpty } from '../utils/checkFileType';
 
-
-export const createDir = async(api: apiconfig): Promise<string> => {
-
-  // building paths to directories
-  const mainDir: string = DIRECTORY.MAIN_DIR(api);
-  const outpathdir: string = path.join(OUTPUT_DIR, mainDir);
-  const resourcDir: string = path.resolve(outpathdir, '../../');
-  const testDir: string = path.join(OUTPUT_DIR, DIRECTORY.TEST_DIR(api));
-  const igrpstudioDir: string = path.join(OUTPUT_DIR, DIRECTORY.IGRPSTUDIO_DIR(api.apiName));
-
-  // list directories to create
-  const dirsToCreate: string [] = [
-    path.join(outpathdir, 'models'),
-    path.join(outpathdir, 'services'),
-    path.join(outpathdir, 'controllers'),
-
-    path.join(resourcDir, 'resources'),
-
-    path.join(testDir, 'repositories'),
-    path.join(testDir, 'services'),
-
-    path.join(igrpstudioDir, 'controllers'),
-    path.join(igrpstudioDir, 'models'),
-
-    
-  ]
-
-  try {
-    await Promise.all(dirsToCreate.map(fs.ensureDir))
-    return SUCCESS_MESSAGE.CREATED_DIRECTORY
-  } catch (error) {
-    return ERROR_MESSAGE.ERROR_CREATING_DIRECTORY
+export const createDir = async (api: ApiConfig, outputDir: string) => {
+  if (!api || !api.apiName || !api.group || !api.artifact) {
+    throw ERROR_MESSAGE.INVALID_API_CONFIG;
   }
-}
 
+  if (!(await checkIfDirectoryIsEmpty(outputDir))) {
+    throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
+  }
 
-const api: apiconfig = {
+  const mainPath = path.join(outputDir, DIRECTORIES.MAIN(api));
+  const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
+  const testPath = path.join(outputDir, DIRECTORIES.TEST(api));
+  const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
+
+  const dirsToCreate: string[] = [
+    path.join(mainPath, 'models'),
+    path.join(mainPath, 'services'),
+    path.join(mainPath, 'controllers'),
+    path.join(resourcePath, 'resources'),
+    path.join(testPath, 'repositories'),
+    path.join(testPath, 'services'),
+    path.join(igrpstudioPath, 'controllers'),
+    path.join(igrpstudioPath, 'models'),
+  ];
+
+  await Promise.all(dirsToCreate.map(fs.ensureDir));
+  await saveFileConfig(api, outputDir);
+  
+};
+
+const api: ApiConfig = {
+  type: 'baseApi',
   apiName: 'rest-api',
   group: 'nosi',
-  artifact: 'igrp'
-}
+  artifact: 'igrp',
+};
 
-createDir(api)
-  .then(res => console.log(res))
-  .catch(error => console.log(error))
+createDir(api, OUTPUT_DIR);

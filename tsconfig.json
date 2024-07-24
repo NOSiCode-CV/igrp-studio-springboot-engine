@@ -5,7 +5,9 @@
     "outDir": "./dist",       // Salida de los archivos compilados
     "rootDir": "./src",       // Directorio raíz de tu código fuente
     "strict": true,           // Habilita verificaciones estrictas de tipos
-    "esModuleInterop": true   // Habilita la interoperabilidad de módulos ES
+    "esModuleInterop": true,   // Habilita la interoperabilidad de módulos ES
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src"]           // Incluye todos los archivos .ts en src
 }

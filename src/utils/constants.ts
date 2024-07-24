@@ -1,28 +1,76 @@
 const path = require('path');
-import { apiconfig } from "../interfaces/types";
+import { ApiConfig } from "../interfaces/types";
 
 
-export const TEMPLATE_DIR = path.join(__dirname, '../templates');
-export const OUTPUT_DIR = path.join(__dirname, '../../generated-apis');
+export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
+// export const OUTPUT_DIR = path.join(__dirname, '../../generated-apis');
+export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_projects_test';
 
-export const TEMPLATE = {
-  'application': 'domain/application.hbs',
-  'application.properties': 'domain/resources/application.properties.hbs'
-}
-
-export const DIRECTORY = {
-
-  IGRPSTUDIO_DIR: (apiName: string) => `${apiName}/.igrpstudio`,
-  TEST_DIR: (config: apiconfig) => `${config.apiName}/src/test/java/${config.group}.${config.artifact}`,
-  MAIN_DIR: (config: apiconfig) => `${config.apiName}/src/main/java/${config.group}.${config.artifact}`
+export const DIRECTORIES = {
+  IGRPSTUDIO: '.igrpstudio/',
+  RESOURCES: 'src/main/',
+  TEST: (config: ApiConfig): string => {
+    const packageName = `${config.group}.${config.artifact}`.replace(/\./g, '/');
+    return `src/test/java/${packageName}`;
+  },
+  MAIN: (config: ApiConfig): string => {
+    const packageName = `${config.group}.${config.artifact}`.replace(/\./g, '/');
+    return `src/main/java/${packageName}`;
+  }
 }
 
 export const SUCCESS_MESSAGE = {
-  CREATED_DIRECTORY: 'Directories created or already exists'
+  FILE_SAVED: 'The file has been saved successfully.',
+  DIRECTORY_CREATED: 'Directories created'
 }
 
-export const ERROR_MESSAGE ={
-  ERROR_CREATING_DIRECTORY: ''
+export const ERROR_MESSAGE = {
+  ERROR_CREATING_DIRECTORY: 'An error occurred while creating directories. Please check the log for more details.',
+  INVALID_API_CONFIG: 'The provided API configuration is invalid. Please verify the API details and try again.',
+  DIRECTORY_ALREADY_IN_USE: 'The specified directory is already in use. Please select a different directory or remove the existing files.',
+  DIRECTORY_DOES_NOT_EXISTS: `The specified directory doesn't exists. Please select a different directory.`,
+  ERROR_SAVING_FILE_CONFIG: 'An error ocurred while saving file. Please check the log for more details.'
+};
+
+
+export const FILE_TYPE ={
+  0: 'basApi',
+  1: 'model',
+  2: 'controller'
 }
+
+export const TEMPLATES = {
+  APPLICATION: 'domain/application.hbd',
+  DOMAIN_MODEL: 'domain/model/model.hbs',
+  IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
+  DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
+  DOMAIN_RESOURCES: 'domain/resources/application.properties.hbs',
+
+  CONFIG_MVNW: 'config/mvnw.hbs',
+  CONFIG_POM_XML: 'config/pom.xml.hbs',
+  CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
+  CONFIG_GITIGNORE: 'config/gitignore.hbs',
+  CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
+  CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
+}
+
+export const CONFIG_FILES = [
+  {template: TEMPLATES.CONFIG_MVNW,          output: 'mvnw'},
+  {template: TEMPLATES.CONFIG_POM_XML,       output: 'pom.xml'},
+  {template: TEMPLATES.CONFIG_MVNW_CMD,      output: 'mvnw.cmd'},
+  {template: TEMPLATES.CONFIG_DOCKER_FILE,   output: 'Dockerfile'},
+  {template: TEMPLATES.CONFIG_GITIGNORE,     output: '.gitignore'},
+  {template: TEMPLATES.CONFIG_GITLABCIYAML,  output: 'gitlab-ci.yaml'},
+]
+
+export const DIRS_TOCREATE = [
+  
+]
+
+export const COMMON_FILES = {
+  BASE_API: 'baseApi.json'
+}
+
+
 
 
