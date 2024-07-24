@@ -5,18 +5,17 @@ import { ApiConfig } from "../interfaces/types";
 export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
 // export const OUTPUT_DIR = path.join(__dirname, '../../generated-apis');
 export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_projects_test';
+export const PACKAGE_NAME = (config: ApiConfig) => `${config.group}.${config.artifact}`.replace(/\./g, '/');
 
 export const DIRECTORIES = {
   IGRPSTUDIO: '.igrpstudio/',
-  RESOURCES: 'src/main/',
-  TEST: (config: ApiConfig): string => {
-    const packageName = `${config.group}.${config.artifact}`.replace(/\./g, '/');
-    return `src/test/java/${packageName}`;
-  },
-  MAIN: (config: ApiConfig): string => {
-    const packageName = `${config.group}.${config.artifact}`.replace(/\./g, '/');
-    return `src/main/java/${packageName}`;
-  }
+  RESOURCES: 'src/main/resource',
+  MODELS: 'model',
+  CONTROLLERS: 'controller',
+  REPOSITORIES: 'repositories',
+  SERVICES: 'services',
+  TEST: (config: ApiConfig) => `src/test/java/${PACKAGE_NAME(config)}`,
+  MAIN: (config: ApiConfig) => `src/main/java/${PACKAGE_NAME(config)}`,
 }
 
 export const SUCCESS_MESSAGE = {
@@ -32,19 +31,12 @@ export const ERROR_MESSAGE = {
   ERROR_SAVING_FILE_CONFIG: 'An error ocurred while saving file. Please check the log for more details.'
 };
 
-
-export const FILE_TYPE ={
-  0: 'basApi',
-  1: 'model',
-  2: 'controller'
-}
-
 export const TEMPLATES = {
-  APPLICATION: 'domain/application.hbd',
+  APPLICATION: 'domain/application.hbs',
   DOMAIN_MODEL: 'domain/model/model.hbs',
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
-  DOMAIN_RESOURCES: 'domain/resources/application.properties.hbs',
+  DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
 
   CONFIG_MVNW: 'config/mvnw.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
@@ -68,7 +60,8 @@ export const DIRS_TOCREATE = [
 ]
 
 export const COMMON_FILES = {
-  BASE_API: 'baseApi.json'
+  BASE_API: 'baseApi.json',
+  APPLICATION_PROPERTIES: 'application.properties'
 }
 
 

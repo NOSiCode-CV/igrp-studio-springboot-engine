@@ -1,8 +1,14 @@
-import { ApiConfig, ModelConfig } from '../interfaces/types';
+import { ApiConfig, ModelConfig, ControllerConfig } from '../interfaces/types';
 import fs from 'fs-extra';
 
-export const isApiConfig = (config: ApiConfig | ModelConfig): config is ApiConfig =>
+export const isApiConfig = (config: ApiConfig | ModelConfig | ControllerConfig): config is ApiConfig =>
   config?.type === 'baseApi';
+
+export const isModelConfig = (config: ApiConfig | ModelConfig | ControllerConfig): config is ApiConfig =>
+  config?.type === 'model';
+
+export const isControllerConfig = (config: ApiConfig | ModelConfig | ControllerConfig): config is ApiConfig =>
+  config?.type === 'controller';
 
 
 export const checkIfDirectoryIsEmpty = async (directoryPath: string): Promise<boolean> => {

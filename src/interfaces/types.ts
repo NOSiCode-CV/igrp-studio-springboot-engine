@@ -5,7 +5,8 @@ export interface ApiConfig {
   group: string,
   artifact: string,
   description?: string,
-  packageName?: string
+  packageName?: string,
+  name?: string
 }
 
 
