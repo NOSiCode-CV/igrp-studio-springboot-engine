@@ -5,7 +5,7 @@ export interface ApiConfig {
   group: string,
   artifact: string,
   description?: string,
-  packageName?: string,
+  package?: string,
   name?: string
 }
 
@@ -14,8 +14,9 @@ export interface ModelConfig {
   type: 'model',
   name: string,
   attributs: Attribut [],
-  relations?: Relation [],
   crud?: Crud
+  package?: string,
+  relations?: Relation [],
 }
 
 export interface ControllerConfig {
@@ -24,9 +25,10 @@ export interface ControllerConfig {
 }
 
 interface Attribut {
+  type: string
   name: string,
   primary?: boolean,
-  type: string
+  required?: true
 }
 
 interface Relation {

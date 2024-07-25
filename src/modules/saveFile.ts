@@ -20,10 +20,9 @@ export const saveFiles = async (config: ApiConfig | ModelConfig | ControllerConf
 
 const config: ModelConfig = {
   type: "model",
-  name: "Studant",
+  name: "Student",
   attributs: [
-    {name: "id", primary: true, type: "String"},
-    {name: "name", type: "String"},
+    {name: "name", type: "String", required:true},
     {name: "lastName", type: "String"}
   ]
 }

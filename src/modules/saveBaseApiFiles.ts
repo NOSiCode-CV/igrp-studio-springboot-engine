@@ -14,7 +14,7 @@ import { generateFromTemplate } from './generateFromTemplate';
 const APPLICATION_SUFFIX = 'Application.java';
 
 export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
-  config.packageName = `${config.group}.${config.artifact}`;
+  config.package = `${config.group}.${config.artifact}`;
   const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config));
   const apiName = `${capitalize(config.apiName)}${APPLICATION_SUFFIX}`;
   const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);

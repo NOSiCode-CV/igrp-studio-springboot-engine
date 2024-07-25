@@ -5,7 +5,7 @@ import { ApiConfig, ModelConfig } from './interfaces/types';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDir } from './modules/createAppDirectories';
 import { generateModel } from './modules/generateModelResources';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from './utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
 
 export const apiSetup = async (config: ApiConfig, outputPath: string) => {
   if (!config || !config.apiName || !config.group || !config.artifact) {
@@ -31,13 +31,3 @@ export const modelSetUp = async (outputPath: string) => {
     generateModel(model, outputPath);
   }
 };
-
-const api: ApiConfig = {
-  type: 'baseApi',
-  apiName: 'rest-api',
-  group: 'cends',
-  artifact: 'gea',
-};
-
-// apiSetup(api, OUTPUT_DIR)
-modelSetUp(OUTPUT_DIR);
