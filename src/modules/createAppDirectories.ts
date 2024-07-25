@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import { saveFiles } from './saveFile';
 import { ApiConfig } from '../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE } from '../utils/constants';
-import { checkIfDirectoryIsEmpty } from '../utils/checkFileType';
+import { checkIfDirectoryIsEmpty } from '../utils/checkFiles';
 
 export const createAppDir = async (config: ApiConfig, outputDir: string) => {
   const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config));

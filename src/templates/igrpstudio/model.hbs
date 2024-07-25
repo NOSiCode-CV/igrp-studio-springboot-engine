@@ -1,0 +1,27 @@
+{
+  "type": "{{type}}",
+  "name": "{{name}}",
+  "attributs": [
+    {{#each attributs}}
+    {{{json this}}}{{#unless @last}},{{/unless}}
+    {{/each}}
+  ]
+  {{#if relations}}
+  ,"relations": [
+    {{#each relations}}
+    {{{json this}}}{{#unless @last}},{{/unless}}
+    {{/each}}
+  ],
+  {{/if}}
+  {{#if crud}}
+  "crud": {
+    "enabled": {{crud.enabled}},
+    "path": "{{crud.path}}",
+    "disabledMethods": [
+      {{#each crud.disabledMethods}}
+      "{{this}}"{{#unless @last}},{{/unless}}
+      {{/each}}
+    ]
+  }
+  {{/if}}
+}

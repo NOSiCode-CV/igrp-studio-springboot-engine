@@ -13,4 +13,9 @@ Handlebars.registerHelper('replace', (str: string) => {
 
 });
 
+Handlebars.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
+
 export { Handlebars };
