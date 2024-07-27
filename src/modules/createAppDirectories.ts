@@ -4,11 +4,11 @@ import { saveFiles } from './saveFile';
 import { ApiConfig } from '../interfaces/types';
 import { DIRECTORIES } from '../utils/constants';
 
-export const createAppDir = async (config: ApiConfig, outputDir: string) => {
-  const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config));
-  const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
-  const testPath = path.join(outputDir, DIRECTORIES.TEST(config));
-  const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
+export const createAppDir = async (config: ApiConfig, output: string) => {
+  const mainPath = path.join(output, DIRECTORIES.MAIN(config));
+  const resourcePath = path.join(output, DIRECTORIES.RESOURCES);
+  const testPath = path.join(output, DIRECTORIES.TEST(config));
+  const igrpstudioPath = path.join(output, DIRECTORIES.IGRPSTUDIO);
 
   const dirsToCreate = [
     resourcePath,
@@ -22,5 +22,5 @@ export const createAppDir = async (config: ApiConfig, outputDir: string) => {
   ];
 
   await Promise.all(dirsToCreate.map((dir) => fs.mkdirSync(dir, { recursive: true })));
-  await saveFiles(config, outputDir);
+  await saveFiles(config, output);
 };

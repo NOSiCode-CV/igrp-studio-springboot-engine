@@ -9,7 +9,6 @@ export interface ApiConfig {
   name?: string
 }
 
-
 export interface ModelConfig {
   type: 'model',
   name: string,

@@ -1,11 +1,19 @@
 import path from 'path';
+import fs from 'fs-extra';
 import { ModelConfig } from '../interfaces/types';
 import { DIRECTORIES, EXTENSIONS, TEMPLATES } from '../utils/constants';
-import { generateFromTemplate } from './generateFromTemplate';
+import { generateTemplate } from './generateTemplate';
 
 export const saveModelFiles = async (config: ModelConfig, outputPath: string) => {
-  const modelOutputIgrpstudio = path.join(outputPath, DIRECTORIES.IGRPSTUDIO, DIRECTORIES.MODELS);
   const MODEL_NAME = `${config.name}${EXTENSIONS.JSON}`;
+  const modelOutputIgrpstudio = path.join(
+    outputPath,
+    DIRECTORIES.IGRPSTUDIO,
+    DIRECTORIES.MODELS,
+    MODEL_NAME,
+  );
 
-  await generateFromTemplate(modelOutputIgrpstudio, TEMPLATES.IGRP_MODEL, MODEL_NAME, config);
+  const modelFile = await generateTemplate(TEMPLATES.IGRP_MODEL, config);
+
+  await fs.writeFile(modelOutputIgrpstudio, modelFile, 'utf-8');
 };

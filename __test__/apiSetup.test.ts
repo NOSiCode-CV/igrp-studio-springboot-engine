@@ -4,6 +4,7 @@ import { apiSetup, modelSetUp } from '../src/apiSetup';
 import { saveModelFiles } from '../src/modules/saveModelFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { COMMON_FILES, DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
+import { assert } from 'console';
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
@@ -23,7 +24,6 @@ const modelConfig: ModelConfig = {
   ],
 };
 
-let cleamDirectory = true;
 
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
@@ -71,7 +71,7 @@ it('should create the project structure with all the directories and templates.'
 
 });
 
-it(`should create a ${modelConfig.name}.json config file in .igrpstudio/model directory`, async () => {
+it(`should create a ${modelConfig.name}.json config file in .igrpstudio/model directory.`, async () => {
   await saveModelFiles(modelConfig, OUTPUT_DIR);
 
   const modelFileConfig = `${modelConfig.name}${EXTENSIONS.JSON}`;
@@ -88,7 +88,8 @@ it(`should create a ${modelConfig.name}.json config file in .igrpstudio/model di
 
 });
 
-it(`should create the ${modelConfig.name} model from .igrpstudio/model/${modelConfig.name}.json directory`, async () => {
+
+it(`should create the ${modelConfig.name} model from .igrpstudio/model/${modelConfig.name}.json directory.`, async () => {
   const model = path.join(
     OUTPUT_DIR,
     DIRECTORIES.MAIN(apiConfig),
