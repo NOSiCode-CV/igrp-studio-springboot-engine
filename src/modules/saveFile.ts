@@ -1,8 +1,7 @@
-import { isApiConfig, isModelConfig, isControllerConfig } from '../utils/checkFiles';
-import { ApiConfig, ControllerConfig, ModelConfig } from '../interfaces/types';
-import { saveFileConfig } from './saveBaseApiFiles';
-import { OUTPUT_DIR } from '../utils/constants';
 import { saveModelFiles } from './saveModelFiles';
+import { saveFileConfig } from './saveBaseApiFiles';
+import { ApiConfig, ControllerConfig, ModelConfig } from '../interfaces/types';
+import { isApiConfig, isModelConfig, isControllerConfig } from '../utils/checkFiles';
 
 
 export const saveFiles = async (config: ApiConfig | ModelConfig | ControllerConfig, outputDir: string) => {
@@ -15,16 +14,4 @@ export const saveFiles = async (config: ApiConfig | ModelConfig | ControllerConf
   }
 
   if (isControllerConfig(config)) {}
-
 };
-
-const config: ModelConfig = {
-  type: "model",
-  name: "Student",
-  attributs: [
-    {name: "name", type: "String", required:true},
-    {name: "lastName", type: "String"}
-  ]
-}
-
-saveFiles(config, OUTPUT_DIR);

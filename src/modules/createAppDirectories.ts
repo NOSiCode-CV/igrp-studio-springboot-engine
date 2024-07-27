@@ -2,8 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { saveFiles } from './saveFile';
 import { ApiConfig } from '../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../utils/constants';
-import { checkIfDirectoryIsEmpty } from '../utils/checkFiles';
+import { DIRECTORIES } from '../utils/constants';
 
 export const createAppDir = async (config: ApiConfig, outputDir: string) => {
   const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config));
