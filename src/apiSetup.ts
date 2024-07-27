@@ -28,6 +28,6 @@ export const modelSetUp = async (outputPath: string) => {
   for (const file of jsonFiles) {
     const filePath = path.join(igrpstudioModelsPath, file);
     const model: ModelConfig = await readJsonFile(filePath);
-    generateModel(model, outputPath);
+    await generateModel(model, outputPath);
   }
 };

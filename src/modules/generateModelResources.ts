@@ -16,14 +16,14 @@ export const generateModel = async (config: ModelConfig, outputPath: string) => 
   const baseApiFile: ApiConfig = await readJsonFile(baseApiPath);
   config.package = baseApiFile.package;
   const model = `${config.name}${EXTENSIONS.JAVA}`;
-  const mainpath = path.join(
+  const outputDir = path.join(
     outputPath,
     DIRECTORIES.MAIN(baseApiFile),
     DIRECTORIES.MODELS,
     config.name,
   );
 
-  fs.mkdirSync(mainpath, { recursive: true });
+  fs.mkdirSync(outputDir, { recursive: true });
 
-  await generateFromTemplate(mainpath, TEMPLATES.DOMAIN_MODEL, model, config);
+  await generateFromTemplate(outputDir, TEMPLATES.DOMAIN_MODEL, model, config);
 };

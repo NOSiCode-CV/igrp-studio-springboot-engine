@@ -1,4 +1,4 @@
-const path = require('path');
+import path from 'path';
 import { ApiConfig } from "../interfaces/types";
 
 
@@ -7,39 +7,39 @@ export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_pr
 export const PACKAGE_NAME = (config: ApiConfig) => `${config.group}.${config.artifact}`.replace(/\./g, '/');
 
 export const DIRECTORIES = {
+  BASE_API: '.igrpstudio/baseApi.json',
   CONTROLLERS: 'controller',
-  IGRPSTUDIO: '.igrpstudio/',
+  IGRPSTUDIO: '.igrpstudio',
   MODELS: 'model',
   RESOURCES: 'src/main/resource',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
-  BASE_API: '.igrpstudio/baseApi.json',
   
   TEST: (config: ApiConfig) => `src/test/java/${PACKAGE_NAME(config)}`,
   MAIN: (config: ApiConfig) => `src/main/java/${PACKAGE_NAME(config)}`,
 }
 
 export const SUCCESS_MESSAGE = {
+  DIRECTORY_CREATED: 'Directories created',
   FILE_SAVED: 'The file has been saved successfully.',
-  DIRECTORY_CREATED: 'Directories created'
 }
 
 export const ERROR_MESSAGE = {
+  DIRECTORY_DOES_NOT_EXISTS: `The specified directory doesn't exists. Please select a different directory.`,
+  DIRECTORY_ALREADY_IN_USE: 'The specified directory is already in use. Please select a different directory or remove the existing files.',
   ERROR_SAVING_FILE_CONFIG: 'An error ocurred while saving file. Please check the log for more details.',
   ERROR_CREATING_DIRECTORY: 'An error occurred while creating directories. Please check the log for more details.',
   FILE_CHECKING: 'Error chaecking if path is a file. Please verify your path and try again',
   INVALID_API_CONFIG: 'The provided API configuration is invalid. Please verify the API details and try again.',
-  DIRECTORY_DOES_NOT_EXISTS: `The specified directory doesn't exists. Please select a different directory.`,
-  DIRECTORY_ALREADY_IN_USE: 'The specified directory is already in use. Please select a different directory or remove the existing files.',
 };
 
 export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
   DOMAIN_MODEL: 'domain/model/model.hbs',
-  IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
-  IGRP_MODEL: 'igrpstudio/model.hbs',
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+  IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
+  IGRP_MODEL: 'igrpstudio/model.hbs',
 
   CONFIG_MVNW: 'config/mvnw.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
@@ -61,7 +61,13 @@ export const CONFIG_FILES = [
 
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES: 'application.properties',
-  BASE_API: 'baseApi.json'
+  BASE_API: 'baseApi.json',
+  DOCKERFILE: 'Dockerfile',
+  GITIGNORE: '.gitignore',
+  GITLAB_CI_YAML: 'gitlab-ci.yaml',
+  MVNW: 'mvnw',
+  MVNW_CMD: 'mvnw.cmd',
+  POM_XML: 'pom.xml',
 }
 
 export const EXTENSIONS = {
