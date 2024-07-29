@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { ModelConfig } from '../interfaces/types';
 import { DIRECTORIES, EXTENSIONS, TEMPLATES } from '../utils/constants';
-import { generateTemplate } from './generateTemplate';
+import { templateGenerator } from './templateGenerator';
 
 export const saveModelFiles = async (config: ModelConfig, outputPath: string) => {
   const MODEL_NAME = `${config.name}${EXTENSIONS.JSON}`;
@@ -13,7 +13,7 @@ export const saveModelFiles = async (config: ModelConfig, outputPath: string) =>
     MODEL_NAME,
   );
 
-  const modelFile = await generateTemplate(TEMPLATES.IGRP_MODEL, config);
+  const modelFile = await templateGenerator(TEMPLATES.IGRP_MODEL, config);
 
   await fs.writeFile(modelOutputIgrpstudio, modelFile, 'utf-8');
 };

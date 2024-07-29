@@ -4,9 +4,9 @@ import { readJsonFile } from './utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from './interfaces/types';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDirectories } from './modules/createAppDirectories';
-import { generateModel } from './modules/generateModelResources';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
 import { saveFiles } from './modules/saveFile';
+import { modelGenerator } from './modules/modelResourcesGenerator';
 
 export const newApi = async (config: ApiConfig, output: string) => {
   if (!(await checkIfDirectoryIsEmpty(output))) {
@@ -37,6 +37,6 @@ export const modelSetUp = async (outputPath: string) => {
   for (const file of jsonFiles) {
     const filePath = path.join(igrpstudioModelsPath, file);
     const model: ModelConfig = await readJsonFile(filePath);
-    await generateModel(model, outputPath);
+    await modelGenerator(model, outputPath);
   }
 };

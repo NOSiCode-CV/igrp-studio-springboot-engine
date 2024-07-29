@@ -17,10 +17,12 @@ public class {{name}} {
   private Long id;
 
   {{#each attributes}}
-  {{#if required}}
+  {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}
+  @Column(unique = {{this.unique}}, nullable = {{this.notNull}})
   private {{this.type}} {{this.name}};
+  
   {{/each}}
 
   {{#if relations}}

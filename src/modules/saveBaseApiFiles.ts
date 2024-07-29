@@ -9,7 +9,7 @@ import {
   CONFIG_FILES,
 } from '../utils/constants';
 import { capitalize } from '../utils/capitalizeStrings';
-import { generateTemplate } from './generateTemplate';
+import { templateGenerator } from './templateGenerator';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -28,17 +28,13 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   const MAIN_FILES = [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
     { output: igrpstudioPath, template: TEMPLATES.IGRP_BASE_API, name: COMMON_FILES.BASE_API },
-    {
-      output: resourcePath,
-      template: TEMPLATES.DOMAIN_RESOURCES,
-      name: COMMON_FILES.APPLICATION_PROPERTIES,
-    },
+    { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
   ];
 
   await Promise.all(
     MAIN_FILES.map(async (file) => {
       const outputPath = path.join(file.output, file.name)
-      const template = await generateTemplate(file.template, config)
+      const template = await templateGenerator(file.template, config)
       await fs.writeFile(outputPath, template, 'utf-8');
     })
   );
@@ -46,7 +42,7 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   await Promise.all(
     CONFIG_FILES.map( async (file) => {
       const outputPath = path.join(outputDir, file.output);
-      const template = await generateTemplate(file.template, config);
+      const template = await templateGenerator(file.template, config);
       await fs.writeFile(outputPath, template, 'utf-8');
     })
   );

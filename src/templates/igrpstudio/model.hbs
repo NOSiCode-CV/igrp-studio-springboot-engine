@@ -11,10 +11,10 @@
     {{#each relations}}
     {{{json this}}}{{#unless @last}},{{/unless}}
     {{/each}}
-  ],
+  ]
   {{/if}}
   {{#if crud}}
-  "crud": {
+  ,"crud": {
     "enabled": {{crud.enabled}},
     "path": "{{crud.path}}",
     "disabledMethods": [

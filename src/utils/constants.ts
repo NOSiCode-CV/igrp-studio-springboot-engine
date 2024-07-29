@@ -39,6 +39,7 @@ export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
   DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
+  DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',
@@ -49,6 +50,7 @@ export const TEMPLATES = {
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
+
 }
 
 export const CONFIG_FILES = [

@@ -27,15 +27,17 @@ interface Attribut {
   type: string
   name: string,
   primary?: boolean,
-  required?: true
+  required?: boolean,
+  unique: boolean,
+  notNull: boolean
 }
 
-interface Relation {
+export interface Relation {
   relationType: string,
   joinColumn: string
 }
 
-interface Crud {
+export interface Crud {
   enabled: boolean,
   path: string,
   disabledMethods: string []
