@@ -16,7 +16,7 @@ const APPLICATION_SUFFIX = 'Application.java';
 export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   config.name = capitalize(config.apiName);
   config.package = `${config.group}.${config.artifact}`;
-  const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config));
+  const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config.group, config.artifact));
   const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
   const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
   const apiName = `${capitalize(config.apiName)}${APPLICATION_SUFFIX}`;

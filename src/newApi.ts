@@ -3,20 +3,29 @@ import fs from 'fs-extra';
 import { readJsonFile } from './utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from './interfaces/types';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
-import { createAppDir } from './modules/createAppDirectories';
+import { createAppDirectories } from './modules/createAppDirectories';
 import { generateModel } from './modules/generateModelResources';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
+import { saveFiles } from './modules/saveFile';
 
-export const apiSetup = async (config: ApiConfig, outputPath: string) => {
-  if (!config || !config.apiName || !config.group || !config.artifact) {
-    throw ERROR_MESSAGE.INVALID_API_CONFIG;
-  }
-
-  if (!(await checkIfDirectoryIsEmpty(outputPath))) {
+export const newApi = async (config: ApiConfig, output: string) => {
+  if (!(await checkIfDirectoryIsEmpty(output))) {
     throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
   }
 
-  await createAppDir(config, outputPath);
+  /**
+   * Creates the folder structure needed for the API.
+   */
+  await createAppDirectories(config, output);
+
+  /**
+   * With the base config sent to the newAPI, this function should create the following:
+   *  - Base config files (pom.xml, mvnw, application.properties, etc.)
+   *  - .igrpstudio config files (baseApi.json)
+   *  - Application bootstrapping files ([API_NAME]Application.java)
+   */
+  await saveFiles(config, output);
+  // TOOD: Add the preconditions on the template generation
 };
 
 export const modelSetUp = async (outputPath: string) => {

@@ -4,9 +4,10 @@ import { ApiConfig } from "../interfaces/types";
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
 export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_projects_test';
-export const PACKAGE_NAME = (config: ApiConfig) => `${config.group}.${config.artifact}`.replace(/\./g, '/');
+// TODO: Move this out of constants and change it to helper functions.
+export const PACKAGE_NAME = (group: string, artifact: string) => `${group}.${artifact}`.replace(/\./g, '/');
 
-export const DIRECTORIES = {
+export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',
   CONTROLLERS: 'controller',
   IGRPSTUDIO: '.igrpstudio',
@@ -15,8 +16,8 @@ export const DIRECTORIES = {
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
   
-  TEST: (config: ApiConfig) => `src/test/java/${PACKAGE_NAME(config)}`,
-  MAIN: (config: ApiConfig) => `src/main/java/${PACKAGE_NAME(config)}`,
+  TEST: (group: string, artifact: string) => `src/test/java/${PACKAGE_NAME(group, artifact)}`,
+  MAIN: (group: string, artifact: string) => `src/main/java/${PACKAGE_NAME(group, artifact)}`,
 }
 
 export const SUCCESS_MESSAGE = {
@@ -31,6 +32,7 @@ export const ERROR_MESSAGE = {
   ERROR_CREATING_DIRECTORY: 'An error occurred while creating directories. Please check the log for more details.',
   FILE_CHECKING: 'Error chaecking if path is a file. Please verify your path and try again',
   INVALID_API_CONFIG: 'The provided API configuration is invalid. Please verify the API details and try again.',
+  INVALID_OUTPUT_PATH: 'The provided output path is invalid or does not exist.',
 };
 
 export const TEMPLATES = {
