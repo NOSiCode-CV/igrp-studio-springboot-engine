@@ -18,4 +18,14 @@ Handlebars.registerHelper('json', function(context) {
 });
 
 
+Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
+  if (arg1 === arg2) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+
+
 export { Handlebars };

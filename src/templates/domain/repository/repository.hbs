@@ -1,0 +1,42 @@
+package {{package}};
+
+/*This class should not be modified outside studio.*/
+
+import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+@Repository
+@RepositoryRestResource(path = "{{crud.path}}")
+public interface {{name}}Repository extends CrudRepository<{{name}}, Long> {
+
+{{#if crud.disabledMethods}}
+{{#each crud.disabledMethods}}
+{{#if (eq this 'save')}}
+@Override
+@RestResource(exported = false)
+<S extends {{../name}}> S save(S entity);
+{{else if (eq this 'deleteById')}}
+@Override
+@RestResource(exported = false)
+void deleteById(Long id);
+{{else if (eq this 'delete')}}
+@Override
+@RestResource(exported = false)
+void delete({{../name}} entity);
+{{else if (eq this 'deleteAll')}}
+@Override
+@RestResource(exported = false)
+void deleteAll();
+{{else if (eq this 'deleteAllIterable')}}
+@Override
+@RestResource(exported = false)
+void deleteAll(Iterable<? extends {{../name}}> entities);
+{{/if}}
+
+{{/each}}
+{{/if}}
+
+
+}
