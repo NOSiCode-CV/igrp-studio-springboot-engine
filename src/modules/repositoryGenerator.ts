@@ -12,7 +12,7 @@ export const repository = async (config: ModelConfig, output: string) => {
   const apiConfig: ApiConfig = await readJsonFile(apiConfigPath);
   const outputFile = path.join(
     output,
-    DIRECTORIES.MAIN(apiConfig),
+    DIRECTORIES.MAIN(apiConfig.group, apiConfig.artifact),
     DIRECTORIES.MODELS,
     config.name,
     `${config.name}${REEPOSITORY_SUFFIX}`,
