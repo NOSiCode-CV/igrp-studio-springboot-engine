@@ -18,7 +18,7 @@ export const modelGenerator = async (config: ModelConfig, output: string) => {
   config.package = baseApiFile.package;
   const outputDir = path.join(
     output,
-    DIRECTORIES.MAIN(baseApiFile),
+    DIRECTORIES.MAIN(baseApiFile.group, baseApiFile.artifact),
     DIRECTORIES.MODELS,
     config.name
   );
