@@ -10,19 +10,43 @@ import {
 } from '../utils/constants';
 import { capitalize } from '../utils/capitalizeStrings';
 import { templateGenerator } from './templateGenerator';
+import { getMainPath } from '../utils/helpers';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
 export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
+  if (!config || !config.apiName || !config.group || !config.artifact){
+    throw ERROR_MESSAGE.INVALID_API_CONFIG
+  }
+
+  if(!outputDir){
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH
+  }
+
   config.name = capitalize(config.apiName);
   config.package = `${config.group}.${config.artifact}`;
-  const mainPath = path.join(outputDir, DIRECTORIES.MAIN(config.group, config.artifact));
-  const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
-  const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
   const apiName = `${capitalize(config.apiName)}${APPLICATION_SUFFIX}`;
 
+  const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
+  const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
+  const mainPath = path.join(outputDir, getMainPath(config.group, config.artifact));
+
+  /**
+   * Verifyig if the follows directories exists
+   *  .igrpstudio/, 
+   *  src/main/java/group/artifact/
+   *  src/main/java/resources/ 
+   */
   if (!(await fs.pathExists(igrpstudioPath))) {
-    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXISTS;
+    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
+  }
+
+  if (!(await fs.pathExists(mainPath))) {
+    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
+  }
+
+  if (!(await fs.pathExists(resourcePath))) {
+    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
   }
 
   const MAIN_FILES = [

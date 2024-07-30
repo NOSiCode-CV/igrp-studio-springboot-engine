@@ -26,6 +26,18 @@ Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, optio
   }
 });
 
+const formatPackageName = (group: string, artifact: string) => `${group}.${artifact}`.replace(/\./g, '/');
+
+const getTestPath = (group: string, artifact: string) => `src/test/java/${formatPackageName(group, artifact)}`;
+
+const getMainPath = (group: string, artifact: string) => `src/main/java/${formatPackageName(group, artifact)}`;
 
 
-export { Handlebars };
+
+export { 
+  Handlebars,
+  formatPackageName,
+  getTestPath,
+  getMainPath
+
+};

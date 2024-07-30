@@ -6,6 +6,7 @@ import { ApiConfig, ModelConfig } from '../interfaces/types';
 import { templateGenerator } from './templateGenerator';
 import { TEMPLATES, EXTENSIONS, DIRECTORIES, ERROR_MESSAGE } from '../utils/constants';
 import { repository } from './repositoryGenerator';
+import { getMainPath } from '../utils/helpers';
 
 export const modelGenerator = async (config: ModelConfig, output: string) => {
   const baseApiPath = path.join(output, DIRECTORIES.BASE_API);
@@ -18,7 +19,7 @@ export const modelGenerator = async (config: ModelConfig, output: string) => {
   config.package = baseApiFile.package;
   const outputDir = path.join(
     output,
-    DIRECTORIES.MAIN(baseApiFile.group, baseApiFile.artifact),
+    getMainPath(baseApiFile.group, baseApiFile.artifact),
     DIRECTORIES.MODELS,
     config.name
   );

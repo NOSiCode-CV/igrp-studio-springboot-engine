@@ -2,8 +2,9 @@ import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, ModelConfig } from '../interfaces/types';
 import { templateGenerator } from './templateGenerator';
-import { DIRECTORIES, PACKAGE_NAME, TEMPLATES } from '../utils/constants';
+import { DIRECTORIES, TEMPLATES } from '../utils/constants';
 import { readJsonFile } from '../utils/readJsonFiles';
+import { getMainPath } from '../utils/helpers';
 
 const REEPOSITORY_SUFFIX = 'Repository.java';
 
@@ -12,7 +13,7 @@ export const repository = async (config: ModelConfig, output: string) => {
   const apiConfig: ApiConfig = await readJsonFile(apiConfigPath);
   const outputFile = path.join(
     output,
-    DIRECTORIES.MAIN(apiConfig.group, apiConfig.artifact),
+    getMainPath(apiConfig.group, apiConfig.artifact),
     DIRECTORIES.MODELS,
     config.name,
     `${config.name}${REEPOSITORY_SUFFIX}`,

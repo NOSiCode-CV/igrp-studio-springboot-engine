@@ -1,11 +1,7 @@
 import path from 'path';
-import { ApiConfig } from "../interfaces/types";
-
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
 export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_projects_test';
-// TODO: Move this out of constants and change it to helper functions.
-export const PACKAGE_NAME = (group: string, artifact: string) => `${group}.${artifact}`.replace(/\./g, '/');
 
 export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',
@@ -15,9 +11,6 @@ export const DIRECTORIES = {
   RESOURCES: 'src/main/resource',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
-  
-  TEST: (group: string, artifact: string) => `src/test/java/${PACKAGE_NAME(group, artifact)}`,
-  MAIN: (group: string, artifact: string) => `src/main/java/${PACKAGE_NAME(group, artifact)}`,
 }
 
 export const SUCCESS_MESSAGE = {
@@ -26,14 +19,19 @@ export const SUCCESS_MESSAGE = {
 }
 
 export const ERROR_MESSAGE = {
-  DIRECTORY_DOES_NOT_EXISTS: `The specified directory doesn't exists. Please select a different directory.`,
+  DIRECTORY_DOES_NOT_EXIST: 'The specified directory does not exist. Please select a different directory.',
   DIRECTORY_ALREADY_IN_USE: 'The specified directory is already in use. Please select a different directory or remove the existing files.',
-  ERROR_SAVING_FILE_CONFIG: 'An error ocurred while saving file. Please check the log for more details.',
+  EMPTY_CONTEXT: 'Provide a valid context. The context must not be empty.',
+  ERROR_SAVING_FILE_CONFIG: 'An error occurred while saving the file. Please check the log for more details.',
   ERROR_CREATING_DIRECTORY: 'An error occurred while creating directories. Please check the log for more details.',
-  FILE_CHECKING: 'Error chaecking if path is a file. Please verify your path and try again',
+  EMPTY_ATTRIBUTE: 'Model attributes must not be empty.',
+  TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
+  FILE_CHECKING: 'Error checking if the path is a file. Please verify your path and try again.',
   INVALID_API_CONFIG: 'The provided API configuration is invalid. Please verify the API details and try again.',
+  INVALID_MODEL_CONFIG:'The provided Model configuration is invalid. Please verify the model details and try again.',
   INVALID_OUTPUT_PATH: 'The provided output path is invalid or does not exist.',
 };
+
 
 export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
@@ -78,7 +76,3 @@ export const EXTENSIONS = {
   JAVA: '.java',
   JSON: '.json'
 }
-
-
-
-
