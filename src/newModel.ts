@@ -5,7 +5,7 @@ import { readJsonFile } from './utils/readJsonFiles';
 import { modelGenerator } from './modules/modelResourcesGenerator';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
 
-export const modelSetUp = async (output: string) => {
+export const modelSetUp = async (model: string, output: string) => {
   if(!output) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH
   }
@@ -15,8 +15,6 @@ export const modelSetUp = async (output: string) => {
 
 
   const jsonFiles = files.filter((file) => path.extname(file) === EXTENSIONS.JSON);
-  console.log(jsonFiles)
-
  
   for (const file of jsonFiles) {
     const filePath = path.join(igrpstudioModelsPath, file);

@@ -31,12 +31,7 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
   const mainPath = path.join(outputDir, getMainPath(config.group, config.artifact));
 
-  /**
-   * Verifyig if the follows directories exists
-   *  .igrpstudio/, 
-   *  src/main/java/group/artifact/
-   *  src/main/java/resources/ 
-   */
+
   if (!(await fs.pathExists(igrpstudioPath))) {
     throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
   }

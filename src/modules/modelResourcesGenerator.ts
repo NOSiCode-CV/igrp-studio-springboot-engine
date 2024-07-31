@@ -9,6 +9,14 @@ import { repository } from './repositoryGenerator';
 import { getMainPath } from '../utils/helpers';
 
 export const modelGenerator = async (config: ModelConfig, output: string) => {
+  if (!config || !config.name) {
+    throw ERROR_MESSAGE.INVALID_MODEL_CONFIG
+  }
+
+  if (!output) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH
+  }
+
   const baseApiPath = path.join(output, DIRECTORIES.BASE_API);
 
   if (!(await isFile(baseApiPath))) {

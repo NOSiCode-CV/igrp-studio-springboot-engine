@@ -12,9 +12,7 @@ export const templateGenerator = async (templateName: string, context: {}) => {
     throw ERROR_MESSAGE.EMPTY_CONTEXT;
   };
 
-  /**
-  * generate a file from handlebars template
-  */
+
   const templatePath = path.join(TEMPLATE_DIR, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);
