@@ -1,11 +1,20 @@
 package {{package}}.model.{{name}};
 
 import lombok.Data;
+import java.util.List;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
+{{#if relations}}
+{{#each relations}}
+import {{../package}}.model.{{this.entity}}.{{this.entity}};
+{{/each}}
+{{/if}}
 
+/**
+* {{name}}
+*/
 @Entity
 @Data
 @NoArgsConstructor
@@ -24,11 +33,36 @@ public class {{name}} {
   private {{this.type}} {{this.name}};
   
   {{/each}}
+ {{#if relations}}
+  {{#each relations}}
+  {{#if (eq this.relationType 'OneToOne') }}
+  @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}
+  private {{this.entity}} {{toLowerCase this.entity}};
 
-  {{#if relations}}
-  {{#each relationships}}
-  @{{this.annotation}}(mappedBy = "{{this.mappedBy}}")
-  private {{this.type}} {{this.name}};
-  {{/each}}
-  {{/if}}
+  {{else if (eq this.relationType 'OneToMany') }}
+  @OneToMany(mappedBy = "{{this.mappedBy}}")
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+
+  {{else if (eq this.relationType 'ManyToOne') }}
+  @ManyToOne
+  @JoinColumn(name = "{{this.joinColumn}}")
+  private {{this.entity}} {{toLowerCase this.entity}};
+
+  {{else if (eq this.relationType 'ManyToMany') }}
+  {{#ifNot this.mappedBy}}
+  @ManyToMany
+  @JoinTable(
+      name = "{{this.joinTable}}",
+      joinColumns = @JoinColumn(name = "{{this.joinColumn}}"),
+      inverseJoinColumns = @JoinColumn(name = "{{this.inverseJoinColumn}}")
+  )
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  {{else}}
+  @ManyToMany(mappedBy = "{{this.mappedBy}}")
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  {{/ifNot}}
+
+{{/if}}
+{{/each}}
+{{/if}}
 }

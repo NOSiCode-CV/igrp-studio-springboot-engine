@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { newApi } from '../src/newApi';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
-import { saveModelFiles } from '../src/modules/saveModelFiles';
+import { saveModelFile } from '../src/modules/saveModelFile';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { modelGenerator } from '../src/modules/modelResourcesGenerator';
 import path from 'path';
@@ -31,8 +31,8 @@ const modelConfig: ModelConfig = {
       required: true,
       unique: false,
       notNull: false,
-    },
-  ],
+    }
+  ]
 };
 
 const apiConfig: ApiConfig = {
@@ -53,7 +53,7 @@ beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
   await newApi(apiConfig, OUTPUT_DIR);
-  await saveModelFiles(modelConfig, OUTPUT_DIR);
+  await saveModelFile(modelConfig, OUTPUT_DIR);
 });
 
 afterAll(async () => {

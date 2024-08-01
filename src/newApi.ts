@@ -5,6 +5,10 @@ import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDirectories } from './modules/createAppDirectories';
 
 export const newApi = async (config: ApiConfig, output: string) => {
+  if(!config) {
+    throw ERROR_MESSAGE.INVALID_API_CONFIG
+  }
+  
   if (!(await checkIfDirectoryIsEmpty(output))) {
     throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
   }

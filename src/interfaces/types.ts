@@ -7,7 +7,7 @@ export interface ApiConfig {
   description?: string,
   package?: string,
   name?: string
-}
+};
 
 export interface ModelConfig {
   type: 'model',
@@ -16,12 +16,12 @@ export interface ModelConfig {
   crud?: Crud
   package?: string,
   relations?: Relation [],
-}
+};
 
 export interface ControllerConfig {
   type: 'controller',
   name: string
-}
+};
 
 interface Attribut {
   type: string
@@ -30,15 +30,25 @@ interface Attribut {
   required?: boolean,
   unique: boolean,
   notNull: boolean
-}
+};
 
 export interface Relation {
   relationType: string,
-  joinColumn: string
-}
+  entity: string,
+  mappedBy?: string,
+  joinColumn?: string,
+  joinTable?: string,
+  inverseJoinColumn?: string
+};
 
 export interface Crud {
   enabled: boolean,
   path: string,
   disabledMethods: string []
+};
+
+export interface Table {
+  name: string,
+  joinColumns: string,
+  inverseJoinColumns: string
 }

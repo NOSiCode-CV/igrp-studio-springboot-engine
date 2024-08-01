@@ -4,7 +4,7 @@ import { ModelConfig } from '../interfaces/types';
 import { templateGenerator } from './templateGenerator';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../utils/constants';
 
-export const saveModelFiles = async (config: ModelConfig, output: string) => {
+export const saveModelFile = async (config: ModelConfig, output: string) => {
   if (!config || !config.type || !config.name || !config.attributs) {
     throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
   }
