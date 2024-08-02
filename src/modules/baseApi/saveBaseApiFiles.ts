@@ -1,16 +1,17 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { ApiConfig } from '../interfaces/types';
+import { ApiConfig } from '../../interfaces/types';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
   TEMPLATES,
   COMMON_FILES,
   CONFIG_FILES,
-} from '../utils/constants';
-import { capitalize } from '../utils/capitalizeStrings';
-import { templateGenerator } from './templateGenerator';
-import { getMainPath } from '../utils/helpers';
+} from '../../utils/constants';
+import { capitalize } from '../../utils/capitalizeStrings';
+import { templateGenerator } from '../common/templateGenerator';
+import { getMainPath } from '../../utils/helpers';
+import { saveTemplate } from '../common/saveTemplate';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -54,7 +55,7 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
     MAIN_FILES.map(async (file) => {
       const outputPath = path.join(file.output, file.name)
       const template = await templateGenerator(file.template, config)
-      await fs.writeFile(outputPath, template, 'utf-8');
+      await saveTemplate(template, outputPath);
     })
   );
 
@@ -62,7 +63,7 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
     CONFIG_FILES.map( async (file) => {
       const outputPath = path.join(outputDir, file.output);
       const template = await templateGenerator(file.template, config);
-      await fs.writeFile(outputPath, template, 'utf-8');
+      await saveTemplate(template, outputPath);
     })
   );
 };

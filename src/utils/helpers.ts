@@ -1,4 +1,6 @@
 import * as Handlebars from 'handlebars';
+import { DIRECTORIES, EXTENSIONS } from './constants';
+import path from 'path';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -53,12 +55,16 @@ const getTestPath = (group: string, artifact: string) => `src/test/java/${format
 
 const getMainPath = (group: string, artifact: string) => `src/main/java/${formatPackageName(group, artifact)}`;
 
+const getModelConfigPath = (model: string, output: string) => path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
 
+const getControllerConfigPath = (controller: string, output: string) => path.join(output, DIRECTORIES.CONFIG_CONTROLLER, `${controller}${EXTENSIONS.JSON}`);
 
 export { 
   Handlebars,
-  formatPackageName,
   getTestPath,
-  getMainPath
+  getMainPath,
+  formatPackageName,
+  getModelConfigPath,
+  getControllerConfigPath
 
 };

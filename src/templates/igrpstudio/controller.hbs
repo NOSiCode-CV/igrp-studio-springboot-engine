@@ -1,0 +1,11 @@
+{
+  "type": "{{type}}",
+  "name": "{{name}}",
+  "basePath": "{{basePath}}",
+  "package": "{{package}}",
+  "actions": [
+    {{#each actions}}
+    {{{json this}}}{{#unless @last}},{{/unless}}
+    {{/each}}
+  ]
+}

@@ -58,6 +58,6 @@ Thumbs.db
 # Storybook files
 .storybook-out/
 
-# MacOS file attributes
+# MacOS file attributs
 .AppleDouble
 .LSOverride

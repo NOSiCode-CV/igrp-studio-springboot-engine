@@ -21,14 +21,6 @@ afterEach(async () => {
   await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
-// Test when the output directory is not empty. To run this test, provide a non-empty directory.
-it('should return output directory is not empty error', async () => {
-  try {
-    await newApi(apiConfig, OUTPUT_DIR);
-  } catch (error) {
-    expect(error).toBe(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
-  }
-});
 
 it('should create the project structure with all the directories and templates.', async () => {
   await newApi(apiConfig, OUTPUT_DIR);

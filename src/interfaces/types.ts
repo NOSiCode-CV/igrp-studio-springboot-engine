@@ -20,7 +20,10 @@ export interface ModelConfig {
 
 export interface ControllerConfig {
   type: 'controller',
-  name: string
+  name: string,
+  basePath: string,
+  package?: string,
+  actions: ControllerAction [] 
 };
 
 interface Attribut {
@@ -51,4 +54,11 @@ export interface Table {
   name: string,
   joinColumns: string,
   inverseJoinColumns: string
+}
+
+export interface ControllerAction {
+  path: string,
+  name: string,
+  pathParams?: string [],
+  response: string
 }

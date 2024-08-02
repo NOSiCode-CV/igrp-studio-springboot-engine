@@ -25,7 +25,7 @@ public class {{name}} {
   @Column(unique = true, nullable = false)
   private Long id;
 
-  {{#each attributes}}
+  {{#each attributs}}
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}

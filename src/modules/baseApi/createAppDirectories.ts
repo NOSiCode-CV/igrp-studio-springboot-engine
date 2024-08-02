@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { ApiConfig } from '../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../utils/constants';
-import { getMainPath, getTestPath } from '../utils/helpers';
+import { ApiConfig } from '../../interfaces/types';
+import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { getMainPath, getTestPath } from '../../utils/helpers';
 
 export const createAppDirectories = async (config: ApiConfig, output: string) => {
   const directories = getDirectoriesToCreate(config, output);
@@ -11,6 +11,7 @@ export const createAppDirectories = async (config: ApiConfig, output: string) =>
 
 export const getDirectoriesToCreate = (config: ApiConfig, output: string): string[] => {
   if (!config || !config.group || !config.artifact) {
+    console.log('AQUIIIIIIII')
     throw ERROR_MESSAGE.INVALID_API_CONFIG;
   }
 

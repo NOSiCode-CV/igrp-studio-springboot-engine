@@ -1,17 +1,18 @@
 import { ApiConfig } from './interfaces/types';
-import { saveFiles } from './modules/saveFile';
 import { ERROR_MESSAGE } from './utils/constants';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
-import { createAppDirectories } from './modules/createAppDirectories';
+import { createAppDirectories } from './modules/baseApi/createAppDirectories';
+import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 
 export const newApi = async (config: ApiConfig, output: string) => {
   if(!config) {
     throw ERROR_MESSAGE.INVALID_API_CONFIG
   }
-  
+    
   if (!(await checkIfDirectoryIsEmpty(output))) {
     throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
   }
+   
   
 
   /**
@@ -25,5 +26,5 @@ export const newApi = async (config: ApiConfig, output: string) => {
    *  - .igrpstudio config files (baseApi.json)
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
-  await saveFiles(config, output);
+  await saveFileConfig(config, output);
 };
