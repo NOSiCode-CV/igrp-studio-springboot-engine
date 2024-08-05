@@ -12,7 +12,7 @@ export interface ApiConfig {
 export interface ModelConfig {
   type: 'model',
   name: string,
-  attributs: Attribut [],
+  attributes: Attribut [],
   crud?: Crud
   package?: string,
   relations?: Relation [],
@@ -25,6 +25,11 @@ export interface ControllerConfig {
   package?: string,
   actions: ControllerAction [] 
 };
+
+export interface Icontroller {
+  type: 'icontroller',
+  name: string
+}
 
 interface Attribut {
   type: string
@@ -59,6 +64,12 @@ export interface Table {
 export interface ControllerAction {
   path: string,
   name: string,
-  pathParams?: string [],
-  response: string
+  method: string,
+  pathParams?: PathParams [],
+  response: any
+}
+
+export interface PathParams {
+  type: string,
+  name: string
 }

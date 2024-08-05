@@ -11,7 +11,7 @@ const bookModel: ModelConfig = {
   type: 'model',
   name: 'Book',
   package: 'nosi.igrp',
-  attributs: [
+  attributes: [
     {
       type: 'String',
       name: 'author',
@@ -39,7 +39,7 @@ const bookModel: ModelConfig = {
 const librayModel: ModelConfig = {
   type: 'model',
   name: 'Library',
-  attributs: [
+  attributes: [
     {
       type: 'String',
       name: 'name',

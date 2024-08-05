@@ -1,4 +1,4 @@
-package {{package}}.model.{{name}};
+package {{package}}.models.{{name}};
 
 import lombok.Data;
 import java.util.List;
@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 {{#if relations}}
 {{#each relations}}
-import {{../package}}.model.{{this.entity}}.{{this.entity}};
+import {{../package}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}
 {{/if}}
 
@@ -25,7 +25,7 @@ public class {{name}} {
   @Column(unique = true, nullable = false)
   private Long id;
 
-  {{#each attributs}}
+  {{#each attributes}}
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}

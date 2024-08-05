@@ -11,7 +11,6 @@ export const createAppDirectories = async (config: ApiConfig, output: string) =>
 
 export const getDirectoriesToCreate = (config: ApiConfig, output: string): string[] => {
   if (!config || !config.group || !config.artifact) {
-    console.log('AQUIIIIIIII')
     throw ERROR_MESSAGE.INVALID_API_CONFIG;
   }
 
@@ -36,7 +35,6 @@ export const getDirectoriesToCreate = (config: ApiConfig, output: string): strin
     path.join(igrpstudioPath, DIRECTORIES.MODELS),
   ];
 };
-
 
 export const saveAppDirectories = async (directories: string[]) => {
   await Promise.all(directories.map((dir) => fs.mkdirSync(dir, { recursive: true })));

@@ -1,0 +1,13 @@
+package {{package}}.controllers.{{name}};
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+import {{package}}.models.{{name}}.{{name}};
+
+public interface {{name}}Service {
+  
+  {{#each actions}}
+  {{#if (eq response 'List')}}List<{{../name}}>{{else}}{{response}}{{/if}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+  {{/each}}
+}

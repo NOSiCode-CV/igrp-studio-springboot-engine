@@ -1,10 +1,8 @@
-import { controllerConfigGenerator } from '../src/modules/controller/controllerConfigGenrator';
-import { controllerInterfaceGenerator } from '../src/modules/controller/controllerInterfaceGenerator';
-import { ControllerConfig } from '../src/interfaces/types';
-import { newControllerConfig } from '../src/newControllerConfig';
-import { DIRECTORIES, OUTPUT_DIR } from '../src/utils/constants';
 import fs from 'fs-extra';
 import path from 'path';
+import { OUTPUT_DIR } from '../src/utils/constants';
+import { newController } from '../src/newController';
+import { ControllerConfig } from '../src/interfaces/types';
 
 const config: ControllerConfig = {
   type: 'controller',
@@ -43,12 +41,12 @@ const config: ControllerConfig = {
   ],
 };
 
-beforeAll(async () => {
-  await fs.mkdir(path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_CONTROLLER), { recursive: true });
+beforeAll(async () => {});
+
+afterAll(async () => {});
+
+describe('Controller Module', () => {
+  it('should fil because the controller configuration file is invalid', async () => {
+    await newController(config, OUTPUT_DIR)
+  });
 });
-
-it('should create a new controller configuration json file', async () => {
-  await newControllerConfig(config, OUTPUT_DIR);
-});
-
-

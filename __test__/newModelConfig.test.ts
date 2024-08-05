@@ -7,7 +7,7 @@ import path from 'path';
 const model: ModelConfig = {
   type: 'model',
   name: 'Library',
-  attributs: [
+  attributes: [
     {
       type: 'String',
       name: 'name',

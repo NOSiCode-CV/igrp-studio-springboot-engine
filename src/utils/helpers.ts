@@ -49,6 +49,10 @@ Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, optio
   }
 });
 
+Handlebars.registerHelper('contains', function(str, substring) {
+  return str.includes(substring);
+});
+
 const formatPackageName = (group: string, artifact: string) => `${group}.${artifact}`.replace(/\./g, '/');
 
 const getTestPath = (group: string, artifact: string) => `src/test/java/${formatPackageName(group, artifact)}`;

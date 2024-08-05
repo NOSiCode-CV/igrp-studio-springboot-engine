@@ -1,19 +1,29 @@
-package {{package}}.controllers.{{name}}
+package {{package}}.controllers.{{name}};
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestMapping;
+import {{package}}.models.{{name}}.{{name}};
+import {{package}}.controllers.{{name}}.{{name}}Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @RestController
-@RequestMapping(path = "/{{basePath}}")
+@RequestMapping(path = "{{basePath}}")
 public class {{name}}Controller {
   
+  @Autowired
+  private {{name}}Service {{toLowerCase name}}Service;
+
+  {{#each actions}}
+  @ResponseStatus(HttpStatus.OK)
+  @RequestMapping(value = "{{path}}", method = RequestMethod.{{method}})
+  public ResponseEntity<{{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}}> {{name}}({{#each pathParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}) {
+      {{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}} result = {{toLowerCase../name}}Service.{{name}}({{#each pathParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+      return ResponseEntity.ok(result);
+  }
+  {{/each}}
 }
+
+

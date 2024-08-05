@@ -5,11 +5,12 @@ export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_pr
 
 export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',
-  CONFIG_CONTROLLER: '.igrpstudio/controller',
-  CONFIG_MODEL: '.igrpstudio/model',
+  CONFIG_CONTROLLER: '.igrpstudio/controllers',
+  CONFIG_ICONTROLLER: '.igrpstudio/controllers',
+  CONFIG_MODEL: '.igrpstudio/models',
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',
-  MODELS: 'model',
+  MODELS: 'models',
   RESOURCES: 'src/main/resource',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
@@ -22,6 +23,7 @@ export const SUCCESS_MESSAGE = {
 
 export const ERROR_MESSAGE = {
   BASE_API_NOT_FOUND: 'The base api json file configuration was not found.',
+  CONTROLLER_FILE_CONFIG_NOT_FOUND:'Controller file configuration not found',
   DIRECTORY_DOES_NOT_EXIST: 'The specified directory does not exist. Please select a different directory.',
   DIRECTORY_ALREADY_IN_USE: 'The specified directory is already in use. Please select a different directory or remove the existing files.',
   EMPTY_CONTEXT: 'Provide a valid context. The context must not be empty.',
@@ -41,10 +43,12 @@ export const ERROR_MESSAGE = {
 
 export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
-  DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
+  DOMAIN_ICONTROLLER: 'domain/controller/controllerInterface.hbs',
+  DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
