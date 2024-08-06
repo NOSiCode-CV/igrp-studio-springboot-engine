@@ -11,7 +11,9 @@ import { repositoryGenerator } from './modules/model/modelRepositoryGenerator';
 const REEPOSITORY_SUFFIX = 'Repository.java';
 
 export const modelResourceGenerator = async (config: ModelConfig, output: string) => {
-  if (!config || !config.name) throw ERROR_MESSAGE.MODEL_REQUIRED;
+  if (!config) throw ERROR_MESSAGE.MODEL_REQUIRED;
+
+  if (!config.name) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
 
   const model = config.name;
   const configFilePath = path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);

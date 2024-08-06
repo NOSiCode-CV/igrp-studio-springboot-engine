@@ -59,7 +59,7 @@ export const TEMPLATES = {
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
-
+  CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs'
 }
 
 export const CONFIG_FILES = [
@@ -69,6 +69,7 @@ export const CONFIG_FILES = [
   {template: TEMPLATES.CONFIG_DOCKER_FILE,   output: 'Dockerfile'},
   {template: TEMPLATES.CONFIG_GITIGNORE,     output: '.gitignore'},
   {template: TEMPLATES.CONFIG_GITLABCIYAML,  output: 'gitlab-ci.yaml'},
+  {template: TEMPLATES.CONFIG_DOCKERIGNORE,  output: '.dockerignore'},
 ]
 
 
@@ -76,12 +77,15 @@ export const COMMON_FILES = {
   APPLICATION_PROPERTIES: 'application.properties',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',
+  DOCKERIGNORE: '.dockerignore',
   GITIGNORE: '.gitignore',
   GITLAB_CI_YAML: 'gitlab-ci.yaml',
   MVNW: 'mvnw',
   MVNW_CMD: 'mvnw.cmd',
   POM_XML: 'pom.xml',
-  REPOSITORY: 'Repository.java'
+  REPOSITORY: 'Repository.java',
+  CONTROLLER: 'Controller.java',
+  SERVICE: 'Service.java',
 }
 
 export const EXTENSIONS = {

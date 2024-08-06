@@ -5,15 +5,13 @@ import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 
 export const newApi = async (config: ApiConfig, output: string) => {
-  if(!config) {
-    throw ERROR_MESSAGE.INVALID_API_CONFIG
+  if (!config) {
+    throw new Error(ERROR_MESSAGE.INVALID_API_CONFIG);
   }
-    
+
   if (!(await checkIfDirectoryIsEmpty(output))) {
-    throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
+    throw new Error(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
   }
-   
-  
 
   /**
    * Creates the folder structure needed for the API.

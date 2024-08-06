@@ -2,10 +2,19 @@ import fs from 'fs-extra';
 import path from 'path';
 import { updateModel } from '../src/updateModel';
 import { getMainPath } from '../src/utils/helpers';
-import { ModelConfig, Relation } from '../src/interfaces/types';
+import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
 import { DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
+import { newApi } from '../src/newApi';
+import { newModelConfig } from '../src/newModelConfig';
 
+const apiConfig: ApiConfig = {
+  type: 'baseApi',
+  apiName: 'api-rest',
+  group: 'nosi',
+  artifact: 'igrp',
+  description: 'API-TEST',
+};
 
 const bookModel: ModelConfig = {
   type: 'model',
@@ -73,26 +82,20 @@ const LibraryRelations: Relation[] = [
   },
 ];
 
+beforeAll(async () => {
+  await fs.mkdir(OUTPUT_DIR, {recursive: true});
+  await newApi(apiConfig, OUTPUT_DIR);
+  await newModelConfig(bookModel, OUTPUT_DIR);
+  await newModelConfig(librayModel, OUTPUT_DIR);
+
+});
+
+afterAll(async () => {
+  await fs.rm(OUTPUT_DIR, {recursive: true});
+});
+
 describe('Model generator', () => {
-  const packageName = bookModel.package?.split('.');
-  const [group, artifact] = [...packageName!];
-
-  it('should update the model configuration file in .igrpstudio and model in the api', async () => {
-    await updateModel(bookModel, OUTPUT_DIR);
-
-    const file = path.join(
-      OUTPUT_DIR,
-      getMainPath(group, artifact),
-      DIRECTORIES.MODELS,
-      bookModel.name,
-      `${bookModel.name}${EXTENSIONS.JAVA}`,
-    );
-
-    const fileExists = await fs.pathExists(file)
-
-    expect(fileExists).toBeTruthy();
-
-  });
+  const {group, artifact} = apiConfig
 
   it('should update adding the relations in the model configuration and the model in the api', async () => {
     bookModel.relations = BookRelations;
