@@ -11,10 +11,15 @@ import {
 import { capitalize } from '../../utils/capitalizeStrings';
 import { templateGenerator } from '../common/templateGenerator';
 import { getMainPath } from '../../utils/helpers';
-import { saveTemplate } from '../common/saveTemplate';
+import { saveToFile } from '../common/saveToFile';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
+/**
+ * Function that creates the api files
+ * @param {ApiConfig} config - API base configuration file containning all the basic API information.
+ * @param {string} outputDir - Output path where directories are created
+ */
 export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   if (!config || !config.apiName || !config.group || !config.artifact){
     throw ERROR_MESSAGE.INVALID_API_CONFIG
@@ -51,19 +56,21 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
     { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
   ];
 
+   // Generation and saving of the main files.
   await Promise.all(
     MAIN_FILES.map(async (file) => {
       const outputPath = path.join(file.output, file.name)
       const template = await templateGenerator(file.template, config)
-      await saveTemplate(template, outputPath);
+      await saveToFile(template, outputPath);
     })
   );
 
+   // Generation and saving of additional configuration files.
   await Promise.all(
     CONFIG_FILES.map( async (file) => {
       const outputPath = path.join(outputDir, file.output);
       const template = await templateGenerator(file.template, config);
-      await saveTemplate(template, outputPath);
+      await saveToFile(template, outputPath);
     })
   );
 };

@@ -4,6 +4,12 @@ import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 
+
+/**
+ * Main Function that creates the base api
+ * @param {ApiConfig} config - API base configuration file containning all the basic API information.
+ * @param {string} output - Output path where directories are created
+ */
 export const newApi = async (config: ApiConfig, output: string) => {
   if (!config) {
     throw new Error(ERROR_MESSAGE.INVALID_API_CONFIG);

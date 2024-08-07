@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { ModelConfig } from './interfaces/types';
 import { getModelConfigPath } from './utils/helpers';
-import { saveTemplate } from './modules/common/saveTemplate';
+import { saveToFile } from './modules/common/saveToFile';
 import { DIRECTORIES, ERROR_MESSAGE } from './utils/constants';
 import { modelConfigGenerator } from './modules/model/modelConfigGenerator';
 
@@ -38,5 +38,5 @@ export const newModelConfig = async (config: ModelConfig, outputDir: string) => 
   const output = getModelConfigPath(config.name, outputDir);
   const model = await modelConfigGenerator(config);
 
-  await saveTemplate(model, output);
+  await saveToFile(model, output);
 };

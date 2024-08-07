@@ -5,7 +5,7 @@ import { ModelConfig } from './interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
 import { readJsonFile } from './utils/readJsonFiles';
 import { getMainPath } from './utils/helpers';
-import { saveTemplate } from './modules/common/saveTemplate';
+import { saveToFile } from './modules/common/saveToFile';
 import { repositoryGenerator } from './modules/model/modelRepositoryGenerator';
 
 const REEPOSITORY_SUFFIX = 'Repository.java';
@@ -35,10 +35,10 @@ export const modelResourceGenerator = async (config: ModelConfig, output: string
 
   await fs.mkdir(modelOutputPath, { recursive: true });
 
-  await saveTemplate(template, path.join(modelOutputPath, `${model}${EXTENSIONS.JAVA}`));
+  await saveToFile(template, path.join(modelOutputPath, `${model}${EXTENSIONS.JAVA}`));
 
   if (file.crud) {
     const repository = await repositoryGenerator(file);
-    await saveTemplate(repository, path.join(modelOutputPath, `${model}${REEPOSITORY_SUFFIX}`));
+    await saveToFile(repository, path.join(modelOutputPath, `${model}${REEPOSITORY_SUFFIX}`));
   }
 };

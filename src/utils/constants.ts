@@ -1,7 +1,7 @@
 import path from 'path';
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
-export const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Documents/Wayvant/spring_projects_test';
+export const OUTPUT_DIR = 'C:/spring_projects_test';
 
 export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',

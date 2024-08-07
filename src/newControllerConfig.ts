@@ -4,7 +4,7 @@ import { ControllerConfig } from './interfaces/types';
 import { controllerConfigGenerator } from './modules/controller/controllerConfigGenrator';
 import { DIRECTORIES, ERROR_MESSAGE } from './utils/constants';
 import { getControllerConfigPath } from './utils/helpers';
-import { saveTemplate } from './modules/common/saveTemplate';
+import { saveToFile } from './modules/common/saveToFile';
 
 export const newControllerConfig = async (config: ControllerConfig, output: string) => {
   if (!config) throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
@@ -34,6 +34,6 @@ export const newControllerConfig = async (config: ControllerConfig, output: stri
   const outputDir = getControllerConfigPath(config.name, output);
   const controller = await controllerConfigGenerator(config);
 
-  await saveTemplate(controller, outputDir);
+  await saveToFile(controller, outputDir);
 
 };
