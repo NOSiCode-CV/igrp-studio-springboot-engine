@@ -4,7 +4,7 @@ import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
 
 /**
  * Generates the model in the API using the provided configuration.
- * @param {ModelConfig} config - The configuration of the model including the model name and attributes.
+ * @param {ModelConfig} context - The configuration of the model including the model name and attributes.
  * @returns {Promise<string>} - A string representing the model generated from the template.
  * @throws {Error} - Throws an error if the model configuration is invalid or has no attributes.
  */

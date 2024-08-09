@@ -1,4 +1,4 @@
-package {{group}}.{{artifact}}.models.{{name}};
+package {{group}}.{{artifact}}.models.{{config.name}};
 
 /*This class should not be modified outside studio.*/
 
@@ -8,15 +8,15 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @Repository
-@RepositoryRestResource(path = "{{crud.path}}")
-public interface {{name}}Repository extends CrudRepository<{{name}}, Long> {
+@RepositoryRestResource(path = "{{config.crud.path}}")
+public interface {{config.name}}Repository extends CrudRepository<{{config.name}}, Long> {
 
-  {{#if crud.disabledMethods}}
-  {{#each crud.disabledMethods}}
+  {{#if config.crud.disabledMethods}}
+  {{#each config.crud.disabledMethods}}
   {{#if (eq this 'save')}}
   @Override
   @RestResource(exported = false)
-  <S extends {{../name}}> S save(S entity);
+  <S extends {{../config.name}}> S save(S entity);
   {{else if (eq this 'deleteById')}}
   @Override
   @RestResource(exported = false)
@@ -24,7 +24,7 @@ public interface {{name}}Repository extends CrudRepository<{{name}}, Long> {
   {{else if (eq this 'delete')}}
   @Override
   @RestResource(exported = false)
-  void delete({{../name}} entity);
+  void delete({{../config.name}} entity);
   {{else if (eq this 'deleteAll')}}
   @Override
   @RestResource(exported = false)
@@ -32,7 +32,7 @@ public interface {{name}}Repository extends CrudRepository<{{name}}, Long> {
   {{else if (eq this 'deleteAllIterable')}}
   @Override
   @RestResource(exported = false)
-  void deleteAll(Iterable<? extends {{../name}}> entities);
+  void deleteAll(Iterable<? extends {{../config.name}}> entities);
   {{/if}}
 
   {{/each}}

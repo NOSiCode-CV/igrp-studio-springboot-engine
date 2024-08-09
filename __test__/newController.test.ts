@@ -1,13 +1,13 @@
-import fs from 'fs-extra';
 import path from 'path';
-import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
-import { newController } from '../src/newController';
-import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
-import { newModelConfig } from '../src/newModelConfig';
+import fs from 'fs-extra';
 import { newApi } from '../src/newApi';
-import { modelResourceGenerator } from '../src/newModelResources';
-import { newControllerConfig } from '../src/newControllerConfig';
 import { getMainPath } from '../src/utils/helpers';
+import { newController } from '../src/newController';
+import { modelResourceGenerator } from '../src/newModelResources';
+import { saveModelConfig } from '../src/modules/model/newModelConfig';
+import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
+import { SaveControllerConfig } from '../src/modules/controller/newControllerConfig';
+import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE, OUTPUT_DIR } from '../src/utils/constants';
 
 const controllerConfig: ControllerConfig = {
   type: 'controller',
@@ -76,9 +76,9 @@ const apiConfig: ApiConfig = {
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
   await newApi(apiConfig, OUTPUT_DIR);
-  await newModelConfig(model, OUTPUT_DIR);
+  await saveModelConfig(model, OUTPUT_DIR);
   await modelResourceGenerator(model, OUTPUT_DIR);
-  await newControllerConfig(controllerConfig, OUTPUT_DIR);
+  await SaveControllerConfig(controllerConfig, OUTPUT_DIR);
 });
 
 afterAll(async () => {

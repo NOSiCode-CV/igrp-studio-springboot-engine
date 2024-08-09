@@ -6,7 +6,7 @@ import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
 import { DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { newApi } from '../src/newApi';
-import { newModelConfig } from '../src/newModelConfig';
+import { saveModelConfig } from '../src/modules/model/newModelConfig';
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
@@ -19,7 +19,6 @@ const apiConfig: ApiConfig = {
 const bookModel: ModelConfig = {
   type: 'model',
   name: 'Book',
-  package: 'nosi.igrp',
   attributes: [
     {
       type: 'String',
@@ -85,8 +84,8 @@ const LibraryRelations: Relation[] = [
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
   await newApi(apiConfig, OUTPUT_DIR);
-  await newModelConfig(bookModel, OUTPUT_DIR);
-  await newModelConfig(librayModel, OUTPUT_DIR);
+  await saveModelConfig(bookModel, OUTPUT_DIR);
+  await saveModelConfig(librayModel, OUTPUT_DIR);
 
 });
 
@@ -95,7 +94,6 @@ afterAll(async () => {
 });
 
 describe('Model generator', () => {
-  const {group, artifact} = apiConfig
 
   it('should update adding the relations in the model configuration and the model in the api', async () => {
     bookModel.relations = BookRelations;

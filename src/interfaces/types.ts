@@ -14,7 +14,6 @@ export interface ModelConfig {
   name: string,
   attributes: Attribut [],
   crud?: Crud
-  package?: string,
   relations?: Relation [],
 };
 
@@ -22,7 +21,6 @@ export interface ControllerConfig {
   type: 'controller',
   name: string,
   basePath: string,
-  package?: string,
   actions: ControllerAction [] 
 };
 

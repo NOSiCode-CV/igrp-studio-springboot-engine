@@ -1,13 +1,11 @@
-import { controllerConfigGenerator } from '../src/modules/controller/controllerConfigGenrator';
-import { controllerInterfaceGenerator } from '../src/modules/controller/controllerInterfaceGenerator';
 import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
-import { newControllerConfig } from '../src/newControllerConfig';
 import { DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 import fs from 'fs-extra';
 import path from 'path';
 import { newApi } from '../src/newApi';
-import { newModelConfig } from '../src/newModelConfig';
 import { modelResourceGenerator } from '../src/newModelResources';
+import { saveModelConfig } from '../src/modules/model/newModelConfig';
+import { SaveControllerConfig } from '../src/modules/controller/newControllerConfig';
 
 const model: ModelConfig = {
   type: 'model',
@@ -76,7 +74,7 @@ const config: ControllerConfig = {
 beforeAll(async () =>{
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
   await newApi(apiConfig, OUTPUT_DIR);
-  await newModelConfig(model, OUTPUT_DIR);
+  await saveModelConfig(model, OUTPUT_DIR);
   await modelResourceGenerator(model, OUTPUT_DIR);
 });
 
@@ -87,7 +85,7 @@ afterAll(async () => {
 
 describe('', ()=> {
   it('should create a new controller configuration json file', async () => {
-    await newControllerConfig(config, OUTPUT_DIR);
+    await SaveControllerConfig(config, OUTPUT_DIR);
     const controllerConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_CONTROLLER, `${config.name}${EXTENSIONS.JSON}`)
     expect(await fs.pathExists(controllerConfigPath)).toBeTruthy();
   });

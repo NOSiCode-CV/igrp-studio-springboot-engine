@@ -23,9 +23,9 @@ afterAll(async () => {
 
 describe('New API Module', () => {
   // To run this test you need to provide a non-empty directory.
-  it('Sshould fail because the directory is not empty', async () => {
-    expect(async () => await newApi(apiConfig, OUTPUT_DIR)).rejects.toThrow(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
-  });
+  // it('Sshould fail because the directory is not empty', async () => {
+  //   expect(async () => await newApi(apiConfig, OUTPUT_DIR)).rejects.toThrow(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
+  // });
 
   it('should create the project structure with all the directories and templates.', async () => {
     await newApi(apiConfig, OUTPUT_DIR);

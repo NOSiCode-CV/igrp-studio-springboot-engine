@@ -1,6 +1,6 @@
-import { ModelConfig } from './interfaces/types';
-import { ERROR_MESSAGE } from './utils/constants';
-import { updateModel } from './updateModel';
+import { ModelConfig } from '../../interfaces/types';
+import { ERROR_MESSAGE } from '../../utils/constants';
+import { updateModel } from '../../updateModel';
 
 /**
  * 

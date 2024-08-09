@@ -1,12 +1,11 @@
-import fs from 'fs-extra';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
-import { modelResourceGenerator } from '../src/newModelResources';
-import { ApiConfig, ModelConfig } from '../src/interfaces/types';
-import { getMainPath } from '../src/utils/helpers';
 import path from 'path';
-import { readJsonFile } from '../src/utils/readJsonFiles';
+import fs from 'fs-extra';
 import { newApi } from '../src/newApi';
-import { newModelConfig } from '../src/newModelConfig';
+import { getMainPath } from '../src/utils/helpers';
+import { readJsonFile } from '../src/utils/readJsonFiles';
+import { ApiConfig, ModelConfig } from '../src/interfaces/types';
+import { modelResourceGenerator } from '../src/newModelResources';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 
 const model: ModelConfig = {
   type: 'model',
@@ -38,7 +37,6 @@ const apiConfig: ApiConfig = {
 beforeAll(async () =>{
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
   await newApi(apiConfig, OUTPUT_DIR);
-  await newModelConfig(model, OUTPUT_DIR);
 });
 
 afterAll(async () => {
@@ -54,12 +52,6 @@ describe('Model generator', () => {
     ).rejects.toEqual(ERROR_MESSAGE.INVALID_MODEL_CONFIG);
   });
 
-  it(`should fail because the model file config doesn't exist in .igrpstudio/models directory`, async () => {
-    const modelNotExist: ModelConfig = { ...model, name: 'NoLibraries' };
-    expect(async () => await modelResourceGenerator(modelNotExist, OUTPUT_DIR)).rejects.toEqual(
-      ERROR_MESSAGE.MODEL_FILE_CONFIG_NOT_FOUNT,
-    );
-  });
 
   it('should create a model in th api', async () => {
     await modelResourceGenerator(model, OUTPUT_DIR);

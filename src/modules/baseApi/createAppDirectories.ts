@@ -6,8 +6,8 @@ import { getMainPath, getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param {ApiConfig} config - API base configuration file containning all the basic API information.
- * @param {string} output - Output path where directories are created
+ * @param config - API base configuration file containning all the basic API information.
+ * @param output - Output path where directories are created
  */
 export const createAppDirectories = async (config: ApiConfig, output: string) => {
   const directories = getDirectoriesToCreate(config, output);
@@ -16,10 +16,9 @@ export const createAppDirectories = async (config: ApiConfig, output: string) =>
 
 /**
  * Function that generates a list of directory paths to create based on the configuration and the output path.
- * @param {ApiConfig} config - API base configuration file containning all the basic API information.
- * @param {string} output - Output path where directories will be created
- * @return {string[]} - List of directory paths to create.
- *
+ * @param config - API base configuration file containning all the basic API information.
+ * @param output - Output path where directories will be created
+ * @return List of directory paths to create.
  */
 export const getDirectoriesToCreate = (config: ApiConfig, output: string): string[] => {
   if (!config || !config.group || !config.artifact) {
@@ -50,7 +49,7 @@ export const getDirectoriesToCreate = (config: ApiConfig, output: string): strin
 
 /**
  * Function that saves directories by physically creating them in the file system.
- * @param{ string[]} directories - List of directory paths to create
+ * @param directories - List of directory paths to create
  */
 export const saveAppDirectories = async (directories: string[]) => {
   await Promise.all(directories.map((dir) => fs.mkdirSync(dir, { recursive: true })));

@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { addCrud } from '../src/addCrud';
+import { addCrud } from '../src/modules/model/addCrud';
 import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ModelConfig, Crud, ApiConfig } from '../src/interfaces/types';
@@ -12,8 +12,8 @@ import {
   OUTPUT_DIR,
 } from '../src/utils/constants';
 import { newApi } from '../src/newApi';
-import { newModelConfig } from '../src/newModelConfig';
 import { modelResourceGenerator } from '../src/newModelResources';
+import { saveModelConfig } from '../src/modules/model/newModelConfig';
 
 const model: ModelConfig = {
   type: 'model',
@@ -51,7 +51,7 @@ const apiConfig: ApiConfig = {
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
   await newApi(apiConfig, OUTPUT_DIR);
-  await newModelConfig(model, OUTPUT_DIR);
+  await saveModelConfig(model, OUTPUT_DIR);
   await modelResourceGenerator(model, OUTPUT_DIR);
 });
 
