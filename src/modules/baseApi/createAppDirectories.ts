@@ -20,7 +20,7 @@ export const createAppDirectories = async (context: RenderContext) => {
  * @param basePath - Output path where directories will be created
  * @return List of directory paths to create.
  */
-export const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
+const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
   if (!config || !config.group || !config.artifact) {
     throw ERROR_MESSAGE.INVALID_API_CONFIG;
   }
@@ -51,6 +51,6 @@ export const getDirectoriesToCreate = (config: ApiConfig, basePath: string): str
  * Function that saves directories by physically creating them in the file system.
  * @param directories - List of directory paths to create
  */
-export const saveAppDirectories = async (directories: string[]) => {
+const saveAppDirectories = async (directories: string[]) => {
   await Promise.all(directories.map((dir) => fs.mkdirSync(dir, { recursive: true })));
 };

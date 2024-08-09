@@ -1,5 +1,5 @@
 import path from 'path';
-import { ApiConfig } from '../../interfaces/types';
+import { ApiConfig, RenderContext } from '../../interfaces/types';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
@@ -17,39 +17,29 @@ const APPLICATION_SUFFIX = 'Application.java';
 export type BASE_API_FILES = {output: string, template: string, name: string}[];
 
 
-export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
-  const baseApiFiles = generateBaseAPIFiles(config, outputDir);
-  await saveBaseApiFiles(baseApiFiles, config, outputDir);
+export const saveFileConfig = async (context: RenderContext) => {
+  const baseApiFiles = generateBaseAPIFiles(context);
+  await saveBaseApiFiles(baseApiFiles, context.baseConfig, context.basePath);
+  await saveBaseApiFileConfig(context);
 }
 
-/**
- * Function that creates the api files
- * @param config - API base configuration file containning all the basic API information.
- * @param outputDir - Output path where directories are created
- */
-export const generateBaseAPIFiles = (config: ApiConfig, outputDir: string): BASE_API_FILES => {
-  if (!config || !config.apiName || !config.group || !config.artifact) {
+
+const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
+  if (!context.baseConfig || !context.baseConfig.apiName || !context.baseConfig.group || !context.baseConfig.artifact) {
     throw ERROR_MESSAGE.INVALID_API_CONFIG
   }
 
-  if (!outputDir) {
-    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH
-  }
+  context.baseConfig.name = capitalize(context.baseConfig.apiName);
+  context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.artifact}`;
+  const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
 
-  config.name = capitalize(config.apiName);
-  config.package = `${config.group}.${config.artifact}`;
-  const apiName = `${capitalize(config.apiName)}${APPLICATION_SUFFIX}`;
-
-  const resourcePath = path.join(outputDir, DIRECTORIES.RESOURCES);
-  const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
-  const mainPath = path.join(outputDir, getMainPath(config.group, config.artifact));
+  const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.artifact));
 
   return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
-    { output: igrpstudioPath, template: TEMPLATES.IGRP_BASE_API, name: COMMON_FILES.BASE_API },
     { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
   ];
-
 
 };
 
@@ -71,4 +61,10 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, config: ApiConfig,
       await saveToFile(template, outputPath);
     })
   );
+
+}
+
+const saveBaseApiFileConfig = async (context: RenderContext) => {
+  const baseApiFileOutputPah = path.join(context.basePath, DIRECTORIES.IGRPSTUDIO, COMMON_FILES.BASE_API)
+  await saveToFile(JSON.stringify(context.baseConfig), baseApiFileOutputPah);
 }
