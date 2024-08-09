@@ -1,17 +1,23 @@
-import { ModelConfig } from "../../interfaces/types";
-import { templateGenerator } from "../common/templateGenerator";
-import { ERROR_MESSAGE, TEMPLATES } from "../../utils/constants";
+import { ModelConfig } from '../../interfaces/types';
+import { templateGenerator } from '../common/templateGenerator';
+import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
 
-export const modelGenerator = async (config: ModelConfig) =>{
+/**
+ * Generates the model in the API using the provided configuration.
+ * @param {ModelConfig} config - The configuration of the model including the model name and attributes.
+ * @returns {Promise<string>} - A string representing the model generated from the template.
+ * @throws {Error} - Throws an error if the model configuration is invalid or has no attributes.
+ */
+export const modelGenerator = async (config: ModelConfig) => {
   if (!config || !config.name || !config.attributes) {
-    throw ERROR_MESSAGE.INVALID_MODEL_CONFIG
+    throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
   }
 
-  if (config.attributes.length === 0 ) {
-    throw ERROR_MESSAGE.EMPTY_ATTRIBUTE
+  if (config.attributes.length === 0) {
+    throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
   const templateModel = await templateGenerator(TEMPLATES.DOMAIN_MODEL, config);
 
-  return templateModel
-}
+  return templateModel;
+};

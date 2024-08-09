@@ -56,7 +56,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await fs.rm(OUTPUT_DIR, { recursive: true });
+  // await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
 describe('Model generator', () => {

@@ -10,6 +10,12 @@ import { repositoryGenerator } from './modules/model/modelRepositoryGenerator';
 
 const REEPOSITORY_SUFFIX = 'Repository.java';
 
+
+/**
+ * 
+ * @param config 
+ * @param output 
+ */
 export const modelResourceGenerator = async (config: ModelConfig, output: string) => {
   if (!config) throw ERROR_MESSAGE.MODEL_REQUIRED;
 
@@ -37,6 +43,9 @@ export const modelResourceGenerator = async (config: ModelConfig, output: string
 
   await saveToFile(template, path.join(modelOutputPath, `${model}${EXTENSIONS.JAVA}`));
 
+  /**
+   * 
+   */
   if (file.crud) {
     const repository = await repositoryGenerator(file);
     await saveToFile(repository, path.join(modelOutputPath, `${model}${REEPOSITORY_SUFFIX}`));

@@ -6,6 +6,13 @@ import { saveToFile } from './modules/common/saveToFile';
 import { DIRECTORIES, ERROR_MESSAGE } from './utils/constants';
 import { modelConfigGenerator } from './modules/model/modelConfigGenerator';
 
+
+/**
+ * Generates and saves the configuration file of a model.
+ * @param {ModelConfig} config - Model configuration.
+ * @param {string} outputDir - Output directory where the model configuration file will be saved.
+ * @throws {Error} - Throws an error if the model configuration or output directory is invalid.
+ */
 export const newModelConfig = async (config: ModelConfig, outputDir: string) => {
   if (!config) {
     throw ERROR_MESSAGE.MODEL_REQUIRED;
