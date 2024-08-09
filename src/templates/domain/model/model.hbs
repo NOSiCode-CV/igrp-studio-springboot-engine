@@ -1,4 +1,4 @@
-package {{package}}.models.{{name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{config.name}};
 
 import lombok.Data;
 import java.util.List;
@@ -6,26 +6,26 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
-{{#if relations}}
-{{#each relations}}
-import {{../package}}.models.{{this.entity}}.{{this.entity}};
+{{#if config.relations}}
+{{#each config.relations}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}
 {{/if}}
 
 /**
-* {{name}}
+* {{config.name}}
 */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class {{name}} {
+public class {{config.name}} {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id;
 
-  {{#each attributes}}
+  {{#each config.attributes}}
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}
@@ -33,8 +33,8 @@ public class {{name}} {
   private {{this.type}} {{this.name}};
   
   {{/each}}
- {{#if relations}}
-  {{#each relations}}
+ {{#if config.relations}}
+  {{#each config.relations}}
   {{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}
   private {{this.entity}} {{toLowerCase this.entity}};

@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs-extra';
 import { ApiConfig } from '../../interfaces/types';
 import {
   DIRECTORIES,
@@ -9,23 +8,31 @@ import {
   CONFIG_FILES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
-import { templateGenerator } from '../common/templateGenerator';
+import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveToFile } from '../common/saveToFile';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
+export type BASE_API_FILES = {output: string, template: string, name: string}[];
+
+
+export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
+  const baseApiFiles = generateBaseAPIFiles(config, outputDir);
+  await saveBaseApiFiles(baseApiFiles, config, outputDir);
+}
+
 /**
  * Function that creates the api files
- * @param {ApiConfig} config - API base configuration file containning all the basic API information.
- * @param {string} outputDir - Output path where directories are created
+ * @param config - API base configuration file containning all the basic API information.
+ * @param outputDir - Output path where directories are created
  */
-export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
-  if (!config || !config.apiName || !config.group || !config.artifact){
+export const generateBaseAPIFiles = (config: ApiConfig, outputDir: string): BASE_API_FILES => {
+  if (!config || !config.apiName || !config.group || !config.artifact) {
     throw ERROR_MESSAGE.INVALID_API_CONFIG
   }
 
-  if(!outputDir){
+  if (!outputDir) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH
   }
 
@@ -37,40 +44,31 @@ export const saveFileConfig = async (config: ApiConfig, outputDir: string) => {
   const igrpstudioPath = path.join(outputDir, DIRECTORIES.IGRPSTUDIO);
   const mainPath = path.join(outputDir, getMainPath(config.group, config.artifact));
 
-
-  if (!(await fs.pathExists(igrpstudioPath))) {
-    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
-  }
-
-  if (!(await fs.pathExists(mainPath))) {
-    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
-  }
-
-  if (!(await fs.pathExists(resourcePath))) {
-    throw ERROR_MESSAGE.DIRECTORY_DOES_NOT_EXIST;
-  }
-
-  const MAIN_FILES = [
+  return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
     { output: igrpstudioPath, template: TEMPLATES.IGRP_BASE_API, name: COMMON_FILES.BASE_API },
     { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
   ];
 
-   // Generation and saving of the main files.
+
+};
+
+const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, config: ApiConfig, outputDir: string) => {
+  // Generation and saving of the main files.
   await Promise.all(
-    MAIN_FILES.map(async (file) => {
+    baseApiFiles.map(async (file) => {
       const outputPath = path.join(file.output, file.name)
-      const template = await templateGenerator(file.template, config)
+      const template = await renderTemplate(file.template, config)
       await saveToFile(template, outputPath);
     })
   );
 
-   // Generation and saving of additional configuration files.
+  // Generation and saving of additional configuration files.
   await Promise.all(
-    CONFIG_FILES.map( async (file) => {
+    CONFIG_FILES.map(async (file) => {
       const outputPath = path.join(outputDir, file.output);
-      const template = await templateGenerator(file.template, config);
+      const template = await renderTemplate(file.template, config);
       await saveToFile(template, outputPath);
     })
   );
-};
+}

@@ -1,12 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { modelGenerator } from './modules/model/modelResourceGenerator';
-import { ModelConfig } from './interfaces/types';
+import { ModelConfig, RenderContext } from './interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './utils/constants';
-import { readJsonFile } from './utils/readJsonFiles';
 import { getMainPath } from './utils/helpers';
 import { saveToFile } from './modules/common/saveToFile';
 import { repositoryGenerator } from './modules/model/modelRepositoryGenerator';
+import { saveModelConfig } from './modules/model/newModelConfig';
+import { getBaseApiConfig } from './modules/baseApi/getBaseApiConfig';
 
 const REEPOSITORY_SUFFIX = 'Repository.java';
 
@@ -20,34 +21,34 @@ export const modelResourceGenerator = async (config: ModelConfig, output: string
   if (!config) throw ERROR_MESSAGE.MODEL_REQUIRED;
 
   if (!config.name) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+  
+  const baseConfig = await getBaseApiConfig(output);
+  await saveModelConfig(config, output);
 
-  const model = config.name;
-  const configFilePath = path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
+  const context: RenderContext<ModelConfig> = {
+    config,
+    basePath: output,
+    baseConfig
+  }
 
-  if (!(await fs.pathExists(configFilePath))) throw ERROR_MESSAGE.MODEL_FILE_CONFIG_NOT_FOUNT;
-
-  const file: ModelConfig = await readJsonFile(configFilePath);
-
-  const template = await modelGenerator(file);
-  const packageName = file.package?.split('.');
-  const [group, artifact] = [...packageName!];
+  const template = await modelGenerator(context);
 
   const modelOutputPath = path.join(
     output,
-    getMainPath(group, artifact),
+    getMainPath(baseConfig.group, baseConfig.artifact),
     DIRECTORIES.MODELS,
-    model,
+    config.name,
   );
 
   await fs.mkdir(modelOutputPath, { recursive: true });
 
-  await saveToFile(template, path.join(modelOutputPath, `${model}${EXTENSIONS.JAVA}`));
+  await saveToFile(template, path.join(modelOutputPath, `${config.name}${EXTENSIONS.JAVA}`));
 
   /**
    * 
    */
-  if (file.crud) {
-    const repository = await repositoryGenerator(file);
-    await saveToFile(repository, path.join(modelOutputPath, `${model}${REEPOSITORY_SUFFIX}`));
+  if (config.crud) {
+    const repository = await repositoryGenerator(config);
+    await saveToFile(repository, path.join(modelOutputPath, `${config.name}${REEPOSITORY_SUFFIX}`));
   }
 };

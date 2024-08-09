@@ -1,7 +1,6 @@
-import { addCrud } from './addCrud';
 import { ModelConfig } from './interfaces/types';
 import { ERROR_MESSAGE } from './utils/constants';
-import { newModelConfig } from './newModelConfig';
+import { saveModelConfig } from './modules/model/newModelConfig';
 import { modelResourceGenerator } from './newModelResources';
 
 export const updateModel = async (model: ModelConfig, output: string) => {
@@ -12,7 +11,7 @@ export const updateModel = async (model: ModelConfig, output: string) => {
   /**
    * first update (overwriting) the model configuration json file in the .igrpstudio/model directory
    */
-  await newModelConfig(model, output);
+  await saveModelConfig(model, output);
 
   /**
    * and update (overwriting) the model in the api

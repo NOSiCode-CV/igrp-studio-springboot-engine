@@ -1,5 +1,5 @@
-import { ModelConfig } from '../../interfaces/types';
-import { templateGenerator } from '../common/templateGenerator';
+import { ModelConfig, RenderContext } from '../../interfaces/types';
+import { renderTemplate } from '../common/renderTemplate';
 import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
 
 /**
@@ -8,16 +8,14 @@ import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
  * @returns {Promise<string>} - A string representing the model generated from the template.
  * @throws {Error} - Throws an error if the model configuration is invalid or has no attributes.
  */
-export const modelGenerator = async (config: ModelConfig) => {
-  if (!config || !config.name || !config.attributes) {
+export const modelGenerator = async (context: RenderContext<ModelConfig>) => {
+  if (!context.config || !context.config.name || !context.config.attributes) {
     throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
   }
 
-  if (config.attributes.length === 0) {
+  if (context.config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
-  const templateModel = await templateGenerator(TEMPLATES.DOMAIN_MODEL, config);
-
-  return templateModel;
+  return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
