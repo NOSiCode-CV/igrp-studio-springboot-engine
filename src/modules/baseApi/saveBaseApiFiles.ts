@@ -19,8 +19,7 @@ export type BASE_API_FILES = {output: string, template: string, name: string}[];
 
 export const saveFileConfig = async (context: RenderContext) => {
   const baseApiFiles = generateBaseAPIFiles(context);
-  await saveBaseApiFiles(baseApiFiles, context.baseConfig, context.basePath);
-  await saveBaseApiFileConfig(context);
+  await saveBaseApiFiles(baseApiFiles, context);
 }
 
 
@@ -43,12 +42,12 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
 };
 
-const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, config: ApiConfig, outputDir: string) => {
+const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {
   // Generation and saving of the main files.
   await Promise.all(
     baseApiFiles.map(async (file) => {
       const outputPath = path.join(file.output, file.name)
-      const template = await renderTemplate(file.template, config)
+      const template = await renderTemplate(file.template, context)
       await saveToFile(template, outputPath);
     })
   );
@@ -56,15 +55,12 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, config: ApiConfig,
   // Generation and saving of additional configuration files.
   await Promise.all(
     CONFIG_FILES.map(async (file) => {
-      const outputPath = path.join(outputDir, file.output);
-      const template = await renderTemplate(file.template, config);
+      const outputPath = path.join(context.basePath, file.output);
+      const template = await renderTemplate(file.template, context);
       await saveToFile(template, outputPath);
     })
   );
 
 }
 
-const saveBaseApiFileConfig = async (context: RenderContext) => {
-  const baseApiFileOutputPah = path.join(context.basePath, DIRECTORIES.IGRPSTUDIO, COMMON_FILES.BASE_API)
-  await saveToFile(JSON.stringify(context.baseConfig), baseApiFileOutputPah);
-}
+

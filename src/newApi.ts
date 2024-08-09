@@ -3,6 +3,7 @@ import { ERROR_MESSAGE } from './utils/constants';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
+import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 
 /**
  * Main Function that creates the base api
@@ -17,12 +18,14 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
   if (!(await checkIfDirectoryIsEmpty(basePath))) {
     throw new Error(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
   }
+  await saveBaseApiFileConfig(config, basePath);
 
   const context: RenderContext = {
     resourceConfig: undefined, // On base API, there is no specific config.
     basePath,
     baseConfig: config
   }
+
 
   /**
    * Creates the folder structure needed for the API.
