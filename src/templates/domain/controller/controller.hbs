@@ -1,7 +1,7 @@
-package {{group}}.{{artifact}}.controllers.{{name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
 
-import {{group}}.{{artifact}}.models.{{name}}.{{name}};
-import {{group}}.{{artifact}}.controllers.{{name}}.{{name}}Service;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}}.{{resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +10,13 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "{{basePath}}")
-public class {{name}}Controller {
+@RequestMapping(path = "{{resourceConfig.basePath}}")
+public class {{resourceConfig.name}}Controller {
   
   @Autowired
-  private {{name}}Service {{toLowerCase name}}Service;
+  private {{resourceConfig.name}}Service {{toLowerCase resourceConfig.name}}Service;
 
-  {{#each actions}}
+  {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
   @RequestMapping(value = "{{path}}", method = RequestMethod.{{method}})
   public ResponseEntity<{{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}}> {{name}}({{#each pathParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}) {

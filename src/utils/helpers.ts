@@ -1,6 +1,7 @@
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
+import { ControllerConfig, ModelConfig, RenderContext } from '../interfaces/types';
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
@@ -31,19 +32,23 @@ export const getMainPath = (group: string, artifact: string) =>
 export const getModelConfigPath = (model: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
 
-export const getModelOutputPath = (
-  basePath: string,
-  group: string,
-  artifact: string,
-  model: string,
-) => path.join(basePath, getMainPath(group, artifact), DIRECTORIES.MODELS, model);
+export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.MODELS,
+    context.resourceConfig.name,
+    `${context.resourceConfig.name}${EXTENSIONS.JAVA}`,
+  );
 
 export const getControllerConfigPath = (controller: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_CONTROLLER, `${controller}${EXTENSIONS.JSON}`);
 
-export const getControllerPath = (
-  basePase: string,
-  group: string,
-  artifact: string,
-  controller: string,
-) => path.join(basePase, group, artifact, DIRECTORIES.CONTROLLERS, controller);
+export const getControllerDir = (context: RenderContext<ControllerConfig>) =>
+  path.join(
+    context.basePath,
+    context.baseConfig.group,
+    context.baseConfig.artifact,
+    DIRECTORIES.CONTROLLERS,
+    context.resourceConfig.name,
+  );

@@ -1,28 +1,33 @@
-import { ApiConfig } from './interfaces/types';
+import { ApiConfig, RenderContext } from './interfaces/types';
 import { ERROR_MESSAGE } from './utils/constants';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 
-
 /**
  * Main Function that creates the base api
  * @param {ApiConfig} config - API base configuration file containning all the basic API information.
- * @param {string} output - Output path where directories are created
+ * @param {string} basePath - Output path where directories are created
  */
-export const newApi = async (config: ApiConfig, output: string) => {
+export const newApi = async (config: ApiConfig, basePath: string) => {
   if (!config) {
     throw new Error(ERROR_MESSAGE.INVALID_API_CONFIG);
   }
 
-  if (!(await checkIfDirectoryIsEmpty(output))) {
+  if (!(await checkIfDirectoryIsEmpty(basePath))) {
     throw new Error(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
+  }
+
+  const context: RenderContext = {
+    resourceConfig: undefined, // On base API, there is no specific config.
+    basePath,
+    baseConfig: config
   }
 
   /**
    * Creates the folder structure needed for the API.
    */
-  await createAppDirectories(config, output);
+  await createAppDirectories(context);
 
   /**
    * With the base config sent to the newAPI, this function should create the following:
@@ -30,5 +35,5 @@ export const newApi = async (config: ApiConfig, output: string) => {
    *  - .igrpstudio config files (baseApi.json)
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
-  await saveFileConfig(config, output);
+  await saveFileConfig(context);
 };

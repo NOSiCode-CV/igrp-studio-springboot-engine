@@ -72,8 +72,8 @@ export interface PathParams {
   name: string
 }
 
-export type RenderContext<T> = {
-  config?: T
+export type RenderContext<T = undefined> = {
+  resourceConfig: T
   basePath: string
   baseConfig: ApiConfig
 }
