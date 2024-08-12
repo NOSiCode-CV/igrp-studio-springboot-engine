@@ -6,10 +6,14 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
-
+ /**
+  * 
+  * @param context 
+  */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
   const controller = await renderController(context);
   const controllerOutputPath = getControllerPath(context);
+
   await saveToFile(controller, controllerOutputPath);
 };
 

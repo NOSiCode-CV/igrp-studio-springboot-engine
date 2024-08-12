@@ -1,13 +1,12 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
 
-import org.springframework.stereotype.Service;
 import java.util.List;
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}}.{{resourceConfig.name}};
 
-public interface {{resourceConfig.name}}Service {
+public interface {{resourceConfig.name}}ServiceInterface {
   
   {{#each resourceConfig.actions}}
-  {{#if (eq response 'List')}}List<{{../name}}>{{else}}{{response}}{{/if}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+  {{#if (eq response 'List')}}List<{{../resourceConfig.name}}>{{else}}{{response}}{{/if}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
   {{/each}}
 }

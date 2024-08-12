@@ -5,7 +5,6 @@ import java.util.List;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import jakarta.validation.constraints.NotBlank;
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};

@@ -4,7 +4,7 @@ import { newApi } from '../src/newApi';
 import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
-import { modelResourceGenerator } from '../src/newModelResources';
+import { modelResourceGenerator } from '../src/newModel';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 
 const model: ModelConfig = {

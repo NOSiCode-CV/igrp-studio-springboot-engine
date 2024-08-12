@@ -1,7 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}}.{{resourceConfig.name}};
-import {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +13,13 @@ import java.util.List;
 public class {{resourceConfig.name}}Controller {
   
   @Autowired
-  private {{resourceConfig.name}}Service {{toLowerCase resourceConfig.name}}Service;
+  private {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
   @RequestMapping(value = "{{path}}", method = RequestMethod.{{method}})
   public ResponseEntity<{{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}}> {{name}}({{#each pathParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}) {
-      {{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}} result = {{toLowerCase../name}}Service.{{name}}({{#each pathParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+      {{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}} result = {{toLowerCase../resourceConfig.name}}Service.{{name}}({{#each pathParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
       return ResponseEntity.ok(result);
   }
   {{/each}}

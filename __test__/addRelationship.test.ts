@@ -1,12 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { updateModel } from '../src/updateModel';
-import { getMainPath } from '../src/utils/helpers';
 import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
 import { DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { newApi } from '../src/newApi';
-import { saveModelConfig } from '../src/modules/model/newModelConfig';
+import { modelResourceGenerator } from '../src/newModel';
+
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
@@ -84,8 +83,6 @@ const LibraryRelations: Relation[] = [
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
   await newApi(apiConfig, OUTPUT_DIR);
-  await saveModelConfig(bookModel, OUTPUT_DIR);
-  await saveModelConfig(librayModel, OUTPUT_DIR);
 
 });
 
@@ -98,9 +95,9 @@ describe('Model generator', () => {
   it('should update adding the relations in the model configuration and the model in the api', async () => {
     bookModel.relations = BookRelations;
     librayModel.relations = LibraryRelations;
-
-    await updateModel(bookModel, OUTPUT_DIR);
-    await updateModel(librayModel, OUTPUT_DIR);
+    
+    await modelResourceGenerator(bookModel, OUTPUT_DIR);
+    await modelResourceGenerator(librayModel, OUTPUT_DIR);
 
     const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${bookModel.name}${EXTENSIONS.JSON}`);
     const bookModelConfig: ModelConfig = await readJsonFile(bookConfigPath);
@@ -112,3 +109,5 @@ describe('Model generator', () => {
 
   });
 });
+
+

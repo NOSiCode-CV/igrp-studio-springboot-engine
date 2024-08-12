@@ -37,8 +37,7 @@ export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.MODELS,
-    context.resourceConfig.name,
-    `${context.resourceConfig.name}${EXTENSIONS.JAVA}`,
+    context.resourceConfig.name
   );
 
 export const getControllerConfigPath = (controller: string, output: string) =>
@@ -47,8 +46,7 @@ export const getControllerConfigPath = (controller: string, output: string) =>
 export const getControllerDir = (context: RenderContext<ControllerConfig>) =>
   path.join(
     context.basePath,
-    context.baseConfig.group,
-    context.baseConfig.artifact,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name,
   );

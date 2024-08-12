@@ -7,6 +7,10 @@ import { getControllerDir } from '../../utils/helpers';
 
 const ICONTROLLER_SUFFIX = 'ServiceInterface.java';
 
+/**
+ * 
+ * @param context 
+ */
 export const generateServiceInterface = async (context: RenderContext<ControllerConfig>) => {
   const serviceInterface = await renderServiceInterface(context);
   const serviceInterfacePath = getServiceInterfacePath(context);

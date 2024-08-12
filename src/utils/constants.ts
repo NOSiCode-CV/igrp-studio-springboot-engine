@@ -85,7 +85,7 @@ export const COMMON_FILES = {
   POM_XML: 'pom.xml',
   REPOSITORY: 'Repository.java',
   CONTROLLER: 'Controller.java',
-  SERVICE: 'Service.java',
+  SERVICE: 'ServiceInterface.java',
 }
 
 export const EXTENSIONS = {

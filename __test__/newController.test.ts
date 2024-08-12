@@ -3,10 +3,8 @@ import fs from 'fs-extra';
 import { newApi } from '../src/newApi';
 import { getMainPath } from '../src/utils/helpers';
 import { newController } from '../src/newController';
-import { modelResourceGenerator } from '../src/newModelResources';
-import { saveModelConfig } from '../src/modules/model/newModelConfig';
+import { modelResourceGenerator } from '../src/newModel';
 import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
-import { SaveControllerConfig } from '../src/modules/controller/newControllerConfig';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE, OUTPUT_DIR } from '../src/utils/constants';
 
 const controllerConfig: ControllerConfig = {
@@ -76,9 +74,7 @@ const apiConfig: ApiConfig = {
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
   await newApi(apiConfig, OUTPUT_DIR);
-  await saveModelConfig(model, OUTPUT_DIR);
   await modelResourceGenerator(model, OUTPUT_DIR);
-  await SaveControllerConfig(controllerConfig, OUTPUT_DIR);
 });
 
 afterAll(async () => {

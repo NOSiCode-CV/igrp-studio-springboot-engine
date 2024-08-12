@@ -8,6 +8,8 @@ import path from 'path';
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
+
+
   await saveToFile(template, modelOutputPath);
 };
 
