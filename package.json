@@ -21,7 +21,11 @@
   "author": "Eduardo - Wayvant",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^3.0.1",
     "fs-extra": "^11.2.0",
+    "sass": "^1.77.8",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.5.1"
   },

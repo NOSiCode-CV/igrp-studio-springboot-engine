@@ -13,6 +13,7 @@ const apiConfig: ApiConfig = {
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
+  database: 'PostgreSQL'
 };
 
 const bookModel: ModelConfig = {

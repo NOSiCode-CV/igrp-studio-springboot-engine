@@ -6,6 +6,7 @@ import { ModelConfig, Crud, ApiConfig } from '../src/interfaces/types';
 import {
   COMMON_FILES,
   DIRECTORIES,
+  ERROR_MESSAGE,
   EXTENSIONS,
   OUTPUT_DIR,
 } from '../src/utils/constants';
@@ -39,18 +40,19 @@ const crud: Crud = {
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'api-rest',
+  apiName: 'api_rest',
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
+  database: 'MySQL',
 };
 
-beforeAll(async () => {
+beforeEach(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
   await newApi(apiConfig, OUTPUT_DIR);
 });
 
-afterAll(async () => {
+afterEach(async () => {
   await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
@@ -62,7 +64,7 @@ describe('Model generator', () => {
     model.name,
     `${model.name}${COMMON_FILES.REPOSITORY}`,
   );
- 
+
   it('should update adding the crud in the model configuration and the model in the api', async () => {
     const crudModel: ModelConfig = { ...model, crud: crud };
     await modelResourceGenerator(crudModel, OUTPUT_DIR);

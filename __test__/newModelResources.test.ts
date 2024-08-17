@@ -28,10 +28,11 @@ const model: ModelConfig = {
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'api-rest',
+  apiName: 'api_rest',
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
+  database: 'MySQL'
 }
 
 beforeAll(async () =>{

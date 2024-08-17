@@ -1,1 +1,21 @@
 spring.application.name={{baseConfig.name}}
+
+{{#if (eq baseConfig.database "MySQL")}}
+spring.datasource.url=jdbc:mysql://<HOST>:<PORT>/<DATABASE_NAME>?<OPTIONAL_PARAMETERS>
+spring.datasource.username="db_username"
+spring.datasource.password="db_userpassword"
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+{{/if}}
+
+{{#if (eq baseConfig.database "PostgreSQL")}}
+spring.datasource.url=jdbc:postgresql://<HOST>:<PORT>/<DATABASE_NAME>?<OPTIONAL_PARAMETERS>
+spring.datasource.username="username"
+spring.datasource.password="password"
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+{{/if}}

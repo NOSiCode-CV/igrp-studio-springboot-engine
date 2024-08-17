@@ -3,6 +3,7 @@ import { saveToFile } from '../common/saveToFile';
 import { ModelConfig } from '../../interfaces/types';
 import { ERROR_MESSAGE } from '../../utils/constants';
 import { getModelConfigPath } from '../../utils/helpers';
+import { validateModelConfig } from '../../schema/modelConfig';
 
 /**
  * Generates and saves the configuration file of a model.
@@ -11,6 +12,7 @@ import { getModelConfigPath } from '../../utils/helpers';
  * @throws Throws an error if the model configuration or output directory is invalid.
  */
 export const saveModelConfig = async (config: ModelConfig, basePath: string) => {
+  // const valid = validateModelConfig(config)
   if (!config || !config.name || !config.attributes) {
     throw ERROR_MESSAGE.MODEL_REQUIRED;
   }

@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import { ApiConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 import { getMainPath, getTestPath } from '../../utils/helpers';
+import { apiValidation } from '../../schema/apiConfig';
 
 /**
  * Function that creates the api directories
@@ -21,9 +22,8 @@ export const createAppDirectories = async (context: RenderContext) => {
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
-  if (!config || !config.group || !config.artifact) {
-    throw ERROR_MESSAGE.INVALID_API_CONFIG;
-  }
+  const valid = apiValidation(config)
+  if (!valid && apiValidation.errors) throw ERROR_MESSAGE.INVALID_API_CONFIG;
 
   if (!basePath) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;

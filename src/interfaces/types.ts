@@ -4,9 +4,10 @@ export interface ApiConfig {
   apiName: string,
   group: string,
   artifact: string,
+  database: string
   description?: string,
   package?: string,
-  name?: string
+  name?: string,
 };
 
 export interface ModelConfig {
@@ -29,7 +30,7 @@ export interface Icontroller {
   name: string
 }
 
-interface Attribut {
+export interface Attribut {
   type: string
   name: string,
   primary?: boolean,

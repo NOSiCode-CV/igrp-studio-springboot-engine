@@ -7,17 +7,18 @@ import { COMMON_FILES, DIRECTORIES, OUTPUT_DIR, ERROR_MESSAGE } from '../src/uti
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'api-rest',
+  apiName: 'api_rest',
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
+  database: 'PostgreSQL',
 };
 
-beforeAll(async () => {
+beforeEach(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
 });
 
-afterAll(async () => {
+afterEach(async () => {
   await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
@@ -26,6 +27,11 @@ describe('New API Module', () => {
   // it('Sshould fail because the directory is not empty', async () => {
   //   expect(async () => await newApi(apiConfig, OUTPUT_DIR)).rejects.toThrow(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
   // });
+
+  it('should fail when trying to create a new api with empty fields or apiName with hyphen or space', async () => {
+    const invalidConfig: ApiConfig = { ...apiConfig, apiName: 'api-name', group:'' };
+    await expect(async () => await newApi(invalidConfig, OUTPUT_DIR)).rejects.toEqual(ERROR_MESSAGE.INVALID_API_CONFIG);
+  });
 
   it('should create the project structure with all the directories and templates.', async () => {
     await newApi(apiConfig, OUTPUT_DIR);

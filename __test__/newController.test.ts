@@ -69,6 +69,7 @@ const apiConfig: ApiConfig = {
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
+  database: 'MySQL'
 };
 
 beforeAll(async () => {

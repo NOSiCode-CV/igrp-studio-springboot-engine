@@ -92,3 +92,8 @@ export const EXTENSIONS = {
   JAVA: '.java',
   JSON: '.json'
 }
+
+export const PATTERNS = {
+  NOT_EMPTY: "^.+$",
+  NO_SPACE_AND_HYPHEN: "^[^\\s-]+$"
+}
