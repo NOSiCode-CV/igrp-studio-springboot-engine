@@ -1,11 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { newApi } from '../src/newApi';
+import { newApi } from '../src/index';
 import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
-import { modelResourceGenerator } from '../src/newModel';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
+import { addModel } from '../src/index';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
+
+const OUTPUT_DIR = ''
 
 const model: ModelConfig = {
   type: 'model',
@@ -49,13 +51,13 @@ describe('Model generator', () => {
 
   it('should fail because the model config file has non-name', async () => {
     expect(
-      async () => await modelResourceGenerator(invalidModelConfig, OUTPUT_DIR),
+      async () => await addModel(invalidModelConfig, OUTPUT_DIR),
     ).rejects.toEqual(ERROR_MESSAGE.INVALID_MODEL_CONFIG);
   });
 
 
   it('should create a model in th api', async () => {
-    await modelResourceGenerator(model, OUTPUT_DIR);
+    await addModel(model, OUTPUT_DIR);
 
     const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
     const config: ApiConfig = await readJsonFile(configPath);

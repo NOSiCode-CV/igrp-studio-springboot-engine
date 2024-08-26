@@ -1,7 +1,6 @@
 import path from 'path';
 
-export const TEMPLATE_DIR = path.join(__dirname, '../../src/templates');
-export const OUTPUT_DIR = 'C:/spring_projects_test';
+export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',

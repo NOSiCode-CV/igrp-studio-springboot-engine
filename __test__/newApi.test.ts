@@ -1,9 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { newApi } from '../src/newApi';
+import { newApi } from '../src/index';
 import { getMainPath } from '../src/utils/helpers';
 import { ApiConfig } from '../src/interfaces/types';
-import { COMMON_FILES, DIRECTORIES, OUTPUT_DIR, ERROR_MESSAGE } from '../src/utils/constants';
+import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
+
+const OUTPUT_DIR = ''
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',

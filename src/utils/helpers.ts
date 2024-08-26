@@ -43,7 +43,7 @@ export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
 export const getControllerConfigPath = (controller: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_CONTROLLER, `${controller}${EXTENSIONS.JSON}`);
 
-export const getControllerDir = (context: RenderContext<ControllerConfig>) =>
+export const getControllerDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),

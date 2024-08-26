@@ -63,9 +63,9 @@ export interface Table {
 export interface ControllerAction {
   path: string,
   name: string,
-  method: string,
+  method: HttpMethod,
   pathParams?: PathParams [],
-  response: any
+  response: string
 }
 
 export interface PathParams {
@@ -77,4 +77,14 @@ export type RenderContext<T = undefined> = {
   resourceConfig: T
   basePath: string
   baseConfig: ApiConfig
+}
+
+export enum HttpMethod {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  PATCH = "PATCH",
+  OPTIONS = "OPTIONS",
+  HEAD = "HEAD"
 }

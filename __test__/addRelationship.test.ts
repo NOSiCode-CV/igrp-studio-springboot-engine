@@ -1,11 +1,12 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
-import { DIRECTORIES, EXTENSIONS, OUTPUT_DIR } from '../src/utils/constants';
+import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
-import { newApi } from '../src/newApi';
-import { modelResourceGenerator } from '../src/newModel';
+import { newApi } from '../src/index';
+import { modelResourceGenerator } from'../src/index';
 
+const OUTPUT_DIR = ''
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',

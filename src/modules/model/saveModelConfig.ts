@@ -12,7 +12,7 @@ import { validateModelConfig } from '../../schema/modelConfig';
  * @throws Throws an error if the model configuration or output directory is invalid.
  */
 export const saveModelConfig = async (config: ModelConfig, basePath: string) => {
-  // const valid = validateModelConfig(config)
+  
   if (!config || !config.name || !config.attributes) {
     throw ERROR_MESSAGE.MODEL_REQUIRED;
   }

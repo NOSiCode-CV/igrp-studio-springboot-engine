@@ -1,10 +1,17 @@
 {
   "name": "spring-engine",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Spring generator api engine",
-  "main": "index.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc && vite build",
+    "start": "tsc && vite"
   },
   "repository": {
     "type": "git",
@@ -40,8 +47,18 @@
     "eslint-config-prettier": "^9.1.0",
     "handlebars": "^4.7.8",
     "jest": "^29.7.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^3.3.3",
-    "ts-jest": "^29.2.3"
+    "ts-jest": "^29.2.3",
+    "vite": "^5.4.2",
+    "vite-plugin-dts": "^4.0.3"
   },
-  "type": "commonjs"
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  }
 }

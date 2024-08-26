@@ -1,6 +1,5 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}}.{{resourceConfig.name}};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import java.util.List;
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 public class {{resourceConfig.name}}Controller {
   
-  @Autowired
+  
   private {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
 
   {{#each resourceConfig.actions}}
@@ -24,5 +23,3 @@ public class {{resourceConfig.name}}Controller {
   }
   {{/each}}
 }
-
-

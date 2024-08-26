@@ -34,9 +34,7 @@ export const renderRepository = async (context: RenderContext<ModelConfig>) => {
   if (!(isModelValid || isCrudValid) && (validateModelConfig.errors || validateCrud.errors))
     throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
 
-  // if (!context.resourceConfig || !context.resourceConfig.crud)
-  //   throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
-
+  
   return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
 };
 

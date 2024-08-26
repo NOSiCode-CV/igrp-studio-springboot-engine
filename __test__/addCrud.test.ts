@@ -6,12 +6,12 @@ import { ModelConfig, Crud, ApiConfig } from '../src/interfaces/types';
 import {
   COMMON_FILES,
   DIRECTORIES,
-  ERROR_MESSAGE,
   EXTENSIONS,
-  OUTPUT_DIR,
 } from '../src/utils/constants';
-import { newApi } from '../src/newApi';
-import { modelResourceGenerator } from '../src/newModel';
+import { newApi } from '../src/index';
+import { modelResourceGenerator } from '../src/index';
+
+const OUTPUT_DIR = ''
 
 const model: ModelConfig = {
   type: 'model',

@@ -1,11 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { newApi } from '../src/newApi';
+import { newApi } from '../src/index';
 import { getMainPath } from '../src/utils/helpers';
-import { newController } from '../src/newController';
-import { modelResourceGenerator } from '../src/newModel';
+import { newController } from '../src/index';
+import { modelResourceGenerator } from '../src/index';
 import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
-import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE, OUTPUT_DIR } from '../src/utils/constants';
+import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
+
+const OUTPUT_DIR = ''
 
 const controllerConfig: ControllerConfig = {
   type: 'controller',
