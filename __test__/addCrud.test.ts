@@ -9,7 +9,7 @@ import {
   EXTENSIONS,
 } from '../src/utils/constants';
 import { newApi } from '../src/index';
-import { modelResourceGenerator } from '../src/index';
+import { addModel } from '../src/index';
 
 const OUTPUT_DIR = ''
 
@@ -67,7 +67,7 @@ describe('Model generator', () => {
 
   it('should update adding the crud in the model configuration and the model in the api', async () => {
     const crudModel: ModelConfig = { ...model, crud: crud };
-    await modelResourceGenerator(crudModel, OUTPUT_DIR);
+    await addModel(crudModel, OUTPUT_DIR);
 
     const libraryConfigPath = path.join(
       OUTPUT_DIR,

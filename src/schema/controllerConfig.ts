@@ -17,9 +17,9 @@ const pathParamsSchema: JSONSchemaType<PathParams> = {
 const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   type: "object",
   properties: {
-    path: { type: "string", minLength: 2, pattern: PATTERNS.NO_SPACE_AND_HYPHEN},
-    name: { type: "string", minLength: 2, pattern: PATTERNS.NO_SPACE_AND_HYPHEN},
-    method: { type: "string",enum: Object.values(HttpMethod), pattern: PATTERNS.NO_SPACE_AND_HYPHEN },
+    path:   { type: "string", minLength: 2, pattern: PATTERNS.NO_SPACE_AND_HYPHEN},
+    name:   { type: "string", minLength: 2, pattern: PATTERNS.NO_SPACE_AND_HYPHEN},
+    method: { type: "string", minLength: 3, pattern: PATTERNS.NO_SPACE_AND_HYPHEN },
     pathParams: { type: "array", items: pathParamsSchema, nullable: true },
     response: { type: "string", minLength: 2, pattern: PATTERNS.NO_SPACE_AND_HYPHEN },
   },

@@ -18,13 +18,6 @@ export interface ModelConfig {
   relations?: Relation [],
 };
 
-export interface ControllerConfig {
-  type: 'controller',
-  name: string,
-  basePath: string,
-  actions: ControllerAction [] 
-};
-
 export interface Icontroller {
   type: 'icontroller',
   name: string
@@ -60,10 +53,17 @@ export interface Table {
   inverseJoinColumns: string
 }
 
+export interface ControllerConfig {
+  type: 'controller',
+  name: string,
+  basePath: string,
+  actions: ControllerAction [] 
+};
+
 export interface ControllerAction {
   path: string,
   name: string,
-  method: HttpMethod,
+  method: string,
   pathParams?: PathParams [],
   response: string
 }
