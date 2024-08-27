@@ -38,13 +38,13 @@ Once the project has been compiled, you can test the various functions of the ap
 
 #### Install the package:
 
-- yarn add spring-engine@1.0.5 --registry=https://sonatype.nosi.cv/repository/npm-group/
+```yarn add spring-engine@1.0.5 --registry=https://sonatype.nosi.cv/repository/npm-group/```
 
 #### You can use this package to:
 
 - Create a new API: This function initializes and sets up the base structure for an API based on the provided configuration.
 
-```
+```java
 @param {ApiConfig} config - The configuration object containing all the basic API information.
 @param {string} basePath - The output path where the API will be created. This path must be empty.
 ```
@@ -59,7 +59,7 @@ const baseConfig: ApiConfig = {
     group: 'example',
     artifact: 'demo',
     description: 'Demo project for Spring Boot',
-    database: 'PostgreSQL'. // you can choose bettween MySQL and PostgreSQL
+    database: 'PostgreSQL'. // you can choose between MySQL and PostgreSQL
 }
 const basePath = 'your/path/'
 
@@ -76,7 +76,7 @@ const createApi = async () => {
 - Add a new Model or editing an existing model - This function creates a model based on the provided configuration and saves it to the specified API base path.
   It also generates the associated CRUD operations if enabled in the configuration.
 
-```ts
+```java
 @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
 @param {string} basePath - Application base path where the model will be saved and generated to the API.
 ```
@@ -110,10 +110,82 @@ const createModel = async () => {
 };
 ```
 
+- Adds CRUD operations to an existing model - This function allows you to add CRUD (Create, Read, Update, Delete) functionality to a model. The CRUD can be added either when the model is initially created or by calling this function later.
+
+```java
+@param {ModelConfig} config - The model configuration object, including the model name and CRUD details.
+@param {string} basePath - The base path of the application where the model and its CRUD operations will be generated and saved.
+```
+```typescript
+const config: ModelConfig = {
+  type: 'model',
+  name: 'Product',
+  attributes: [
+    { type: 'string', name: 'name', required: true, notNull: true },
+    { type: 'number', name: 'price', notNull: true }
+  ],
+  crud: {
+    enabled: true,
+    path: '/products',
+    disabledMethods: ['DELETE'] // Example of disabling the DELETE method
+  }
+};
+
+const basePath = 'C://your_project_path';
+
+const addProductCrud = async () => {
+  try {
+    await addCrud(config, basePath);
+    console.log('CRUD operations for Product have been successfully added.');
+  } catch (error) {
+    console.error('Error adding CRUD operations:', error);
+  }
+};
+```
+- Add Relationship - Adds a relationship between the specified models.
+```java
+This function modifies the configuration of an existing model to include a new relationship. 
+The relationship is defined in the `relations` property of the `ModelConfig` object.
+All models involved in the relationship should already be created. 
+The function will update the model configuration file by adding the relation parameter and then call the `addModel` function to apply the changes.
+@param {ModelConfig} config - The model configuration object, including the relationship details.
+@param {string} basePath - The base path of the application where the model configuration will be updated and saved.
+```
+```ts
+import { addRelationship } from 'spring-engine';
+import { ModelConfig } from 'spring-engine/dist/interfaces/types';
+
+const config: ModelConfig = {
+  type: 'model',
+  name: 'Order',
+  attributes: [
+    { type: 'string', name: 'description', notNull: true }
+  ],
+  relations: [
+    {
+      relationType: 'ManyToOne',
+      entity: 'Customer', // Relating 'Order' with 'Customer'
+      joinColumn: 'customer_id'
+    }
+  ]
+};
+ 
+const basePath = 'C://your_project_path';
+
+const addOrderRelationship = async () => {
+  try {
+    await addRelationship(config, basePath);
+    console.log('Relationship between Order and Customer has been successfully added.');
+  } catch (error) {
+    console.error('Error adding relationship:', error);
+  }
+};
+```
+
 - Delete Model - This function removes a model configuration and its related repository files based on the provided configuration.
   It ensures that the model is properly deleted from the specified API base path.
 
-```ts
+```java
 @param {ModelConfig} config - The model configuration object, which primarily includes the type and name of the model to be deleted.
 @param {string} basePath - The base path of the application where the model and repository are located.
 ```
@@ -146,7 +218,7 @@ const removeModel = async () => {
 - Add new controller - This function creates a controller based on the provided configuration and integrates it into the specified API base path.
   It also generates the corresponding service interface for the controller actions defined.
 
-```ts
+```java
 @param {ControllerConfig} config - The controller configuration object, including the controller name, base path, and actions.
 @param {string} basePath - The base path of the application where the controller will be generated and saved.
 ```

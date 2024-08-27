@@ -36,7 +36,7 @@ import { generateServiceInterface } from './modules/controller/generateServiceIn
  *    apiName: 'my_api' //Names with hyphens or spaces are not accepted.
  *    group: 'example'
  *    artifact: 'demo'
- *    database: 'MySQL' //you can choose bettween MySQL and PostgreSQL
+ *    database: 'MySQL' //you can choose between MySQL and PostgreSQL
  *    description: 'your project descripcion' //optional field
  * }
  * const basePath: 'C://your_path'; The path must be empty
@@ -146,51 +146,98 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
   }
 };
 
+/**
+ * Adds CRUD operations to an existing model.
+ *
+ * This function allows you to add CRUD (Create, Read, Update, Delete) functionality to a model. 
+ * The CRUD can be added either when the model is initially created or by calling this function later.
+ * The CRUD configuration is defined in the `crud` property of the `ModelConfig` object.
+ *
+ * @param {ModelConfig} config - The model configuration object, including the model name and CRUD details.
+ * @param {string} basePath - The base path of the application where the model and its CRUD operations will be generated and saved.
+ *
+ * @throws {Error} Throws an error if the model configuration is invalid or if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * const config: ModelConfig = {
+ *   type: 'model',
+ *   name: 'Product', // The name should be 'Product', not 'ProductModel'.
+ *   attributes: [
+ *     { type: 'string', name: 'name', required: true, notNull: true },
+ *     { type: 'number', name: 'price', notNull: true }
+ *   ],
+ *   crud: {
+ *     enabled: true,
+ *     path: '/products',
+ *     disabledMethods: ['DELETE'] // Example of disabling the DELETE method
+ *   }
+ * };
+ * 
+ * const basePath = 'C://your_project_path';
+ * 
+ * const addProductCrud = async () => {
+ *   try {
+ *     await addCrud(config, basePath);
+ *     console.log('CRUD operations for Product have been successfully added.');
+ *   } catch (error) {
+ *     console.error('Error adding CRUD operations:', error);
+ *   }
+ * };
+ */
 export const addCrud = async (config: ModelConfig, basePath: string) => {
-  const valid = validateModelConfig(config);
-
-  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
-
-  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-
-  const baseConfig = await getBaseApiConfig(basePath);
-  await saveModelConfig(config, basePath);
-
-  const context: RenderContext<ModelConfig> = {
-    resourceConfig: config,
-    basePath,
-    baseConfig,
-  };
-
-  await generateModel(context);
-
-  if (config.crud) {
-    await generateRepository(context);
-  }
+  await addModel(config, basePath);
 };
 
+
+/**
+ * Adds a relationship between the specified models.
+ *
+ * This function modifies the configuration of an existing model to include a new relationship. 
+ * The relationship is defined in the `relations` property of the `ModelConfig` object.
+ * All models involved in the relationship should already be created. 
+ * The function will update the model configuration file by adding the relation parameter and then call the `addModel` function to apply the changes.
+ *
+ * @param {ModelConfig} config - The model configuration object, including the relationship details.
+ * @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
+ *
+ * @throws {Error} Throws an error if the model configuration is invalid or if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * const config: ModelConfig = {
+ *   type: 'model',
+ *   name: 'Order', // The name should be 'Order', not 'OrderModel'.
+ *   attributes: [
+ *     { type: 'number', name: 'id', primary: true, unique: true, notNull: true },
+ *     { type: 'string', name: 'description', notNull: true }
+ *   ],
+ *   relations: [
+ *     {
+ *       relationType: 'ManyToOne',
+ *       entity: 'Customer', // Relating 'Order' with 'Customer'
+ *       joinColumn: 'customer_id'
+ *     }
+ *   ]
+ * };
+ * 
+ * const applicationBasePath = 'C://your_project_path';
+ * 
+ * const addOrderRelationship = async () => {
+ *   try {
+ *     await addRelationship(config, applicationBasePath);
+ *     console.log('Relationship between Order and Customer has been successfully added.');
+ *   } catch (error) {
+ *     console.error('Error adding relationship:', error);
+ *   }
+ * };
+ * 
+ * addOrderRelationship();
+ */
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
-  const valid = validateModelConfig(config);
-
-  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
-
-  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-
-  const baseConfig = await getBaseApiConfig(basePath);
-  await saveModelConfig(config, basePath);
-
-  const context: RenderContext<ModelConfig> = {
-    resourceConfig: config,
-    basePath,
-    baseConfig,
-  };
-
-  await generateModel(context);
-
-  if (config.crud) {
-    await generateRepository(context);
-  }
+  await addModel(config, basePath);
 };
+
 
 
 /**

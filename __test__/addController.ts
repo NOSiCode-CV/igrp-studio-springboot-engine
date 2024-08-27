@@ -2,8 +2,8 @@ import path from 'path';
 import fs from 'fs-extra';
 import { newApi } from '../src/index';
 import { getMainPath } from '../src/utils/helpers';
-import { newController } from '../src/index';
-import { modelResourceGenerator } from '../src/index';
+import { addController } from '../src/index';
+import { addModel } from '../src/index';
 import { ApiConfig, ControllerConfig, ModelConfig } from '../src/interfaces/types';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
 
@@ -77,7 +77,7 @@ const apiConfig: ApiConfig = {
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
   await newApi(apiConfig, OUTPUT_DIR);
-  await modelResourceGenerator(model, OUTPUT_DIR);
+  await addModel(model, OUTPUT_DIR);
 });
 
 afterAll(async () => {
@@ -89,13 +89,13 @@ describe('Controller Module', () => {
   const invaliControllerConfig: ControllerConfig = { ...controllerConfig, name: '' };
 
   it('should fail because the controller configuration file is invalid', async () => {
-    expect(async () => await newController(invaliControllerConfig, OUTPUT_DIR)).rejects.toEqual(
+    expect(async () => await addController(invaliControllerConfig, OUTPUT_DIR)).rejects.toEqual(
       ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG,
     );
   });
 
   it('should create the controller class and the service interface', async () => {
-    await newController(controllerConfig, OUTPUT_DIR);
+    await addController(controllerConfig, OUTPUT_DIR);
 
     const controllerPath = path.join(
       OUTPUT_DIR,
