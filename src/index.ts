@@ -146,6 +146,53 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
   }
 };
 
+export const addCrud = async (config: ModelConfig, basePath: string) => {
+  const valid = validateModelConfig(config);
+
+  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  await saveModelConfig(config, basePath);
+
+  const context: RenderContext<ModelConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await generateModel(context);
+
+  if (config.crud) {
+    await generateRepository(context);
+  }
+};
+
+export const addRelationship = async (config: ModelConfig, basePath: string) => {
+  const valid = validateModelConfig(config);
+
+  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  await saveModelConfig(config, basePath);
+
+  const context: RenderContext<ModelConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await generateModel(context);
+
+  if (config.crud) {
+    await generateRepository(context);
+  }
+};
+
+
 /**
  * Deletes a model and its associated repository from the API.
  *

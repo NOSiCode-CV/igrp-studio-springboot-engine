@@ -4,7 +4,7 @@ import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { newApi } from '../src/index';
-import { modelResourceGenerator } from'../src/index';
+import { addModel } from'../src/index';
 
 const OUTPUT_DIR = ''
 
@@ -98,8 +98,8 @@ describe('Model generator', () => {
     bookModel.relations = BookRelations;
     librayModel.relations = LibraryRelations;
     
-    await modelResourceGenerator(bookModel, OUTPUT_DIR);
-    await modelResourceGenerator(librayModel, OUTPUT_DIR);
+    await addModel(bookModel, OUTPUT_DIR);
+    await addModel(librayModel, OUTPUT_DIR);
 
     const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${bookModel.name}${EXTENSIONS.JSON}`);
     const bookModelConfig: ModelConfig = await readJsonFile(bookConfigPath);
