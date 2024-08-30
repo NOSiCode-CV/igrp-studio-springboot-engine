@@ -189,7 +189,6 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
   await addModel(config, basePath);
 };
 
-
 /**
  * Adds a relationship between the specified models.
  *
@@ -237,8 +236,6 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
   await addModel(config, basePath);
 };
-
-
 
 /**
  * Deletes a model and its associated repository from the API.
