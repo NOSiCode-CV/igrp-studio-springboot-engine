@@ -59,13 +59,13 @@ const baseConfig: ApiConfig = {
     group: 'example',
     artifact: 'demo',
     description: 'Demo project for Spring Boot',
-    database: 'PostgreSQL'. // you can choose between MySQL and PostgreSQL
+    database: 'PostgreSQL' // you can choose between MySQL and PostgreSQL
 }
 const basePath = 'your/path/'
 
 const createApi = async () => {
  try {
-   await newApi(config, basePath)
+   await newApi(baseConfig, basePath)
  }
  catch(error) {
    console.log(error)
@@ -90,12 +90,12 @@ const config: ModelConfig = {
   name: 'User',
   attributes: [
     { type: 'string', name: 'email', unique: true, notNull: true, required: true },
-    { type: 'string', name: 'password', notNull: true, required: true },
+    { type: 'string', name: 'password', unique: false, notNull: true, required: true },
   ],
   crud: {
     enabled: true,
     path: '/users',
-    disabledMethods: ['DELETE'],
+    disabledMethods: ['delete'],
   },
   relations: [],
 };
