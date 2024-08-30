@@ -13,6 +13,7 @@ import { generateRepository } from './modules/model/generateRepository';
 import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
+import { deleteControllerConfig } from './modules/controller/deleteController';
 import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
 import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
@@ -359,3 +360,56 @@ export const addController = async (config: ControllerConfig, basePath: string) 
   await generateController(context);
   await generateServiceInterface(context);
 };
+
+/**
+ * 
+ * @param config 
+ * @param basePath 
+ */
+export const updateController = async (config: ControllerConfig, basePath: string) => {
+  const isConfigValid = validateController(config);
+  
+  if (!isConfigValid || validateController.errors) {
+    throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
+  }
+  
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+  
+  const baseConfig = await getBaseApiConfig(basePath);
+  await saveControllerConfig(config, basePath);
+  
+  const context: RenderContext<ControllerConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+  
+  await generateController(context);
+  await generateServiceInterface(context);
+};
+
+/**
+ * 
+ * @param config 
+ * @param basePath 
+ */
+export const deleteController = async (config: ControllerConfig, basePath: string) => {
+  const valid = validateModelConfig(config);
+
+  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<ControllerConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await deleteControllerConfig(context)
+
+}
