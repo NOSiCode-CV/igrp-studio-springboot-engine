@@ -1,13 +1,12 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { newApi } from '../src/index';
 import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const model: ModelConfig = {
   type: 'model',
@@ -18,6 +17,7 @@ const model: ModelConfig = {
       name: 'name',
       unique: false,
       notNull: true,
+      required: true
     },
     {
       type: 'String',
@@ -28,22 +28,14 @@ const model: ModelConfig = {
   ],
 };
 
-const apiConfig: ApiConfig = {
-  type: 'baseApi',
-  apiName: 'api_rest',
-  group: 'nosi',
-  artifact: 'igrp',
-  description: 'API-TEST',
-  database: 'MySQL'
-}
+
 
 beforeAll(async () =>{
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
-  await newApi(apiConfig, OUTPUT_DIR);
 });
 
 afterAll(async () => {
-  await fs.rm(OUTPUT_DIR, {recursive: true});
+  // await fs.rm(OUTPUT_DIR, {recursive: true});
 });
 
 describe('Model generator', () => {
