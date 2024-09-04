@@ -89,12 +89,12 @@ const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'string', name: 'email', unique: true, notNull: true, required: true },
-    { type: 'string', name: 'password', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'email', unique: true, notNull: true, required: true },
+    { type: 'String', name: 'password', unique: false, notNull: true, required: true },
   ],
   crud: {
     enabled: true,
-    path: '/users',
+    path: 'users',
     disabledMethods: ['delete'],
   },
   relations: [],
@@ -121,8 +121,8 @@ const config: ModelConfig = {
   type: 'model',
   name: 'Product',
   attributes: [
-    { type: 'string', name: 'name', required: true, notNull: true },
-    { type: 'number', name: 'price', notNull: true }
+    { type: 'String', name: 'name', required: true, notNull: true },
+    { type: 'Integer', name: 'price', notNull: true }
   ],
   crud: {
     enabled: true,
@@ -159,7 +159,7 @@ const config: ModelConfig = {
   type: 'model',
   name: 'Order',
   attributes: [
-    { type: 'string', name: 'description', notNull: true }
+    { type: 'String', name: 'description', notNull: true }
   ],
   relations: [
     {
@@ -198,8 +198,8 @@ const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'string', name: 'email', unique: true, notNull: true, required: true },
-    { type: 'string', name: 'password', notNull: true, required: true },
+    { type: 'String', name: 'email', unique: true, notNull: true, required: true },
+    { type: 'String', name: 'password', notNull: true, required: true },
   ],
   crud: {},
   relations: [],
@@ -230,20 +230,20 @@ import { ControllerConfig } from 'spring-engine/dist/interfaces/types';
 const config: ControllerConfig = {
   type: 'controller',
   name: 'User', //The name should be 'User', not 'UserController'.
-  basePath: '/users',
+  basePath: 'users',
   actions: [
     {
       name: 'getUser',
       path: '/user',
       method: 'GET',
       pathParams: [{ type: 'string', name: 'id' }],
-      response: 'User',
+      response: 'Object',
     },
     {
       name: 'createUser',
       path: '/user',
       method: 'POST',
-      response: 'User',
+      response: 'Object',
     },
   ],
 };

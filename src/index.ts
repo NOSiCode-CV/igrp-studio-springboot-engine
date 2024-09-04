@@ -104,8 +104,8 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 *   type: 'model',
 *   name: 'User',
 *   attributes: [
-*     { type: 'string', name: 'email', unique: true, notNull: true, required: true },
-*     { type: 'string', name: 'password', notNull: true, required: true },
+*     { type: 'String', name: 'email', unique: true, notNull: true, required: true },
+*     { type: 'String', name: 'password', notNull: true, required: true },
 *   ],
 *   crud: {
 *     enabled: true,
@@ -165,8 +165,8 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
  *   type: 'model',
  *   name: 'Product', // The name should be 'Product', not 'ProductModel'.
  *   attributes: [
- *     { type: 'string', name: 'name', required: true, notNull: true },
- *     { type: 'number', name: 'price', notNull: true }
+ *     { type: 'String', name: 'name', required: true, notNull: true },
+ *     { type: 'Integer', name: 'price', notNull: true }
  *   ],
  *   crud: {
  *     enabled: true,

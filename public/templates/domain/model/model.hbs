@@ -21,7 +21,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{this.entity}}.{{thi
 @AllArgsConstructor
 public class {{resourceConfig.name}} {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  //@GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id;
 

@@ -1,6 +1,6 @@
 import path from 'path';
 
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
 
 export const DIRECTORIES = { 
   BASE_API: '.igrpstudio/baseApi.json',
@@ -10,7 +10,7 @@ export const DIRECTORIES = {
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',
   MODELS: 'models',
-  RESOURCES: 'src/main/resource',
+  RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
 }
