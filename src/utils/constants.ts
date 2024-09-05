@@ -96,3 +96,21 @@ export const PATTERNS = {
   NOT_EMPTY: "^.+$",
   NO_SPACE_AND_HYPHEN: "^[^\\s-]+$"
 }
+
+export const METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"]
+export const ATTRIBUTE_TYPES = [
+  "Boolean",
+  "Byte",
+  "Short",
+  "Character",
+  "Integer",
+  "Long",
+  "Float",
+  "Double",
+  "String",
+  "Date",
+  "BigInteger",
+  "BigDecimal",
+  "Time",
+  "Timestamp"
+]

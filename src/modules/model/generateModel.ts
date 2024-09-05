@@ -1,4 +1,4 @@
-import { Attribut, ModelConfig, RenderContext } from '../../interfaces/types';
+import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
@@ -36,7 +36,7 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
 
-const sqlUniquesAttributes = (attributes: Attribut[]) => {
+const sqlUniquesAttributes = (attributes: Attribute[]) => {
   let sqlAttributes: string[] = [];
   attributes.forEach(attribute => {
     if (attribute.type === "Date" || attribute.type === "Time" || attribute.type === "Timestamp"){
@@ -47,7 +47,7 @@ const sqlUniquesAttributes = (attributes: Attribut[]) => {
   return [...new Set(sqlAttributes)]
 }
 
-const mathUniquesAttributes = (attributes: Attribut[]) => {
+const mathUniquesAttributes = (attributes: Attribute[]) => {
   let mathAttributes: string[] = [];
   attributes.forEach(attribute => {
     if (attribute.type === "BigInteger" || attribute.type === "BigDecimal"){

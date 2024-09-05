@@ -35,7 +35,7 @@ public class {{resourceConfig.name}} {
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}
-  @Column(unique = {{this.unique}}, nullable = {{this.notNull}})
+  @Column({{#if (eq this.unique 'true')}}unique = {{this.unique}}{{/if}}, nullable = {{this.notNull}})
   private {{this.type}} {{this.name}};
   
   {{/each}}

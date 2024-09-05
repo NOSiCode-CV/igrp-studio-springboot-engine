@@ -1,20 +1,20 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribut, Relation } from "../interfaces/types";
+import { ModelConfig, Crud, Attribute, Relation } from "../interfaces/types";
 import { PATTERNS } from "../utils/constants";
 
 
-const attributSchema: JSONSchemaType<Attribut> = {
+const attributSchema: JSONSchemaType<Attribute> = {
   type: "object",
   properties: {
     type: { type: "string", minLength: 1 },
     name: { type: "string", minLength: 1 },
     primary: { type: "boolean", nullable: true }, 
     required: { type: "boolean", nullable: true },  
-    unique: { type: "boolean" },
-    notNull: { type: "boolean" }
+    unique: { type: "boolean", nullable: true},
+    notNull: { type: "boolean", nullable: true }
   },
-  required: ["type", "name", "unique", "notNull"],
+  required: ["type", "name"],
   additionalProperties: false,
 };
 
