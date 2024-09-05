@@ -23,7 +23,7 @@ export const createAppDirectories = async (context: RenderContext) => {
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
   const valid = apiValidation(config)
-  if (!valid && apiValidation.errors) throw ERROR_MESSAGE.INVALID_API_CONFIG;
+  if (!valid && apiValidation.errors) throw apiValidation.errors;
 
   if (!basePath) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;

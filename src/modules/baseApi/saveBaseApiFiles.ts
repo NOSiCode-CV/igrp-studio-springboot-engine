@@ -25,7 +25,7 @@ export const saveFileConfig = async (context: RenderContext) => {
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   const valid = apiValidation(context.baseConfig);
 
-  if (!valid && apiValidation.errors) throw ERROR_MESSAGE.INVALID_API_CONFIG;
+  if (!valid && apiValidation.errors) throw apiValidation.errors;
 
   context.baseConfig.name = capitalize(context.baseConfig.apiName);
   context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.artifact}`;

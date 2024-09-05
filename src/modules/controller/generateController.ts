@@ -18,6 +18,7 @@ export const generateController = async (context: RenderContext<ControllerConfig
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
+  // TODO: Verify schema validation here
   if (!context.resourceConfig) throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
 
   return await renderTemplate(TEMPLATES.DOMAIN_CONTROLLER, context);

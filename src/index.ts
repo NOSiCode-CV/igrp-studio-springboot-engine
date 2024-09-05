@@ -53,10 +53,11 @@ import { generateServiceInterface } from './modules/controller/generateServiceIn
  * 
  */
 export const newApi = async (config: ApiConfig, basePath: string) => {
+  // TODO: Validate only here the inputs.
   const valid = apiValidation(config);
 
   if (!valid && apiValidation.errors) {
-    throw ERROR_MESSAGE.INVALID_API_CONFIG;
+    throw apiValidation.errors;
   }
 
   if (!(await checkIfDirectoryIsEmpty(basePath))) {
@@ -127,7 +128,7 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 export const addModel = async (config: ModelConfig, basePath: string) => {
   const valid = validateModelConfig(config);
 
-  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+  if (!valid && validateModelConfig.errors) throw validateModelConfig.errors;
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
@@ -235,6 +236,7 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
  * addOrderRelationship();
  */
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
+  // TODO: Add validation
   await addModel(config, basePath);
 };
 
@@ -273,7 +275,7 @@ export const addRelationship = async (config: ModelConfig, basePath: string) => 
 export const deleteModel = async (config: ModelConfig, basePath: string) => {
   const valid = validateModelConfig(config);
 
-  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+  if (!valid && validateModelConfig.errors) throw validateModelConfig.errors;
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
@@ -340,8 +342,8 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 export const addController = async (config: ControllerConfig, basePath: string) => {
   const isConfigValid = validateController(config);
   
-  if (!isConfigValid || validateController.errors) {
-    throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
+  if (!isConfigValid && validateController.errors) {
+    throw validateController.errors
   }
   
   if (!basePath) {
@@ -369,8 +371,8 @@ export const addController = async (config: ControllerConfig, basePath: string) 
 export const updateController = async (config: ControllerConfig, basePath: string) => {
   const isConfigValid = validateController(config);
   
-  if (!isConfigValid || validateController.errors) {
-    throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
+  if (!isConfigValid && validateController.errors) {
+    throw validateController.errors
   }
   
   if (!basePath) {
@@ -398,7 +400,7 @@ export const updateController = async (config: ControllerConfig, basePath: strin
 export const deleteController = async (config: ControllerConfig, basePath: string) => {
   const valid = validateModelConfig(config);
 
-  if (!valid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
+  if (!valid && validateModelConfig.errors) throw validateController.errors
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 

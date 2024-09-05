@@ -1,9 +1,11 @@
+import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
+
 export interface ApiConfig {
   type: 'baseApi';
   apiName: string;
   group: string;
   artifact: string;
-  database: DataBaseTypes;
+  database: DatabaseTypes;
   description?: string;
   package?: string;
   name?: string;
@@ -80,32 +82,9 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
 };
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS' | 'HEAD';
-
-export type AttributeType =
-  | 'boolean'
-  | 'byte'
-  | 'short'
-  | 'char'
-  | 'int'
-  | 'long'
-  | 'float'
-  | 'double'
-  | 'Boolean'
-  | 'Byte'
-  | 'Short'
-  | 'Character'
-  | 'Integer'
-  | 'Long'
-  | 'Float'
-  | 'Double'
-  | 'String'
-  | 'BigInteger'
-  | 'BigDecimal'
-  | 'Date'
-  | 'Time'
-  | 'Timestamp';
-
-export type DataBaseTypes = 'MySQL' | 'Oracle' | 'Postgresql';
-
-export type DisabledMethods = 'save' | 'delete'
+export type HttpMethod = typeof HTTP_METHOD_TYPES[number];
+export type AttributeType = typeof ATTRIBUTE_TYPES[number];
+export type DatabaseTypes = typeof DATABASE_TYPES[number];
+export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
+export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
+export type ResponseTypes = typeof RESPONSE_TYPES[number];

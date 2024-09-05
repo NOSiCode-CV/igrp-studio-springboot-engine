@@ -13,6 +13,7 @@ import { ApiConfig } from '../../interfaces/types';
 export const getBaseApiConfig = async  (basePath: string): Promise<ApiConfig> => {
     const apiConfig = await fs.readJSON(path.join(basePath, DIRECTORIES.IGRPSTUDIO, COMMON_FILES.BASE_API));
 
+    // TODO: Verify with Validation Schema.
     if (!apiConfig?.type || !apiConfig?.artifact || !apiConfig?.group || !apiConfig?.apiName ) {
         throw ERROR_MESSAGE.INVALID_API_CONFIG;
     }

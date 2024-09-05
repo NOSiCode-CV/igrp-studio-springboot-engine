@@ -1,7 +1,7 @@
 import { ApiConfig } from "../interfaces/types";
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { PATTERNS } from "../utils/constants";
+import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
 
 
 const apiSchema: JSONSchemaType<ApiConfig> = {
@@ -22,6 +22,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       }
     },
     group: { 
+      // TODO Add Pattern
       type: "string", 
       minLength: 1, 
       errorMessage: {
@@ -29,6 +30,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       }
     },
     artifact: { 
+      // TODO Add Pattern
       type: "string", 
       minLength: 1, 
       errorMessage: {
@@ -37,6 +39,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     },
     database: { 
       type: "string", 
+      enum: DATABASE_TYPES,
       minLength: 1, 
       errorMessage: {
         minLength: "The 'database' attribute cannot be empty."
@@ -47,20 +50,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       nullable: true, 
       errorMessage: {
         type: "The 'description' attribute must be a string."
-      }
-    },
-    package: { 
-      type: "string", 
-      nullable: true, 
-      errorMessage: {
-        type: "The 'package' attribute must be a string."
-      }
-    },
-    name: { 
-      type: "string", 
-      nullable: true, 
-      errorMessage: {
-        type: "The 'name' attribute must be a string."
       }
     }
   },

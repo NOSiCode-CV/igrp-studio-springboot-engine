@@ -9,6 +9,7 @@ import { dirname } from 'path';
  * @throws {Error} - Throws an error if the content or output path is invalid.
  */
 export const saveToFile = async (content: string, outputPath: string) => {
+  // TODO Review if this is catched on schema validations.
   if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
   if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
