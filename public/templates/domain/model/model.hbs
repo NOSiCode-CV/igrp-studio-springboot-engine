@@ -6,9 +6,15 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+{{#each sqlAttributes}}
+import java.sql.{{this}};
+{{/each}}
+{{#each mathAttributes}}
+import java.math.{{this}};
+{{/each}}
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}
 {{/if}}
 

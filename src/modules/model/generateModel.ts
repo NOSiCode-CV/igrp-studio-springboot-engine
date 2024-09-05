@@ -1,4 +1,4 @@
-import { ModelConfig, RenderContext } from '../../interfaces/types';
+import { Attribut, ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
@@ -22,6 +22,8 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
  */
 const renderModel = async (context: RenderContext<ModelConfig>) => {
   const isModelValid = validateModelConfig(context.resourceConfig)
+  context.sqlAttributes = sqlUniquesAttributes(context.resourceConfig.attributes)
+  context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
 
   if (!isModelValid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
 
@@ -29,9 +31,35 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
+
+
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
 
+const sqlUniquesAttributes = (attributes: Attribut[]) => {
+  let sqlAttributes: string[] = [];
+  attributes.forEach(attribute => {
+    if (attribute.type === "Date" || attribute.type === "Time" || attribute.type === "Timestamp"){
+      sqlAttributes.push(attribute.type)
+    }
+  })
+
+  return [...new Set(sqlAttributes)]
+}
+
+const mathUniquesAttributes = (attributes: Attribut[]) => {
+  let mathAttributes: string[] = [];
+  attributes.forEach(attribute => {
+    if (attribute.type === "BigInteger" || attribute.type === "BigDecimal"){
+      mathAttributes.push(attribute.type)
+    }
+  })
+
+  return [...new Set(mathAttributes)]
+}
+
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+
+
 

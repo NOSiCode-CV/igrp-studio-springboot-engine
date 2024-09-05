@@ -24,7 +24,7 @@ export interface Icontroller {
 }
 
 export interface Attribut {
-  type: string
+  type: AttributeType
   name: string,
   primary?: boolean,
   required?: boolean,
@@ -76,15 +76,40 @@ export interface PathParams {
 export type RenderContext<T = undefined> = {
   resourceConfig: T
   basePath: string
-  baseConfig: ApiConfig
+  baseConfig: ApiConfig,
+  mathAttributes?:string[],
+  sqlAttributes?: string [],
 }
 
-export enum HttpMethod {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  DELETE = "DELETE",
-  PATCH = "PATCH",
-  OPTIONS = "OPTIONS",
-  HEAD = "HEAD"
-}
+export type HttpMethod =
+| "GET"
+| "POST"
+| "PUT"
+| "DELETE"
+| "PATCH"
+| "OPTIONS"
+| "HEAD"
+
+export type AttributeType =
+| "boolean"
+| "byte"
+| "short"
+| "char"
+| "int"
+| "long"
+| "float"
+| "double"
+| "Boolean"
+| "Byte"
+| "Short"
+| "Character"
+| "Integer"
+| "Long"
+| "Float"
+| "Double"
+| "String"
+| "BigInteger"
+| "BigDecimal"
+| "Date"
+| "Time"
+| "Timestamp";

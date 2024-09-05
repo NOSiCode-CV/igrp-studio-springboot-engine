@@ -126,7 +126,7 @@ const config: ModelConfig = {
   ],
   crud: {
     enabled: true,
-    path: '/products',
+    path: 'products',
     disabledMethods: ['DELETE'] // Example of disabling the DELETE method
   }
 };

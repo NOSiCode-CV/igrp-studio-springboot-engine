@@ -1,6 +1,6 @@
 {
   "name": "spring-engine",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Spring generator api engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
