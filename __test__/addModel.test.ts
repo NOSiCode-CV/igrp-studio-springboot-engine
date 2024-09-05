@@ -6,27 +6,42 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const model: ModelConfig = {
   type: 'model',
-  name: 'Library',
+  name: 'SIPS_T_PESSOA',
   attributes: [
-    {
-      type: 'String',
-      name: 'name',
-      unique: false,
-      notNull: true,
-      required: true
-    },
-    {
-      type: 'String',
-      name: 'address',
-      unique: true,
-      notNull: true,
-    },
-  ],
+    { type: 'Integer', name: 'idEstadoCivil', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nome', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'sexo', unique: false, notNull: true, required: true },
+    { type: 'Date', name: 'dtNascimento', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nomePai', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nomeMae', unique: false, notNull: true, required: true },
+    { type: 'Timestamp', name: 'dia', unique: false, notNull: true, required: true },
+    { type: 'Time', name: 'hora', unique: false, notNull: true, required: true },
+    { type: 'BigInteger', name: 'millones', unique: false, notNull: true, required: true },
+    { type: 'BigDecimal', name: 'escudos', unique: false, notNull: true, required: true },
+  ], 
+  crud: {
+    enabled: true,
+    path: 'sips_pessoa',
+    disabledMethods: ['delete'],
+  }
 };
+
+const model2: ModelConfig = {
+  type: 'model',
+  name: 'SIPS_T_UTENTE',
+  attributes: [
+    { type: 'Integer', name: 'idPessoa', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'numero', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nib', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nrConvencao', unique: false, notNull: true, required: true },
+  ]
+};
+
+
 
 
 
@@ -50,6 +65,7 @@ describe('Model generator', () => {
 
   it('should create a model in th api', async () => {
     await addModel(model, OUTPUT_DIR);
+    await addModel(model2, OUTPUT_DIR);
 
     const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
     const config: ApiConfig = await readJsonFile(configPath);

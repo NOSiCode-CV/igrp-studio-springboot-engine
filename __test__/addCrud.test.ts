@@ -11,7 +11,7 @@ import {
 import { newApi } from '../src/index';
 import { addModel } from '../src/index';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const model: ModelConfig = {
   type: 'model',

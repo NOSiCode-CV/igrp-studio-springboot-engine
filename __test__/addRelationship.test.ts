@@ -6,7 +6,7 @@ import { readJsonFile } from '../src/utils/readJsonFiles';
 import { newApi } from '../src/index';
 import { addModel } from'../src/index';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
@@ -17,95 +17,77 @@ const apiConfig: ApiConfig = {
   database: 'PostgreSQL'
 };
 
-const bookModel: ModelConfig = {
+const model: ModelConfig = {
   type: 'model',
-  name: 'Book',
+  name: 'SIPS_T_PESSOA',
   attributes: [
+    { type: 'Integer', name: 'idEstadoCivil', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nome', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'sexo', unique: false, notNull: true, required: true },
+    { type: 'Date', name: 'dtNascimento', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nomePai', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nomeMae', unique: false, notNull: true, required: true },
+    { type: 'Timestamp', name: 'dia', unique: false, notNull: true, required: true },
+    { type: 'Time', name: 'hora', unique: false, notNull: true, required: true },
+    { type: 'BigInteger', name: 'millones', unique: false, notNull: true, required: true },
+    { type: 'BigDecimal', name: 'escudos', unique: false, notNull: true, required: true },
+  ], 
+  crud: {
+    enabled: true,
+    path: 'sips_pessoa',
+    disabledMethods: ['delete'],
+  },
+  relations: [
     {
-      type: 'String',
-      name: 'author',
-      required: true,
-      unique: false,
-      notNull: false,
+      relationType: 'ManyToMany',
+      entity: 'SIPS_T_UTENTE',
+      joinColumn: 'book_id',
+      joinTable: 'book_library',
+      inverseJoinColumn: 'library_id',
     },
-    {
-      type: 'String',
-      name: 'title',
-      required: true,
-      unique: false,
-      notNull: false,
-    },
-    {
-      type: 'String',
-      name: 'editor',
-      required: true,
-      unique: false,
-      notNull: false,
-    },
-  ],
+  ]
 };
 
-const librayModel: ModelConfig = {
+const model2: ModelConfig = {
   type: 'model',
-  name: 'Library',
+  name: 'SIPS_T_UTENTE',
   attributes: [
+    { type: 'Integer', name: 'idPessoa', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'numero', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nib', unique: false, notNull: true, required: true },
+    { type: 'String', name: 'nrConvencao', unique: false, notNull: true, required: true },
+  ], 
+  relations:[
     {
-      type: 'String',
-      name: 'name',
-      unique: false,
-      notNull: true,
-    },
-    {
-      type: 'String',
-      name: 'address',
-      unique: true,
-      notNull: true,
+      relationType: 'ManyToMany',
+      entity: 'SIPS_T_PESSOA',
+      mappedBy: 'library',
     }
-  ],
+  ]
 };
 
-const BookRelations: Relation[] = [
-  {
-    relationType: 'ManyToMany',
-    entity: 'Library',
-    joinColumn: 'book_id',
-    joinTable: 'book_library',
-    inverseJoinColumn: 'library_id',
-  },
-];
-
-const LibraryRelations: Relation[] = [
-  {
-    relationType: 'ManyToMany',
-    entity: 'Book',
-    mappedBy: 'library',
-  },
-];
 
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
-  await newApi(apiConfig, OUTPUT_DIR);
 
 });
 
 afterAll(async () => {
-  await fs.rm(OUTPUT_DIR, {recursive: true});
+  // await fs.rm(OUTPUT_DIR, {recursive: true});
 });
 
 describe('Model generator', () => {
 
   it('should update adding the relations in the model configuration and the model in the api', async () => {
-    bookModel.relations = BookRelations;
-    librayModel.relations = LibraryRelations;
     
-    await addModel(bookModel, OUTPUT_DIR);
-    await addModel(librayModel, OUTPUT_DIR);
+    await addModel(model, OUTPUT_DIR);
+    await addModel(model2, OUTPUT_DIR);
 
-    const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${bookModel.name}${EXTENSIONS.JSON}`);
+    const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model.name}${EXTENSIONS.JSON}`);
     const bookModelConfig: ModelConfig = await readJsonFile(bookConfigPath);
     expect(bookModelConfig.relations).toBeTruthy();
     
-    const libraryConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${librayModel.name}${EXTENSIONS.JSON}`);
+    const libraryConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model2.name}${EXTENSIONS.JSON}`);
     const libraryModelConfig: ModelConfig = await readJsonFile(libraryConfigPath);
     expect(libraryModelConfig.relations).toBeTruthy();
 

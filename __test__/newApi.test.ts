@@ -5,15 +5,15 @@ import { getMainPath } from '../src/utils/helpers';
 import { ApiConfig } from '../src/interfaces/types';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'api_rest',
-  group: 'nosi',
-  artifact: 'igrp',
-  description: 'API-TEST',
-  database: 'PostgreSQL',
+  apiName: 'demo', //Names with hyphens or spaces are not accepted.
+  group: 'example',
+  artifact: 'demo',
+  description: 'Demo project for Spring Boot',
+  database: 'PostgreSQL' // you can choose between MySQL and PostgreSQL
 };
 
 beforeEach(async () => {
@@ -21,7 +21,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await fs.rm(OUTPUT_DIR, { recursive: true });
+  // await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
 describe('New API Module', () => {
