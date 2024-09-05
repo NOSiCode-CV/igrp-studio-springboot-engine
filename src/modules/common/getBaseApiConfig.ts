@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 import { ApiConfig } from '../../interfaces/types';
+import { apiValidation } from '../../schema/apiConfig';
 
 /**
 * Loads and validates the base API configuration from the `baseApi.json` file.
@@ -12,10 +13,13 @@ import { ApiConfig } from '../../interfaces/types';
 */
 export const getBaseApiConfig = async  (basePath: string): Promise<ApiConfig> => {
     const apiConfig = await fs.readJSON(path.join(basePath, DIRECTORIES.IGRPSTUDIO, COMMON_FILES.BASE_API));
+    const valid = apiValidation(apiConfig);
 
-    // TODO: Verify with Validation Schema.
-    if (!apiConfig?.type || !apiConfig?.artifact || !apiConfig?.group || !apiConfig?.apiName ) {
-        throw ERROR_MESSAGE.INVALID_API_CONFIG;
+    if (!valid && apiValidation.errors) 
+        throw apiValidation.errors;
+
+    if (!basePath) {
+        throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
     }
 
     return <ApiConfig> apiConfig;

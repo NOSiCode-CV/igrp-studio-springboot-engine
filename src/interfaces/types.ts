@@ -1,4 +1,4 @@
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
+import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
 
 export interface ApiConfig {
   type: 'baseApi';
@@ -88,3 +88,5 @@ export type DatabaseTypes = typeof DATABASE_TYPES[number];
 export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
 export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
 export type ResponseTypes = typeof RESPONSE_TYPES[number];
+export type ParamsTypes = typeof PARAMS_TYPES[number];
+

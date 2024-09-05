@@ -53,11 +53,13 @@ import { generateServiceInterface } from './modules/controller/generateServiceIn
  * 
  */
 export const newApi = async (config: ApiConfig, basePath: string) => {
-  // TODO: Validate only here the inputs.
   const valid = apiValidation(config);
 
-  if (!valid && apiValidation.errors) {
+  if (!valid && apiValidation.errors) 
     throw apiValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
 
   if (!(await checkIfDirectoryIsEmpty(basePath))) {
@@ -128,7 +130,9 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 export const addModel = async (config: ModelConfig, basePath: string) => {
   const valid = validateModelConfig(config);
 
-  if (!valid && validateModelConfig.errors) throw validateModelConfig.errors;
+  if (!valid && validateModelConfig.errors) {
+    throw validateModelConfig.errors
+  }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
@@ -236,7 +240,6 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
  * addOrderRelationship();
  */
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
-  // TODO: Add validation
   await addModel(config, basePath);
 };
 
@@ -275,7 +278,9 @@ export const addRelationship = async (config: ModelConfig, basePath: string) => 
 export const deleteModel = async (config: ModelConfig, basePath: string) => {
   const valid = validateModelConfig(config);
 
-  if (!valid && validateModelConfig.errors) throw validateModelConfig.errors;
+  if (!valid && validateModelConfig.errors) {
+    throw validateModelConfig.errors
+  }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 

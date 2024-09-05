@@ -13,16 +13,8 @@ import { validateModelConfig } from '../../schema/modelConfig';
  */
 export const saveModelConfig = async (config: ModelConfig, basePath: string) => {
   
-  if (!config || !config.name || !config.attributes) {
-    throw ERROR_MESSAGE.MODEL_REQUIRED;
-  }
-
   if (config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
-  }
-
-  if (!basePath || !(await fs.pathExists(basePath))) {
-    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
 
   const output = getModelConfigPath(config.name, basePath);

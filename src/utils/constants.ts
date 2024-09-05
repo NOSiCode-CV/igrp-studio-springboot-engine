@@ -101,9 +101,12 @@ export const EXTENSIONS = {
 export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-]+$',
+  NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9]*$',
+  PARAMS_VALIDATION: '^[a-zA-Z]+$',
+  PATH_VALIDATION: '^[a-zA-Z]+$',
 };
 
-export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'] as const;
 
 export const ATTRIBUTE_TYPES = [
   'Boolean',
@@ -126,12 +129,12 @@ export const RESPONSE_TYPES = [
   'String',
   'Integer',
   'Boolean',
-  "Object",
-  "List<String>",
-  "List<Integer>",
-  "List<Boolean>",
-  "List<Object>"
-]
+  'Object',
+  'List<String>',
+  'List<Integer>',
+  'List<Boolean>',
+  'List<Object>',
+] as const;
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
@@ -145,4 +148,6 @@ export const HTTP_METHOD_TYPES = [
 ] as const;
 export const CRUD_DISABLED_OPTIONS = ['save', 'delete'] as const;
 
-export const RELATIONSHIP_TYPES = ["OneToOne", "OneToMany", "ManyToOne", "ManyToMany"] as const;
+export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
+
+export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean'] as const

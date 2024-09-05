@@ -18,8 +18,6 @@ export const generateServiceInterface = async (context: RenderContext<Controller
 };
 
 export const renderServiceInterface = async (context: RenderContext<ControllerConfig>) => {
-  if (!context.resourceConfig) throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
-
   return await renderTemplate(TEMPLATES.DOMAIN_ICONTROLLER, context);
 };
 

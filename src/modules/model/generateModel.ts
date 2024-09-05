@@ -4,7 +4,6 @@ import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
-import { validateModelConfig } from '../../schema/modelConfig';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
@@ -21,17 +20,12 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
  * @throws - Throws an error if the model configuration is invalid or has no attributes.
  */
 const renderModel = async (context: RenderContext<ModelConfig>) => {
-  const isModelValid = validateModelConfig(context.resourceConfig)
   context.sqlAttributes = sqlUniquesAttributes(context.resourceConfig.attributes)
   context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
-
-  if (!isModelValid && validateModelConfig.errors) throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
 
   if (context.resourceConfig.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
-
-
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };

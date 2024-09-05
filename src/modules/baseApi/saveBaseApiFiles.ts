@@ -2,7 +2,6 @@ import path from 'path';
 import { RenderContext } from '../../interfaces/types';
 import {
   DIRECTORIES,
-  ERROR_MESSAGE,
   TEMPLATES,
   COMMON_FILES,
   CONFIG_FILES,
@@ -11,7 +10,6 @@ import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveToFile } from '../common/saveToFile';
-import { apiValidation } from '../../schema/apiConfig';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -23,9 +21,6 @@ export const saveFileConfig = async (context: RenderContext) => {
 };
 
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
-  const valid = apiValidation(context.baseConfig);
-
-  if (!valid && apiValidation.errors) throw apiValidation.errors;
 
   context.baseConfig.name = capitalize(context.baseConfig.apiName);
   context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.artifact}`;

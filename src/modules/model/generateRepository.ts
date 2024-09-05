@@ -28,12 +28,6 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
  * @throws - Throws an error if the model configuration is invalid or if CRUD is not specified.
  */
 export const renderRepository = async (context: RenderContext<ModelConfig>) => {
-  const isModelValid = validateModelConfig(context.resourceConfig);
-  const isCrudValid = context.resourceConfig.crud ? validateCrud(context.resourceConfig.crud): false
-
-  if (!(isModelValid || isCrudValid) && (validateModelConfig.errors || validateCrud.errors))
-    throw ERROR_MESSAGE.INVALID_MODEL_CONFIG;
-
   
   return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
 };

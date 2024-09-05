@@ -10,61 +10,67 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     type: { 
       type: "string", 
       const: "baseApi",
-      errorMessage: "The 'type' attribute must be 'baseApi'."  // Error message for the constant
+      errorMessage: "The 'type' attribute must have the value 'baseApi'."  
     },
     apiName: { 
       type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
-      minLength: 1,
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
-        pattern: "The 'apiName' attribute cannot contain spaces or hyphens.",
-        minLength: "The 'apiName' attribute cannot be empty."
+        pattern: "The 'apiName' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
       }
     },
     group: { 
-      // TODO Add Pattern
       type: "string", 
-      minLength: 1, 
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
-        minLength: "The 'group' attribute cannot be empty."
+        pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
       }
     },
     artifact: { 
-      // TODO Add Pattern
-      type: "string", 
-      minLength: 1, 
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN, 
       errorMessage: {
-        minLength: "The 'artifact' attribute cannot be empty."
+        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
       }
     },
     database: { 
       type: "string", 
       enum: DATABASE_TYPES,
-      minLength: 1, 
       errorMessage: {
-        minLength: "The 'database' attribute cannot be empty."
+        enum: "The 'database' attribute cannot be empty and must be one of the following: 'PostgreSQL', 'MySQL', or 'Oracle'."
       }
     },
     description: { 
       type: "string", 
       nullable: true, 
       errorMessage: {
-        type: "The 'description' attribute must be a string."
+        type: "The 'description' attribute must be a valid string."
       }
+    },
+    package: {
+      type: "string",
+      nullable: true
+    },
+    name: {
+      type: "string",
+      nullable: true
     }
   },
   required: ["type", "apiName", "group", "artifact", "database"],
   additionalProperties: false,
   errorMessage: {
     required: {
-      type: "The 'type' attribute is required.",
-      apiName: "The 'apiName' attribute is required.",
-      group: "The 'group' attribute is required.",
-      artifact: "The 'artifact' attribute is required.",
-      database: "The 'database' attribute is required."
+      type: "The 'type' attribute is required and must be specified.",
+      apiName: "The 'apiName' attribute is required and cannot be left blank.",
+      group: "The 'group' attribute is required and must be provided.",
+      artifact: "The 'artifact' attribute is required and cannot be empty.",
+      database: "The 'database' attribute is required and must specify a valid database type."
     },
-    additionalProperties: "No additional properties are allowed in the API configuration."
+    additionalProperties: "Extra attributes are not allowed in the API configuration."
   }
 };
 
+
 export const apiValidation: ValidateFunction<ApiConfig> = ajvInstance.compile<ApiConfig>(apiSchema);
+
+

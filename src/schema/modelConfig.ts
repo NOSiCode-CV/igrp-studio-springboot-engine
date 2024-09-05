@@ -3,68 +3,185 @@ import { JSONSchemaType, ValidateFunction } from "ajv";
 import { ModelConfig, Crud, Attribute, Relation } from "../interfaces/types";
 import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES } from "../utils/constants";
 
-// TODO Add errors
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
   properties: {
-    type: { type: "string", enum: ATTRIBUTE_TYPES, minLength: 1 },
-    // TODO: Check convention with pattern
-    name: { type: "string", minLength: 1 },
-    primary: { type: "boolean", nullable: true }, 
-    required: { type: "boolean", nullable: true },  
-    unique: { type: "boolean", nullable: true},
-    notNull: { type: "boolean", nullable: true }
+    type: { 
+      type: "string",
+      enum: ATTRIBUTE_TYPES, 
+      errorMessage: `The attribute type must be one of ${ATTRIBUTE_TYPES} and cannot be empty.`
+    },
+    name: { 
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
+    },
+    primary: { 
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The primary attribute must be a boolean value if provided.'
+    }, 
+    required: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The required attribute must be a boolean value if provided.'
+    },  
+    unique: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The unique attribute must be a boolean value if provided.'
+    },
+    notNull: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The notNull attribute must be a boolean value if provided.'
+    }
   },
   required: ["type", "name"],
   additionalProperties: false,
+  errorMessage: {
+    required: {
+      type: 'The attribute type is required.',
+      name: 'The attribute name is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the attribute schema.'
+  }
 };
 
-// TODO Add errors
+
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",
   properties: {
-    enabled: { type: "boolean" },
-    // TODO Add pattern
-    path: { type: "string", minLength: 1 },
-    disabledMethods: { type: "array", items: { type: "string", enum: CRUD_DISABLED_OPTIONS } }
+    enabled: { 
+      type: "boolean",
+      errorMessage: 'The enabled property must be a boolean value.'
+    },
+    path: { 
+      type: "string", 
+      pattern: PATTERNS.PATH_VALIDATION,
+      errorMessage: 'The path must contain only alphabetic characters and cannot contain spaces or special characters.'
+    },
+    disabledMethods: { 
+      type: "array", 
+      items: { 
+        type: "string", 
+        enum: CRUD_DISABLED_OPTIONS,
+        errorMessage: `Each disabled method must be one of the following: ${CRUD_DISABLED_OPTIONS}.`
+      },
+      errorMessage: 'The disabledMethods must be an array of valid method names.'
+    }
   },
   required: ["enabled", "path", "disabledMethods"],
   additionalProperties: false,
+  errorMessage: {
+    required: {
+      enabled: 'The enabled field is required.',
+      path: 'The path field is required and cannot be empty.',
+      disabledMethods: 'The disabledMethods field is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the CRUD schema.'
+  }
 };
+
 
 // TODO Add errors
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
-    relationType: { type: "string", enum: RELATIONSHIP_TYPES, minLength: 1 },
+    relationType: { 
+      type: "string", 
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
     // TODO Add pattern with existing entities (it is a function and it will need to read the config files)
-    entity: { type: "string", minLength: 1 },
-    // TODO: Add pattern for convention. 
-    mappedBy: { type: "string", nullable: true },
+    entity: { 
+      type: "string", 
+      minLength: 1,
+      errorMessage: 'The entity name is required and cannot be empty.' 
+    },
+    mappedBy: { 
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN, 
+      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
+
+    },
     // TODO: Add pattern based on the selected entity.  
-    joinColumn: { type: "string", nullable: true }, 
+    joinColumn: { 
+      type: "string", 
+      nullable: true,
+      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.' 
+    }, 
     // TODO: Add pattern based on the selected entity. 
-    joinTable: { type: "string", nullable: true },  
+    joinTable: { 
+      type: "string",
+      nullable: true,
+      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
+    },  
+
     // TODO: Add pattern based on the selected entity. 
-    inverseJoinColumn: { type: "string", nullable: true }  
+    inverseJoinColumn: { 
+      type: "string", 
+      nullable: true,
+      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.' 
+    }  
   },
   required: ["relationType", "entity"],
   additionalProperties: false,
+  errorMessage: {
+    required: {
+      relationType: 'The relationType is required and cannot be empty.',
+      entity: 'The entity is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
 };
 
-// TODO Add errors
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
-    type: { type: "string", const: "model" },
-    name: { type: "string", minLength: 1, pattern: PATTERNS.NO_SPACE_AND_HYPHEN },
-    attributes: { type: "array", items: attributeSchema },
-    crud: { type: "object", nullable: true, properties: crudSchema.properties, required: crudSchema.required },
-    relations: { type: "array", nullable: true, items: relationSchema }
+    type: { 
+      type: "string", 
+      const: "model",
+      errorMessage: 'The type must be "model".'
+    },
+    name: { 
+      type: "string", 
+      minLength: 1, 
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+    },
+    attributes: { 
+      type: "array", 
+      items: attributeSchema,
+      errorMessage: 'The attributes must be an array of valid attribute definitions.'
+    },
+    crud: { 
+      type: "object", 
+      nullable: true, 
+      properties: crudSchema.properties, 
+      required: crudSchema.required,
+      errorMessage: 'If provided, the CRUD configuration must be valid.'
+    },
+    relations: { 
+      type: "array", 
+      nullable: true, 
+      items: relationSchema,
+      errorMessage: 'The relations, if provided, must be an array of valid relationship definitions.'
+    }
   },
   required: ["type", "name", "attributes"],
   additionalProperties: false,
+  errorMessage: {
+    required: {
+      type: 'The type field is required and must be "model".',
+      name: 'The name field is required and must follow the naming convention.',
+      attributes: 'The attributes field is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the model configuration schema.'
+  }
 };
+
 
 export const validateModelConfig: ValidateFunction<ModelConfig> = ajvInstance.compile<ModelConfig>(modelConfigSchema);
 export const validateCrud: ValidateFunction<Crud> = ajvInstance.compile<Crud>(crudSchema)
