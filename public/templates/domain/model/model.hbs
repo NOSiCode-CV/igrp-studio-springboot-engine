@@ -18,28 +18,46 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 {{/each}}
 {{/if}}
 
-/**
-* {{resourceConfig.name}}
-*/
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="{{resourceConfig.tableName}}")
 public class {{resourceConfig.name}} {
-  @Id
-  //@GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(unique = true, nullable = false)
-  private Long id;
-
   {{#each resourceConfig.attributes}}
+  {{#if (eq this.primarykey true)}}
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(unique = true, nullable = false)
+  private {{this.type}} {{this.name}};
+  {{else}}
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}
-  @Column({{#if (eq this.unique 'true')}}unique = {{this.unique}}{{/if}}, nullable = {{this.notNull}})
+  {{#if (eq this.type 'Text')}}
+  @Column(
+    name="{{toLowerCase this.name}}",{{#if (eq this.unique true)}},
+    unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, 
+    nullable = {{this.nullable}},{{/if}}
+    columnDefinition="TEXT"{{#if this.length}},
+    length={{this.length}}{{/if}}
+  )
+  private String {{this.name}};
+  {{else}}
+  @Column(
+    name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, 
+    unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, 
+    nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}},
+    length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}},
+    length={{this.length}}{{/if}}{{/if}}
+  )
   private {{this.type}} {{this.name}};
+  {{/if}}
+  {{/if}}
   
   {{/each}}
- {{#if resourceConfig.relations}}
+  {{#if resourceConfig.relations}}
   {{#each resourceConfig.relations}}
   {{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}
@@ -58,16 +76,15 @@ public class {{resourceConfig.name}} {
   {{#ifNot this.mappedBy}}
   @ManyToMany
   @JoinTable(
-      name = "{{this.joinTable}}",
-      joinColumns = @JoinColumn(name = "{{this.joinColumn}}"),
-      inverseJoinColumns = @JoinColumn(name = "{{this.inverseJoinColumn}}")
+    name = "{{this.joinTable}}",
+    joinColumns = @JoinColumn(name = "{{this.joinColumn}}"),
+    inverseJoinColumns = @JoinColumn(name = "{{this.inverseJoinColumn}}")
   )
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
   {{else}}
   @ManyToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
   {{/ifNot}}
-
 {{/if}}
 {{/each}}
 {{/if}}

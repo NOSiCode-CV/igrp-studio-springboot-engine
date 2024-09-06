@@ -19,10 +19,19 @@ public class {{resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
-  @RequestMapping(value = "{{path}}", method = RequestMethod.{{method}})
-  public ResponseEntity<{{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}}> {{name}}({{#each pathParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}) {
-      {{#if (contains response "List<")}}{{response}}{{else}}{{response}}{{/if}} result = {{toLowerCase../resourceConfig.name}}Service.{{name}}({{#each pathParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-      return ResponseEntity.ok(result);
+  @RequestMapping(value = "{{path}}{{#each pathParams}}/{ {{this.name}} }{{/each}}", method = RequestMethod.{{method}})
+  {{#if this.isList}}
+  public ResponseEntity<List<{{this.response}}>> {{name}}({{#if requestBody}}@RequestBody Object {{this.type}} {{requestBody}}{{/if}}{{#each pathParams}}, @PathVariable {{this.type}} {{this.name}}{{/each}}) {
+    List<{{this.response}}> result = {{toLowerCase ../resourceConfig.name}}Service.{{name}}({{#if requestBody}}{{requestBody}}{{/if}}{{#each pathParams}}, {{this.name}}{{/each}});
+    return ResponseEntity.ok(result);
   }
+  {{else}}
+  public ResponseEntity<{{this.response}}> {{name}}({{#if requestBody}}@RequestBody Object {{this.type}} {{requestBody}},{{/if}} {{#each pathParams}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}) {
+    {{this.response}} result = {{toLowerCase ../resourceConfig.name}}Service.{{name}}({{#each pathParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+    return ResponseEntity.ok(result);
+  }
+  {{/if}}
   {{/each}}
+
 }
+

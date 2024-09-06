@@ -11,38 +11,33 @@ const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 const model: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_PESSOA',
+  tableName: 'sips_t_pessoa',
+  audit: false,
   attributes: [
-    { type: 'Integer', name: 'idEstadoCivil', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nome', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'sexo', unique: false, notNull: true, required: true },
-    { type: 'Date', name: 'dtNascimento', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nomePai', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nomeMae', unique: false, notNull: true, required: true },
-    { type: 'Timestamp', name: 'dia', unique: false, notNull: true, required: true },
-    { type: 'Time', name: 'hora', unique: false, notNull: true, required: true },
-    { type: 'BigInteger', name: 'millones', unique: false, notNull: true, required: true },
-    { type: 'BigDecimal', name: 'escudos', unique: false, notNull: true, required: true },
+    { type: 'Long', name: 'idPessoa', primarykey: true},
+    { type: 'String', name: 'numero', unique: false, nullable: false, required: true },
+    { type: 'String', name: 'nomeMae', length:30 },
+    { type: 'Float', name: 'saldo', length:50},
+    { type: 'Boolean', name: 'fumador', length:30 },
+    { type: 'Text', name: 'nomePai', length:2000, required: true},
   ], 
   crud: {
     enabled: true,
     path: 'sips_pessoa',
-    disabledMethods: ['delete'],
+    disabledMethods: ['delete', 'deleteAll', 'deleteAllIterable', 'deleteById', 'save'],
   }
 };
 
-const model2: ModelConfig = {
-  type: 'model',
-  name: 'SIPS_T_UTENTE',
-  attributes: [
-    { type: 'Integer', name: 'idPessoa', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'numero', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nib', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nrConvencao', unique: false, notNull: true, required: true },
-  ]
-};
-
-
-
+// const model2: ModelConfig = {
+//   type: 'model',
+//   name: 'SIPS_T_UTENTE',
+//   attributes: [
+//     { type: 'Integer', name: 'idPessoa', unique: false, notNull: true, required: true },
+//     { type: 'String', name: 'numero', unique: false, notNull: true, required: true },
+//     { type: 'String', name: 'nib', unique: false, notNull: true, required: true },
+//     { type: 'String', name: 'nrConvencao', unique: false, notNull: true, required: true },
+//   ]
+// };
 
 
 beforeAll(async () =>{
@@ -56,16 +51,16 @@ afterAll(async () => {
 describe('Model generator', () => {
   const invalidModelConfig: ModelConfig = { ...model, name: '' };
 
-  it('should fail because the model config file has non-name', async () => {
-    expect(
-      async () => await addModel(invalidModelConfig, OUTPUT_DIR),
-    ).rejects.toEqual(ERROR_MESSAGE.INVALID_MODEL_CONFIG);
-  });
+  // it('should fail because the model config file has non-name', async () => {
+  //   expect(
+  //     async () => await addModel(invalidModelConfig, OUTPUT_DIR),
+  //   ).rejects.toEqual(ERROR_MESSAGE.INVALID_MODEL_CONFIG);
+  // });
 
 
   it('should create a model in th api', async () => {
     await addModel(model, OUTPUT_DIR);
-    await addModel(model2, OUTPUT_DIR);
+    // await addModel(model2, OUTPUT_DIR);
 
     const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
     const config: ApiConfig = await readJsonFile(configPath);

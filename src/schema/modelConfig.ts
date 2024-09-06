@@ -16,10 +16,15 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
-    primary: { 
+    length: {
+      type: "number",
+      nullable: true,
+      errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
+    },
+    primarykey: { 
       type: "boolean",
       nullable: true,
-      errorMessage: 'The primary attribute must be a boolean value if provided.'
+      errorMessage: 'The primary key attribute must be a boolean value if provided.'
     }, 
     required: { 
       type: "boolean", 
@@ -31,7 +36,7 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
     },
-    notNull: { 
+    nullable: { 
       type: "boolean", 
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
@@ -147,10 +152,18 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
     },
     name: { 
       type: "string", 
-      minLength: 1, 
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
     },
+    tableName: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The table name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+    },
+    audit: { 
+      type: "boolean",
+      errorMessage: 'The audit attribute must be a boolean value.'
+    }, 
     attributes: { 
       type: "array", 
       items: attributeSchema,
@@ -170,12 +183,13 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       errorMessage: 'The relations, if provided, must be an array of valid relationship definitions.'
     }
   },
-  required: ["type", "name", "attributes"],
+  required: ["type", "name", "attributes", "tableName", "audit"],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The type field is required and must be "model".',
       name: 'The name field is required and must follow the naming convention.',
+      tableName: "table name is required",
       attributes: 'The attributes field is required and cannot be empty.'
     },
     additionalProperties: 'No additional properties are allowed in the model configuration schema.'

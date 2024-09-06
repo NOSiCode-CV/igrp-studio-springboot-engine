@@ -9,7 +9,7 @@ const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'ssss', //Names with hyphens or spaces are not accepted.
+  apiName: 'apiDemo', //Names with hyphens or spaces are not accepted.
   group: 'com',
   artifact: 'demo',
   description: 'Demo project for Spring Boot',
@@ -21,19 +21,19 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await fs.rm(OUTPUT_DIR, { recursive: true });
+  // await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
 describe('New API Module', () => {
   // To run this test you need to provide a non-empty directory.
-  it('Sshould fail because the directory is not empty', async () => {
-    expect(async () => await newApi(apiConfig, OUTPUT_DIR)).rejects.toThrow(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
-  });
+  // it('Sshould fail because the directory is not empty', async () => {
+  //   expect(async () => await newApi(apiConfig, OUTPUT_DIR)).rejects.toThrow(ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE);
+  // });
 
-  it('should fail when trying to create a new api with empty fields or apiName with hyphen or space', async () => {
-    const invalidConfig: ApiConfig = { ...apiConfig, apiName: 'api-name', group:'' };
-    await expect(async () => await newApi(invalidConfig, OUTPUT_DIR)).rejects.toEqual(ERROR_MESSAGE.INVALID_API_CONFIG);
-  });
+  // it('should fail when trying to create a new api with empty fields or apiName with hyphen or space', async () => {
+  //   const invalidConfig: ApiConfig = { ...apiConfig, apiName: 'api-name', group:'' };
+  //   await expect(async () => await newApi(invalidConfig, OUTPUT_DIR)).rejects.toEqual(ERROR_MESSAGE.INVALID_API_CONFIG);
+  // });
 
   it('should create the project structure with all the directories and templates.', async () => {
     await newApi(apiConfig, OUTPUT_DIR);

@@ -147,7 +147,7 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
 
   await generateModel(context);
 
-  if (config.crud) {
+  if (config.crud?.enabled) {
     await generateRepository(context);
   }
 };

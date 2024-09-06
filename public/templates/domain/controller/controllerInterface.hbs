@@ -3,8 +3,8 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfi
 import java.util.List;
 
 public interface {{resourceConfig.name}}ServiceInterface {
-  
+
   {{#each resourceConfig.actions}}
-  {{#if (eq response 'List')}}List<{{../resourceConfig.name}}>{{else}}{{response}}{{/if}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+  {{#if this.isList}}List<{{this.response}}> {{name}}({{#if requestBody}}Object {{this.type}}{{requestBody}}{{/if}}{{#each pathParams}}, {{this.type}} {{this.name}}{{/each}}); {{else}}{{response}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}); {{/if}}
   {{/each}}
 }

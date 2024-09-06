@@ -23,6 +23,7 @@ export const SUCCESS_MESSAGE = {
 export const ERROR_MESSAGE = {
   BASE_API_NOT_FOUND: 'The base api json file configuration was not found.',
   CONTROLLER_FILE_CONFIG_NOT_FOUND: 'Controller file configuration not found',
+  CONTROLLER_FILE_NOT_FOUND: 'Controller class not found',
   DIRECTORY_DOES_NOT_EXIST:
     'The specified directory does not exist. Please select a different directory.',
   DIRECTORY_ALREADY_IN_USE:
@@ -101,9 +102,10 @@ export const EXTENSIONS = {
 export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-]+$',
-  NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9]*$',
-  PARAMS_VALIDATION: '^[a-zA-Z]+$',
-  PATH_VALIDATION: '^[a-zA-Z]+$',
+  NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
+  PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
+  PATH_VALIDATION: '^[a-zA-Z_/]+$',
+  NUMBER_VALIDATION: '^\d+$'
 };
 
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'] as const;
@@ -123,6 +125,7 @@ export const ATTRIBUTE_TYPES = [
   'BigDecimal',
   'Time',
   'Timestamp',
+  'Text'
 ] as const;
 
 export const RESPONSE_TYPES = [
@@ -133,7 +136,7 @@ export const RESPONSE_TYPES = [
   'List<String>',
   'List<Integer>',
   'List<Boolean>',
-  'List<Object>',
+  'List<Object>'
 ] as const;
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
@@ -146,8 +149,8 @@ export const HTTP_METHOD_TYPES = [
   'OPTIONS',
   'HEAD',
 ] as const;
-export const CRUD_DISABLED_OPTIONS = ['save', 'delete'] as const;
+export const CRUD_DISABLED_OPTIONS = ['save', 'delete', 'deleteAllIterable', 'deleteAll', 'deleteById'] as const;
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean'] as const
+export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const

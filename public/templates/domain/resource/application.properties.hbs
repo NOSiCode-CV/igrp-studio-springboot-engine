@@ -10,7 +10,7 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 {{/if}}
 
-{{#if (eq baseConfig.database "PostgreSQL")}}
+{{#if (eq baseConfig.database "Postgresql")}}
 spring.datasource.url=jdbc:postgresql://<HOST>:<PORT>/<DATABASE_NAME>?<OPTIONAL_PARAMETERS>
 spring.datasource.username="username"
 spring.datasource.password="password"
@@ -18,4 +18,14 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+{{/if}}
+
+{{#if (eq baseConfig.database "Oracle")}}
+spring.datasource.url=jdbc:oracle:thin:@//<HOST>:<PORT>/<DATABASE_NAME>
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contraseña
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+
 {{/if}}

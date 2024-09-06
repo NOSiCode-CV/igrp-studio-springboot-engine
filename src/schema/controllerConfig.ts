@@ -40,17 +40,26 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'the name attribute can only contain characters whithout spaces or special characters.'
     },
+    isResponseList: { 
+      type: "boolean",
+      errorMessage: 'The isList attribute must be a boolean'
+    },
     method: { 
       type: 'string', 
       enum: HTTP_METHOD_TYPES,
       errorMessage: `method type can only be one of ${HTTP_METHOD_TYPES}`
+    },
+    requestBody: { 
+      type: 'string', 
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      nullable: true,
+      errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
     },
     pathParams: { 
       type: 'array', 
       items: pathParamsSchema, 
       nullable: true,
       errorMessage: 'Path params can only contain a characters without spaces or special characters.'
-
     },
     response: { 
       type: 'string',
@@ -58,7 +67,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage: `Response type can only be one of ${RESPONSE_TYPES}`
     },
   },
-  required: ['path', 'name', 'method', 'response'],
+  required: ['path', 'name', 'method', 'response', 'isResponseList'],
   additionalProperties: false,
   errorMessage: {
     required: {

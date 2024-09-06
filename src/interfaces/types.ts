@@ -14,6 +14,8 @@ export interface ApiConfig {
 export interface ModelConfig {
   type: 'model';
   name: string;
+  tableName: string;
+  audit: boolean,
   attributes: Attribute[];
   crud?: Crud;
   relations?: Relation[];
@@ -27,10 +29,11 @@ export interface Icontroller {
 export interface Attribute {
   type: AttributeType;
   name: string;
-  primary?: boolean;
+  length?: number,
+  nullable?: boolean;
+  primarykey?: boolean;
   required?: boolean;
   unique?: boolean;
-  notNull?: boolean;
 }
 
 export interface Relation {
@@ -64,7 +67,9 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   name: string;
+  isResponseList: boolean,
   method: HttpMethod;
+  requestBody?: string,
   pathParams?: PathParams[];
   response: string;
 }
