@@ -14,24 +14,25 @@ const apiConfig: ApiConfig = {
   group: 'nosi',
   artifact: 'igrp',
   description: 'API-TEST',
-  database: 'PostgreSQL'
+  database: 'Postgresql'
 };
 
 const model: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_PESSOA',
+  tableName: 'sips',
   attributes: [
-    { type: 'Integer', name: 'idEstadoCivil', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nome', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'sexo', unique: false, notNull: true, required: true },
-    { type: 'Date', name: 'dtNascimento', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nomePai', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nomeMae', unique: false, notNull: true, required: true },
-    { type: 'Timestamp', name: 'dia', unique: false, notNull: true, required: true },
-    { type: 'Time', name: 'hora', unique: false, notNull: true, required: true },
-    { type: 'BigInteger', name: 'millones', unique: false, notNull: true, required: true },
-    { type: 'BigDecimal', name: 'escudos', unique: false, notNull: true, required: true },
-  ], 
+    { type: 'Integer', name: 'idEstadoCivil', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'nome', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'sexo', unique: false, nullable: true, required: true },
+    { type: 'Date', name: 'dtNascimento', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'nomePai', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'nomeMae', unique: false, nullable: true, required: true },
+    { type: 'Timestamp', name: 'dia', unique: false, nullable: true, required: true },
+    { type: 'Time', name: 'hora', unique: false, nullable: true, required: true },
+    { type: 'BigInteger', name: 'millones', unique: false, nullable: true, required: true },
+    { type: 'BigDecimal', name: 'escudos', unique: false, nullable: true, required: true },
+  ],
   crud: {
     enabled: true,
     path: 'sips_pessoa',
@@ -45,17 +46,18 @@ const model: ModelConfig = {
       joinTable: 'book_library',
       inverseJoinColumn: 'library_id',
     },
-  ]
+  ],
 };
 
 const model2: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_UTENTE',
+  tableName: 'sips_utent',
   attributes: [
-    { type: 'Integer', name: 'idPessoa', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'numero', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nib', unique: false, notNull: true, required: true },
-    { type: 'String', name: 'nrConvencao', unique: false, notNull: true, required: true },
+    { type: 'Integer', name: 'idPessoa', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'numero', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'nib', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'nrConvencao', unique: false, nullable: true, required: true },
   ], 
   relations:[
     {

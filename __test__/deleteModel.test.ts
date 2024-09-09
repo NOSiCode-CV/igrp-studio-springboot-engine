@@ -4,7 +4,7 @@ import { deleteModel } from '../src/index';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { TEMPLATE_DIR } from '../src/utils/constants';
 
-const basePath = 'C:/Users/Eduardo Fernando/Downloads/api'
+const basePath = ''
 
 const model: ModelConfig = {
   type: 'model',
@@ -14,15 +14,16 @@ const model: ModelConfig = {
       type: 'String',
       name: 'name',
       unique: false,
-      notNull: true,
+      nullable: true,
     },
     {
       type: 'String',
       name: 'address',
       unique: true,
-      notNull: true,
+      nullable: true,
     },
   ],
+  tableName: 'library'
 };
 
 const apiConfig: ApiConfig = {

@@ -6,13 +6,12 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
+const OUTPUT_DIR = ''
 
 const model: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_PESSOA',
   tableName: 'sips_t_pessoa',
-  audit: false,
   attributes: [
     { type: 'Long', name: 'idPessoa', primarykey: true},
     { type: 'String', name: 'numero', unique: false, nullable: false, required: true },
@@ -24,7 +23,7 @@ const model: ModelConfig = {
   crud: {
     enabled: true,
     path: 'sips_pessoa',
-    disabledMethods: ['delete', 'deleteAll', 'deleteAllIterable', 'deleteById', 'save'],
+    disabledMethods: ['save', 'saveAll', 'delete', 'deleteAll', 'deleteById', 'findAll', 'findById', 'findAllById'],
   }
 };
 

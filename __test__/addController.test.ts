@@ -6,38 +6,41 @@ import { ApiConfig, ControllerConfig } from '../src/interfaces/types';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
 import { HttpMethod } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
+const OUTPUT_DIR = ''
 const GET: HttpMethod = 'GET';
 const POST: HttpMethod = 'POST';
 const controllerConfig: ControllerConfig = {
   type: "controller",
-  name: "Sips",
-  basePath: "sips",
+  name: "Greeting",
+  basePath: "greetings",
   actions: [
     {
-      path: 'sipst',
+      path: 'hello',
       method: 'GET',
-      name: 'saludo',
-      pathParams: [],
+      actionName: 'hello',
+      accepts: 'application/x-cdf',
+      requestParams: [{ type: 'String', name: 'greetingName' }],
       response: 'String',
-      isResponseList: false,
+      isResponseList: false
     },
     {
-      path: 'sipst',
+      path: 'addGreeting',
       method: 'POST',
-      name: 'addSips',
-      isResponseList: true,
-      requestBody: 'pessoa',
-      pathParams: [{ type: 'Long', name: 'idSips' }],
-      response: 'Object'
+      actionName: 'addGreeting',
+      requestBody: 'greeting',
+      pathVariables:[],
+      requestParams: [],
+      response: 'Object',
+      isResponseList: true
     },
     {
-      path: 'sipst',
+      path: 'goodbye',
       method: 'GET',
-      isResponseList: false,
-      name: 'getSips',
-      pathParams: [{ type: 'Long', name: 'id' }],
+      actionName: 'goodBye',
+      pathVariables:[{ type: 'Long', name: 'id' }],
+      requestParams: [{ type: 'String', name: 'greetingName' }],
       response: 'String',
+      isResponseList: false,
     }
   ]
 };

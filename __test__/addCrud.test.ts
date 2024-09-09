@@ -11,23 +11,24 @@ import {
 import { newApi } from '../src/index';
 import { addModel } from '../src/index';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
+const OUTPUT_DIR = ''
 
 const model: ModelConfig = {
   type: 'model',
   name: 'Library',
+  tableName: 'library',
   attributes: [
     {
       type: 'String',
       name: 'name',
       unique: false,
-      notNull: true,
+      nullable: true,
     },
     {
       type: 'String',
       name: 'address',
       unique: true,
-      notNull: true,
+      nullable: true,
     },
   ],
 };

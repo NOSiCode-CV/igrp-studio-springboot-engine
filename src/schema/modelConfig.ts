@@ -53,7 +53,6 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
-
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",
   properties: {
@@ -88,8 +87,6 @@ const crudSchema: JSONSchemaType<Crud> = {
   }
 };
 
-
-// TODO Add errors
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
@@ -98,9 +95,10 @@ const relationSchema: JSONSchemaType<Relation> = {
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
     },
-    // TODO Add pattern with existing entities (it is a function and it will need to read the config files)
+    
     entity: { 
-      type: "string", 
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN, 
       minLength: 1,
       errorMessage: 'The entity name is required and cannot be empty.' 
     },
@@ -111,22 +109,24 @@ const relationSchema: JSONSchemaType<Relation> = {
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
 
     },
-    // TODO: Add pattern based on the selected entity.  
+    
     joinColumn: { 
       type: "string", 
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
       errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.' 
     }, 
-    // TODO: Add pattern based on the selected entity. 
+ 
     joinTable: { 
       type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
       errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
     },  
 
-    // TODO: Add pattern based on the selected entity. 
     inverseJoinColumn: { 
       type: "string", 
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.' 
     }  
@@ -159,10 +159,6 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The table name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
-    },
-    audit: { 
-      type: "boolean",
-      errorMessage: 'The audit attribute must be a boolean value.'
     }, 
     attributes: { 
       type: "array", 
@@ -183,7 +179,7 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       errorMessage: 'The relations, if provided, must be an array of valid relationship definitions.'
     }
   },
-  required: ["type", "name", "attributes", "tableName", "audit"],
+  required: ["type", "name", "attributes", "tableName"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -195,7 +191,6 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
     additionalProperties: 'No additional properties are allowed in the model configuration schema.'
   }
 };
-
 
 export const validateModelConfig: ValidateFunction<ModelConfig> = ajvInstance.compile<ModelConfig>(modelConfigSchema);
 export const validateCrud: ValidateFunction<Crud> = ajvInstance.compile<Crud>(crudSchema)

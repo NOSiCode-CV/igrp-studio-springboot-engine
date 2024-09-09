@@ -1,10 +1,12 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
-
 import java.util.List;
 
 public interface {{resourceConfig.name}}ServiceInterface {
-
   {{#each resourceConfig.actions}}
-  {{#if this.isList}}List<{{this.response}}> {{name}}({{#if requestBody}}Object {{this.type}}{{requestBody}}{{/if}}{{#each pathParams}}, {{this.type}} {{this.name}}{{/each}}); {{else}}{{response}} {{name}}({{#each pathParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}); {{/if}}
+  {{#if this.isResponseList}} 
+  List<{{this.response}}> {{actionName}}({{#if requestBody}}{{this.response}} {{requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+  {{else}}
+  {{response}} {{actionName}}({{#if requestBody}}{{this.response}} {{requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+  {{/if}}
   {{/each}}
 }

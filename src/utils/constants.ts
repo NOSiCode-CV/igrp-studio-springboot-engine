@@ -101,11 +101,10 @@ export const EXTENSIONS = {
 
 export const PATTERNS = {
   NOT_EMPTY: '^.+$',
-  NO_SPACE_AND_HYPHEN: '^[^\\s-]+$',
+  NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
-  PATH_VALIDATION: '^[a-zA-Z_/]+$',
-  NUMBER_VALIDATION: '^\d+$'
+  PATH_VALIDATION: '^[a-zA-Z_/]+$',  
 };
 
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'] as const;
@@ -128,16 +127,7 @@ export const ATTRIBUTE_TYPES = [
   'Text'
 ] as const;
 
-export const RESPONSE_TYPES = [
-  'String',
-  'Integer',
-  'Boolean',
-  'Object',
-  'List<String>',
-  'List<Integer>',
-  'List<Boolean>',
-  'List<Object>'
-] as const;
+export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
@@ -149,7 +139,69 @@ export const HTTP_METHOD_TYPES = [
   'OPTIONS',
   'HEAD',
 ] as const;
-export const CRUD_DISABLED_OPTIONS = ['save', 'delete', 'deleteAllIterable', 'deleteAll', 'deleteById'] as const;
+
+export const MIME_TYPES = [
+  "font/woff2",
+  "application/json",
+  "video/ogg",
+  "application/ogg",
+  "audio/3gpp",
+  "audio/webm",
+  "audio/wav",
+  "image/svg+xml",
+  "image/jpeg",
+  "audio/aac",
+  "audio/mpeg",
+  "application/x-csh",
+  "image/webp",
+  "application/x-7z-compressed",
+  "font/woff",
+  "font/ttf",
+  "video/mpeg",
+  "application/gzip",
+  "application/xml",
+  "text/csv",
+  "text/javascript",
+  "application/pdf",
+  "application/x-tar",
+  "font/otf",
+  "application/zip",
+  "audio/midi",
+  "video/3gpp",
+  "audio/ogg",
+  "image/apng",
+  "image/png",
+  "text/calendar",
+  "text/css",
+  "application/x-cdf",
+  "application/x-bzip",
+  "text/plain",
+  "image/tiff",
+  "video/webm",
+  "audio/x-midi",
+  "image/gif",
+  "application/x-bzip2",
+  "image/bmp",
+  "text/html",
+  "audio/3gpp2",
+  "application/octet-stream",
+  "video/mp4",
+  "video/3gpp2",
+  "application/epub+zip",
+  "image/avif",
+  "video/mp2t"
+];
+
+export const CRUD_DISABLED_OPTIONS = [
+  'save', 
+  'saveAll',
+  'delete', 
+  'deleteAll', 
+  'deleteById',
+  'findAll', 
+  'findById', 
+  'findAllById',
+] as const;
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 

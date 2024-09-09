@@ -1,4 +1,4 @@
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
+import { ATTRIBUTE_TYPES, MIME_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
 
 export interface ApiConfig {
   type: 'baseApi';
@@ -15,7 +15,6 @@ export interface ModelConfig {
   type: 'model';
   name: string;
   tableName: string;
-  audit: boolean,
   attributes: Attribute[];
   crud?: Crud;
   relations?: Relation[];
@@ -66,15 +65,22 @@ export interface ControllerConfig {
 
 export interface ControllerAction {
   path: string;
-  name: string;
+  actionName: string;
   isResponseList: boolean,
   method: HttpMethod;
+  accepts?: MimeTypes,
+  contentType?:MimeTypes, 
   requestBody?: string,
-  pathParams?: PathParams[];
+  requestParams?: RequestParams[];
   response: string;
+  pathVariables?:PathVariables[]
 }
 
-export interface PathParams {
+export interface RequestParams {
+  type: string;
+  name: string;
+}
+export interface PathVariables {
   type: string;
   name: string;
 }
@@ -94,4 +100,5 @@ export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
 export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
 export type ResponseTypes = typeof RESPONSE_TYPES[number];
 export type ParamsTypes = typeof PARAMS_TYPES[number];
+export type MimeTypes = typeof MIME_TYPES[number];
 

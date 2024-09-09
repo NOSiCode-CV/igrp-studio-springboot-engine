@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import java.util.Optional;
 
 @Repository
 @RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
@@ -33,6 +34,18 @@ public interface {{resourceConfig.name}}Repository extends CrudRepository<{{reso
   @Override
   @RestResource(exported = false)
   void deleteAll(Iterable<? extends {{../resourceConfig.name}}> entities);
+  {{else if (eq this 'findAll')}}
+  @Override
+  @RestResource(exported = false)
+  Iterable<{{../resourceConfig.name}}> findAll();
+  {{else if (eq this 'findById')}}
+  @Override
+  @RestResource(exported = false)
+  Optional<{{../resourceConfig.name}}> findById(Long id);
+  {{else if (eq this 'findAllById')}}
+  @Override
+  @RestResource(exported = false)
+  Iterable<{{../resourceConfig.name}}> findAllById(Iterable<Long> ids);
   {{/if}}
 
   {{/each}}

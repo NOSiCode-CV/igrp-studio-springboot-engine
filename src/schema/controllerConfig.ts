@@ -1,9 +1,9 @@
-import { HTTP_METHOD_TYPES, PARAMS_TYPES, PATTERNS, RESPONSE_TYPES } from '../utils/constants';
+import { HTTP_METHOD_TYPES, MIME_TYPES, PARAMS_TYPES, PATTERNS, RESPONSE_TYPES } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
-import { ControllerAction, ControllerConfig, PathParams, } from '../interfaces/types';
+import { ControllerAction, ControllerConfig, RequestParams, } from '../interfaces/types';
 
-const pathParamsSchema: JSONSchemaType<PathParams> = {
+const pathParamsSchema: JSONSchemaType<RequestParams> = {
   type: 'object',
   properties: {
     type: { 
@@ -35,10 +35,10 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       pattern: PATTERNS.PATH_VALIDATION,
       errorMessage:'The path attribute must only contain characters whithout spaces or special characters.'
     },
-    name: { 
+    actionName: { 
       type: 'string', 
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'the name attribute can only contain characters whithout spaces or special characters.'
+      errorMessage: 'the ActionName attribute can only contain characters whithout spaces or special characters.'
     },
     isResponseList: { 
       type: "boolean",
@@ -55,7 +55,13 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       nullable: true,
       errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
     },
-    pathParams: { 
+    requestParams: { 
+      type: 'array', 
+      items: pathParamsSchema, 
+      nullable: true,
+      errorMessage: 'Request params can only contain a characters without spaces or special characters.'
+    },
+    pathVariables: { 
       type: 'array', 
       items: pathParamsSchema, 
       nullable: true,
@@ -64,10 +70,22 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     response: { 
       type: 'string',
       enum: RESPONSE_TYPES,
-      errorMessage: `Response type can only be one of ${RESPONSE_TYPES}`
+      errorMessage: `Response type can only be one of [${RESPONSE_TYPES}]`
     },
+    accepts: {
+      type: "string",
+      enum: MIME_TYPES,
+      nullable: true,
+      errorMessage: `Accepts type can only be one of ${MIME_TYPES}`
+    },
+    contentType: {
+      type: "string",
+      enum: MIME_TYPES,
+      nullable: true,
+      errorMessage: `ContentType type can only be one of ${MIME_TYPES}`
+    }
   },
-  required: ['path', 'name', 'method', 'response', 'isResponseList'],
+  required: ['path', 'actionName', 'method', 'response', 'isResponseList'],
   additionalProperties: false,
   errorMessage: {
     required: {

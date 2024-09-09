@@ -51,4 +51,8 @@ Handlebars.registerHelper('contains', function(str, substring) {
   return str.includes(substring);
 });
 
+Handlebars.registerHelper('paramsFormat', function(str){
+  return `{${str}}`
+})
+
 export { Handlebars };
