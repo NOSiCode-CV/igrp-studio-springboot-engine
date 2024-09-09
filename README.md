@@ -89,14 +89,10 @@ const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'String', name: 'email', unique: true, notNull: true, required: true },
-    { type: 'String', name: 'password', unique: false, notNull: true, required: true },
-  ],
-  crud: {
-    enabled: true,
-    path: 'users',
-    disabledMethods: ['delete'],
-  },
+    { type: 'Long', name: 'idUser', primarykey: true},
+    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
+    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
+  ]
   relations: [],
 };
 const basePath = 'C://your_project_path';
@@ -121,8 +117,9 @@ const config: ModelConfig = {
   type: 'model',
   name: 'Product',
   attributes: [
-    { type: 'String', name: 'name', required: true, notNull: true },
-    { type: 'Integer', name: 'price', notNull: true }
+    { type: 'Long', name: 'productId', primarykey: true},
+    { type: 'String', name: 'name', required: true, nullable: false },
+    { type: 'Integer', name: 'price' }
   ],
   crud: {
     enabled: true,
@@ -142,6 +139,8 @@ const addProductCrud = async () => {
   }
 };
 ```
+All methods of this crud will be available at the url http://localhost:8080/products
+
 - Add Relationship - Adds a relationship between the specified models.
 ```java
 This function modifies the configuration of an existing model to include a new relationship. 
@@ -159,7 +158,8 @@ const config: ModelConfig = {
   type: 'model',
   name: 'Order',
   attributes: [
-    { type: 'String', name: 'description', notNull: true }
+    { type: 'Long', name: 'orderId', primarykey: true},
+    { type: 'String', name: 'description', nullable: false }
   ],
   relations: [
     {
@@ -198,8 +198,9 @@ const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'String', name: 'email', unique: true, notNull: true, required: true },
-    { type: 'String', name: 'password', notNull: true, required: true },
+    { type: 'Long', name: 'userId', primarykey: true},
+    { type: 'String', name: 'email', unique: true, required: true },
+    { type: 'String', name: 'password', nullable: false, required: true },
   ],
   crud: {},
   relations: [],
@@ -227,30 +228,45 @@ const removeModel = async () => {
 import { addController } from 'spring-engine';
 import { ControllerConfig } from 'spring-engine/dist/interfaces/types';
 
-const config: ControllerConfig = {
-  type: 'controller',
-  name: 'User', //The name should be 'User', not 'UserController'.
-  basePath: 'users',
+const controllerConfig: ControllerConfig = {
+  type: "controller",
+  name: "Greeting",
+  basePath: "greetings",
   actions: [
     {
-      name: 'getUser',
-      path: '/user',
+      path: 'hello',
       method: 'GET',
-      pathParams: [{ type: 'string', name: 'id' }],
-      response: 'Object',
+      actionName: 'hello',
+      accepts: 'application/x-cdf',
+      requestParams: [{ type: 'String', name: 'greetingName' }],
+      response: 'String',
+      isResponseList: false
     },
     {
-      name: 'createUser',
-      path: '/user',
+      path: 'addGreeting',
       method: 'POST',
+      actionName: 'addGreeting',
+      requestBody: 'greeting',
+      pathVariables:[],
+      requestParams: [],
       response: 'Object',
+      isResponseList: true
     },
-  ],
+    {
+      path: 'goodbye',
+      method: 'GET',
+      actionName: 'goodBye',
+      pathVariables:[{ type: 'Long', name: 'id' }],
+      requestParams: [{ type: 'String', name: 'greetingName' }],
+      response: 'String',
+      isResponseList: false,
+    }
+  ]
 };
 
 const applicationBasePath = 'C://your_project_path';
 
-const generateUserController = async () => {
+const generateGreetingController = async () => {
   try {
     await addController(config, applicationBasePath);
     console.log('UserController has been successfully generated.');
@@ -259,42 +275,42 @@ const generateUserController = async () => {
   }
 };
 ```
+Note: To access the generated endpoints, it is necessary to implement the methods declared in the controller interface automatically generated. This implementation is done by the programmer.
+The implemented methods will be available at:
+```ts
+GET: http://localhost:8080/greetings/hello
+POST: http://localhost:8080/greetings/addGreeting
+GET: http://localhost:8080/greetings/goodbye/<id>
+```
 
 ### Types
 
 ```ts
-interface ApiConfig {
-  type: 'baseApi';
-  apiName: string;
-  group: string;
-  artifact: string;
-  database: string;
-  description?: string;
-}
-
-interface ModelConfig {
+export interface ModelConfig {
   type: 'model';
   name: string;
-  attributes: Attribut[];
+  tableName: string;
+  attributes: Attribute[];
   crud?: Crud;
   relations?: Relation[];
 }
 
-interface Icontroller {
+export interface Icontroller {
   type: 'icontroller';
   name: string;
 }
 
-interface Attribut {
-  type: string;
+export interface Attribute {
+  type: AttributeType;
   name: string;
-  primary?: boolean;
+  length?: number,
+  nullable?: boolean;
+  primarykey?: boolean;
   required?: boolean;
-  unique: boolean;
-  notNull: boolean;
+  unique?: boolean;
 }
 
-interface Relation {
+export interface Relation {
   relationType: string;
   entity: string;
   mappedBy?: string;
@@ -303,35 +319,61 @@ interface Relation {
   inverseJoinColumn?: string;
 }
 
-interface Crud {
+export interface Crud {
   enabled: boolean;
   path: string;
-  disabledMethods: string[];
+  disabledMethods: DisabledMethods [];
 }
 
-interface Table {
+export interface Table {
   name: string;
   joinColumns: string;
   inverseJoinColumns: string;
 }
 
-interface ControllerConfig {
+export interface ControllerConfig {
   type: 'controller';
   name: string;
   basePath: string;
   actions: ControllerAction[];
 }
 
-interface ControllerAction {
+export interface ControllerAction {
   path: string;
-  name: string;
-  method: string;
-  pathParams?: PathParams[];
+  actionName: string;
+  isResponseList: boolean,
+  method: HttpMethod;
+  accepts?: MimeTypes,
+  contentType?:MimeTypes, 
+  requestBody?: string,
+  requestParams?: RequestParams[];
   response: string;
+  pathVariables?:PathVariables[]
 }
 
-interface PathParams {
+export interface RequestParams {
   type: string;
   name: string;
 }
+export interface PathVariables {
+  type: string;
+  name: string;
+}
+
+export type RenderContext<T = undefined> = {
+  resourceConfig: T;
+  basePath: string;
+  baseConfig: ApiConfig;
+  mathAttributes?: string[];
+  sqlAttributes?: string[];
+};
+
+export type HttpMethod = typeof HTTP_METHOD_TYPES[number];
+export type AttributeType = typeof ATTRIBUTE_TYPES[number];
+export type DatabaseTypes = typeof DATABASE_TYPES[number];
+export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
+export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
+export type ResponseTypes = typeof RESPONSE_TYPES[number];
+export type ParamsTypes = typeof PARAMS_TYPES[number];
+export type MimeTypes = typeof MIME_TYPES[number];
 ```

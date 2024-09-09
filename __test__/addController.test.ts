@@ -7,8 +7,6 @@ import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants
 import { HttpMethod } from '../src/interfaces/types';
 
 const OUTPUT_DIR = ''
-const GET: HttpMethod = 'GET';
-const POST: HttpMethod = 'POST';
 const controllerConfig: ControllerConfig = {
   type: "controller",
   name: "Greeting",
