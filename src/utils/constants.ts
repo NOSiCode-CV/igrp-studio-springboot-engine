@@ -10,6 +10,7 @@ export const DIRECTORIES = {
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',
   MODELS: 'models',
+  DTO: 'dto',
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
@@ -46,6 +47,7 @@ export const ERROR_MESSAGE = {
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
+  TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
 };
 
 export const TEMPLATES = {
@@ -55,6 +57,11 @@ export const TEMPLATES = {
   DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+
+  DOMAIN_DTO: {
+    'classic': 'domain/dto/lombok.hbs',
+    'record': 'domain/dto/record.hbs',
+  },
 
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',

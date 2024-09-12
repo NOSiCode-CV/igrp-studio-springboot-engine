@@ -20,6 +20,30 @@ export interface ModelConfig {
   relations?: Relation[];
 }
 
+export interface GenericType {
+  name: string,
+  namespace?: string
+}
+
+export interface JavaType {
+  name: string,
+  namespace?: string
+  generics?: GenericType[]
+}
+
+export interface JavaAttribute {
+  name: string,
+  type: string | JavaType
+}
+
+export interface DTOConfig {
+  type: 'dto';
+  name: string;
+  generics?: JavaType[],
+  template: 'classic' | 'record',
+  attributes: JavaAttribute[];
+}
+
 export interface Icontroller {
   type: 'icontroller';
   name: string;
