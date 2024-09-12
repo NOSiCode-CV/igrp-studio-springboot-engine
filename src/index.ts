@@ -17,6 +17,7 @@ import { deleteControllerConfig } from './modules/controller/deleteController';
 import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
 import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
+import logger from './utils/logger';
 
 /**
  * Main Function that creates the base api
@@ -53,6 +54,8 @@ import { generateServiceInterface } from './modules/controller/generateServiceIn
  * 
  */
 export const newApi = async (config: ApiConfig, basePath: string) => {
+  logger.info('Validating the configuration file...');
+
   const valid = apiValidation(config);
 
   if (!valid && apiValidation.errors) 
@@ -66,6 +69,7 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
     throw ERROR_MESSAGE.DIRECTORY_ALREADY_IN_USE;
   }
 
+  logger.info('Saving the configuration file...');
   await saveBaseApiFileConfig(config, basePath);
 
   const context: RenderContext = {
@@ -74,11 +78,13 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
     baseConfig: config,
   };
 
+  logger.info('Creating the application directories...');
   /**
    * Creates the folder structure needed for the API.
    */
   await createAppDirectories(context);
 
+  logger.info('Generating the default application files...');
   /**
    * With the base config sent to the newAPI, this function should create the following:
    *  - Base config files (pom.xml, mvnw, application.properties, etc.)
@@ -86,6 +92,8 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
   await saveFileConfig(context);
+
+  logger.info('Application generated with success');
 };
 
 /**
@@ -128,6 +136,7 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 * };
 */
 export const addModel = async (config: ModelConfig, basePath: string) => {
+  logger.info('Validating the model file configuration...');
   const valid = validateModelConfig(config);
 
   if (!valid && validateModelConfig.errors) {
@@ -145,11 +154,16 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
     baseConfig,
   };
 
+  logger.info('Generating the model...');
   await generateModel(context);
+  logger.info('Model generated');
 
   if (config.crud?.enabled) {
+    logger.info('Generating the repository...');
     await generateRepository(context);
+    logger.info('Repository generated');
   }
+
 };
 
 /**
@@ -193,6 +207,7 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
  */
 export const addCrud = async (config: ModelConfig, basePath: string) => {
   await addModel(config, basePath);
+  logger.info('Crud added successfully...');
 };
 
 /**
@@ -241,6 +256,8 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
  */
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
   await addModel(config, basePath);
+  logger.info('Relationship added successfully...');
+
 };
 
 /**
@@ -276,6 +293,7 @@ export const addRelationship = async (config: ModelConfig, basePath: string) => 
  * 
  */
 export const deleteModel = async (config: ModelConfig, basePath: string) => {
+  logger.info('Validating the model configuration configuration...');
   const valid = validateModelConfig(config);
 
   if (!valid && validateModelConfig.errors) {
@@ -293,6 +311,7 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
   };
 
   await deleteModelConfig(context)
+  logger.info('Model deleted');
 
 }
 
@@ -345,6 +364,7 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
  * 
  */
 export const addController = async (config: ControllerConfig, basePath: string) => {
+  logger.info('Validating the controller file configuration..');
   const isConfigValid = validateController(config);
   
   if (!isConfigValid && validateController.errors) {
@@ -364,8 +384,11 @@ export const addController = async (config: ControllerConfig, basePath: string) 
     baseConfig,
   };
   
+  logger.info('Generating the Controller and Service Interface files..');
   await generateController(context);
   await generateServiceInterface(context);
+  logger.info('Controller and Service Interface files generated');
+
 };
 
 /**
@@ -395,6 +418,7 @@ export const updateController = async (config: ControllerConfig, basePath: strin
   
   await generateController(context);
   await generateServiceInterface(context);
+  logger.info('Controller and Service Interface updated');
 };
 
 /**
@@ -403,6 +427,7 @@ export const updateController = async (config: ControllerConfig, basePath: strin
  * @param basePath 
  */
 export const deleteController = async (config: ControllerConfig, basePath: string) => {
+  logger.info('Validating the controller file configuration..');
   const valid = validateModelConfig(config);
 
   if (!valid && validateModelConfig.errors) throw validateController.errors
@@ -418,5 +443,7 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
   };
 
   await deleteControllerConfig(context)
+  logger.info('Controller deleted');
+
 
 }

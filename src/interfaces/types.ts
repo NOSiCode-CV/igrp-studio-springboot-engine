@@ -1,4 +1,13 @@
-import { ATTRIBUTE_TYPES, MIME_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
+import {
+  ATTRIBUTE_TYPES,
+  MIME_TYPES,
+  CRUD_DISABLED_OPTIONS,
+  DATABASE_TYPES,
+  HTTP_METHOD_TYPES,
+  PARAMS_TYPES,
+  RELATIONSHIP_TYPES,
+  RESPONSE_TYPES,
+} from '../utils/constants';
 
 export interface ApiConfig {
   type: 'baseApi';
@@ -28,7 +37,7 @@ export interface Icontroller {
 export interface Attribute {
   type: AttributeType;
   name: string;
-  length?: number,
+  length?: number;
   nullable?: boolean;
   primarykey?: boolean;
   required?: boolean;
@@ -47,7 +56,7 @@ export interface Relation {
 export interface Crud {
   enabled: boolean;
   path: string;
-  disabledMethods: DisabledMethods [];
+  disabledMethods: DisabledMethods[];
 }
 
 export interface Table {
@@ -66,14 +75,14 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   actionName: string;
-  isResponseList: boolean,
+  isResponseList: boolean;
   method: HttpMethod;
-  accepts?: MimeTypes,
-  contentType?:MimeTypes, 
-  requestBody?: string,
+  accepts?: MimeTypes;
+  contentType?: MimeTypes;
+  requestBody?: string;
   requestParams?: RequestParams[];
   response: string;
-  pathVariables?:PathVariables[]
+  pathVariables?: PathVariables[];
 }
 
 export interface RequestParams {
@@ -93,12 +102,11 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
 };
 
-export type HttpMethod = typeof HTTP_METHOD_TYPES[number];
-export type AttributeType = typeof ATTRIBUTE_TYPES[number];
-export type DatabaseTypes = typeof DATABASE_TYPES[number];
-export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
-export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
-export type ResponseTypes = typeof RESPONSE_TYPES[number];
-export type ParamsTypes = typeof PARAMS_TYPES[number];
-export type MimeTypes = typeof MIME_TYPES[number];
-
+export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
+export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
+export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
+export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
+export type ResponseTypes = (typeof RESPONSE_TYPES)[number];
+export type ParamsTypes = (typeof PARAMS_TYPES)[number];
+export type MimeTypes = (typeof MIME_TYPES)[number];
