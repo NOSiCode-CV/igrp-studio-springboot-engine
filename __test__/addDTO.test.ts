@@ -7,7 +7,7 @@ import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { getMainPath } from '../src/utils/helpers';
 
-const OUTPUT_DIR = 'C:/Users/jailsonf.rodrigues/Projetos/NOSi/test/epcv-core'
+const OUTPUT_DIR = ''
 
 /*beforeAll(async () =>{
     await fs.mkdir(OUTPUT_DIR, {recursive: true});
