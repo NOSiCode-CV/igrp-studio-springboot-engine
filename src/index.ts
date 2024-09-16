@@ -1,4 +1,4 @@
-import { ModelConfig } from './interfaces/types';
+import { DTOConfig, ModelConfig } from './interfaces/types';
 import { ERROR_MESSAGE } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
@@ -17,6 +17,8 @@ import { deleteControllerConfig } from './modules/controller/deleteController';
 import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
 import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
+import { saveDTOConfig } from './modules/dto/saveDTOConfig';
+import { generateDTO } from './modules/dto/generateDTO';
 
 /**
  * Main Function that creates the base api
@@ -295,6 +297,66 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
   await deleteModelConfig(context)
 
 }
+
+
+/**
+* Generates and saves a model to the API.
+* This function creates a model based on the provided configuration and saves it to the specified API base path.
+* It also generates the associated CRUD operations if enabled in the configuration.
+*
+* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
+* @param {string} basePath - Application base path where the model will be saved and generated to the API.
+* 
+* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
+* @throws {Error} Will throw an error if the base path is not provided.
+* 
+* @example
+* // Example usage:
+* import { addDTO } from "spring-engine";
+* import { DTOConfig } from "spring-engine/dist/interfaces/types";
+* const config: DTOConfig = {
+*   type: 'dto',
+*   name: 'User',
+*   attributes: [
+*     { type: 'String', name: 't0'},
+*     { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
+*     { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
+* 
+*     { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
+*     { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+*   ]
+* };
+* const basePath = 'C://your_project_path';
+* 
+* const createDTO = async () => {
+*   try {
+*     await addDTO(config, basePath);
+*   } catch (error) {
+*     console.error(error);
+*   }
+* };
+*/
+export const addDTO = async (config: DTOConfig, basePath: string) => {
+  /* FIXME
+  const valid = validateDTOConfig(config);
+
+  if (!valid && validateDTOConfig.errors) {
+    throw validateDTOConfig.errors
+  }*/
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  await saveDTOConfig(config, basePath);
+
+  const context: RenderContext<DTOConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await generateDTO(context);
+};
 
 /**
  * Generates and saves a controller in the API.

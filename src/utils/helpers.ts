@@ -32,6 +32,9 @@ export const getMainPath = (group: string, artifact: string) =>
 export const getModelConfigPath = (model: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
 
+export const getDTOConfigPath = (dto: string, output: string) =>
+  path.join(output, DIRECTORIES.CONFIG_DTO, `${dto}${EXTENSIONS.JSON}`);
+
 export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
     context.basePath,
@@ -44,8 +47,7 @@ export const getDtoOutputDir = (context: RenderContext<DTOConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
-    DIRECTORIES.DTO,
-    context.resourceConfig.name
+    DIRECTORIES.DTO
   );
 
 export const getControllerConfigPath = (controller: string, output: string) =>

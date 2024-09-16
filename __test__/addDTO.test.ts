@@ -1,10 +1,21 @@
-import { DTOConfig, RenderContext } from '../src/interfaces/types';
-import { generateDTO, renderDTO } from '../src/modules/dto/generateDTO';
+import path from 'path';
+import fs from 'fs-extra';
+import { addDTO } from '../src';
+import { ApiConfig, DTOConfig, RenderContext } from '../src/interfaces/types';
+import { generateDTO, _renderDTO } from '../src/modules/dto/generateDTO';
+import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
+import { readJsonFile } from '../src/utils/readJsonFiles';
+import { getMainPath } from '../src/utils/helpers';
 
+const OUTPUT_DIR = 'C:/Users/jailsonf.rodrigues/Projetos/NOSi/test/epcv-core'
+
+/*beforeAll(async () =>{
+    await fs.mkdir(OUTPUT_DIR, {recursive: true});
+});*/
 
 describe('DTO generator', () => {
 
-    it('should generate a classica dto with declared fields', async () => {
+    it('should generate a classic dto with declared fields', async () => {
         const model: DTOConfig = {
             type: 'dto',
             name: 'TPessoa',
@@ -31,7 +42,7 @@ describe('DTO generator', () => {
                 database: 'Oracle'
             },
         };
-        const dto = await renderDTO(context);
+        const dto = await _renderDTO(context);
         console.log(dto);
         const result = [
             /package cv.gov.dto_test.dto.TPessoa;/,
@@ -79,7 +90,7 @@ describe('DTO generator', () => {
                 database: 'Oracle'
             },
         };
-        const dto = await renderDTO(context);
+        const dto = await _renderDTO(context);
         console.log(dto);
         const result = [
             /package cv.gov.dto_test.dto.TPessoa;/,
@@ -96,6 +107,73 @@ describe('DTO generator', () => {
         ].map(p => p.test(dto)).reduce((a, b)=> a&&b);
 
         expect(result).toBeTruthy();
+  
+    });
+
+
+    it('should add a classic dto with declared fields', async () => {
+        const model: DTOConfig = {
+            type: 'dto',
+            name: 'TPessoa',
+            template: 'classic',
+            attributes: [
+              { type: 'String', name: 't0'},
+        
+              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
+              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
+        
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+            ]
+        };
+
+        await addDTO(model, OUTPUT_DIR);
+
+        const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
+        const config: ApiConfig = await readJsonFile(configPath);
+        const modelPath = path.join(
+            OUTPUT_DIR,
+            getMainPath(config.group, config.artifact),
+            DIRECTORIES.DTO,
+            `${model.name}${EXTENSIONS.JAVA}`
+        );
+        
+        const pathExists = await fs.pathExists(modelPath);
+
+        expect(pathExists).toBeTruthy();
+  
+    });
+
+    it('should add a record dto with declared fields', async () => {
+        const model: DTOConfig = {
+            type: 'dto',
+            name: 'TPessoaRecord',
+            template: 'record',
+            attributes: [
+              { type: 'String', name: 't0'},
+        
+              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
+              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
+        
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+            ]
+        };
+
+        await addDTO(model, OUTPUT_DIR);
+
+        const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
+        const config: ApiConfig = await readJsonFile(configPath);
+        const modelPath = path.join(
+            OUTPUT_DIR,
+            getMainPath(config.group, config.artifact),
+            DIRECTORIES.DTO,
+            `${model.name}${EXTENSIONS.JAVA}`
+        );
+        
+        const pathExists = await fs.pathExists(modelPath);
+
+        expect(pathExists).toBeTruthy();
   
     });
 });
