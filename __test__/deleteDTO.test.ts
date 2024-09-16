@@ -6,7 +6,7 @@ import { readJsonFile } from '../src/utils/readJsonFiles';
 import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
 
-const basePath = 'C:/Users/jailsonf.rodrigues/Projetos/NOSi/test/epcv-core'
+const basePath = ''
 
 describe('DTO generator', () => {
     it('should force delete a dto', async () => {
