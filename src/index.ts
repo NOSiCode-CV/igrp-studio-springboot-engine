@@ -19,6 +19,7 @@ import { saveControllerConfig } from './modules/controller/saveControllerConfig'
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
 import { saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO } from './modules/dto/generateDTO';
+import { deleteDTOConfig } from './modules/dto/deleteDTO';
 
 /**
  * Main Function that creates the base api
@@ -357,6 +358,60 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
 
   await generateDTO(context);
 };
+
+/**
+ * Deletes a dto from the API.
+ *
+ * This function removes a dto configuration based on the provided configuration.
+ * It ensures that the dto is properly deleted from the specified API base path.
+ *
+ * @param {DTOConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
+ * @param {string} basePath - The base path of the application where the dto and repository are located.
+ * @param {boolean} force - Delete without checking dependency.
+ *
+ * @throws {Error} Will throw an error if the dto configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * const config: DTOConfig = {
+ *   type: 'dto',
+ *   name: 'User',
+ *   attributes: [],
+ *   crud: {},
+ *   relations: []
+ * };
+ * const basePath = 'C://your_project_path';
+ * 
+ * const removeDTO = async () => {
+ *   try {
+ *     await deleteDTO(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ * 
+ */
+export const deleteDTO = async (config: DTOConfig, basePath: string, force: boolean) => {
+  /* FIXME
+  const valid = validateDTOConfig(config);
+
+  if (!valid && validateDTOConfig.errors) {
+    throw validateDTOConfig.errors
+  }*/
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<DTOConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await deleteDTOConfig(context, force);
+}
 
 /**
  * Generates and saves a controller in the API.
