@@ -1,7 +1,7 @@
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
-import { ControllerConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
+import { ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
@@ -43,7 +43,7 @@ export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
     context.resourceConfig.name
   );
 
-export const getDtoOutputDir = (context: RenderContext<DTOConfig>) =>
+export const getDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),

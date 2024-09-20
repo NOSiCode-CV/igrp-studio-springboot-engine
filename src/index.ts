@@ -1,4 +1,4 @@
-import { DTOConfig, ModelConfig } from './interfaces/types';
+import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
 import { ERROR_MESSAGE } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
@@ -20,6 +20,7 @@ import { generateServiceInterface } from './modules/controller/generateServiceIn
 import { saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO } from './modules/dto/generateDTO';
 import { deleteDTOConfig } from './modules/dto/deleteDTO';
+import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 
 /**
  * Main Function that creates the base api
@@ -338,12 +339,12 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 * };
 */
 export const addDTO = async (config: DTOConfig, basePath: string) => {
-  /* FIXME
+  /* FIXME*/
   const valid = validateDTOConfig(config);
 
   if (!valid && validateDTOConfig.errors) {
     throw validateDTOConfig.errors
-  }*/
+  }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
@@ -376,10 +377,7 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  * // Example usage:
  * const config: DTOConfig = {
  *   type: 'dto',
- *   name: 'User',
- *   attributes: [],
- *   crud: {},
- *   relations: []
+ *   name: 'User'
  * };
  * const basePath = 'C://your_project_path';
  * 
@@ -392,19 +390,18 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  * };
  * 
  */
-export const deleteDTO = async (config: DTOConfig, basePath: string, force: boolean) => {
-  /* FIXME
-  const valid = validateDTOConfig(config);
+export const deleteDTO = async (config: DTOBaseConfig, basePath: string, force: boolean) => {
+  const valid = validateDeleteDTOConfig(config);
 
-  if (!valid && validateDTOConfig.errors) {
-    throw validateDTOConfig.errors
-  }*/
+  if (!valid && validateDeleteDTOConfig.errors) {
+    throw validateDeleteDTOConfig.errors
+  }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
 
-  const context: RenderContext<DTOConfig> = {
+  const context: RenderContext<DTOBaseConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,

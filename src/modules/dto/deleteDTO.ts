@@ -1,15 +1,16 @@
 import fs from 'fs-extra';
 import { getDTOConfigPath, getDtoOutputDir } from '../../utils/helpers';
-import { DTOConfig, RenderContext } from '../../interfaces/types';
+import { DTOBaseConfig, DTOConfig, RenderContext } from '../../interfaces/types';
 import { ERROR_MESSAGE } from '../../utils/constants';
 import { Exception } from 'sass';
 
 /**
 * @param {boolean} force - Delete without checking dependency.
  */
-export const deleteDTOConfig = async (context: RenderContext<DTOConfig>, force: boolean) => {
+export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, force: boolean) => {
 
   if (!force) {
+    //TODO check dependencies
     throw "Soft delete DTO Not implemented yet.";
   }
 

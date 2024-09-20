@@ -27,19 +27,23 @@ export interface GenericType {
 
 export interface JavaType {
   name: string,
-  namespace?: string
+  namespace?: string,
   generics?: GenericType[]
 }
 
 export interface JavaAttribute {
   name: string,
   type: string | JavaType
+
 }
 
-export interface DTOConfig {
+export interface DTOBaseConfig {
   type: 'dto';
   name: string;
-  generics?: JavaType[],
+}
+
+export interface DTOConfig extends DTOBaseConfig {
+  generics?: string[],
   template: 'classic' | 'record',
   attributes: JavaAttribute[];
 }

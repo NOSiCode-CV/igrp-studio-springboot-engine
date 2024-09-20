@@ -1,13 +1,62 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { DTOConfig, JavaAttribute } from "../interfaces/types";
+import { DTOBaseConfig, DTOConfig, GenericType, JavaAttribute, JavaType } from "../interfaces/types";
 import { PATTERNS } from "../utils/constants";
+
+const genericsTypeSchema: JSONSchemaType<GenericType> = {
+  type: "object",
+  properties: { 
+    name: { 
+      type: "string", pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.' 
+    },
+    namespace: { 
+      type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
+      errorMessage: 'The namespace must follow the package naming convention.'
+    }
+  },
+  required: ["name"],
+};
+
+type JavaTypeUnion = string | JavaType;
+
+const javaTypeSchema: JSONSchemaType<JavaTypeUnion> = {
+  anyOf: [
+    {
+      type: "object",
+      properties: { 
+        name: { 
+          type: "string", pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+          errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+        },
+        namespace: { 
+          type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
+          errorMessage: 'The namespace must follow the package naming convention.'
+        }, 
+        generics: {  
+          type: "array", 
+          nullable: true, 
+          items: genericsTypeSchema,
+          errorMessage: 'The generics on fields must be an array of valid attribute definitions.'
+        }
+      },
+      required: ["name"],
+    },
+    {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+    }
+  ]
+  
+};
+
 const attributeSchema: JSONSchemaType<JavaAttribute> = {
   type: "object",
   properties: {
     type: { 
-      type: "string",
-      errorMessage: `The attribute type must be one of  and cannot be empty.`
+      type: ["object", "string"],
+      anyOf: javaTypeSchema.anyOf
     },
     name: { 
       type: "string",
@@ -16,7 +65,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
     },
   },
   required: ["type", "name"],
-  additionalProperties: true,
+  additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The attribute type is required.',
@@ -41,8 +90,17 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
     },
     template: { 
       type: "string", 
-      pattern: ['record', 'classic'],
+      enum: ['record', 'classic'],
       errorMessage: 'The acceptable template are: record, classic.'
+    },
+    generics: {
+      type: "array",
+      items: { 
+        type: "string",
+        pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+        errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed).'
+      },
+      nullable: true,
     },
     attributes: { 
       type: "array", 
@@ -62,4 +120,31 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
   }
 };
 
+const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
+  type: "object",
+  properties: {
+    type: { 
+      type: "string", 
+      const: "dto",
+      errorMessage: 'The type must be "dto".'
+    },
+    name: { 
+      type: "string", 
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+    }
+  },
+  required: ["type", "name"],
+  additionalProperties: true,
+  errorMessage: {
+    required: {
+      type: 'The type field is required and must be "model".',
+      name: 'The name field is required and must follow the naming convention.',
+    },
+    additionalProperties: 'No additional properties are allowed in the model configuration schema.'
+  }
+};
+
 export const validateDTOConfig: ValidateFunction<DTOConfig> = ajvInstance.compile<DTOConfig>(dtoConfigSchema);
+
+export const validateDeleteDTOConfig: ValidateFunction<DTOBaseConfig> = ajvInstance.compile<DTOBaseConfig>(deletedDTOConfigSchema);

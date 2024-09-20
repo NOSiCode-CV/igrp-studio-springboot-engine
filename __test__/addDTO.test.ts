@@ -22,7 +22,7 @@ describe('DTO generator', () => {
             template: 'classic',
             attributes: [
               { type: 'String', name: 't0'},
-        
+              //{ type: { name: 'String' }, name: 't0'},
               { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
               { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
         
@@ -70,7 +70,7 @@ describe('DTO generator', () => {
             template: 'record',
             attributes: [
               { type: 'String', name: 't0'},
-        
+              //{ type: { name: 'String' }, name: 't0'},
               { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
               { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
         
@@ -118,7 +118,8 @@ describe('DTO generator', () => {
             template: 'classic',
             attributes: [
               { type: 'String', name: 't0'},
-        
+              //{ type: { name: 'String' }, name: 't0'},
+
               { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
               { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
         
@@ -151,7 +152,9 @@ describe('DTO generator', () => {
             template: 'record',
             attributes: [
               { type: 'String', name: 't0'},
-        
+
+              //{ type: { name: 'String' }, name: 't0'},
+
               { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
               { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
         
