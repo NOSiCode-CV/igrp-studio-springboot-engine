@@ -47,7 +47,7 @@ const checkDependencyInDTO = async function(context: RenderContext<DTOBaseConfig
 
         if (type.generics) {
           for(const gt of type.generics) {
-            if (gt.ns === 'dto') {
+            if (gt.ns === 'dto' && gt.name === cfg.name) {
               errors.push({message: `'dto.${cfg.name}' is beeing used as generic type on 'dto.${t.name}' on attribute line '${attr.name}'.`});
             }
           }
@@ -66,5 +66,5 @@ const checkDependencyInModel = async function(context: RenderContext<DTOBaseConf
 }
 
 const checkDependencyInController = async function(context: RenderContext<DTOBaseConfig>) {
-  //TODO implement this when there is dependency specification on Controller
+  //TODO implement this when there is dependency specification on Model
 }
