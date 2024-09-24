@@ -22,7 +22,8 @@ export interface ModelConfig {
 
 export interface GenericType {
   name: string,
-  namespace?: string
+  namespace?: string,
+  ns: 'dto'|'model'|'java'|'local'
 }
 
 export interface JavaType {
@@ -34,7 +35,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string,
   type: string | JavaType
-
+  ns: 'dto'|'model'|'java'
 }
 
 export interface DTOBaseConfig {

@@ -18,7 +18,7 @@ import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
 import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
 import { saveDTOConfig } from './modules/dto/saveDTOConfig';
-import { generateDTO } from './modules/dto/generateDTO';
+import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 
@@ -320,12 +320,13 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 *   type: 'dto',
 *   name: 'User',
 *   attributes: [
-*     { type: 'String', name: 't0'},
-*     { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-*     { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
+*     { type: 'String', ns: 'java', name: 't0'},
+*     { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
+*     { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
+*     { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
 * 
-*     { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-*     { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+*     { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+*     { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
 *   ]
 * };
 * const basePath = 'C://your_project_path';
@@ -339,7 +340,6 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 * };
 */
 export const addDTO = async (config: DTOConfig, basePath: string) => {
-  /* FIXME*/
   const valid = validateDTOConfig(config);
 
   if (!valid && validateDTOConfig.errors) {
@@ -352,7 +352,7 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
   await saveDTOConfig(config, basePath);
 
   const context: RenderContext<DTOConfig> = {
-    resourceConfig: config,
+    resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
     baseConfig,
   };
@@ -368,7 +368,6 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  *
  * @param {DTOConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
  * @param {string} basePath - The base path of the application where the dto and repository are located.
- * @param {boolean} force - Delete without checking dependency.
  *
  * @throws {Error} Will throw an error if the dto configuration is invalid.
  * @throws {Error} Will throw an error if the base path is not provided.
@@ -390,7 +389,7 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  * };
  * 
  */
-export const deleteDTO = async (config: DTOBaseConfig, basePath: string, force: boolean) => {
+export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
   const valid = validateDeleteDTOConfig(config);
 
   if (!valid && validateDeleteDTOConfig.errors) {
@@ -407,7 +406,7 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string, force: 
     baseConfig,
   };
 
-  await deleteDTOConfig(context, force);
+  await deleteDTOConfig(context, false);
 }
 
 /**

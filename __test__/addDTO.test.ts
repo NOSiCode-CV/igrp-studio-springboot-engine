@@ -21,13 +21,13 @@ describe('DTO generator', () => {
             name: 'TPessoa',
             template: 'classic',
             attributes: [
-              { type: 'String', name: 't0'},
+              { type: 'String', ns: 'java', name: 't0'},
               //{ type: { name: 'String' }, name: 't0'},
-              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
+              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, ns: 'dto', name: 't1'},
+              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, ns: 'dto', name: 't2'},
         
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', ns: 'java', namespace: 'java.math'}]}, ns: 'dto', name: 't4'},
             ]
         };
 
@@ -45,7 +45,7 @@ describe('DTO generator', () => {
         const dto = await _renderDTO(context);
         console.log(dto);
         const result = [
-            /package cv.gov.dto_test.dto.TPessoa;/,
+            /package cv.gov.dto_test.dto;/,
             /import cv.gov.mf.dto.DTO1;/,
             /import cv.gov.mf.dto.CTO1;/,
             /import java.util.List;/,
@@ -69,13 +69,13 @@ describe('DTO generator', () => {
             name: 'TPessoa',
             template: 'record',
             attributes: [
-              { type: 'String', name: 't0'},
-              //{ type: { name: 'String' }, name: 't0'},
-              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
-        
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+                { type: 'String', ns: 'java', name: 't0'},
+                //{ type: { name: 'String' }, name: 't0'},
+                { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, ns: 'dto', name: 't1'},
+                { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, ns: 'dto', name: 't2'},
+          
+                { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+                { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', ns: 'java', namespace: 'java.math'}]}, ns: 'java', name: 't4'},
             ]
         };
 
@@ -93,7 +93,7 @@ describe('DTO generator', () => {
         const dto = await _renderDTO(context);
         console.log(dto);
         const result = [
-            /package cv.gov.dto_test.dto.TPessoa;/,
+            /package cv.gov.dto_test.dto;/,
             /import cv.gov.mf.dto.DTO1;/,
             /import cv.gov.mf.dto.CTO1;/,
             /import java.util.List;/,
@@ -117,16 +117,36 @@ describe('DTO generator', () => {
             name: 'TPessoa',
             template: 'classic',
             attributes: [
-              { type: 'String', name: 't0'},
-              //{ type: { name: 'String' }, name: 't0'},
-
-              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
-        
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+                { type: 'String', ns: 'java', name: 't0'},
+                //{ type: { name: 'String' }, name: 't0'},
+                { type: 'DTO1', ns: 'dto', name: 't1'},
+                { type: 'CTO1', ns: 'dto', name: 't2'},
+          
+                { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+                { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
             ]
         };
+
+        const dto1: DTOConfig = {
+            type: 'dto',
+            name: 'DTO1',
+            template: 'classic',
+            attributes: [
+                { type: 'String', ns: 'java', name: 't0'}
+            ]
+        };
+
+        const cto1: DTOConfig = {
+            type: 'dto',
+            name: 'CTO1',
+            template: 'record',
+            attributes: [
+                { type: 'String', ns: 'java', name: 't0'}
+            ]
+        };
+
+        await addDTO(dto1, OUTPUT_DIR);
+        await addDTO(cto1, OUTPUT_DIR);
 
         await addDTO(model, OUTPUT_DIR);
 
@@ -151,17 +171,36 @@ describe('DTO generator', () => {
             name: 'TPessoaRecord',
             template: 'record',
             attributes: [
-              { type: 'String', name: 't0'},
-
-              //{ type: { name: 'String' }, name: 't0'},
-
-              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
-        
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+                { type: 'String', ns: 'java', name: 't0'},
+                //{ type: { name: 'String' }, name: 't0'},
+                { type: 'DTO1', ns: 'dto', name: 't1'},
+                { type: 'CTO1', ns: 'dto', name: 't2'},
+          
+                { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+                { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
             ]
         };
+
+        const dto1: DTOConfig = {
+            type: 'dto',
+            name: 'DTO1',
+            template: 'classic',
+            attributes: [
+                { type: 'String', ns: 'java', name: 't0'}
+            ]
+        };
+
+        const cto1: DTOConfig = {
+            type: 'dto',
+            name: 'CTO1',
+            template: 'record',
+            attributes: [
+                { type: 'String', ns: 'java', name: 't0'}
+            ]
+        };
+
+        await addDTO(dto1, OUTPUT_DIR);
+        await addDTO(cto1, OUTPUT_DIR);
 
         await addDTO(model, OUTPUT_DIR);
 

@@ -13,7 +13,12 @@ const genericsTypeSchema: JSONSchemaType<GenericType> = {
     namespace: { 
       type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
       errorMessage: 'The namespace must follow the package naming convention.'
-    }
+    },
+    ns: { 
+      type: "string", 
+      enum: ['model', 'dto', 'java'],
+      errorMessage: 'The abbreaviated namespace must model, dto, java.'
+    },
   },
   required: ["name"],
 };
@@ -63,8 +68,13 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
+    ns: { 
+      type: "string", 
+      enum: ['model', 'dto', 'java'],
+      errorMessage: 'The abbreaviated namespace must model, dto, java.'
+    },
   },
-  required: ["type", "name"],
+  required: ["type", "name", "ns"],
   additionalProperties: false,
   errorMessage: {
     required: {

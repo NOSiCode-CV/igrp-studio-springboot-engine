@@ -9,19 +9,13 @@ import { getMainPath } from '../src/utils/helpers';
 const basePath = ''
 
 describe('DTO generator', () => {
-    it('should force delete a dto', async () => {
+    it('should delete a dto', async () => {
         const model: DTOConfig = {
             type: 'dto',
             name: 'DTO2Delete',
             template: 'record',
             attributes: [
-              { type: 'String', name: 't0'},
-        
-              { type: { name: 'DTO1', namespace: 'cv.gov.mf.dto'}, name: 't1'},
-              { type: { name: 'CTO1', namespace: 'cv.gov.mf.dto'}, name: 't2'},
-        
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'Integer'}]}, name: 't3'},
-              { type: { name: 'List', namespace: 'java.util', generics:[{name: 'BigDecimal', namespace: 'java.math'}]}, name: 't4'},
+              { type: 'String', ns: 'java', name: 't0'},
             ]
         };
 
@@ -38,9 +32,55 @@ describe('DTO generator', () => {
         
         const pathExists = await fs.pathExists(modelPath);
         
-        await deleteDTO(model, basePath, true)
+        await deleteDTO(model, basePath)
         const pathNotExists = !await fs.pathExists(modelPath);
         expect(pathExists&&pathNotExists).toBeTruthy();
+    });
+
+    it('should not delete a dto', async () => {
+        const model: DTOConfig = {
+            type: 'dto',
+            name: 'DTO2DeleteV1',
+            template: 'record',
+            attributes: [
+              { type: 'String', ns: 'java', name: 't0'},
+              { type: 'DTO2DeleteV11', ns: 'dto', name: 't1'},
+            ]
+        };
+
+        const dto11: DTOConfig = {
+            type: 'dto',
+            name: 'DTO2DeleteV11',
+            template: 'record',
+            attributes: [
+              { type: 'String', ns: 'java', name: 't0'},
+            ]
+        };
+
+        await addDTO(dto11, basePath);
+        await addDTO(model, basePath);
+
+        const configPath = path.join(basePath, DIRECTORIES.BASE_API);
+        const config: ApiConfig = await readJsonFile(configPath);
+        const modelPath = path.join(
+            basePath,
+            getMainPath(config.group, config.artifact),
+            DIRECTORIES.DTO,
+            `${model.name}${EXTENSIONS.JAVA}`
+        );
+        
+        const pathExists = await fs.pathExists(modelPath);
+        
+        let errors;
+        
+        try {
+            await deleteDTO(dto11, basePath)
+        } catch(e) {
+            errors = e;
+        }
+        console.log(errors);
+        const pathExists2 = await fs.pathExists(modelPath);
+        expect(pathExists&&pathExists2).toBeTruthy();
     });
   
 });

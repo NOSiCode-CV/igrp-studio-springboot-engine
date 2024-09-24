@@ -17,6 +17,12 @@ export const DIRECTORIES = {
   SERVICES: 'services',
 };
 
+export const PACKAGES = {
+  MODELS: 'models',
+  DTO: 'dto',
+  CONTROLLERS: 'controller'
+};
+
 export const SUCCESS_MESSAGE = {
   DIRECTORY_CREATED: 'Directories created',
   FILE_SAVED: 'The file has been saved successfully.',
@@ -139,6 +145,30 @@ export const ATTRIBUTE_TYPES = [
 
 export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 
+export const JAVA_TYPES: Map<string, {name: string, primitive: boolean, namespace?:string}> = new Map(Object.entries({
+  'boolean': { name: 'boolean', primitive: true },
+  'char': { name: 'char', primitive: true },
+  'short': { name: 'short', primitive: true },
+  'int': { name: 'int', primitive: true },
+  'long': { name: 'long', primitive: true },
+  'float': { name: 'float', primitive: true },
+  'double': { name: 'double', primitive: true },
+  'Boolean': { name: 'Boolean', primitive: false },
+  'Short': { name: 'Short', primitive: false },
+  'Integer': { name: 'Integer', primitive: false },
+  'Long': { name: 'Long', primitive: false },
+  'Double': { name: 'Double', primitive: false },
+  'String': { name: 'String', primitive: false },
+  'Character': { name: 'Character', primitive: false },
+  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
+  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+  'LocalTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+
+  'List': { name: 'List', primitive: false, namespace: 'java.util', },
+}));
+
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
   'GET',
@@ -216,3 +246,4 @@ export const CRUD_DISABLED_OPTIONS = [
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
 export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
+

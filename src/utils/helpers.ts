@@ -1,7 +1,8 @@
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
-import { ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
+import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
+import { config } from 'process';
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
@@ -19,6 +20,10 @@ export const getPackage = async (outputDir: string) => {
 
   return `${group}.${artifact}`;
 };
+
+export const getPackageNameFromConfig = function (config: ApiConfig) {
+  return `${config.group}.${config.artifact}`;
+}
 
 export const formatPackageName = (group: string, artifact: string) =>
   `${group}.${artifact}`.replace(/\./g, '/');
@@ -60,3 +65,27 @@ export const getControllerDir = (context: RenderContext<ControllerConfig | Model
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name,
   );
+
+
+export const loadConfig = async function<T> (basePath: string): Promise<T[]> {
+  if (!(await fs.pathExists(basePath))) {
+    return [];
+  }
+  
+  const files = (await fs.readdir(basePath))
+    .filter(f => f.endsWith('.json'))
+    .map(f => fs.readJSON(path.join(basePath,f)));
+  return await Promise.all<T>(files);
+}
+
+export const loadDTOConfigs = async function (basePath: string): Promise<DTOConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_DTO));
+}
+
+export const loadModelConfigs = async function (basePath: string): Promise<ModelConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_MODEL));
+}
+
+export const loadControllerConfigs = async function (basePath: string): Promise<ControllerConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
+}
