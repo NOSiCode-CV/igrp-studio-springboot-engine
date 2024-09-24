@@ -66,5 +66,5 @@ const checkDependencyInModel = async function(context: RenderContext<DTOBaseConf
 }
 
 const checkDependencyInController = async function(context: RenderContext<DTOBaseConfig>) {
-  //TODO implement this when there is dependency specification on Model
+  //TODO implement this when there is dependency specification on Controller
 }
