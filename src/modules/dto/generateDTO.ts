@@ -1,6 +1,6 @@
-import { ApiConfig, Attribute, DTOConfig, JavaType, ModelConfig, RenderContext } from '../../interfaces/types';
+import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadata } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { ERROR_MESSAGE, EXTENSIONS, JAVA_TYPES, PACKAGES, TEMPLATES } from '../../utils/constants';
+import { ERROR_MESSAGE, EXTENSIONS, JAVA_TYPES, PACKAGE_NS, PACKAGES, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getDtoOutputDir, getPackageNameFromConfig } from '../../utils/helpers';
 import path from 'path';
@@ -50,7 +50,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
     }
 
     let typeNotFound = false;
-    if (attr.ns === 'java') {
+    if (attr.ns === PACKAGE_NS.java) {
       const jt:{name: string, primitive: boolean, namespace?:string}|undefined = JAVA_TYPES.get(type.name);
       if (jt) {
         if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
@@ -59,7 +59,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
       } else {
         typeNotFound = true;
       }
-    } else if (attr.ns === 'model'){
+    } else if (attr.ns === PACKAGE_NS.model){
       if (mtypes === undefined) {
         mtypes = await getModelTypes(basePath);
       }
@@ -70,7 +70,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
         typeNotFound = true;
       }
       
-    } else if (attr.ns === 'dto') {
+    } else if (attr.ns === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(basePath);
       }
@@ -90,8 +90,8 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
     if (type.generics) {
       for (const gt of type.generics) {
         let typeNotFound = false;
-        if (gt.ns === 'java') {
-          const jt:{name: string, primitive: boolean, namespace?:string}|undefined = JAVA_TYPES.get(type.name);
+        if (gt.ns === PACKAGE_NS.java) {
+          const jt:TypeMetadata|undefined = JAVA_TYPES.get(type.name);
           if (jt) {
             if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
               gt.namespace = jt.namespace;
@@ -99,7 +99,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
           } else {
             typeNotFound = true;
           }
-        } else if (gt.ns === 'model'){
+        } else if (gt.ns === PACKAGE_NS.model){
           if (mtypes === undefined) {
             mtypes = await getModelTypes(basePath);
           }
@@ -110,7 +110,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
             typeNotFound = true;
           }
           
-        } else if (gt.ns === 'dto') {
+        } else if (gt.ns === PACKAGE_NS.dto) {
           if (dtypes === undefined) {
             dtypes = await getDTOTypes(basePath);
           }
@@ -119,7 +119,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
           if (!dt) {
             typeNotFound = true;
           }
-        } else if (gt.ns === 'local') {
+        } else if (gt.ns === PACKAGE_NS.local) {
           if (!ncfg.generics ||  !ncfg.generics.includes(gt.name)) {
             typeNotFound = true;
           }

@@ -111,6 +111,76 @@ describe('DTO generator', () => {
     });
 
 
+    it('should generate a classic dto with generic types', async () => {
+        const model: DTOConfig = {
+            type: 'dto',
+            name: 'TPessoa',
+            template: 'classic',
+            generics:['K','V'],
+            attributes: [
+              { type: 'String', ns: 'java', name: 't0'},
+            ]
+        };
+
+        const context: RenderContext<DTOConfig> = {
+            resourceConfig: model,
+            basePath: '/',
+            baseConfig: {
+                type: 'baseApi',
+                apiName: 'dt_test',
+                group: 'cv.gov',
+                artifact: 'dto_test',
+                database: 'Oracle'
+            },
+        };
+        const dto = await _renderDTO(context);
+        console.log(dto);
+        const result = [
+            /package cv.gov.dto_test.dto;/,
+            /public class TPessoa<K, V>/,
+            /private String t0;/
+        ].map(p => p.test(dto)).reduce((a, b)=> a&&b);
+
+        expect(result).toBeTruthy();
+  
+    });
+
+
+    it('should generate a record dto with generic types', async () => {
+        const model: DTOConfig = {
+            type: 'dto',
+            name: 'TPessoa',
+            template: 'record',
+            generics:['K','V'],
+            attributes: [
+                { type: 'String', ns: 'java', name: 't0'}
+            ]
+        };
+
+        const context: RenderContext<DTOConfig> = {
+            resourceConfig: model,
+            basePath: '/',
+            baseConfig: {
+                type: 'baseApi',
+                apiName: 'dt_test',
+                group: 'cv.gov',
+                artifact: 'dto_test',
+                database: 'Oracle'
+            },
+        };
+        const dto = await _renderDTO(context);
+        console.log(dto);
+        const result = [
+            /package cv.gov.dto_test.dto;/,
+            /public record TPessoa<K, V>\(/,
+            /String t0/
+        ].map(p => p.test(dto)).reduce((a, b)=> a&&b);
+
+        expect(result).toBeTruthy();
+  
+    });
+
+
     it('should add a classic dto with declared fields', async () => {
         const model: DTOConfig = {
             type: 'dto',

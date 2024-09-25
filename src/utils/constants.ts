@@ -1,4 +1,5 @@
 import path from 'path';
+import { TypeMetadata } from '../interfaces/types';
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
 
@@ -21,6 +22,14 @@ export const PACKAGES = {
   MODELS: 'models',
   DTO: 'dto',
   CONTROLLERS: 'controller'
+};
+
+export const PACKAGE_NS = {
+  local: 'local',
+  java: 'java',
+  model: 'model',
+  dto: 'dto',
+  controller: 'controller'
 };
 
 export const SUCCESS_MESSAGE = {
@@ -145,7 +154,7 @@ export const ATTRIBUTE_TYPES = [
 
 export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 
-export const JAVA_TYPES: Map<string, {name: string, primitive: boolean, namespace?:string}> = new Map(Object.entries({
+export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
   'char': { name: 'char', primitive: true },
   'short': { name: 'short', primitive: true },

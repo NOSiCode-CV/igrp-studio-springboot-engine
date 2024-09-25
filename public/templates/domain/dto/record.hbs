@@ -5,7 +5,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.dto;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public record {{resourceConfig.name}}(
+public record {{resourceConfig.name}}{{#if resourceConfig.generics}}<{{#each resourceConfig.generics}}{{this}}{{#if @last}}{{else}}, {{/if}}{{/each}}>{{/if}}(
 {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
     @{{this.annotation}}

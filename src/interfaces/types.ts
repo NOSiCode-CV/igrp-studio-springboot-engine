@@ -1,5 +1,11 @@
 import { ATTRIBUTE_TYPES, MIME_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from "../utils/constants";
 
+export interface TypeMetadata {
+  name: string;
+  primitive: boolean; 
+  namespace?:string;
+}
+
 export interface ApiConfig {
   type: 'baseApi';
   apiName: string;
