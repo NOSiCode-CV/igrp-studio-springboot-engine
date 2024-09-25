@@ -27,21 +27,21 @@ export interface ModelConfig {
 }
 
 export interface GenericType {
-  name: string,
-  namespace?: string,
-  ns: 'dto'|'model'|'java'|'local'
+  name: string;
+  namespace?: string;
+  ns: 'dto'|'model'|'java'|'local';
 }
 
 export interface JavaType {
-  name: string,
-  namespace?: string,
-  generics?: GenericType[]
+  name: string;
+  namespace?: string;
+  generics?: GenericType[];
 }
 
 export interface JavaAttribute {
-  name: string,
-  type: string | JavaType
-  ns: 'dto'|'model'|'java'
+  name: string;
+  type: string | JavaType;
+  ns: 'dto'|'model'|'java';
 }
 
 export interface DTOBaseConfig {
@@ -50,8 +50,8 @@ export interface DTOBaseConfig {
 }
 
 export interface DTOConfig extends DTOBaseConfig {
-  generics?: string[],
-  template: 'classic' | 'record',
+  generics?: string[];
+  template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
 

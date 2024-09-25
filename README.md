@@ -216,6 +216,114 @@ const removeModel = async () => {
 };
 ```
 
+```ts
+/**
+* Generates and saves a model to the API.
+* This function creates a model based on the provided configuration and saves it to the specified API base path.
+* It also generates the associated CRUD operations if enabled in the configuration.
+*
+* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
+* @param {string} basePath - Application base path where the model will be saved and generated to the API.
+* 
+* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
+* @throws {Error} Will throw an error if the base path is not provided.
+* 
+*/
+ // Example usage:
+import { addDTO } from "spring-engine";
+import { DTOConfig } from "spring-engine/dist/interfaces/types";
+const config: DTOConfig = {
+  type: 'dto',
+  name: 'User',
+  attributes: [
+    { type: 'String', ns: 'java', name: 't0'},
+    { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
+    { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
+    { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
+ 
+    { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+    { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
+  ]
+};
+
+const basePath = 'C://your_project_path';
+ 
+const createDTO = async () => {
+  try {
+    await addDTO(config, basePath);
+  } catch (error) {
+    console.error(error);
+  }
+};
+/*
+* when ns=model it will check if that model exist in json config.
+* when ns=dto it will check if that dto exist in json config
+* when ns=java it will check if that java class exists on the * allowed list 
+* when ns=local it will check if that type name exist on DTO wide config, it will check if this DTO has that name as Generic Param Type 
+*/
+// JAVA LIST
+
+export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
+  'boolean': { name: 'boolean', primitive: true },
+  'char': { name: 'char', primitive: true },
+  'short': { name: 'short', primitive: true },
+  'int': { name: 'int', primitive: true },
+  'long': { name: 'long', primitive: true },
+  'float': { name: 'float', primitive: true },
+  'double': { name: 'double', primitive: true },
+  'Boolean': { name: 'Boolean', primitive: false },
+  'Short': { name: 'Short', primitive: false },
+  'Integer': { name: 'Integer', primitive: false },
+  'Long': { name: 'Long', primitive: false },
+  'Double': { name: 'Double', primitive: false },
+  'String': { name: 'String', primitive: false },
+  'Character': { name: 'Character', primitive: false },
+  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
+  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+  'LocalTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+
+  'List': { name: 'List', primitive: false, namespace: 'java.util', },
+}));
+```
+
+```ts
+/**
+ * Deletes a dto from the API.
+ *
+ * This function removes a dto configuration based on the provided configuration.
+ * It ensures that the dto is properly deleted from the specified API base path.
+ *
+ * @param {DTOBaseConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
+ * @param {string} basePath - The base path of the application where the dto and repository are located.
+ *
+ * @throws {Error} Will throw an error if the dto configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ * @throws {Error} Will throw an error the DTO is beeing used in other json configuration.
+ *
+ * @example
+ * // Example usage:
+ *  */
+
+import { deleteDTO } from "spring-engine";
+import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
+ 
+const config: DTOBaseConfig = {
+  type: 'dto',
+  name: 'User'
+};
+const basePath = 'C://your_project_path';
+  
+const removeDTO = async () => {
+  try {
+    await deleteDTO(config, basePath);
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+
 - Add new controller - This function creates a controller based on the provided configuration and integrates it into the specified API base path.
   It also generates the corresponding service interface for the controller actions defined.
 
@@ -286,6 +394,33 @@ GET: http://localhost:8080/greetings/goodbye/<id>
 ### Types
 
 ```ts
+export interface GenericType {
+  name: string;
+  ns: 'dto'|'model'|'java'|'local';
+}
+
+export interface JavaType {
+  name: string;
+  generics?: GenericType[];
+}
+
+export interface JavaAttribute {
+  name: string;
+  type: string | JavaType;
+  ns: 'dto'|'model'|'java';
+}
+
+export interface DTOBaseConfig {
+  type: 'dto';
+  name: string;
+}
+
+export interface DTOConfig extends DTOBaseConfig {
+  generics?: string[];
+  template: 'classic' | 'record';
+  attributes: JavaAttribute[];
+}
+
 export interface ModelConfig {
   type: 'model';
   name: string;

@@ -366,15 +366,17 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  * This function removes a dto configuration based on the provided configuration.
  * It ensures that the dto is properly deleted from the specified API base path.
  *
- * @param {DTOConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
+ * @param {DTOBaseConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
  * @param {string} basePath - The base path of the application where the dto and repository are located.
  *
  * @throws {Error} Will throw an error if the dto configuration is invalid.
  * @throws {Error} Will throw an error if the base path is not provided.
- *
+ * @throws {Error} Will throw an error the DTO is beeing used in other json configuration.
  * @example
  * // Example usage:
- * const config: DTOConfig = {
+ * import { deleteDTO } from "spring-engine";
+ * import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
+ * const config: DTOBaseConfig = {
  *   type: 'dto',
  *   name: 'User'
  * };
