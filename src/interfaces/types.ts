@@ -6,7 +6,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
-  RESPONSE_TYPES,
+  SIMPLE_RESPONSE_TYPES,
 } from '../utils/constants';
 
 export interface ApiConfig {
@@ -86,9 +86,10 @@ export interface ControllerAction {
 }
 
 export interface RequestParams {
-  type: string;
+  type: ParamsTypes;
   name: string;
 }
+
 export interface PathVariables {
   type: string;
   name: string;
@@ -102,11 +103,14 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
 };
 
+
+
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
-export type ResponseTypes = (typeof RESPONSE_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
+export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
+export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`

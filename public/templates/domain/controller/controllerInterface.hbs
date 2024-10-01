@@ -3,10 +3,6 @@ import java.util.List;
 
 public interface {{resourceConfig.name}}ServiceInterface {
   {{#each resourceConfig.actions}}
-  {{#if this.isResponseList}} 
-  List<{{this.response}}> {{actionName}}({{#if requestBody}}{{this.response}} {{requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-  {{else}}
-  {{response}} {{actionName}}({{#if requestBody}}{{this.response}} {{requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-  {{/if}}
+  {{{response}}} {{actionName}}({{#if requestBody}}{{{this.response}}} {{requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
   {{/each}}
 }

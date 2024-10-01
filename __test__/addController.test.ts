@@ -1,12 +1,9 @@
-import path from 'path';
 import fs from 'fs-extra';
-import { getMainPath } from '../src/utils/helpers';
 import { addController } from '../src/index';
-import { ApiConfig, ControllerConfig } from '../src/interfaces/types';
-import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
-import { HttpMethod } from '../src/interfaces/types';
+import { ControllerConfig } from '../src/interfaces/types';
 
 const OUTPUT_DIR = ''
+
 const controllerConfig: ControllerConfig = {
   type: "controller",
   name: "Greeting",
@@ -37,7 +34,7 @@ const controllerConfig: ControllerConfig = {
       actionName: 'goodBye',
       pathVariables:[{ type: 'Long', name: 'id' }],
       requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
+      response: 'List<String>',
       isResponseList: false,
     }
   ]
