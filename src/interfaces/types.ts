@@ -42,6 +42,7 @@ export interface Attribute {
   primarykey?: boolean;
   required?: boolean;
   unique?: boolean;
+  defaultValue?: string; // Adiciona o campo defaultValue aqui
 }
 
 export interface Relation {
