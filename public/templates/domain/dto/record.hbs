@@ -12,4 +12,4 @@ public record {{resourceConfig.name}}{{#if resourceConfig.generics}}<{{#each res
     {{/each}}
     {{{resolve-type this.type}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-);
+){};

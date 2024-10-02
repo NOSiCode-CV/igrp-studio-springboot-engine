@@ -7,7 +7,7 @@ import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { getMainPath } from '../src/utils/helpers';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
 
 /*beforeAll(async () =>{
     await fs.mkdir(OUTPUT_DIR, {recursive: true});

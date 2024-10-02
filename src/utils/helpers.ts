@@ -89,3 +89,4 @@ export const loadModelConfigs = async function (basePath: string): Promise<Model
 export const loadControllerConfigs = async function (basePath: string): Promise<ControllerConfig[]> {
   return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
 }
+

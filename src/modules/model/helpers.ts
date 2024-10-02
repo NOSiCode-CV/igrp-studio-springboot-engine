@@ -1,6 +1,5 @@
-import { ApiConfig, ModelConfig } from "../../interfaces/types"
-import { PACKAGES } from "../../utils/constants";
-import { getPackageNameFromConfig, loadModelConfigs } from "../../utils/helpers"
+import { ModelConfig } from "../../interfaces/types";
+import { loadModelConfigs } from "../../utils/helpers";
 
 export const getModelTypes = async function (basePath: string): Promise<Map<string, ModelConfig>> {
     const configs = await loadModelConfigs(basePath)

@@ -1,5 +1,6 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
+import { getDTOTypes } from '../modules/dto/helpers';
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
 
@@ -63,6 +64,7 @@ export const ERROR_MESSAGE = {
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
   DTO_FILE_CONFIG_NOT_FOUNT: 'DTO file configuration not found',
+  DTO_FILE_NOT_FOUND: 'DTO file not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
   TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
 };
@@ -152,7 +154,7 @@ export const ATTRIBUTE_TYPES = [
   'Text'
 ] as const;
 
-export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object', 'TPessoaRecord'] as const;
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },

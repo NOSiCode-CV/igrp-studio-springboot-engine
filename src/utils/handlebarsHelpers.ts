@@ -67,12 +67,19 @@ Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
     if (typeof attr.type === 'string') return;
     const type: JavaType = attr.type;
     if (type.namespace) {
+     
       imports.add(`import ${type.namespace}.${type.name};`);
+      
     }
     
     if (type.generics) {
       type.generics.forEach(grc => {
-        if (grc.namespace) imports.add(`import ${grc.namespace}.${grc.name};`)
+        if (grc.namespace) {
+          if (grc.name === "BigDecimal" || grc.name === "BigInteger")
+            imports.add(`import java.math.${grc.name};`)
+          
+          // imports.add(`import ${grc.namespace}.${grc.name};`) whe do not need to import the generic types
+        }
       });
     }
   });
