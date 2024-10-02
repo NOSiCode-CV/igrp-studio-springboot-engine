@@ -9,6 +9,12 @@ import {
   SIMPLE_RESPONSE_TYPES,
 } from '../utils/constants';
 
+export interface TypeMetadata {
+  name: string;
+  primitive: boolean; 
+  namespace?:string;
+}
+
 export interface ApiConfig {
   type: 'baseApi';
   apiName: string;
@@ -33,6 +39,35 @@ export interface ModelConfig {
 export interface PrimaryKey {
   name: string;
   type: AttributeType;
+}
+
+export interface GenericType {
+  name: string;
+  namespace?: string;
+  ns: 'dto'|'model'|'java'|'local';
+}
+
+export interface JavaType {
+  name: string;
+  namespace?: string;
+  generics?: GenericType[];
+}
+
+export interface JavaAttribute {
+  name: string;
+  type: string | JavaType;
+  ns: 'dto'|'model'|'java';
+}
+
+export interface DTOBaseConfig {
+  type: 'dto';
+  name: string;
+}
+
+export interface DTOConfig extends DTOBaseConfig {
+  generics?: string[];
+  template: 'classic' | 'record';
+  attributes: JavaAttribute[];
 }
 
 export interface Icontroller {
@@ -80,7 +115,6 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   actionName: string;
-  isResponseList: boolean;
   method: HttpMethod;
   accepts?: MimeTypes;
   contentType?: MimeTypes;
@@ -108,7 +142,6 @@ export type RenderContext<T = undefined> = {
   mathAttributes?: string[];
   sqlAttributes?: string[];
 };
-
 
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

@@ -6,7 +6,7 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/apiTest'
+const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
 
 const model: ModelConfig = {
   type: 'model',

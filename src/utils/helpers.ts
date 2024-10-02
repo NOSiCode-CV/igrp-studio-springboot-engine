@@ -1,7 +1,8 @@
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, REQUEST_BODY_NOT_IMPORT } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
-import { ControllerConfig, ModelConfig, RenderContext } from '../interfaces/types';
+import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
+import { config } from 'process';
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
@@ -20,6 +21,10 @@ export const getPackage = async (outputDir: string) => {
   return `${group}.${artifact}`;
 };
 
+export const getPackageNameFromConfig = function (config: ApiConfig) {
+  return `${config.group}.${config.artifact}`;
+}
+
 export const formatPackageName = (group: string, artifact: string) =>
   `${group}.${artifact}`.replace(/\./g, '/');
 
@@ -32,12 +37,22 @@ export const getMainPath = (group: string, artifact: string) =>
 export const getModelConfigPath = (model: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
 
+export const getDTOConfigPath = (dto: string, output: string) =>
+  path.join(output, DIRECTORIES.CONFIG_DTO, `${dto}${EXTENSIONS.JSON}`);
+
 export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.MODELS,
     context.resourceConfig.name
+  );
+
+export const getDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DTO
   );
 
 export const getControllerConfigPath = (controller: string, output: string) =>
@@ -50,3 +65,39 @@ export const getControllerDir = (context: RenderContext<ControllerConfig | Model
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name,
   );
+
+
+export const loadConfig = async function<T> (basePath: string): Promise<T[]> {
+  if (!(await fs.pathExists(basePath))) {
+    return [];
+  }
+  
+  const files = (await fs.readdir(basePath))
+    .filter(f => f.endsWith('.json'))
+    .map(f => fs.readJSON(path.join(basePath,f)));
+  return await Promise.all<T>(files);
+}
+
+export const loadDTOConfigs = async function (basePath: string): Promise<DTOConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_DTO));
+}
+
+export const loadModelConfigs = async function (basePath: string): Promise<ModelConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_MODEL));
+}
+
+export const loadControllerConfigs = async function (basePath: string): Promise<ControllerConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
+}
+
+export const extractTypeFromList = (typeString: string): string | null => {
+  const listRegex = "^List<(.+)>$";
+  const match = typeString.match(listRegex);
+  if (match && match[1]) {
+    if (match[1].trim() && !REQUEST_BODY_NOT_IMPORT.includes(match[1].trim()))
+      return match[1].trim();
+  }
+  else if (!REQUEST_BODY_NOT_IMPORT.includes(typeString)) 
+    return typeString
+  return null; 
+};
