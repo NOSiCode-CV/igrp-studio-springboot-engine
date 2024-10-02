@@ -7,7 +7,6 @@ import {
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
   SIMPLE_RESPONSE_TYPES,
-  SIMPLE_RESPONSE_TYPES,
 } from '../utils/constants';
 
 export interface ApiConfig {
@@ -92,7 +91,6 @@ export interface ControllerAction {
 }
 
 export interface RequestParams {
-  type: ParamsTypes;
   type: ParamsTypes;
   name: string;
 }
