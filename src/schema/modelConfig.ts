@@ -1,6 +1,6 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribute, Relation } from "../interfaces/types";
+import { ModelConfig, Crud, Attribute, Relation, PrimaryKey } from "../interfaces/types";
 import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
@@ -21,11 +21,6 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
     },
-    primarykey: { 
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The primary key attribute must be a boolean value if provided.'
-    }, 
     required: { 
       type: "boolean", 
       nullable: true,
@@ -107,7 +102,6 @@ const relationSchema: JSONSchemaType<Relation> = {
       nullable: true,
       pattern: PATTERNS.NAME_VALIDATION_PATTERN, 
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
-
     },
     
     joinColumn: { 
@@ -142,6 +136,31 @@ const relationSchema: JSONSchemaType<Relation> = {
   }
 };
 
+const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
+  type: "object",
+  properties: {
+    type: {
+      type: "string",
+      enum: ATTRIBUTE_TYPES,
+      errorMessage: `The primary key type is mandatory and must be one of ${ATTRIBUTE_TYPES}`
+    },
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
+    }
+  },
+  required:['name','type'],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      type: 'The attribute type is required.',
+      name: 'The attribute name is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the attribute schema.'
+  }
+}
+
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
@@ -160,6 +179,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The table name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
     }, 
+    primaryKey: {
+      type: 'array',
+      items: primaryKeySchema,
+      errorMessage: 'The primary key attribute must be provided.'
+    },
+
     attributes: { 
       type: "array", 
       items: attributeSchema,

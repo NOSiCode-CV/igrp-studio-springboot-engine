@@ -128,7 +128,10 @@ export const ATTRIBUTE_TYPES = [
   'Text'
 ] as const;
 
-export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+// export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+
+export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [

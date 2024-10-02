@@ -24,13 +24,11 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 @AllArgsConstructor
 @Table(name="{{resourceConfig.tableName}}")
 public class {{resourceConfig.name}} {
+
+  @EmbeddedId
+  private {{capitalize }};
+  
   {{#each resourceConfig.attributes}}
-  {{#if (eq this.primarykey true)}}
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(unique = true, nullable = false)
-  private {{this.type}} {{this.name}};
-  {{else}}
   {{#if this.required}}
   @NotBlank(message = "{{this.name}} is mandatory")
   {{/if}}
@@ -40,7 +38,6 @@ public class {{resourceConfig.name}} {
   {{else}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{this.type}} {{this.name}};
-  {{/if}}
   {{/if}}
   
   {{/each}}
