@@ -74,41 +74,7 @@ const controllerConfig2: ControllerConfig = {
     }
   ]
 };
-const controllerConfig2: ControllerConfig = {
-  type: "controller",
-  name: "CcontrollerTest",
-  basePath: "greetings",
-  actions: [
-    {
-      path: 'hello',
-      method: 'GET',
-      actionName: 'hello',
-      accepts: 'application/x-cdf',
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false
-    },
-    {
-      path: 'addGreeting',
-      method: 'POST',
-      actionName: 'addGreeting',
-      requestBody: 'greeting',
-      pathVariables:[],
-      requestParams: [],
-      response: 'Object',
-      isResponseList: true
-    },
-    {
-      path: 'goodbye',
-      method: 'GET',
-      actionName: 'goodBye',
-      pathVariables:[{ type: 'Long', name: 'id' }],
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'List<String>',
-      isResponseList: false,
-    }
-  ]
-};
+
 
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
