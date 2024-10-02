@@ -187,11 +187,6 @@ export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPE
 
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 
-export const DTO_RESPONSE_TYPES = [
-
-]
-
-
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
   'GET',

@@ -1,5 +1,5 @@
-import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
-import { ATTRIBUTE_TYPES, ERROR_MESSAGE, METHODS, RESPONSE_TYPES } from './utils/constants';
+import { DTOBaseConfig, DTOConfig, ModelConfig, ParamsTypes } from './interfaces/types';
+import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, ERROR_MESSAGE, HTTP_METHOD_TYPES, METHODS, MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
@@ -558,11 +558,19 @@ export const engineTypes = async (basePath: string) =>{
 
   let bodyTypes = ["Object", ...dtos]
 
+  let paramsTypes = [...PARAMS_TYPES, ...dtos]
+
   const allTypes = {
-    METHODS: METHODS,
+    MYME_TYPES: MIME_TYPES,
+    DATABASE_TYPES: DATABASE_TYPES,
+    METHODS: HTTP_METHOD_TYPES,
     BODY_REQUEST: bodyTypes,
     RESPONSE_TYPES : responseTypes,
-    ATTRIBUTE_TYPES : ATTRIBUTE_TYPES
+    ATTRIBUTE_TYPES : ATTRIBUTE_TYPES,
+    CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS,
+    RELATIONSHIP_TYPES: RELATIONSHIP_TYPES,
+    PARAMS_TYPES : paramsTypes,
+    REQUEST_PARAMS: PARAMS_TYPES
   }
 
   return allTypes
