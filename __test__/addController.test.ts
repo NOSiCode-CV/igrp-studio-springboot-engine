@@ -1,16 +1,47 @@
-import path from 'path';
 import fs from 'fs-extra';
-import { getMainPath } from '../src/utils/helpers';
 import { addController } from '../src/index';
-import { ApiConfig, ControllerConfig } from '../src/interfaces/types';
-import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
-import { HttpMethod } from '../src/interfaces/types';
+import { ControllerConfig } from '../src/interfaces/types';
 
 
 const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
 const controllerConfig: ControllerConfig = {
   type: "controller",
   name: "Greeting",
+  basePath: "greetings",
+  actions: [
+    {
+      path: 'hello',
+      method: 'GET',
+      actionName: 'hello',
+      accepts: 'application/x-cdf',
+      requestParams: [{ type: 'String', name: 'greetingName' }],
+      response: 'String',
+      isResponseList: false
+    },
+    {
+      path: 'addGreeting',
+      method: 'POST',
+      actionName: 'addGreeting',
+      requestBody: 'TPessoaRecord',
+      pathVariables:[],
+      requestParams: [],
+      response: 'TPessoaRecord',
+      isResponseList: true
+    },
+    {
+      path: 'goodbye',
+      method: 'GET',
+      actionName: 'goodBye',
+      pathVariables:[{ type: 'Long', name: 'id' }],
+      requestParams: [{ type: 'String', name: 'greetingName' }],
+      response: 'String',
+      isResponseList: false,
+    }
+  ]
+};
+const controllerConfig2: ControllerConfig = {
+  type: "controller",
+  name: "CcontrollerTest",
   basePath: "greetings",
   actions: [
     {
@@ -73,7 +104,7 @@ const controllerConfig2: ControllerConfig = {
       actionName: 'goodBye',
       pathVariables:[{ type: 'Long', name: 'id' }],
       requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
+      response: 'List<String>',
       isResponseList: false,
     }
   ]

@@ -2,8 +2,8 @@ import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 import { getDTOTypes } from '../modules/dto/helpers';
 
-export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-// export const TEMPLATE_DIR = path.join(__dirname, './templates');
+// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -155,7 +155,6 @@ export const ATTRIBUTE_TYPES = [
   'Text'
 ] as const;
 
-export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object', 'TPessoaRecord'] as const;
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
@@ -180,6 +179,12 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
 
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
 }));
+
+// export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+
+export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
+
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
