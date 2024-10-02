@@ -1,4 +1,4 @@
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, REQUEST_BODY_NOT_IMPORT } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
@@ -90,3 +90,14 @@ export const loadControllerConfigs = async function (basePath: string): Promise<
   return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
 }
 
+export const extractTypeFromList = (typeString: string): string | null => {
+  const listRegex = "^List<(.+)>$";
+  const match = typeString.match(listRegex);
+  if (match && match[1]) {
+    if (match[1].trim() && !REQUEST_BODY_NOT_IMPORT.includes(match[1].trim()))
+      return match[1].trim();
+  }
+  else if (!REQUEST_BODY_NOT_IMPORT.includes(typeString)) 
+    return typeString
+  return null; 
+};

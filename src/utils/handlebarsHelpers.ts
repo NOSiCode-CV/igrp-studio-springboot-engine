@@ -1,5 +1,7 @@
 import * as Handlebars from 'handlebars';
-import { GenericType, JavaAttribute, JavaType } from '../interfaces/types';
+import { ControllerAction, ControllerConfig, GenericType, JavaAttribute, JavaType } from '../interfaces/types';
+import { REQUEST_BODY_NOT_IMPORT, RESPONSE_TYPES } from './constants';
+import { extractTypeFromList } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -39,6 +41,23 @@ Handlebars.registerHelper('ifNot', function(this: any, conditional: any, options
     return options.inverse(this);
   }
 });
+
+Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
+  let imports: string [] = []
+  for (const action of actions) {
+    if (action.requestBody)
+      if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody)) 
+        imports.push(`import ${group}.${artifact}.dto.${action.requestBody};`)
+      if (action.response)
+        if (extractTypeFromList(action.response)){
+          const type = extractTypeFromList(action.response)
+          imports.push(`import ${group}.${artifact}.dto.${type};`)
+        }
+  }
+  
+  return [...new Set(imports)].join(" ")
+})
+
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
   if (arg1 === arg2) {

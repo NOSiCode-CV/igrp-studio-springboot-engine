@@ -1,5 +1,5 @@
 import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
-import { ERROR_MESSAGE } from './utils/constants';
+import { ATTRIBUTE_TYPES, ERROR_MESSAGE, METHODS, RESPONSE_TYPES } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
@@ -21,6 +21,7 @@ import { saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
+import { getDTOTypes } from './modules/dto/helpers';
 
 /**
  * Main Function that creates the base api
@@ -537,4 +538,33 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
   };
 
   await deleteControllerConfig(context)
+}
+
+/**
+ * 
+ * @param basePath 
+ * @returns 
+ */
+export const engineTypes = async (basePath: string) =>{
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  let dtos = [];
+  const typesDTOs = await getDTOTypes(basePath);
+  
+  for (const dto of typesDTOs.values()) {
+    dtos.push(dto.name)
+  }
+  const responseTypes = [...RESPONSE_TYPES, ...dtos, ...dtos.map(dto=> `List<${dto}>`)]
+
+  let bodyTypes = ["Object", ...dtos]
+
+  const allTypes = {
+    METHODS: METHODS,
+    BODY_REQUEST: bodyTypes,
+    RESPONSE_TYPES : responseTypes,
+    ATTRIBUTE_TYPES : ATTRIBUTE_TYPES
+  }
+
+  return allTypes
+  
 }

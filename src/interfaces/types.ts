@@ -110,7 +110,6 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   actionName: string;
-  isResponseList: boolean;
   method: HttpMethod;
   accepts?: MimeTypes;
   contentType?: MimeTypes;

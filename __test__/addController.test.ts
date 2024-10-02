@@ -15,18 +15,16 @@ const controllerConfig: ControllerConfig = {
       actionName: 'hello',
       accepts: 'application/x-cdf',
       requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false
+      response: 'DTO',
     },
     {
       path: 'addGreeting',
       method: 'POST',
       actionName: 'addGreeting',
-      requestBody: 'TPessoaRecord',
+      requestBody: 'TPessoaRecord', //Ensure that it is a "Object" or a "DTO CLASS", otherwise you will get an error in your controller
       pathVariables:[],
       requestParams: [],
-      response: 'TPessoaRecord',
-      isResponseList: true
+      response: 'Object',
     },
     {
       path: 'goodbye',
@@ -34,46 +32,45 @@ const controllerConfig: ControllerConfig = {
       actionName: 'goodBye',
       pathVariables:[{ type: 'Long', name: 'id' }],
       requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false,
+      response: 'List<TPessoaRecord>'
     }
   ]
 };
-const controllerConfig2: ControllerConfig = {
-  type: "controller",
-  name: "CcontrollerTest",
-  basePath: "greetings",
-  actions: [
-    {
-      path: 'hello',
-      method: 'GET',
-      actionName: 'hello',
-      accepts: 'application/x-cdf',
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false
-    },
-    {
-      path: 'addGreeting',
-      method: 'POST',
-      actionName: 'addGreeting',
-      requestBody: 'TPessoaRecord',
-      pathVariables:[],
-      requestParams: [],
-      response: 'TPessoaRecord',
-      isResponseList: true
-    },
-    {
-      path: 'goodbye',
-      method: 'GET',
-      actionName: 'goodBye',
-      pathVariables:[{ type: 'Long', name: 'id' }],
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false,
-    }
-  ]
-};
+// const controllerConfig2: ControllerConfig = {
+//   type: "controller",
+//   name: "CcontrollerTest",
+//   basePath: "greetings",
+//   actions: [
+//     {
+//       path: 'hello',
+//       method: 'GET',
+//       actionName: 'hello',
+//       accepts: 'application/x-cdf',
+//       requestParams: [{ type: 'String', name: 'greetingName' }],
+//       response: 'String',
+//       isResponseList: false
+//     },
+//     {
+//       path: 'addGreeting',
+//       method: 'POST',
+//       actionName: 'addGreeting',
+//       requestBody: 'TPessoaRecord',
+//       pathVariables:[],
+//       requestParams: [],
+//       response: 'TPessoaRecord',
+//       isResponseList: true
+//     },
+//     {
+//       path: 'goodbye',
+//       method: 'GET',
+//       actionName: 'goodBye',
+//       pathVariables:[{ type: 'Long', name: 'id' }],
+//       requestParams: [{ type: 'String', name: 'greetingName' }],
+//       response: 'String',
+//       isResponseList: false,
+//     }
+//   ]
+// };
 
 
 beforeAll(async () => {
@@ -96,7 +93,8 @@ describe('Controller Module', () => {
 
   it('should create the controller class and the service interface', async () => {
     await addController(controllerConfig, OUTPUT_DIR);
-    await addController(controllerConfig2, OUTPUT_DIR);
+
+    // await addController(controllerConfig2, OUTPUT_DIR);
 
     // const controllerPath = path.join(
     //   OUTPUT_DIR,

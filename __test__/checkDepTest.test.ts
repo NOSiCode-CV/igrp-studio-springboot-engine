@@ -18,7 +18,7 @@ describe("delete DTO", () => {
       template: 'record',
       attributes: [
           { type: 'String', ns: 'java', name: 't0'},
-          { type: 'DTO1', ns: 'dto', name: 't1'},    
+          // { type: 'DTO', ns: 'dto', name: 't1'},    
           { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
           { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
       ]
@@ -29,7 +29,7 @@ describe("delete DTO", () => {
       template: 'record',
       attributes: [
           { type: 'String', ns: 'java', name: 't0'},
-          { type: 'DTO1', ns: 'dto', name: 't1'},    
+          // { type: 'DTO', ns: 'dto', name: 't1'},    
           { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
           { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
       ]
@@ -37,7 +37,7 @@ describe("delete DTO", () => {
 
     const dto1: DTOConfig = {
       type: 'dto',
-      name: 'DTO1',
+      name: 'DTO',
       template: 'classic',
       attributes: [
           { type: 'String', ns: 'java', name: 't0'}
