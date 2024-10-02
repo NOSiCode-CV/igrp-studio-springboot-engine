@@ -46,6 +46,7 @@ const model: ModelConfig = {
       inverseJoinColumn: 'library_id',
     },
   ],
+  primaryKey: []
 };
 
 const model2: ModelConfig = {
@@ -57,14 +58,15 @@ const model2: ModelConfig = {
     { type: 'String', name: 'numero', unique: false, nullable: true, required: true },
     { type: 'String', name: 'nib', unique: false, nullable: true, required: true },
     { type: 'String', name: 'nrConvencao', unique: false, nullable: true, required: true },
-  ], 
-  relations:[
+  ],
+  relations: [
     {
       relationType: 'ManyToMany',
       entity: 'SIPS_T_PESSOA',
       mappedBy: 'library',
     }
-  ]
+  ],
+  primaryKey: []
 };
 
 

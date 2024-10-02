@@ -26,7 +26,7 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 public class {{resourceConfig.name}} {
 
   @EmbeddedId
-  private {{capitalize }};
+  private PrimaryKey id;
   
   {{#each resourceConfig.attributes}}
   {{#if this.required}}

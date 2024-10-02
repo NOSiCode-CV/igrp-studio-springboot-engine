@@ -1,9 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
-import { getDTOTypes } from '../modules/dto/helpers';
 
-// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+// export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -77,6 +76,7 @@ export const TEMPLATES = {
   DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+  DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
 
   DOMAIN_DTO: {
     'classic': 'domain/dto/lombok.hbs',
@@ -180,7 +180,6 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
 }));
 
-// export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]

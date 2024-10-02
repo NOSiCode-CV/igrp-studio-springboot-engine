@@ -6,7 +6,7 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
+const OUTPUT_DIR = ''
 
 const model: ModelConfig = {
   type: 'model',
@@ -20,11 +20,6 @@ const model: ModelConfig = {
     { type: 'Boolean', name: 'fumador', length: 30 },
     { type: 'Text', name: 'nomePai', length: 2000, required: true },
   ],
-  crud: {
-    enabled: true,
-    path: 'sips_pessoa',
-    disabledMethods: ['save', 'saveAll', 'delete', 'deleteAll', 'deleteById', 'findAll', 'findById', 'findAllById'],
-  },
   primaryKey: [
     {
       name: 'userId',

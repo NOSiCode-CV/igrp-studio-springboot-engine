@@ -21,7 +21,8 @@ const model: ModelConfig = {
       nullable: true,
     },
   ],
-  tableName: 'library'
+  tableName: 'library',
+  primaryKey: []
 };
 
 const apiConfig: ApiConfig = {

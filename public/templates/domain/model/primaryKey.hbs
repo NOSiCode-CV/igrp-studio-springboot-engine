@@ -6,8 +6,7 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class UserId implements Serializable {
-  
+public class PrimaryKey implements Serializable {
   {{#each resourceConfig.primaryKey}}
   private {{this.type}} {{this.name}};
   {{/each}}

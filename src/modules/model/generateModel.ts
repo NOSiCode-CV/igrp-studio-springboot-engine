@@ -9,7 +9,10 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
 
+  const primaryKeyTemplate = await renderPrimaryKey(context);
+  const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
 
+  await saveToFile(primaryKeyTemplate, primaryKeyPath);
   await saveToFile(template, modelOutputPath);
 };
 
@@ -29,6 +32,11 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
+
+const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
+  console.log(context.resourceConfig.primaryKey)
+  return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
+}
 
 const sqlUniquesAttributes = (attributes: Attribute[]) => {
   let sqlAttributes: string[] = [];
@@ -54,6 +62,9 @@ const mathUniquesAttributes = (attributes: Attribute[]) => {
 
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+
+const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
+  path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
 
 
 
