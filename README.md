@@ -38,7 +38,7 @@ Once the project has been compiled, you can test the various functions of the ap
 
 #### Install the package:
 
-```yarn add spring-engine@1.0.5 --registry=https://sonatype.nosi.cv/repository/npm-group/```
+```yarn add @igrp/spring-engine@0.0.5 --registry=https://sonatype.nosi.cv/repository/npm-group/```
 
 #### You can use this package to:
 

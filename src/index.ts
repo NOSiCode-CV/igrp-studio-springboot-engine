@@ -57,6 +57,7 @@ import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
  * 
  */
 export const newApi = async (config: ApiConfig, basePath: string) => {
+
   const valid = apiValidation(config);
 
   if (!valid && apiValidation.errors) 
@@ -77,7 +78,6 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
     basePath,
     baseConfig: config,
   };
-
   /**
    * Creates the folder structure needed for the API.
    */
@@ -90,6 +90,7 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
   await saveFileConfig(context);
+
 };
 
 /**
@@ -154,6 +155,7 @@ export const addModel = async (config: ModelConfig, basePath: string) => {
   if (config.crud?.enabled) {
     await generateRepository(context);
   }
+
 };
 
 /**
@@ -245,6 +247,7 @@ export const addCrud = async (config: ModelConfig, basePath: string) => {
  */
 export const addRelationship = async (config: ModelConfig, basePath: string) => {
   await addModel(config, basePath);
+
 };
 
 /**
@@ -481,6 +484,7 @@ export const addController = async (config: ControllerConfig, basePath: string) 
   
   await generateController(context);
   await generateServiceInterface(context);
+
 };
 
 /**
@@ -533,5 +537,4 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
   };
 
   await deleteControllerConfig(context)
-
 }
