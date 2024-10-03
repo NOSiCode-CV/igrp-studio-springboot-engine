@@ -4,7 +4,7 @@ import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
+import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
 const OUTPUT_DIR = ''
 
@@ -13,18 +13,23 @@ const model: ModelConfig = {
   name: 'SIPS_T_PESSOA',
   tableName: 'sips_t_pessoa',
   attributes: [
-    { type: 'Long', name: 'idPessoa', primarykey: true},
+    { type: 'Long', name: 'idPessoa' },
     { type: 'String', name: 'numero', unique: false, nullable: false, required: true },
-    { type: 'String', name: 'nomeMae', length:30 },
-    { type: 'Float', name: 'saldo', length:50},
-    { type: 'Boolean', name: 'fumador', length:30 },
-    { type: 'Text', name: 'nomePai', length:2000, required: true},
-  ], 
-  crud: {
-    enabled: true,
-    path: 'sips_pessoa',
-    disabledMethods: ['save', 'saveAll', 'delete', 'deleteAll', 'deleteById', 'findAll', 'findById', 'findAllById'],
-  }
+    { type: 'String', name: 'nomeMae', length: 30 },
+    { type: 'Float', name: 'saldo', length: 50 },
+    { type: 'Boolean', name: 'fumador', length: 30 },
+    { type: 'Text', name: 'nomePai', length: 2000, required: true },
+  ],
+  primaryKey: [
+    {
+      name: 'userId',
+      type: 'Long'
+    },
+    {
+      name: 'userName',
+      type: 'String'
+    },
+  ]
 };
 
 // const model2: ModelConfig = {
@@ -97,3 +102,4 @@ describe('Model generator', () => {
 
   });
 });
+

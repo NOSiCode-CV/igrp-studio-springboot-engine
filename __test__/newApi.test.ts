@@ -5,7 +5,9 @@ import { getMainPath } from '../src/utils/helpers';
 import { ApiConfig } from '../src/interfaces/types';
 import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api2'
+
+const OUTPUT_DIR = ''
+
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',

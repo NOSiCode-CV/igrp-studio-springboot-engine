@@ -1,5 +1,3 @@
-import path from 'path';
-import fs from 'fs-extra';
 import { deleteModel } from '../src/index';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { TEMPLATE_DIR } from '../src/utils/constants';
@@ -23,7 +21,8 @@ const model: ModelConfig = {
       nullable: true,
     },
   ],
-  tableName: 'library'
+  tableName: 'library',
+  primaryKey: []
 };
 
 const apiConfig: ApiConfig = {
@@ -36,7 +35,6 @@ const apiConfig: ApiConfig = {
 }
 
 beforeAll(async () =>{
-  console.log(TEMPLATE_DIR)
   // await fs.mkdir(OUTPUT_DIR, {recursive: true});
   // await newApi(apiConfig, OUTPUT_DIR);
 });

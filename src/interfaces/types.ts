@@ -6,8 +6,14 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
-  RESPONSE_TYPES,
+  SIMPLE_RESPONSE_TYPES,
 } from '../utils/constants';
+
+export interface TypeMetadata {
+  name: string;
+  primitive: boolean; 
+  namespace?:string;
+}
 
 export interface ApiConfig {
   type: 'baseApi';
@@ -25,8 +31,43 @@ export interface ModelConfig {
   name: string;
   tableName: string;
   attributes: Attribute[];
+  primaryKey: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
+}
+
+export interface PrimaryKey {
+  name: string;
+  type: AttributeType;
+}
+
+export interface GenericType {
+  name: string;
+  namespace?: string;
+  ns: 'dto'|'model'|'java'|'local';
+}
+
+export interface JavaType {
+  name: string;
+  namespace?: string;
+  generics?: GenericType[];
+}
+
+export interface JavaAttribute {
+  name: string;
+  type: string | JavaType;
+  ns: 'dto'|'model'|'java';
+}
+
+export interface DTOBaseConfig {
+  type: 'dto';
+  name: string;
+}
+
+export interface DTOConfig extends DTOBaseConfig {
+  generics?: string[];
+  template: 'classic' | 'record';
+  attributes: JavaAttribute[];
 }
 
 export interface Icontroller {
@@ -39,7 +80,6 @@ export interface Attribute {
   name: string;
   length?: number;
   nullable?: boolean;
-  primarykey?: boolean;
   required?: boolean;
   unique?: boolean;
   defaultValue?: string; // Adiciona o campo defaultValue aqui
@@ -76,7 +116,6 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   actionName: string;
-  isResponseList: boolean;
   method: HttpMethod;
   accepts?: MimeTypes;
   contentType?: MimeTypes;
@@ -87,9 +126,11 @@ export interface ControllerAction {
 }
 
 export interface RequestParams {
-  type: string;
+  type: ParamsTypes;
   name: string;
 }
+
+
 export interface PathVariables {
   type: string;
   name: string;
@@ -103,11 +144,13 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
 };
 
+
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
-export type ResponseTypes = (typeof RESPONSE_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
+export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
+export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`

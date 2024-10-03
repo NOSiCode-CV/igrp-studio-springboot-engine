@@ -1,0 +1,13 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}};
+
+import java.io.Serializable;
+import jakarta.persistence.Embeddable;
+import lombok.Data;
+
+@Data
+@Embeddable
+public class PrimaryKey implements Serializable {
+  {{#each resourceConfig.primaryKey}}
+  private {{this.type}} {{this.name}};
+  {{/each}}
+}

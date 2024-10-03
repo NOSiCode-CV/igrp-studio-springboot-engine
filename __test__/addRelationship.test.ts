@@ -1,12 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { ApiConfig, ModelConfig, Relation } from '../src/interfaces/types';
+import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
-import { newApi } from '../src/index';
 import { addModel } from'../src/index';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/api'
+const OUTPUT_DIR = ''
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
@@ -47,6 +46,7 @@ const model: ModelConfig = {
       inverseJoinColumn: 'library_id',
     },
   ],
+  primaryKey: []
 };
 
 const model2: ModelConfig = {
@@ -58,14 +58,15 @@ const model2: ModelConfig = {
     { type: 'String', name: 'numero', unique: false, nullable: true, required: true },
     { type: 'String', name: 'nib', unique: false, nullable: true, required: true },
     { type: 'String', name: 'nrConvencao', unique: false, nullable: true, required: true },
-  ], 
-  relations:[
+  ],
+  relations: [
     {
       relationType: 'ManyToMany',
       entity: 'SIPS_T_PESSOA',
       mappedBy: 'library',
     }
-  ]
+  ],
+  primaryKey: []
 };
 
 

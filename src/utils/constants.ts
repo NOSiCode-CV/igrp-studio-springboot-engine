@@ -1,4 +1,5 @@
 import path from 'path';
+import { TypeMetadata } from '../interfaces/types';
 
 export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
 // export const TEMPLATE_DIR = path.join(__dirname, './templates');
@@ -8,12 +9,28 @@ export const DIRECTORIES = {
   CONFIG_CONTROLLER: '.igrpstudio/controllers',
   CONFIG_ICONTROLLER: '.igrpstudio/controllers',
   CONFIG_MODEL: '.igrpstudio/models',
+  CONFIG_DTO: '.igrpstudio/dto',
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',
   MODELS: 'models',
+  DTO: 'dto',
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
+};
+
+export const PACKAGES = {
+  MODELS: 'models',
+  DTO: 'dto',
+  CONTROLLERS: 'controller'
+};
+
+export const PACKAGE_NS = {
+  local: 'local',
+  java: 'java',
+  model: 'model',
+  dto: 'dto',
+  controller: 'controller'
 };
 
 export const SUCCESS_MESSAGE = {
@@ -46,7 +63,10 @@ export const ERROR_MESSAGE = {
   MODEL_REQUIRED:
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
+  DTO_FILE_CONFIG_NOT_FOUNT: 'DTO file configuration not found',
+  DTO_FILE_NOT_FOUND: 'DTO file not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
+  TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
 };
 
 export const TEMPLATES = {
@@ -56,6 +76,12 @@ export const TEMPLATES = {
   DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+  DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
+
+  DOMAIN_DTO: {
+    'classic': 'domain/dto/lombok.hbs',
+    'record': 'domain/dto/record.hbs',
+  },
 
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',
@@ -104,6 +130,7 @@ export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
+  NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',  
 };
@@ -128,7 +155,36 @@ export const ATTRIBUTE_TYPES = [
   'Text'
 ] as const;
 
-export const RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+
+export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
+  'boolean': { name: 'boolean', primitive: true },
+  'char': { name: 'char', primitive: true },
+  'short': { name: 'short', primitive: true },
+  'int': { name: 'int', primitive: true },
+  'long': { name: 'long', primitive: true },
+  'float': { name: 'float', primitive: true },
+  'double': { name: 'double', primitive: true },
+  'Boolean': { name: 'Boolean', primitive: false },
+  'Short': { name: 'Short', primitive: false },
+  'Integer': { name: 'Integer', primitive: false },
+  'Long': { name: 'Long', primitive: false },
+  'Double': { name: 'Double', primitive: false },
+  'String': { name: 'String', primitive: false },
+  'Character': { name: 'Character', primitive: false },
+  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
+  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+  'LocalTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+
+  'List': { name: 'List', primitive: false, namespace: 'java.util', },
+}));
+
+
+export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
+export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
+
+export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const HTTP_METHOD_TYPES = [
@@ -207,3 +263,4 @@ export const CRUD_DISABLED_OPTIONS = [
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
 export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
+
