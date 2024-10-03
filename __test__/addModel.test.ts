@@ -4,9 +4,9 @@ import { getMainPath } from '../src/utils/helpers';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../src/utils/constants';
+import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
 
 const model: ModelConfig = {
   type: 'model',

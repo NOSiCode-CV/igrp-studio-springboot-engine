@@ -1,0 +1,11 @@
+stages:
+  - build
+build_packagedev:
+  image: node:slim
+  stage: build
+  only:
+    - master
+  script:
+    - npm install
+    - npm run build
+    - npm publish --registry=https://sonatype.nosi.cv/repository/igrp/

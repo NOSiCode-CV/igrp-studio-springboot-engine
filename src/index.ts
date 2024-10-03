@@ -1,5 +1,5 @@
-import { ModelConfig } from './interfaces/types';
-import { ERROR_MESSAGE } from './utils/constants';
+import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
+import { ATTRIBUTE_TYPES, ERROR_MESSAGE, METHODS, RESPONSE_TYPES } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
@@ -17,6 +17,11 @@ import { deleteControllerConfig } from './modules/controller/deleteController';
 import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
 import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
+import { saveDTOConfig } from './modules/dto/saveDTOConfig';
+import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
+import { deleteDTOConfig } from './modules/dto/deleteDTO';
+import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
+import { getDTOTypes } from './modules/dto/helpers';
 
 /**
  * Main Function that creates the base api
@@ -299,6 +304,117 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 
 }
 
+
+/**
+* Generates and saves a model to the API.
+* This function creates a model based on the provided configuration and saves it to the specified API base path.
+* It also generates the associated CRUD operations if enabled in the configuration.
+*
+* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
+* @param {string} basePath - Application base path where the model will be saved and generated to the API.
+* 
+* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
+* @throws {Error} Will throw an error if the base path is not provided.
+* 
+* @example
+* // Example usage:
+* import { addDTO } from "spring-engine";
+* import { DTOConfig } from "spring-engine/dist/interfaces/types";
+* const config: DTOConfig = {
+*   type: 'dto',
+*   name: 'User',
+*   attributes: [
+*     { type: 'String', ns: 'java', name: 't0'},
+*     { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
+*     { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
+*     { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
+* 
+*     { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
+*     { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
+*   ]
+* };
+* const basePath = 'C://your_project_path';
+* 
+* const createDTO = async () => {
+*   try {
+*     await addDTO(config, basePath);
+*   } catch (error) {
+*     console.error(error);
+*   }
+* };
+*/
+export const addDTO = async (config: DTOConfig, basePath: string) => {
+  const valid = validateDTOConfig(config);
+
+  if (!valid && validateDTOConfig.errors) {
+    throw validateDTOConfig.errors
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  await saveDTOConfig(config, basePath);
+
+  const context: RenderContext<DTOConfig> = {
+    resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
+    basePath,
+    baseConfig,
+  };
+
+  await generateDTO(context);
+};
+
+/**
+ * Deletes a dto from the API.
+ *
+ * This function removes a dto configuration based on the provided configuration.
+ * It ensures that the dto is properly deleted from the specified API base path.
+ *
+ * @param {DTOBaseConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
+ * @param {string} basePath - The base path of the application where the dto and repository are located.
+ *
+ * @throws {Error} Will throw an error if the dto configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ * @throws {Error} Will throw an error the DTO is beeing used in other json configuration.
+ * @example
+ * // Example usage:
+ * import { deleteDTO } from "spring-engine";
+ * import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
+ * const config: DTOBaseConfig = {
+ *   type: 'dto',
+ *   name: 'User'
+ * };
+ * const basePath = 'C://your_project_path';
+ * 
+ * const removeDTO = async () => {
+ *   try {
+ *     await deleteDTO(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ * 
+ */
+export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
+  const valid = validateDeleteDTOConfig(config);
+
+  if (!valid && validateDeleteDTOConfig.errors) {
+    throw validateDeleteDTOConfig.errors
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<DTOBaseConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await deleteDTOConfig(context, false);
+}
+
 /**
  * Generates and saves a controller in the API.
  *
@@ -422,4 +538,33 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
   };
 
   await deleteControllerConfig(context)
+}
+
+/**
+ * 
+ * @param basePath 
+ * @returns 
+ */
+export const engineTypes = async (basePath: string) =>{
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  let dtos = [];
+  const typesDTOs = await getDTOTypes(basePath);
+  
+  for (const dto of typesDTOs.values()) {
+    dtos.push(dto.name)
+  }
+  const responseTypes = [...RESPONSE_TYPES, ...dtos, ...dtos.map(dto=> `List<${dto}>`)]
+
+  let bodyTypes = ["Object", ...dtos]
+
+  const allTypes = {
+    METHODS: METHODS,
+    BODY_REQUEST: bodyTypes,
+    RESPONSE_TYPES : responseTypes,
+    ATTRIBUTE_TYPES : ATTRIBUTE_TYPES
+  }
+
+  return allTypes
+  
 }

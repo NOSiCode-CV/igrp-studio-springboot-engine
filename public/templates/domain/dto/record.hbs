@@ -1,0 +1,15 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.dto;
+
+{{resolve-imports resourceConfig}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public record {{resourceConfig.name}}{{#if resourceConfig.generics}}<{{#each resourceConfig.generics}}{{this}}{{#if @last}}{{else}}, {{/if}}{{/each}}>{{/if}}(
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-type this.type}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+){};
