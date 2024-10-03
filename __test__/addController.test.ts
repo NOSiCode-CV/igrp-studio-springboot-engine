@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { addController } from '../src/index';
 import { ControllerConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo Fernando/Downloads/apiTest'
+const OUTPUT_DIR = ''
 const controllerConfig: ControllerConfig = {
   type: "controller",
   name: "Greeting",
@@ -20,7 +20,7 @@ const controllerConfig: ControllerConfig = {
       path: 'addGreeting',
       method: 'POST',
       actionName: 'addGreeting',
-      requestBody: 'TPessoaRecord', //Ensure that it is a "Object" or a "DTO CLASS", otherwise you will get an error in your controller
+      requestBody: 'TPessoaRecord', //Make sure it is a previously created "DTO" or "Object" otherwise you will get an error in your controller
       pathVariables:[],
       requestParams: [],
       response: 'TPessoaDto',

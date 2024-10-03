@@ -2,7 +2,7 @@ import { addDTO, deleteDTO } from "../src"
 import { DTOConfig } from "../src/interfaces/types"
 
 
-const basePath = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
+const basePath = ''
 
 beforeEach(() => {
   

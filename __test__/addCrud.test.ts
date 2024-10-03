@@ -31,6 +31,10 @@ const model: ModelConfig = {
       nullable: true,
     },
   ],
+  primaryKey: [{
+    name: 'libraryId',
+    type: 'String'
+  }]
 };
 
 const crud: Crud = {
