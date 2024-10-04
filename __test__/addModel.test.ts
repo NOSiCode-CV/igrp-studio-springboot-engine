@@ -49,7 +49,7 @@ const model3: ModelConfig = {
   tableName: 'sips_t_socio',
   attributes: [
     { type: 'Integer', name: 'idPessoa', unique: false, nullable: true, required: true, defaultValue: '20' },
-    { type: 'String', name: 'numero', unique: false, nullable: true, required: true },
+    { type: 'String', name: 'numero', unique: false, nullable: true, required: true, defaultValue: 'X0PSKK012' },
     { type: 'String', name: 'nib', unique: false, nullable: true, required: true },
     { type: 'String', name: 'nrConvencao', unique: false, nullable: true, required: true },
     { type: 'Long', name: 'documentoLongo', unique: false, nullable: true, required: true, defaultValue: '123456789012345' }, // Longo
@@ -57,9 +57,15 @@ const model3: ModelConfig = {
     { type: 'Float', name: 'percentagem', unique: false, nullable: true, required: false, defaultValue: '12.5' }, // Flutuante
     { type: 'Double', name: 'distancia', unique: false, nullable: true, required: false, defaultValue: '12345.6789' }, // Double
     { type: 'Boolean', name: 'ativo', unique: false, nullable: true, required: true, defaultValue: 'true' }, // Booleano
-    { type: 'Date', name: 'dataNascimento', unique: false, nullable: true, required: false, defaultValue: '2024-01-01' }, // Data
+    { type: 'Date', name: 'dataNascimento', unique: false, nullable: true, required: false }, // Data
     { type: 'Short', name: 'codigoCurto', unique: false, nullable: true, required: true, defaultValue: '10' }, // Short
     { type: 'Byte', name: 'nivelAcesso', unique: false, nullable: true, required: true, defaultValue: '1' }, // Byte
+  ],
+  primaryKey: [
+    {
+      name: "idPessoa", // Nome do campo que é chave primária
+      type: 'Long'
+    }
   ]
 };
 

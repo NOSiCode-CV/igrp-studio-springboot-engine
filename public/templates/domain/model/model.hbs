@@ -37,6 +37,7 @@ public class {{resourceConfig.name}} {
   private String {{this.name}};
   {{else}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
+  {{#if this.defaultValue}}@ColumnDefault("{{this.defaultValue}}"){{/if}}
   private {{this.type}} {{this.name}};
   {{/if}}
   
