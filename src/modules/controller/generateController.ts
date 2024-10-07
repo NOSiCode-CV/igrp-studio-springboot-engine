@@ -56,10 +56,11 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
       if (!types.includes(responseType)){
         errors.push(`The response type '${responseType}' in action '${action.actionName}' is not valid`)
       }
-    } else {
-      if (action.response !=="Object")
-        errors.push(`The response type '${action.response}' in action '${action.actionName}' is not valid`)
-    }
+    } 
+    // else {
+    //   if (action.response !=="Object")
+    //     errors.push(`The response type '${action.response}' in action '${action.actionName}' is not valid`)
+    // }
 
   }
 

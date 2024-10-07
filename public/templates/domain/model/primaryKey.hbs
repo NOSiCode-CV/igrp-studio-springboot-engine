@@ -8,6 +8,8 @@ import lombok.Data;
 @Embeddable
 public class PrimaryKey implements Serializable {
   {{#each resourceConfig.primaryKey}}
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{this.type}} {{this.name}};
+  
   {{/each}}
 }
