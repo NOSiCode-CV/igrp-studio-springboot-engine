@@ -22,6 +22,7 @@ import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
+import { getModelTypes } from './modules/model/helpers';
 
 /**
  * Main Function that creates the base api
@@ -560,19 +561,23 @@ export const engineTypes = async (basePath: string) =>{
 
   let paramsTypes = [...PARAMS_TYPES, ...dtos]
 
-  const allTypes = {
-    MYME_TYPES: MIME_TYPES,
-    DATABASE_TYPES: DATABASE_TYPES,
-    METHODS: HTTP_METHOD_TYPES,
-    BODY_REQUEST: bodyTypes,
-    RESPONSE_TYPES : responseTypes,
-    ATTRIBUTE_TYPES : ATTRIBUTE_TYPES,
-    CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS,
-    RELATIONSHIP_TYPES: RELATIONSHIP_TYPES,
-    PARAMS_TYPES : paramsTypes,
-    REQUEST_PARAMS: PARAMS_TYPES
-  }
+  const allTypes = [
+    {MYME_TYPES: MIME_TYPES},
+    {DATABASE_TYPES: DATABASE_TYPES},
+    {METHODS: HTTP_METHOD_TYPES},
+    {BODY_REQUEST: bodyTypes},
+    {RESPONSE_TYPES : responseTypes},
+    {ATTRIBUTE_TYPES : ATTRIBUTE_TYPES},
+    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS},
+    {RELATIONSHIP_TYPES: RELATIONSHIP_TYPES},
+    {PARAMS_TYPES : paramsTypes},
+    {REQUEST_PARAMS: PARAMS_TYPES}
+  ]
 
-  return allTypes
-  
+  return allTypes 
 }
+
+
+
+
+
