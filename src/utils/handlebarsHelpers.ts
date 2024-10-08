@@ -121,4 +121,17 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   return rtype;
 });
 
+Handlebars.registerHelper('breakEach', function (context, options) {
+  let result = '';
+  for (let i = 0; i < context.length; i++) {
+    result += options.fn(context[i]);
+    // Se a condição for atendida, interrompe o loop
+    if (context[i].defaultValue) {
+      break;
+    }
+  }
+  return result;
+});
+
+
 export { Handlebars };

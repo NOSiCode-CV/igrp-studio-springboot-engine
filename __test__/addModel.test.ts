@@ -16,7 +16,7 @@ const model: ModelConfig = {
     { type: 'Long', name: 'idPessoa' },
     { type: 'String', name: 'numero', unique: false, nullable: false, required: true },
     { type: 'String', name: 'nomeMae', length: 30 },
-    { type: 'Float', name: 'saldo', length: 50 },
+    { type: 'Float', name: 'saldo', length: 50, defaultValue: '12.233' },
     { type: 'Boolean', name: 'fumador', length: 30 },
     { type: 'Text', name: 'nomePai', length: 2000, required: true },
   ],

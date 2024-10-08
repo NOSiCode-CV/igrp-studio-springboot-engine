@@ -17,6 +17,7 @@ import java.math.{{this}};
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}
 {{/if}}
+{{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 
 @Entity
 @Data
