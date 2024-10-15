@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 {{#each sqlAttributes}}
 import java.sql.{{this}};
@@ -29,11 +30,11 @@ public class {{resourceConfig.name}} {
   private PrimaryKey id;
   
   {{#each resourceConfig.attributes}}
-  {{#if this.required}}
-  @NotBlank(message = "{{this.name}} is mandatory")
+  {{#if (eq this.nullable false)}} 
+  {{#if (isText-type this.type)}}@NotBlank(message = "{{this.name}} is mandatory"){{else}}@NotNull(message = "{{this.name}} is mandatory"){{/if}}
   {{/if}}
   {{#if (eq this.type 'Text')}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}},{{/if}} columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
   private String {{this.name}};
   {{else}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})

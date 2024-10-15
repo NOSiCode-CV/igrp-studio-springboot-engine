@@ -20,11 +20,6 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "number",
       nullable: true,
       errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
-    },
-    required: { 
-      type: "boolean", 
-      nullable: true,
-      errorMessage: 'The required attribute must be a boolean value if provided.'
     },  
     unique: { 
       type: "boolean", 

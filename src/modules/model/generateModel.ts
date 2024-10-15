@@ -34,7 +34,6 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
 };
 
 const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
-  console.log(context.resourceConfig.primaryKey)
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
 }
 

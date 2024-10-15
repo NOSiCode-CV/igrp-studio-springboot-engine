@@ -96,14 +96,10 @@ Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
         if (grc.namespace) {
           if (grc.name === "BigDecimal" || grc.name === "BigInteger")
             imports.add(`import java.math.${grc.name};`)
-          
-          // imports.add(`import ${grc.namespace}.${grc.name};`) whe do not need to import the generic types
         }
       });
     }
   });
-
-  //TODO handle annotarions import
 
   return Array.from(imports).sort().join('\n');
 });
@@ -120,5 +116,15 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
   return rtype;
 });
+
+Handlebars.registerHelper('isText-type', function (this: any, type: any) {
+  const textTypes = [
+    'String', 'Text', 'VARCHAR', 'CHAR', 'TEXT', 'CLOB', 'LONGTEXT', 'MEDIUMTEXT', 
+    'TINYTEXT', 'NVARCHAR', 'NCHAR', 'NCLOB', 'Character'
+  ];
+  if (textTypes.includes(type))
+    return true
+  return false
+})
 
 export { Handlebars };

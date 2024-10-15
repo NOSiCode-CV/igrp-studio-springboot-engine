@@ -78,7 +78,6 @@ export interface Attribute {
   name: string;
   length?: number;
   nullable?: boolean;
-  required?: boolean;
   unique?: boolean;
 }
 
