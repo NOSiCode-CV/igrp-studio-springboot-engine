@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import java.util.Optional;
+{{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
+
 
 @Repository
 @RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
