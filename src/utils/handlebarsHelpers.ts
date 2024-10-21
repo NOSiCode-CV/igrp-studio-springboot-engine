@@ -125,6 +125,19 @@ Handlebars.registerHelper('isText-type', function (this: any, type: any) {
   if (textTypes.includes(type))
     return true
   return false
-})
+});
+
+Handlebars.registerHelper('breakEach', function (context, options) {
+  let result = '';
+  for (let i = 0; i < context.length; i++) {
+    result += options.fn(context[i]);
+    // Se a condição for atendida, interrompe o loop
+    if (context[i].defaultValue) {
+      break;
+    }
+  }
+  return result;
+});
+
 
 export { Handlebars };

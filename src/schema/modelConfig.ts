@@ -168,6 +168,10 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
       type: "boolean", 
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
+    }, 
+    defaultValue: {
+      type: 'string',
+      nullable: true
     }
   },
   required: ["type", "name"],
