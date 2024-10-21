@@ -36,9 +36,7 @@ export interface ModelConfig {
   relations?: Relation[];
 }
 
-export interface PrimaryKey {
-  name: string;
-  type: AttributeType;
+export interface PrimaryKey extends Attribute {
 }
 
 export interface GenericType {
@@ -80,7 +78,6 @@ export interface Attribute {
   name: string;
   length?: number;
   nullable?: boolean;
-  required?: boolean;
   unique?: boolean;
   defaultValue?: string; // Adiciona o campo defaultValue aqui
 }
@@ -129,7 +126,6 @@ export interface RequestParams {
   type: ParamsTypes;
   name: string;
 }
-
 
 export interface PathVariables {
   type: string;

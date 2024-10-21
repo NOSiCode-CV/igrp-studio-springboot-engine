@@ -20,11 +20,6 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "number",
       nullable: true,
       errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
-    },
-    required: { 
-      type: "boolean", 
-      nullable: true,
-      errorMessage: 'The required attribute must be a boolean value if provided.'
     },  
     unique: { 
       type: "boolean", 
@@ -144,18 +139,38 @@ const relationSchema: JSONSchemaType<Relation> = {
 const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
   type: "object",
   properties: {
-    type: {
+    type: { 
       type: "string",
-      enum: ATTRIBUTE_TYPES,
-      errorMessage: `The primary key type is mandatory and must be one of ${ATTRIBUTE_TYPES}`
+      enum: ATTRIBUTE_TYPES, 
+      errorMessage: `The attribute type must be one of ${ATTRIBUTE_TYPES} and cannot be empty.`
     },
-    name: {
+    name: { 
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
+    },
+    length: {
+      type: "number",
+      nullable: true,
+      errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
+    },
+    required: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The required attribute must be a boolean value if provided.'
+    },  
+    unique: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The unique attribute must be a boolean value if provided.'
+    },
+    nullable: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The notNull attribute must be a boolean value if provided.'
     }
   },
-  required:['name','type'],
+  required: ["type", "name"],
   additionalProperties: false,
   errorMessage: {
     required: {

@@ -23,11 +23,12 @@ const model: ModelConfig = {
   primaryKey: [
     {
       name: 'userId',
-      type: 'Long'
+      type: 'Long',
     },
     {
       name: 'userName',
-      type: 'String'
+      type: 'String',
+      length: 2000, required: true
     },
   ]
 };

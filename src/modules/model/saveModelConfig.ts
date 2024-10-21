@@ -14,6 +14,10 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
   if (config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
+  
+  if (config.primaryKey.length === 0) {
+    throw `The model '${config.name}' must have at least one primary key`
+  }
 
   const output = getModelConfigPath(config.name, basePath);
   await saveToFile(JSON.stringify(config), output);
