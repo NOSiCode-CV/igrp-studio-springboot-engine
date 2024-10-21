@@ -31,8 +31,14 @@ export interface ModelConfig {
   name: string;
   tableName: string;
   attributes: Attribute[];
+  uniqueConstraints?: UniqueConstraint[]; // Novo campo para Compound Unique
   crud?: Crud;
   relations?: Relation[];
+}
+
+export interface UniqueConstraint {
+  name: string;
+  columns: string[];
 }
 
 export interface GenericType {
@@ -135,6 +141,7 @@ export type RenderContext<T = undefined> = {
   baseConfig: ApiConfig;
   mathAttributes?: string[];
   sqlAttributes?: string[];
+  uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
 };
 
 

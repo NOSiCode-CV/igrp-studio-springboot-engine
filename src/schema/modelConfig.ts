@@ -1,6 +1,6 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribute, Relation } from "../interfaces/types";
+import { ModelConfig, Crud, Attribute, Relation, UniqueConstraint } from "../interfaces/types";
 import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
@@ -142,6 +142,29 @@ const relationSchema: JSONSchemaType<Relation> = {
   }
 };
 
+// Atualização do modelConfigSchema
+const uniqueConstraintSchema: JSONSchemaType<UniqueConstraint> = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: "The unique constraint name must follow the naming convention."
+    },
+    columns: {
+      type: "array",
+      items: {
+        type: "string",
+        pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+        errorMessage: "Each column name in the unique constraint must follow the naming convention."
+      },
+      errorMessage: "The columns field must be an array of valid column names."
+    }
+  },
+  required: ["name", "columns"],
+  additionalProperties: false
+};
+
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
@@ -171,6 +194,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       properties: crudSchema.properties, 
       required: crudSchema.required,
       errorMessage: 'If provided, the CRUD configuration must be valid.'
+    },
+    uniqueConstraints: {
+      type: "array",
+      nullable: true,
+      items: uniqueConstraintSchema,
+      errorMessage: 'The uniqueConstraints must be an array of valid unique constraint definitions.'
     },
     relations: { 
       type: "array", 

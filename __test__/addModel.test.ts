@@ -6,7 +6,7 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
+const OUTPUT_DIR = 'C:/Users/UTIC/Desktop/projects/test-engine'
 
 const model: ModelConfig = {
   type: 'model',
@@ -19,6 +19,20 @@ const model: ModelConfig = {
     { type: 'Float', name: 'saldo', length:50},
     { type: 'Boolean', name: 'fumador', length:30 },
     { type: 'Text', name: 'nomePai', length:2000, required: true},
+  ],
+  uniqueConstraints: [
+    {
+      name: 'UK_SIPS_T_PESSOA_NUMERO_NOME_MAE',
+      columns: ['numero', 'nomeMae'],
+    },
+    {
+      name: 'UK_SIPS_T_PESSOA_NUMERO_NOME_PAI',
+      columns: ['numero', 'nomePai'],
+    },
+    {
+      name: 'UK_SIPS_T_PESSOA_ID_NUMERO',
+      columns: ['id', 'numero'],
+    },
   ], 
   crud: {
     enabled: true,

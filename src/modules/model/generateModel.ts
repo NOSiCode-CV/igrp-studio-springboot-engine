@@ -27,6 +27,9 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
+  // Gerar as restrições únicas compostas
+  context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
+
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
 
