@@ -1,9 +1,6 @@
-import path from 'path';
 import fs from 'fs-extra';
 import { newApi } from '../src/index';
-import { getMainPath } from '../src/utils/helpers';
 import { ApiConfig } from '../src/interfaces/types';
-import { COMMON_FILES, DIRECTORIES, ERROR_MESSAGE } from '../src/utils/constants';
 
 
 const OUTPUT_DIR = ''
@@ -11,11 +8,11 @@ const OUTPUT_DIR = ''
 
 const apiConfig: ApiConfig = {
   type: 'baseApi',
-  apiName: 'apiDemo', //Names with hyphens or spaces are not accepted.
+  apiName: 'apiDemo',
   group: 'com',
   artifact: 'demo',
   description: 'Demo project for Spring Boot',
-  database: 'Postgresql' // you can choose between MySQL and PostgreSQL
+  database: 'Postgresql'
 };
 
 beforeEach(async () => {

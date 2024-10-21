@@ -524,10 +524,10 @@ export const updateController = async (config: ControllerConfig, basePath: strin
  * @param basePath 
  */
 export const deleteController = async (config: ControllerConfig, basePath: string) => {
-  const valid = validateModelConfig(config);
-
+  const valid = validateController(config);
+  
   if (!valid && validateModelConfig.errors) throw validateController.errors
-
+ 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
