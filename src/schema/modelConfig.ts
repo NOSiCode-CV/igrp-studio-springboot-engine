@@ -30,6 +30,11 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "boolean", 
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
+    },
+    defaultValue: { // Adicionando o campo defaultValue
+      type: "string",
+      nullable: true,
+      errorMessage: 'The defaultValue, if provided, must be a valid string.'
     }
   },
   required: ["type", "name"],
@@ -163,6 +168,10 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
       type: "boolean", 
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
+    }, 
+    defaultValue: {
+      type: 'string',
+      nullable: true
     }
   },
   required: ["type", "name"],

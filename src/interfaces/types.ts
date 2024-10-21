@@ -79,6 +79,7 @@ export interface Attribute {
   length?: number;
   nullable?: boolean;
   unique?: boolean;
+  defaultValue?: string; // Adiciona o campo defaultValue aqui
 }
 
 export interface Relation {

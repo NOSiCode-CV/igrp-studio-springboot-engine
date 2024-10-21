@@ -30,6 +30,13 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
+    // Validação e renderização de cada atributo com seu valor padrão
+    context.resourceConfig.attributes.forEach(attribute => {
+      if (attribute.defaultValue) {
+        const columnAnnotation = renderColumnWithDefault(attribute);
+      }
+    });
+
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
 
@@ -47,7 +54,7 @@ const sqlUniquesAttributes = (attributes: Attribute[]) => {
 
   return [...new Set(sqlAttributes)]
 }
-
+// Verefica existencia de atributos de alta precisão
 const mathUniquesAttributes = (attributes: Attribute[]) => {
   let mathAttributes: string[] = [];
   attributes.forEach(attribute => {
@@ -59,6 +66,37 @@ const mathUniquesAttributes = (attributes: Attribute[]) => {
   return [...new Set(mathAttributes)]
 }
 
+const validateColumnDefault = (attribute: Attribute) => {
+  const { type, defaultValue } = attribute;
+
+  if (defaultValue) { // Só valida se defaultValue estiver presente
+    if (['Integer', 'BigInteger', 'BigDecimal', 'Long', 'Double', 'Float', 'Short', 'Byte'].includes(type)) {
+      // Verifica se o valor padrão é um número válido
+      if (isNaN(Number(defaultValue))) {
+        throw new Error(`The default value "${defaultValue}" is not valid for the numeric type ${type}.`);
+      }
+    } else if (type === 'String') {
+      // Verifica se o valor padrão é uma string válida (permite espaço no meio)
+      if (!/^\S.*\S$/.test(defaultValue)) {
+        throw new Error(`The default value "${defaultValue}" is not valid for the string type ${type}.`);
+      }
+    } else {
+      console.warn(`No specific validation for the type ${type}.`);
+    }
+  }
+};
+
+const renderColumnWithDefault = (attribute: Attribute) => {
+  validateColumnDefault(attribute);
+
+  if (attribute.defaultValue) {
+    return `@ColumnDefault(${attribute.defaultValue})`;
+  }
+
+  return ''; // Caso não tenha valor padrão, não retorna a anotação
+};
+
+// Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
 

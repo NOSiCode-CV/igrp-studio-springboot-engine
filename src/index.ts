@@ -134,8 +134,8 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 *   }
 * };
 */
-export const addModel = async (config: ModelConfig, basePath: string) => {
-  const valid = validateModelConfig(config);
+export const addModel = async (config: ModelConfig, basePath: string) => { // Responsavel  por adicionar novo model
+  const valid = validateModelConfig(config); // valida
 
   if (!valid && validateModelConfig.errors) {
     throw validateModelConfig.errors
