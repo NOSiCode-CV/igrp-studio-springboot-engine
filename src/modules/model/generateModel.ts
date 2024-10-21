@@ -34,7 +34,6 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     context.resourceConfig.attributes.forEach(attribute => {
       if (attribute.defaultValue) {
         const columnAnnotation = renderColumnWithDefault(attribute);
-        console.log(columnAnnotation);  // Mostra a anotação gerada no console | para caso dev
       }
     });
 
@@ -42,7 +41,6 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
 };
 
 const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
-  console.log(context.resourceConfig.primaryKey)
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
 }
 
