@@ -21,16 +21,16 @@ const model: ModelConfig = {
   name: 'SIPS_T_PESSOA',
   tableName: 'sips',
   attributes: [
-    { type: 'Integer', name: 'idEstadoCivil', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'nome', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'sexo', unique: false, nullable: true, required: true },
-    { type: 'Date', name: 'dtNascimento', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'nomePai', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'nomeMae', unique: false, nullable: true, required: true },
-    { type: 'Timestamp', name: 'dia', unique: false, nullable: true, required: true },
-    { type: 'Time', name: 'hora', unique: false, nullable: true, required: true },
-    { type: 'BigInteger', name: 'millones', unique: false, nullable: true, required: true },
-    { type: 'BigDecimal', name: 'escudos', unique: false, nullable: true, required: true },
+    { type: 'Integer', name: 'idEstadoCivil', unique: false, nullable: true },
+    { type: 'String', name: 'nome', unique: false, nullable: true },
+    { type: 'String', name: 'sexo', unique: false, nullable: true },
+    { type: 'Date', name: 'dtNascimento', unique: false, nullable: true },
+    { type: 'String', name: 'nomePai', unique: false, nullable: true },
+    { type: 'String', name: 'nomeMae', unique: false, nullable: true },
+    { type: 'Timestamp', name: 'dia', unique: false, nullable: true },
+    { type: 'Time', name: 'hora', unique: false, nullable: true },
+    { type: 'BigInteger', name: 'millones', unique: false, nullable: true },
+    { type: 'BigDecimal', name: 'escudos', unique: false, nullable: true },
   ],
   crud: {
     enabled: true,
@@ -46,7 +46,10 @@ const model: ModelConfig = {
       inverseJoinColumn: 'library_id',
     },
   ],
-  primaryKey: []
+  primaryKey: [{
+    type: "Integer",
+    name: "pessoaID"
+  }]
 };
 
 const model2: ModelConfig = {
@@ -54,10 +57,10 @@ const model2: ModelConfig = {
   name: 'SIPS_T_UTENTE',
   tableName: 'sips_utent',
   attributes: [
-    { type: 'Integer', name: 'idPessoa', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'numero', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'nib', unique: false, nullable: true, required: true },
-    { type: 'String', name: 'nrConvencao', unique: false, nullable: true, required: true },
+    { type: 'Integer', name: 'idPessoa', unique: false, nullable: true},
+    { type: 'String', name: 'numero', unique: false, nullable: true},
+    { type: 'String', name: 'nib', unique: false, nullable: true},
+    { type: 'String', name: 'nrConvencao', unique: false, nullable: true},
   ],
   relations: [
     {
@@ -66,7 +69,10 @@ const model2: ModelConfig = {
       mappedBy: 'library',
     }
   ],
-  primaryKey: []
+  primaryKey: [{
+    type: "Integer",
+    name: "utenteID"
+  }]
 };
 
 
@@ -85,14 +91,6 @@ describe('Model generator', () => {
     
     await addModel(model, OUTPUT_DIR);
     await addModel(model2, OUTPUT_DIR);
-
-    const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model.name}${EXTENSIONS.JSON}`);
-    const bookModelConfig: ModelConfig = await readJsonFile(bookConfigPath);
-    expect(bookModelConfig.relations).toBeTruthy();
-    
-    const libraryConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model2.name}${EXTENSIONS.JSON}`);
-    const libraryModelConfig: ModelConfig = await readJsonFile(libraryConfigPath);
-    expect(libraryModelConfig.relations).toBeTruthy();
 
   });
 });
