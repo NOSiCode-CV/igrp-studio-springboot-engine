@@ -93,35 +93,34 @@ const relationSchema: JSONSchemaType<Relation> = {
     
     entity: { 
       type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN, 
-      minLength: 1,
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       errorMessage: 'The entity name is required and cannot be empty.' 
     },
     mappedBy: { 
       type: "string",
       nullable: true,
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN, 
+      pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
     
     joinColumn: { 
       type: "string", 
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.' 
     }, 
  
     joinTable: { 
       type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
     },  
 
     inverseJoinColumn: { 
       type: "string", 
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.' 
     }  
   },

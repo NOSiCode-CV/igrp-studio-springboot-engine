@@ -29,46 +29,35 @@ public class {{resourceConfig.name}} {
 
   @EmbeddedId
   private PrimaryKey id;
-  
-  {{#each resourceConfig.attributes}}
-  {{#if (eq this.nullable false)}} 
-  {{#if (isText-type this.type)}}@NotBlank(message = "{{this.name}} is mandatory"){{else}}@NotNull(message = "{{this.name}} is mandatory"){{/if}}
-  {{/if}}
-  {{#if (eq this.type 'Text')}}
-  {{#if this.defaultValue}}@ColumnDefault("{{this.defaultValue}}"){{/if}}
+  {{#each resourceConfig.attributes}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+  @NotBlank(message = "{{this.name}} is mandatory"){{else}}@NotNull(message = "{{this.name}} is mandatory"){{/if}}
+  {{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+  @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
   private String {{this.name}};
   {{else}}
   {{#if this.defaultValue}}@ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{this.type}} {{this.name}};{{/if}}
-  
   {{/each}}
-  {{#if resourceConfig.relations}}
-  {{#each resourceConfig.relations}}
-  {{#if (eq this.relationType 'OneToOne') }}
+  {{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}
   private {{this.entity}} {{toLowerCase this.entity}};
-
   {{else if (eq this.relationType 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
-
   {{else if (eq this.relationType 'ManyToOne') }}
-  @ManyToOne
-  @JoinColumn(name = "{{this.joinColumn}}")
+  @ManyToOne{{#if this.joinColumn}}
+  @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
   private {{this.entity}} {{toLowerCase this.entity}};
-
-  {{else if (eq this.relationType 'ManyToMany') }}
-  {{#ifNot this.mappedBy}}
-  @ManyToMany
+  {{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
+  @ManyToMany{{#if this.joinTable}}
   @JoinTable(
-    name = "{{this.joinTable}}",
-    joinColumns = @JoinColumn(name = "{{this.joinColumn}}"),
-    inverseJoinColumns = @JoinColumn(name = "{{this.inverseJoinColumn}}")
-  )
-  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
-  {{else}}
+    name = "{{this.joinTable}}"{{#if this.joinColumn}},
+    joinColumns = @JoinColumn(name = "{{this.joinColumn}}"){{/if}}{{#if this.inverseJoinColumn}},
+    inverseJoinColumns = @JoinColumn(name = "{{this.inverseJoinColumn}}"){{/if}}
+  ){{/if}}
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};{{else}}
   @ManyToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
   {{/ifNot}}
