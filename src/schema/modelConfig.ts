@@ -1,7 +1,7 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { ModelConfig, Crud, Attribute, Relation, PrimaryKey } from "../interfaces/types";
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES } from "../utils/constants";
+import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
@@ -31,10 +31,21 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
     },
-    defaultValue: { // Adicionando o campo defaultValue
+    defaultValue: { 
       type: "string",
       nullable: true,
       errorMessage: 'The defaultValue, if provided, must be a valid string.'
+    },
+    generationType: { 
+      type: "string",
+      nullable: true,
+      enum: GENERATION_TYPES,
+      errorMessage: `The generation type, if provided, must be one of ${GENERATION_TYPES}`
+    },
+    primaryKey: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The primary key, if provided, must be a valid boolean.'
     }
   },
   required: ["type", "name"],
@@ -153,25 +164,10 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
       nullable: true,
       errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
     },
-    required: { 
-      type: "boolean", 
-      nullable: true,
-      errorMessage: 'The required attribute must be a boolean value if provided.'
-    },  
-    unique: { 
-      type: "boolean", 
-      nullable: true,
-      errorMessage: 'The unique attribute must be a boolean value if provided.'
-    },
-    nullable: { 
-      type: "boolean", 
-      nullable: true,
-      errorMessage: 'The notNull attribute must be a boolean value if provided.'
-    }, 
     defaultValue: {
       type: 'string',
       nullable: true
-    }
+    },
   },
   required: ["type", "name"],
   additionalProperties: false,
@@ -204,6 +200,7 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
     }, 
     primaryKey: {
       type: 'array',
+      nullable: true,
       items: primaryKeySchema,
       errorMessage: 'The primary key attribute must be provided.'
     },

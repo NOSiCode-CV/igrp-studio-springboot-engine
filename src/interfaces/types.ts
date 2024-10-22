@@ -7,6 +7,7 @@ import {
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
   SIMPLE_RESPONSE_TYPES,
+  GENERATION_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -31,12 +32,9 @@ export interface ModelConfig {
   name: string;
   tableName: string;
   attributes: Attribute[];
-  primaryKey: PrimaryKey[];
+  primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
-}
-
-export interface PrimaryKey extends Attribute {
 }
 
 export interface GenericType {
@@ -73,13 +71,17 @@ export interface Icontroller {
   name: string;
 }
 
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length' | 'defaultValue'> {}
+
 export interface Attribute {
   type: AttributeType;
   name: string;
   length?: number;
   nullable?: boolean;
   unique?: boolean;
-  defaultValue?: string; // Adiciona o campo defaultValue aqui
+  primaryKey?: boolean;
+  generationType?: GenerationType
+  defaultValue?: string;
 }
 
 export interface Relation {
@@ -150,3 +152,4 @@ export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
 export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
 export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`
+export type GenerationType = (typeof GENERATION_TYPES)[number]

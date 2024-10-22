@@ -67,6 +67,10 @@ export const ERROR_MESSAGE = {
   DTO_FILE_NOT_FOUND: 'DTO file not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
   TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
+  CONFLICTING_PRIMARY_KEY_TYPES: "A compound primary key and a simple primary key cannot be selected simultaneously.",
+  MULTIPLE_SIMPLE_PRIMARY_KEYS: 'Only one simple primary key is allowed; multiple simple primary keys are not acceptable',
+  MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY: 'A generation type must be specified when a simple primary key is selected.',
+  MISSING_PRIMARY_KEY: 'A primary key must be defined for the entity.'
 };
 
 export const TEMPLATES = {
@@ -264,4 +268,6 @@ export const CRUD_DISABLED_OPTIONS = [
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
 export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
+
+export const GENERATION_TYPES = ['IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
 

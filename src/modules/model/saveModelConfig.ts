@@ -15,7 +15,7 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
   
-  if (config.primaryKey.length === 0) {
+  if (config.primaryKey?.length === 0) {
     throw `The model '${config.name}' must have at least one primary key`
   }
 

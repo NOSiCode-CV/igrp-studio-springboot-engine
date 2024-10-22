@@ -9,10 +9,13 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
 
+ if (context.resourceConfig.primaryKey) {
   const primaryKeyTemplate = await renderPrimaryKey(context);
   const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
 
   await saveToFile(primaryKeyTemplate, primaryKeyPath);
+ }
+ 
   await saveToFile(template, modelOutputPath);
 };
 

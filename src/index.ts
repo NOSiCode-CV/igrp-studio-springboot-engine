@@ -23,6 +23,7 @@ import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
 import { getModelTypes } from './modules/model/helpers';
+import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 
 /**
  * Main Function that creates the base api
@@ -134,12 +135,18 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 *   }
 * };
 */
-export const addModel = async (config: ModelConfig, basePath: string) => { // Responsavel  por adicionar novo model
-  const valid = validateModelConfig(config); // valida
+export const addModel = async (config: ModelConfig, basePath: string) => {
+
+  const valid = validateModelConfig(config); 
 
   if (!valid && validateModelConfig.errors) {
     throw validateModelConfig.errors
   }
+
+  /**
+   * check if the correct primary key was selected
+   */
+  checkPrimaryKeys(config)
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
