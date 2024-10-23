@@ -24,7 +24,7 @@ public class {{resourceConfig.name}}Controller {
     {{{this.response}}} result = {{toLowerCase ../resourceConfig.name}}Service.{{actionName}}({{#if requestBody}}{{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
 
     return ResponseEntity.ok(result);
-  };
+  }
   
   {{/each}}
 }
