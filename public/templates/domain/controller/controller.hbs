@@ -1,6 +1,5 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}};
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,11 @@ public class {{resourceConfig.name}}Controller {
   // Replace {{resourceConfig.name}}ServiceInterface with {{resourceConfig.name}}ServiceInterfaceImpl, which implements all methods defined in SipsServiceInterface. 
   // Note: Ensure that the SipsServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
 
-  @Autowired
   private final {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
+
+  public {{resourceConfig.name}}Controller({{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service){
+    this.{{toLowerCase resourceConfig.name}}Service = {{toLowerCase resourceConfig.name}}Service;
+  }
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
