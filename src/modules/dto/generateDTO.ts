@@ -87,52 +87,6 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
       errors.push({message: `on attribute ${attr.name}, Type ${type.name} not on the allowed '${attr.ns}' list`});
     }
 
-    if (type.generics) {
-      for (const gt of type.generics) {
-        let typeNotFound = false;
-        if (gt.ns === PACKAGE_NS.java) {
-          const jt:TypeMetadata|undefined = JAVA_TYPES.get(type.name);
-          if (jt) {
-            if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
-              gt.namespace = jt.namespace;
-            }
-          } else {
-            typeNotFound = true;
-          }
-        } else if (gt.ns === PACKAGE_NS.model){
-          if (mtypes === undefined) {
-            mtypes = await getModelTypes(basePath);
-          }
-          const mt = mtypes.get(type.name);
-          if (mt) {
-            gt.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
-          } else {
-            typeNotFound = true;
-          }
-          
-        } else if (gt.ns === PACKAGE_NS.dto) {
-          if (dtypes === undefined) {
-            dtypes = await getDTOTypes(basePath);
-          }
-
-          const dt = dtypes.get(type.name);
-          if (!dt) {
-            typeNotFound = true;
-          }
-        } else if (gt.ns === PACKAGE_NS.local) {
-          if (!ncfg.generics ||  !ncfg.generics.includes(gt.name)) {
-            typeNotFound = true;
-          }
-        } else {
-          typeNotFound = true;
-        }
-
-        if (typeNotFound) {
-          errors.push({message: `Type ${type.name} not on the allowed '${attr.ns}' list`});
-        }
-      }
-    }
-
     attr.type = type;
   }
 
