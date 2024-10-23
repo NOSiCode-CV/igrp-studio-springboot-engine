@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-public class {{resourceConfig.name}}Controller {
+public class {{capitalize resourceConfig.name}}Controller {
 
   // Replace {{resourceConfig.name}}ServiceInterface with {{resourceConfig.name}}ServiceInterfaceImpl, which implements all methods defined in SipsServiceInterface. 
   // Note: Ensure that the SipsServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
