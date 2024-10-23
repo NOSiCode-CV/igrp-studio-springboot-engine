@@ -21,14 +21,14 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     },
     group: { 
       type: "string", 
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      pattern: "^[a-zA-Z0-9._]+$",
       errorMessage: {
         pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
       }
     },
     artifact: { 
       type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN, 
+      pattern: "^[a-zA-Z0-9._]+$",
       errorMessage: {
         pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
       }

@@ -71,7 +71,7 @@ export interface Icontroller {
   name: string;
 }
 
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length' | 'defaultValue'> {}
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
   type: AttributeType;
