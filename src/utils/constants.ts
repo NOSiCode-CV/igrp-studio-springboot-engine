@@ -70,7 +70,9 @@ export const ERROR_MESSAGE = {
   CONFLICTING_PRIMARY_KEY_TYPES: "A compound primary key and a simple primary key cannot be selected simultaneously.",
   MULTIPLE_SIMPLE_PRIMARY_KEYS: 'Only one simple primary key is allowed; multiple simple primary keys are not acceptable',
   MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY: 'A generation type must be specified when a simple primary key is selected.',
-  MISSING_PRIMARY_KEY: 'A primary key must be defined for the entity.'
+  MISSING_PRIMARY_KEY: 'A primary key must be defined for the entity.',
+  ACCEPTS_REQUIRED: 'Accepts is required for POST, PUT and PATCH methods',
+  REQUEST_BODY_REQUIRED: 'Request Body is required for POST, PUT and PATCH methods',
 };
 
 export const TEMPLATES = {
@@ -203,6 +205,7 @@ export const HTTP_METHOD_TYPES = [
 ] as const;
 
 export const MIME_TYPES = [
+  "",
   "font/woff2",
   "application/json",
   "video/ogg",

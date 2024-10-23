@@ -14,6 +14,7 @@ const CONTROLLER_SUFFIX = 'Controller.java';
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
   const controller = await renderController(context);
   const allTypes = await getDtos(context)
+  checkAcceptsAndRequestBody(context.resourceConfig.actions)
   verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
   
   const controllerOutputPath = getControllerPath(context);
@@ -57,15 +58,21 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
         errors.push(`The response type '${responseType}' in action '${action.actionName}' is not valid`)
       }
     } 
-    // else {
-    //   if (action.response !=="Object")
-    //     errors.push(`The response type '${action.response}' in action '${action.actionName}' is not valid`)
-    // }
-
   }
 
   if (errors.length > 0) {
     throw errors.join("\n")
   }
+}
+
+const checkAcceptsAndRequestBody = (actions: ControllerAction[]) => {
+  const method = ['POST', 'PUT', 'PATCH']
+  actions.map(action => {
+    if (method.includes(action.method) && !action.requestBody)
+      throw ERROR_MESSAGE.REQUEST_BODY_REQUIRED
+    
+    if (method.includes(action.method) && !action.accepts)
+      throw ERROR_MESSAGE.ACCEPTS_REQUIRED
+  })
 }
 

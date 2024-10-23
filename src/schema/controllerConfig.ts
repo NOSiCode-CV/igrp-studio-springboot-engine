@@ -47,7 +47,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     },
     requestBody: { 
       type: 'string', 
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      pattern: PATTERNS.RELATIONS_PATTERN,
       nullable: true,
       errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
     },
