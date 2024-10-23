@@ -15,7 +15,7 @@ public class {{resourceConfig.name}}Controller {
   // Note: Ensure that the SipsServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
 
   @Autowired
-  private {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
+  private final {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
