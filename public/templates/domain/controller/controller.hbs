@@ -21,7 +21,7 @@ public class {{resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
-  @RequestMapping(value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}", method = RequestMethod.{{method}}{{#if this.accepts}}, consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, produces = "{{this.contentType}}" {{/if}})
+  @RequestMapping({{#if path}}value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}", {{/if}}method = RequestMethod.{{method}}{{#if this.accepts}}, consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, produces = "{{this.contentType}}" {{/if}})
   public ResponseEntity<{{{this.response}}}> {{actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
 
     final var result = {{toLowerCase ../resourceConfig.name}}Service.{{actionName}}({{#if requestBody}}{{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});

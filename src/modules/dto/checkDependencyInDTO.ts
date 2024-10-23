@@ -20,13 +20,13 @@ export const checkDependencyInDTO = async function(context: RenderContext<DTOBas
           errors.push({message: `'dto.${cfg.name}' is beeing used in 'dto.${t.name}' on attribute line '${attr.name}'.`});
         }
 
-        if (type.generics) {
-          for(const gt of type.generics) {
-            if (gt.ns === 'dto' && gt.name === cfg.name) {
-              errors.push({message: `'dto.${cfg.name}' is beeing used as generic type on 'dto.${t.name}' on attribute line '${attr.name}'.`});
-            }
-          }
-        }
+        // if (type.generics) {
+        //   for(const gt of type.generics) {
+        //     if (gt.ns === 'dto' && gt.name === cfg.name) {
+        //       errors.push({message: `'dto.${cfg.name}' is beeing used as generic type on 'dto.${t.name}' on attribute line '${attr.name}'.`});
+        //     }
+        //   }
+        // }
       }
     })
   }

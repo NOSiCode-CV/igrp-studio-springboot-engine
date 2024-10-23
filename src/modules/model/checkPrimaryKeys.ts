@@ -23,7 +23,7 @@ export const checkPrimaryKeys = (model: ModelConfig) => {
    * Ensures that a compound primary key and a simple primary key 
    * are not selected simultaneously.
    */
-  if (primaryKey && extract_primarykeys.length > 0)
+  if (primaryKey!.length > 0 && extract_primarykeys.length > 0)
     throw ERROR_MESSAGE.CONFLICTING_PRIMARY_KEY_TYPES
 
   /**

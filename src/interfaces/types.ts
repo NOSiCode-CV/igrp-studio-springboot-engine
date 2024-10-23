@@ -46,13 +46,13 @@ export interface GenericType {
 export interface JavaType {
   name: string;
   namespace?: string;
-  generics?: GenericType[];
 }
 
 export interface JavaAttribute {
   name: string;
   type: string | JavaType;
   ns: 'dto'|'model'|'java';
+  isList?: boolean
 }
 
 export interface DTOBaseConfig {
@@ -61,7 +61,6 @@ export interface DTOBaseConfig {
 }
 
 export interface DTOConfig extends DTOBaseConfig {
-  generics?: string[];
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
@@ -113,7 +112,7 @@ export interface ControllerConfig {
 }
 
 export interface ControllerAction {
-  path: string;
+  path?: string;
   actionName: string;
   method: HttpMethod;
   accepts?: MimeTypes;

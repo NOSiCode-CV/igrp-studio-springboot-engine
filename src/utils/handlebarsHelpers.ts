@@ -86,19 +86,13 @@ Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
     if (typeof attr.type === 'string') return;
     const type: JavaType = attr.type;
     if (type.namespace) {
-     
-      imports.add(`import ${type.namespace}.${type.name};`);
-      
+      if (type.namespace.includes('models'))
+        imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
+      else 
+        imports.add(`import ${type.namespace}.${type.name};`);
     }
-    
-    if (type.generics) {
-      type.generics.forEach(grc => {
-        if (grc.namespace) {
-          if (grc.name === "BigDecimal" || grc.name === "BigInteger")
-            imports.add(`import java.math.${grc.name};`)
-        }
-      });
-    }
+    if (attr.isList)
+      imports.add(`import java.util.List;`);
   });
 
   return Array.from(imports).sort().join('\n');
@@ -106,14 +100,12 @@ Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
 
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
-  if (!t1 || typeof t1 === 'string') return t1;
+  if (!t1.type || typeof t1.type === 'string') return t1.type;
 
-  let rtype = t1.name;
-  if (t1.generics && Array.isArray(t1.generics) && t1.generics.length > 0) {
-    const gnrs = t1.generics.map((e1: GenericType) => e1.name).join(", ");
-    rtype = `${rtype}<${gnrs}>`;
+  let rtype = t1.type.name;
+  if (t1.isList ) {
+    rtype = `List<${t1.type.name}>`;
   }
-
   return rtype;
 });
 

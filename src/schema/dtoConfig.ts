@@ -37,12 +37,6 @@ const javaTypeSchema: JSONSchemaType<JavaTypeUnion> = {
         namespace: { 
           type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
           errorMessage: 'The namespace must follow the package naming convention.'
-        }, 
-        generics: {  
-          type: "array", 
-          nullable: true, 
-          items: genericsTypeSchema,
-          errorMessage: 'The generics on fields must be an array of valid attribute definitions.'
         }
       },
       required: ["name"],
@@ -73,6 +67,11 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       enum: ['model', 'dto', 'java'],
       errorMessage: 'The abbreaviated namespace must model, dto, java.'
     },
+    isList: { 
+      type: "boolean", 
+      nullable: true,
+      errorMessage: 'The isList attribute must be a boolean value.'
+    },
   },
   required: ["type", "name", "ns"],
   additionalProperties: false,
@@ -102,15 +101,6 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       type: "string", 
       enum: ['record', 'classic'],
       errorMessage: 'The acceptable template are: record, classic.'
-    },
-    generics: {
-      type: "array",
-      items: { 
-        type: "string",
-        pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-        errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed).'
-      },
-      nullable: true,
     },
     attributes: { 
       type: "array", 

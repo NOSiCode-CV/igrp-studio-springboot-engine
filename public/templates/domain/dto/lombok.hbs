@@ -12,13 +12,13 @@ import lombok.AllArgsConstructor;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}{{#if resourceConfig.generics}}<{{#each resourceConfig.generics}}{{this}}{{#if @last}}{{else}}, {{/if}}{{/each}}>{{/if}}{
+public class {{resourceConfig.name}}{
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
     @{{this.annotation}}
     {{/each}}
-    private {{{resolve-type this.type}}} {{this.name}};
+    private {{{resolve-type this}}} {{this.name}};
 
     {{/each}}
 }
