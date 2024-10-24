@@ -11,8 +11,8 @@ import { ModelConfig } from '../../interfaces/types';
  */
 export const checkPrimaryKeys = (model: ModelConfig) => {
   const { attributes, primaryKey } = model;
-  const extract_primarykeys = attributes.filter(attr => attr.primaryKey)
-
+  const extract_primarykeys = attributes.filter(attr => attr.primaryKey===true)
+  
   /**
    * Checks if the model has more than one simple primary key.
    */
@@ -23,8 +23,10 @@ export const checkPrimaryKeys = (model: ModelConfig) => {
    * Ensures that a compound primary key and a simple primary key 
    * are not selected simultaneously.
    */
-  if (primaryKey!.length > 0 && extract_primarykeys.length > 0)
-    throw ERROR_MESSAGE.CONFLICTING_PRIMARY_KEY_TYPES
+  if (primaryKey) {
+    if (primaryKey.length > 0 && extract_primarykeys.length > 0)
+      throw ERROR_MESSAGE.CONFLICTING_PRIMARY_KEY_TYPES
+  }
 
   /**
    * Verifies that a generation type is provided when a simple primary key is selected.
@@ -34,11 +36,14 @@ export const checkPrimaryKeys = (model: ModelConfig) => {
   
     if (primarykey_attr && !primarykey_attr.generationType)
       throw ERROR_MESSAGE.MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY
+    
   }
 
   /**
    * Ensures that at least one type of primary key is provided.
    */
-  if (extract_primarykeys.length <= 0 && !primaryKey)
+  if (extract_primarykeys.length === 0 && primaryKey?.length === 0){
     throw ERROR_MESSAGE.MISSING_PRIMARY_KEY
+  }
+
 }

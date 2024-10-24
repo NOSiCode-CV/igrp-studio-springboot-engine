@@ -75,6 +75,20 @@ Handlebars.registerHelper('paramsFormat', function(str){
   return `{${str}}`
 })
 
+Handlebars.registerHelper('resolve-mapping', function(this: any, action: ControllerAction) {
+ let pathVariable = ""
+  if(action.path) {
+    if (action.pathVariables){
+      action.pathVariables.forEach(path =>{
+        pathVariable = pathVariable.concat(`=/{${path.name}}`)
+      })
+
+      return pathVariable
+    }
+  }
+  
+})
+
 Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
   if (!config) return null;
   if (!config.type || config.type !== 'dto') return null;
