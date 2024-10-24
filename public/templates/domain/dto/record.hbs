@@ -10,6 +10,6 @@ public record {{resourceConfig.name}}(
     {{#each this.annotations}}
     @{{this.annotation}}
     {{/each}}
-    {{{resolve-type this.type}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
 ){};
