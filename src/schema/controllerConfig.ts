@@ -32,7 +32,8 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   properties: {
     path: { 
       type: 'string', 
-      pattern: PATTERNS.PATH_VALIDATION,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      nullable: true,
       errorMessage:'The path attribute must only contain characters whithout spaces or special characters.'
     },
     actionName: { 
@@ -47,7 +48,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     },
     requestBody: { 
       type: 'string', 
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      pattern: PATTERNS.RELATIONS_PATTERN,
       nullable: true,
       errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
     },
@@ -80,7 +81,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage: `ContentType type can only be one of ${MIME_TYPES}`
     }
   },
-  required: ['path', 'actionName', 'method', 'response'],
+  required: ['actionName', 'method', 'response'],
   additionalProperties: false,
   errorMessage: {
     required: {

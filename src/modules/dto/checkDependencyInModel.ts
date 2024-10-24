@@ -25,13 +25,13 @@ export const checkDependencyInModel = async function(context: RenderContext<DTOB
           errors.push({ message: `'model.${type.name}' is being used in 'dto.${dto.name}' on attribute '${attr.name}'` });
         }
 
-        if (type.generics) {
-          for (const gt of type.generics) {
-            if (gt.ns === 'model' && modelTypes.has(gt.name)) {
-              errors.push({ message: `'model.${gt.name}' is being used as generic type in 'dto.${dto.name}' on attribute '${attr.name}'` });
-            }
-          }
-        }
+        // if (type.generics) {
+        //   for (const gt of type.generics) {
+        //     if (gt.ns === 'model' && modelTypes.has(gt.name)) {
+        //       errors.push({ message: `'model.${gt.name}' is being used as generic type in 'dto.${dto.name}' on attribute '${attr.name}'` });
+        //     }
+        //   }
+        // }
       }
     });
   }

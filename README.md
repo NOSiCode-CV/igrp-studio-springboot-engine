@@ -50,18 +50,18 @@ Once the project has been compiled, you can test the various functions of the ap
 ```
 
 ```typescript
-import { newApi } from "spring-engine"
-import { ApiConfig } from "spring-engine/dist/interfaces/types"
+import { newApi } from "@igrp/spring-engine"
+import { ApiConfig } from "@igrp/spring-engine/dist/interfaces/types";
 
 const baseConfig: ApiConfig = {
 	type: 'baseApi',
     apiName: 'demo', //Names with hyphens or spaces are not accepted.
-    group: 'example',
+    group: 'com.example',
     artifact: 'demo',
     description: 'Demo project for Spring Boot',
-    database: 'PostgreSQL' // you can choose between MySQL and PostgreSQL
+    database: 'Postgresql' // you can choose between MySQL and PostgreSQL
 }
-const basePath = 'your/path/'
+const basePath = 'your/absolute path/'
 
 const createApi = async () => {
  try {
@@ -82,20 +82,42 @@ const createApi = async () => {
 ```
 
 ```typescript
-import { addModel } from 'spring-engine';
-import { ModelConfig } from 'spring-engine/dist/interfaces/types';
+import { addModel } from '@igrp/spring-engine';
+import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
 
+//Model with simple primary key
 const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'Long', name: 'idUser', primarykey: true},
+    { type: 'Long', name: 'userID', primaryKey: true, generationType:"SEQUENCE" },
     { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
     { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
   ]
-  relations: [],
 };
-const basePath = 'C://your_project_path';
+
+//Model with compound primary keys
+const config2: ModelConfig = {
+  type: 'model',
+  name: 'User',
+  attributes: [
+    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
+    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
+  ],
+  primaryKey: [
+    {
+      name: 'userId',
+      type: 'Long',
+    },
+    {
+      name: 'userName',
+      type: 'String',
+      length: 2000,
+    },
+  ]
+};
+
+const basePath = 'your_absolute_project_path';
 
 const createModel = async () => {
   try {
@@ -115,20 +137,20 @@ const createModel = async () => {
 ```typescript
 const config: ModelConfig = {
   type: 'model',
-  name: 'Product',
+  name: 'User',
   attributes: [
-    { type: 'Long', name: 'productId', primarykey: true},
-    { type: 'String', name: 'name', required: true, nullable: false },
-    { type: 'Integer', name: 'price' }
+    { type: 'Long', name: 'userID', primaryKey: true, generationType:"SEQUENCE" },
+    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
+    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
   ],
   crud: {
     enabled: true,
     path: 'products',
-    disabledMethods: ['DELETE'] // Example of disabling the DELETE method
+    disabledMethods: ['delete'] // Example of disabling the DELETE method
   }
 };
 
-const basePath = 'C://your_project_path';
+const basePath = 'your_absolute_project_path';
 
 const addProductCrud = async () => {
   try {
@@ -151,26 +173,26 @@ The function will update the model configuration file by adding the relation par
 @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
 ```
 ```ts
-import { addRelationship } from 'spring-engine';
-import { ModelConfig } from 'spring-engine/dist/interfaces/types';
+import { addRelationship } from '@igrp/spring-engine';
+import { ModelConfig } from "@igrp/spring-engine/dist/interfaces/types";
 
 const config: ModelConfig = {
   type: 'model',
   name: 'Order',
   attributes: [
-    { type: 'Long', name: 'orderId', primarykey: true},
+    { type: 'Long', name: 'orderID', primaryKey: true, generationType:"SEQUENCE" },
     { type: 'String', name: 'description', nullable: false }
   ],
   relations: [
     {
       relationType: 'ManyToOne',
-      entity: 'Customer', // Relating 'Order' with 'Customer'
+      entity: 'Customer', 
       joinColumn: 'customer_id'
     }
   ]
 };
  
-const basePath = 'C://your_project_path';
+const basePath = 'your_absolute_project_path';
 
 const addOrderRelationship = async () => {
   try {
@@ -191,14 +213,14 @@ const addOrderRelationship = async () => {
 ```
 
 ```ts
-import { deleteModel } from 'spring-engine';
-import { ModelConfig } from 'spring-engine/dist/interfaces/types';
+import { deleteModel } from '@igrp/spring-engine';
+import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
 
 const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'Long', name: 'userId', primarykey: true},
+    { type: 'Long', name: 'userId', primarykey: true, generationType: "SEQUENCE"},
     { type: 'String', name: 'email', unique: true, required: true },
     { type: 'String', name: 'password', nullable: false, required: true },
   ],
@@ -230,8 +252,8 @@ const removeModel = async () => {
 * 
 */
  // Example usage:
-import { addDTO } from "spring-engine";
-import { DTOConfig } from "spring-engine/dist/interfaces/types";
+import { addDTO } from "@igrp/spring-engine";
+import { DTOConfig } from "@igrp/spring-engine/dist/interfaces/types";;
 const config: DTOConfig = {
   type: 'dto',
   name: 'User',
@@ -306,8 +328,8 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
  * // Example usage:
  *  */
 
-import { deleteDTO } from "spring-engine";
-import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
+import { deleteDTO } from "@igrp/spring-engine";
+import { DTOBaseConfig } from "@igrp/spring-engine/dist/interfaces/types";;
  
 const config: DTOBaseConfig = {
   type: 'dto',
@@ -333,8 +355,8 @@ const removeDTO = async () => {
 ```
 
 ```ts
-import { addController } from 'spring-engine';
-import { ControllerConfig } from 'spring-engine/dist/interfaces/types';
+import { addController } from '@igrp/spring-engine';
+import { ControllerConfig } from '@igrp/spring-engine/dist/interfaces/types';
 
 const controllerConfig: ControllerConfig = {
   type: "controller",
@@ -347,8 +369,7 @@ const controllerConfig: ControllerConfig = {
       actionName: 'hello',
       accepts: 'application/x-cdf',
       requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-      isResponseList: false
+      response: 'String'
     },
     {
       path: 'addGreeting',
@@ -358,7 +379,6 @@ const controllerConfig: ControllerConfig = {
       pathVariables:[],
       requestParams: [],
       response: 'Object',
-      isResponseList: true
     },
     {
       path: 'goodbye',
@@ -367,7 +387,6 @@ const controllerConfig: ControllerConfig = {
       pathVariables:[{ type: 'Long', name: 'id' }],
       requestParams: [{ type: 'String', name: 'greetingName' }],
       response: 'String',
-      isResponseList: false,
     }
   ]
 };
@@ -394,13 +413,43 @@ GET: http://localhost:8080/greetings/goodbye/<id>
 ### Types
 
 ```ts
+
+export interface TypeMetadata {
+  name: string;
+  primitive: boolean; 
+  namespace?:string;
+}
+
+export interface ApiConfig {
+  type: 'baseApi';
+  apiName: string;
+  group: string;
+  artifact: string;
+  database: DatabaseTypes;
+  description?: string;
+  package?: string;
+  name?: string;
+}
+
+export interface ModelConfig {
+  type: 'model';
+  name: string;
+  tableName: string;
+  attributes: Attribute[];
+  primaryKey?: PrimaryKey[];
+  crud?: Crud;
+  relations?: Relation[];
+}
+
 export interface GenericType {
   name: string;
+  namespace?: string;
   ns: 'dto'|'model'|'java'|'local';
 }
 
 export interface JavaType {
   name: string;
+  namespace?: string;
   generics?: GenericType[];
 }
 
@@ -421,28 +470,22 @@ export interface DTOConfig extends DTOBaseConfig {
   attributes: JavaAttribute[];
 }
 
-export interface ModelConfig {
-  type: 'model';
-  name: string;
-  tableName: string;
-  attributes: Attribute[];
-  crud?: Crud;
-  relations?: Relation[];
-}
-
 export interface Icontroller {
   type: 'icontroller';
   name: string;
 }
 
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+
 export interface Attribute {
   type: AttributeType;
   name: string;
-  length?: number,
+  length?: number;
   nullable?: boolean;
-  primarykey?: boolean;
-  required?: boolean;
   unique?: boolean;
+  primaryKey?: boolean;
+  generationType?: GenerationType
+  defaultValue?: string;
 }
 
 export interface Relation {
@@ -457,7 +500,7 @@ export interface Relation {
 export interface Crud {
   enabled: boolean;
   path: string;
-  disabledMethods: DisabledMethods [];
+  disabledMethods: DisabledMethods[];
 }
 
 export interface Table {
@@ -476,20 +519,20 @@ export interface ControllerConfig {
 export interface ControllerAction {
   path: string;
   actionName: string;
-  isResponseList: boolean,
   method: HttpMethod;
-  accepts?: MimeTypes,
-  contentType?:MimeTypes, 
-  requestBody?: string,
+  accepts?: MimeTypes;
+  contentType?: MimeTypes;
+  requestBody?: string;
   requestParams?: RequestParams[];
   response: string;
-  pathVariables?:PathVariables[]
+  pathVariables?: PathVariables[];
 }
 
 export interface RequestParams {
-  type: string;
+  type: ParamsTypes;
   name: string;
 }
+
 export interface PathVariables {
   type: string;
   name: string;
@@ -503,12 +546,15 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
 };
 
-export type HttpMethod = typeof HTTP_METHOD_TYPES[number];
-export type AttributeType = typeof ATTRIBUTE_TYPES[number];
-export type DatabaseTypes = typeof DATABASE_TYPES[number];
-export type DisabledMethods = typeof CRUD_DISABLED_OPTIONS[number];
-export type RelationshipTypes = typeof RELATIONSHIP_TYPES[number];
-export type ResponseTypes = typeof RESPONSE_TYPES[number];
-export type ParamsTypes = typeof PARAMS_TYPES[number];
-export type MimeTypes = typeof MIME_TYPES[number];
+
+export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
+export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
+export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
+export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
+export type ParamsTypes = (typeof PARAMS_TYPES)[number];
+export type MimeTypes = (typeof MIME_TYPES)[number];
+export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
+export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`
+export type GenerationType = (typeof GENERATION_TYPES)[number]
 ```

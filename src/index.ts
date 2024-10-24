@@ -1,5 +1,9 @@
-import { DTOBaseConfig, DTOConfig, ModelConfig, ParamsTypes } from './interfaces/types';
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, DATABASE_TYPES, ERROR_MESSAGE, HTTP_METHOD_TYPES, METHODS, MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES } from './utils/constants';
+import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
+import { 
+  ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
+  DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
+  MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES 
+} from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import { validateModelConfig } from './schema/modelConfig';
 import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
@@ -22,7 +26,7 @@ import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
-import { getModelTypes } from './modules/model/helpers';
+import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 
 /**
  * Main Function that creates the base api
@@ -134,12 +138,18 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 *   }
 * };
 */
-export const addModel = async (config: ModelConfig, basePath: string) => { // Responsavel  por adicionar novo model
-  const valid = validateModelConfig(config); // valida
+export const addModel = async (config: ModelConfig, basePath: string) => {
+
+  const valid = validateModelConfig(config); 
 
   if (!valid && validateModelConfig.errors) {
     throw validateModelConfig.errors
   }
+
+  /**
+   * check if the correct primary key was selected
+   */
+  checkPrimaryKeys(config)
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
@@ -563,15 +573,16 @@ export const engineTypes = async (basePath: string) =>{
 
   const allTypes = [
     {MYME_TYPES: MIME_TYPES},
-    {DATABASE_TYPES: DATABASE_TYPES},
-    {METHODS: HTTP_METHOD_TYPES},
     {BODY_REQUEST: bodyTypes},
+    {PARAMS_TYPES : paramsTypes},
+    {METHODS: HTTP_METHOD_TYPES},
+    {REQUEST_PARAMS: PARAMS_TYPES},
+    {DATABASE_TYPES: DATABASE_TYPES},
     {RESPONSE_TYPES : responseTypes},
     {ATTRIBUTE_TYPES : ATTRIBUTE_TYPES},
-    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS},
+    {GENERATION_TYPES: GENERATION_TYPES},
     {RELATIONSHIP_TYPES: RELATIONSHIP_TYPES},
-    {PARAMS_TYPES : paramsTypes},
-    {REQUEST_PARAMS: PARAMS_TYPES}
+    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS}
   ]
 
   return allTypes 
