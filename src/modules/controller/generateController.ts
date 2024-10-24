@@ -1,13 +1,11 @@
 import path from 'path';
-import { ControllerAction, ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, RESPONSE_TYPES, SIMPLE_RESPONSE_TYPES, TEMPLATES } from '../../utils/constants';
-import { extractTypeFromList, getControllerDir } from '../../utils/helpers';
-import { ControllerAction, ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, RESPONSE_TYPES, SIMPLE_RESPONSE_TYPES, TEMPLATES } from '../../utils/constants';
-import { extractTypeFromList, getControllerDir } from '../../utils/helpers';
+
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDTOTypes } from '../dto/helpers';
+import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
+import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
+import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**

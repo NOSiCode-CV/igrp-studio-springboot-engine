@@ -1,9 +1,7 @@
 import * as Handlebars from 'handlebars';
-import { ControllerAction, ControllerConfig, GenericType, JavaAttribute, JavaType } from '../interfaces/types';
-import { REQUEST_BODY_NOT_IMPORT, RESPONSE_TYPES } from './constants';
-import { extractTypeFromList } from './helpers';
-import { ControllerAction, ControllerConfig, GenericType, JavaAttribute, JavaType } from '../interfaces/types';
-import { REQUEST_BODY_NOT_IMPORT, RESPONSE_TYPES } from './constants';
+
+import { ControllerAction, JavaAttribute, JavaType } from '../interfaces/types';
+import { REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {

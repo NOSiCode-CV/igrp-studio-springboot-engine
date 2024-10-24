@@ -6,8 +6,8 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
-  SIMPLE_SIMPLE_RESPONSE_TYPES,
   GENERATION_TYPES,
+  SIMPLE_RESPONSE_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -86,7 +86,6 @@ export interface GenericType {
 export interface JavaType {
   name: string;
   namespace?: string;
-  generics?: GenericType[];
 }
 
 export interface JavaAttribute {
@@ -101,7 +100,6 @@ export interface DTOBaseConfig {
 }
 
 export interface DTOConfig extends DTOBaseConfig {
-  generics?: string[];
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
@@ -165,7 +163,6 @@ export interface ControllerAction {
 }
 
 export interface RequestParams {
-  type: ParamsTypes;
   type: ParamsTypes;
   name: string;
 }

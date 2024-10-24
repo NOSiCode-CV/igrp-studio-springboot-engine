@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
-// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+// export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -83,11 +83,6 @@ export const TEMPLATES = {
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
-
-  DOMAIN_DTO: {
-    'classic': 'domain/dto/lombok.hbs',
-    'record': 'domain/dto/record.hbs',
-  },
 
   DOMAIN_DTO: {
     'classic': 'domain/dto/lombok.hbs',
