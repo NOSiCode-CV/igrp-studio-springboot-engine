@@ -60,6 +60,8 @@
       "require": "./dist/index.cjs.js",
       "types": "./dist/index.d.ts",
       "constants":"./dist/utils/constants.d.ts"
+      "types": "./dist/index.d.ts",
+      "constants":"./dist/utils/constants.d.ts"
     }
   }
 }

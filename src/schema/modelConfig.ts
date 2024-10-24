@@ -1,6 +1,6 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribute, Relation, PrimaryKey } from "../interfaces/types";
+import { ModelConfig, Crud, Attribute, Relation, PrimaryKey, UniqueConstraint } from "../interfaces/types";
 import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
@@ -216,6 +216,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       properties: crudSchema.properties, 
       required: crudSchema.required,
       errorMessage: 'If provided, the CRUD configuration must be valid.'
+    },
+    uniqueConstraints: {
+      type: "array",
+      nullable: true,
+      items: uniqueConstraintSchema,
+      errorMessage: 'The uniqueConstraints must be an array of valid unique constraint definitions.'
     },
     relations: { 
       type: "array", 

@@ -6,9 +6,15 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
-  SIMPLE_RESPONSE_TYPES,
+  SIMPLE_SIMPLE_RESPONSE_TYPES,
   GENERATION_TYPES,
 } from '../utils/constants';
+
+export interface TypeMetadata {
+  name: string;
+  primitive: boolean; 
+  namespace?:string;
+}
 
 export interface TypeMetadata {
   name: string;
@@ -32,6 +38,7 @@ export interface ModelConfig {
   name: string;
   tableName: string;
   attributes: Attribute[];
+  uniqueConstraints?: UniqueConstraint[]; // Novo campo para Compound Unique
   primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
@@ -61,6 +68,40 @@ export interface DTOBaseConfig {
 }
 
 export interface DTOConfig extends DTOBaseConfig {
+  template: 'classic' | 'record';
+  attributes: JavaAttribute[];
+}
+
+export interface UniqueConstraint {
+  name: string;
+  columns: string[];
+}
+
+export interface GenericType {
+  name: string;
+  namespace?: string;
+  ns: 'dto'|'model'|'java'|'local';
+}
+
+export interface JavaType {
+  name: string;
+  namespace?: string;
+  generics?: GenericType[];
+}
+
+export interface JavaAttribute {
+  name: string;
+  type: string | JavaType;
+  ns: 'dto'|'model'|'java';
+}
+
+export interface DTOBaseConfig {
+  type: 'dto';
+  name: string;
+}
+
+export interface DTOConfig extends DTOBaseConfig {
+  generics?: string[];
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
@@ -125,8 +166,10 @@ export interface ControllerAction {
 
 export interface RequestParams {
   type: ParamsTypes;
+  type: ParamsTypes;
   name: string;
 }
+
 
 export interface PathVariables {
   type: string;
@@ -139,7 +182,10 @@ export type RenderContext<T = undefined> = {
   baseConfig: ApiConfig;
   mathAttributes?: string[];
   sqlAttributes?: string[];
+  uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
 };
+
+
 
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

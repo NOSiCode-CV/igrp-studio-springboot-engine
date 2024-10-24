@@ -89,6 +89,11 @@ export const TEMPLATES = {
     'record': 'domain/dto/record.hbs',
   },
 
+  DOMAIN_DTO: {
+    'classic': 'domain/dto/lombok.hbs',
+    'record': 'domain/dto/record.hbs',
+  },
+
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
