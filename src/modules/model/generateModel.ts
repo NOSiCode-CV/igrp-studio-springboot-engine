@@ -42,6 +42,9 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
       }
     });
 
+    // Gerar as restrições únicas compostas
+  context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
+
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
 

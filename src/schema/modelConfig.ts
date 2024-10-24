@@ -179,6 +179,27 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
     additionalProperties: 'No additional properties are allowed in the attribute schema.'
   }
 }
+const uniqueConstraintSchema: JSONSchemaType<UniqueConstraint> = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: "The unique constraint name must follow the naming convention."
+    },
+    columns: {
+      type: "array",
+      items: {
+        type: "string",
+        pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+        errorMessage: "Each column name in the unique constraint must follow the naming convention."
+      },
+      errorMessage: "The columns field must be an array of valid column names."
+    }
+  },
+  required: ["name", "columns"],
+  additionalProperties: false
+};
 
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
