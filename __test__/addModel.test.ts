@@ -72,7 +72,7 @@ const model3: ModelConfig = {
     { type: 'BigDecimal', name: 'saldo', unique: false, nullable: true, defaultValue: '1000.50' }, // Decimal
     { type: 'Float', name: 'percentagem', unique: false, nullable: true, defaultValue: '12.5' }, // Flutuante
     { type: 'Double', name: 'distancia', unique: false, nullable: true, defaultValue: '12345.6789' }, // Double
-    { type: 'Boolean', name: 'ativo', unique: false, nullable: true, defaultValue: 'true' }, // Booleano
+    { type: 'Boolean', name: 'ativo', unique: false, nullable: true, defaultValue: 'false' }, // Booleano
     { type: 'Date', name: 'dataNascimento', unique: false, nullable: true,}, // Data
     { type: 'Short', name: 'codigoCurto', unique: false, nullable: true, defaultValue: '10' }, // Short
     { type: 'Byte', name: 'nivelAcesso', unique: false, nullable: true, defaultValue: '1' }, // Byte
@@ -106,7 +106,7 @@ describe('Model generator', () => {
 
   it('should create a model in th api', async () => {
     //await addModel(model, OUTPUT_DIR);
-    await addModel(model5, OUTPUT_DIR);
+    await addModel(model3, OUTPUT_DIR);
 
   });
 });
