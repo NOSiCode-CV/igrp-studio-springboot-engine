@@ -85,6 +85,11 @@ const validateColumnDefault = (attribute: Attribute) => {
       if (!/^\S.*\S$/.test(defaultValue)) {
         throw new Error(`The default value "${defaultValue}" is not valid for the string type ${type}.`);
       }
+    } else if (type === 'Boolean') {
+      // Verifica se o valor padrão é "true" ou "false"
+      if (!['true', 'false'].includes(defaultValue.toLowerCase())) {
+        throw new Error(`The default value "${defaultValue}" is not valid for the boolean type ${type}.`);
+      }
     } else {
       console.warn(`No specific validation for the type ${type}.`);
     }
