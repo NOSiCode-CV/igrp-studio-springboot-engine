@@ -30,6 +30,7 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
+import { capitalize } from './utils/capitalizeStrings';
 
 /**
  * Main Function that creates the base api
@@ -146,6 +147,8 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
  * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
  */
   const config:ModelConfig = cleaner(dirty)
+  
+  dirty.crud? config.crud = dirty.crud: ''
 
   // this function check is the request params in actions have duplicateds names
   checkDuplicated(config.attributes, [], [])
@@ -165,6 +168,8 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
 
   const baseConfig = await getBaseApiConfig(basePath);
   await saveModelConfig(config, basePath);
+
+  config.name = capitalize(config.name)
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
@@ -315,6 +320,8 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 
   const baseConfig = await getBaseApiConfig(basePath);
 
+  config.name = capitalize(config.name)
+
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
     basePath,
@@ -382,6 +389,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   const baseConfig = await getBaseApiConfig(basePath);
   await saveDTOConfig(config, basePath);
+  config.name = capitalize(config.name)
 
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
@@ -434,7 +442,7 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
-
+  
   const context: RenderContext<DTOBaseConfig> = {
     resourceConfig: config,
     basePath,
@@ -513,7 +521,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   
   const baseConfig = await getBaseApiConfig(basePath);
   await saveControllerConfig(config, basePath);
-  
+  config.name = capitalize(config.name)
+
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
     basePath,
@@ -543,7 +552,7 @@ export const updateController = async (config: ControllerConfig, basePath: strin
   
   const baseConfig = await getBaseApiConfig(basePath);
   await saveControllerConfig(config, basePath);
-  
+  config.name = capitalize(config.name)
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
     basePath,
