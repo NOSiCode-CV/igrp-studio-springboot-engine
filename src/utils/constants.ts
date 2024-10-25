@@ -272,5 +272,5 @@ export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyTo
 
 export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
 
-export const GENERATION_TYPES = ['IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
+export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
 

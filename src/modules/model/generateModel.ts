@@ -8,12 +8,14 @@ import path from 'path';
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
+  const {primaryKey} = context.resourceConfig
 
- if (context.resourceConfig.primaryKey) {
-  const primaryKeyTemplate = await renderPrimaryKey(context);
-  const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
-
-  await saveToFile(primaryKeyTemplate, primaryKeyPath);
+ if (primaryKey) {
+  if (primaryKey.length > 0) {
+    const primaryKeyTemplate = await renderPrimaryKey(context);
+    const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+    await saveToFile(primaryKeyTemplate, primaryKeyPath);
+  }
  }
  
   await saveToFile(template, modelOutputPath);
@@ -82,6 +84,11 @@ const validateColumnDefault = (attribute: Attribute) => {
       // Verifica se o valor padrão é uma string válida (permite espaço no meio)
       if (!/^\S.*\S$/.test(defaultValue)) {
         throw new Error(`The default value "${defaultValue}" is not valid for the string type ${type}.`);
+      }
+    } else if (type === 'Boolean') {
+      // Verifica se o valor padrão é "true" ou "false"
+      if (!['true', 'false'].includes(defaultValue.toLowerCase())) {
+        throw new Error(`The default value "${defaultValue}" is not valid for the boolean type ${type}.`);
       }
     } else {
       console.warn(`No specific validation for the type ${type}.`);
