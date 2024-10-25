@@ -27,6 +27,9 @@ import { deleteDTOConfig } from './modules/dto/deleteDTO';
 import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
 import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
+import { cleaner } from './modules/common/cleanerConfigFile';
+
+import { checkDuplicated } from './modules/common/checkDuplicates';
 
 /**
  * Main Function that creates the base api
@@ -62,8 +65,8 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
  * }
  * 
  */
-export const newApi = async (config: ApiConfig, basePath: string) => {
-
+export const newApi = async (dirty: ApiConfig, basePath: string) => {
+  const config = cleaner(dirty)
   const valid = apiValidation(config);
 
   if (!valid && apiValidation.errors) 
@@ -138,7 +141,14 @@ export const newApi = async (config: ApiConfig, basePath: string) => {
 *   }
 * };
 */
-export const addModel = async (config: ModelConfig, basePath: string) => {
+export const addModel = async (dirty: ModelConfig, basePath: string) => {
+  /**
+ * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+ */
+  const config:ModelConfig = cleaner(dirty)
+
+  // this function check is the request params in actions have duplicateds names
+  checkDuplicated(config.attributes, [], [])
 
   const valid = validateModelConfig(config); 
 
@@ -315,7 +325,6 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 
 }
 
-
 /**
 * Generates and saves a model to the API.
 * This function creates a model based on the provided configuration and saves it to the specified API base path.
@@ -354,7 +363,15 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 *   }
 * };
 */
-export const addDTO = async (config: DTOConfig, basePath: string) => {
+export const addDTO = async (dirty: DTOConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config:DTOConfig = cleaner(dirty)
+
+  // this function check is the request params in actions have duplicateds names
+  checkDuplicated([], [], config.attributes)
+
   const valid = validateDTOConfig(config);
 
   if (!valid && validateDTOConfig.errors) {
@@ -391,6 +408,7 @@ export const addDTO = async (config: DTOConfig, basePath: string) => {
  * // Example usage:
  * import { deleteDTO } from "spring-engine";
  * import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
+import { checkDuplicated } from './modules/controller/checkDuplicates';
  * const config: DTOBaseConfig = {
  *   type: 'dto',
  *   name: 'User'
@@ -474,7 +492,15 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
  * };
  * 
  */
-export const addController = async (config: ControllerConfig, basePath: string) => {
+export const addController = async (dirty: ControllerConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config = cleaner(dirty)
+  
+  // this function check is the request params in actions have duplicateds names
+  checkDuplicated([], config.actions, [])
+
   const isConfigValid = validateController(config);
   
   if (!isConfigValid && validateController.errors) {
@@ -580,15 +606,11 @@ export const engineTypes = async (basePath: string) =>{
     {DATABASE_TYPES: DATABASE_TYPES},
     {RESPONSE_TYPES : responseTypes},
     {ATTRIBUTE_TYPES : ATTRIBUTE_TYPES},
-    {GENERATION_TYPES: GENERATION_TYPES},
     {RELATIONSHIP_TYPES: RELATIONSHIP_TYPES},
-    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS}
+    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS},
+    {GENERATION_TYPES: GENERATION_TYPES.filter(gt => gt !== '')},
   ]
 
   return allTypes 
 }
-
-
-
-
 
