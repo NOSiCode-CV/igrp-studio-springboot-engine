@@ -8,10 +8,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-public class {{capitalize resourceConfig.name}}Controller {
+public class {{resourceConfig.name}}Controller {
 
   // Replace {{resourceConfig.name}}ServiceInterface with {{resourceConfig.name}}ServiceInterfaceImpl, which implements all methods defined in SipsServiceInterface. 
-  // Note: Ensure that the SipsServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
+  // Note: Ensure that the {{resourceConfig.name}}ServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
 
   private final {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
 
@@ -21,7 +21,13 @@ public class {{capitalize resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
-  @RequestMapping({{#if path}}value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}", {{/if}}method = RequestMethod.{{method}}{{#if this.accepts}}, consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, produces = "{{this.contentType}}" {{/if}})
+  @RequestMapping(
+    method = RequestMethod.{{method}}{{#if path}},
+    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{else}}{{#if pathVariables}},
+    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if this.accepts}},
+    consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
+    produces = "{{this.contentType}}"{{/if}}
+  )
   public ResponseEntity<{{{this.response}}}> {{actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
 
     final var result = {{toLowerCase ../resourceConfig.name}}Service.{{actionName}}({{#if requestBody}}{{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});

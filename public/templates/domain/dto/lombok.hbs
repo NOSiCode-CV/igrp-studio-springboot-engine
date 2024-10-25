@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public class {{capitalize resourceConfig.name}}{
+public class {{resourceConfig.name}}{
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}

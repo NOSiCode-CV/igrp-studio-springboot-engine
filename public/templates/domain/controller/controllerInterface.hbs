@@ -2,7 +2,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfi
 import java.util.List;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact}}
 
-public interface {{capitalize resourceConfig.name}}ServiceInterface {
+public interface {{resourceConfig.name}}ServiceInterface {
   {{#each resourceConfig.actions}}
   {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
   {{/each}}
