@@ -1,5 +1,6 @@
 import { ERROR_MESSAGE } from '../../utils/constants'
 import { ModelConfig } from '../../interfaces/types';
+import { checkDuplicated } from '../common/checkDuplicates';
 
 /**
  * Checks the primary keys in the model configuration.
@@ -11,6 +12,9 @@ import { ModelConfig } from '../../interfaces/types';
  */
 export const checkPrimaryKeys = (model: ModelConfig) => {
   const { attributes, primaryKey } = model;
+  if (primaryKey && primaryKey.length > 0) {
+    checkDuplicated(primaryKey)
+  }
   const extract_primarykeys = attributes.filter(attr => attr.primaryKey===true)
   
   /**

@@ -48,17 +48,15 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
 
   const errors: string[] = [];
   for (const action of actions) {
-    if (action.requestBody) {
-      if (!bodyTypes.includes(action.requestBody) ) {
-        errors.push(`Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`);
-      }
-    }
+    if (action.requestBody) 
+      if (!bodyTypes.includes(action.requestBody) )
+        throw `Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`
+    
     const responseType = extractTypeFromList(action.response)
-    if (responseType) {
+    if (responseType)
       if (!types.includes(responseType)){
-        errors.push(`The response type '${responseType}' in action '${action.actionName}' is not valid`)
+        throw `The response type '${responseType}' in action '${action.actionName}' is not valid`
       }
-    } 
   }
 
   if (errors.length > 0) {
