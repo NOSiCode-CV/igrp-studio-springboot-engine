@@ -4,14 +4,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact}}
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 public class {{resourceConfig.name}}Controller {
-
-  // Replace {{resourceConfig.name}}ServiceInterface with {{resourceConfig.name}}ServiceInterfaceImpl, which implements all methods defined in SipsServiceInterface. 
-  // Note: Ensure that the {{resourceConfig.name}}ServiceImpl is injected using the @Autowired annotation, as it is required for this dependency.
 
   private final {{resourceConfig.name}}ServiceInterface {{toLowerCase resourceConfig.name}}Service;
 

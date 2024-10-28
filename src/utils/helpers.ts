@@ -63,7 +63,13 @@ export const getControllerDir = (context: RenderContext<ControllerConfig | Model
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.CONTROLLERS,
-    context.resourceConfig.name,
+    context.resourceConfig.name
+  );
+export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.SERVICES
   );
 
 
