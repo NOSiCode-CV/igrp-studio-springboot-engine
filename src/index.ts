@@ -31,6 +31,8 @@ import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
 import { capitalize } from './utils/capitalizeStrings';
+import { generateServiceInmpl } from './modules/controller/generateService';
+import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 
 /**
  * Main Function that creates the base api
@@ -149,10 +151,11 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   const config:ModelConfig = cleaner(dirty)
   
   dirty.crud? config.crud = dirty.crud: ''
-
+  dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
+  
   // this function check is the request params in actions have duplicateds names
   checkDuplicated(config.attributes, [], [])
-
+  
   const valid = validateModelConfig(config); 
 
   if (!valid && validateModelConfig.errors) {
@@ -167,9 +170,10 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name)
+
   await saveModelConfig(config, basePath);
 
-  config.name = capitalize(config.name)
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
@@ -387,9 +391,10 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
-  const baseConfig = await getBaseApiConfig(basePath);
-  await saveDTOConfig(config, basePath);
   config.name = capitalize(config.name)
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  await saveDTOConfig(config, basePath);
 
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
@@ -442,6 +447,7 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name)
   
   const context: RenderContext<DTOBaseConfig> = {
     resourceConfig: config,
@@ -509,6 +515,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   // this function check is the request params in actions have duplicateds names
   checkDuplicated([], config.actions, [])
 
+  config.actions = upperCaseResponse(config.actions)
+
   const isConfigValid = validateController(config);
   
   if (!isConfigValid && validateController.errors) {
@@ -520,8 +528,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   }
   
   const baseConfig = await getBaseApiConfig(basePath);
-  await saveControllerConfig(config, basePath);
   config.name = capitalize(config.name)
+
+  await saveControllerConfig(config, basePath);
 
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
@@ -531,6 +540,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   
   await generateController(context);
   await generateServiceInterface(context);
+  await generateServiceInmpl(context);
 
 };
 
@@ -551,8 +561,10 @@ export const updateController = async (config: ControllerConfig, basePath: strin
   }
   
   const baseConfig = await getBaseApiConfig(basePath);
-  await saveControllerConfig(config, basePath);
   config.name = capitalize(config.name)
+
+  await saveControllerConfig(config, basePath);
+  
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
     basePath,
@@ -576,6 +588,7 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name)
 
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,

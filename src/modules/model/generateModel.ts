@@ -4,18 +4,31 @@ import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
+import fs from 'fs-extra';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
+
+  // Validação dos uniqueConstraints antes de salvar o modelo
+  const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
+
+  if (errosUniqueConstraints.length > 0) {
+    throw new Error(`Erros de uniqueConstraints encontrados:\n${errosUniqueConstraints.join('\n')}`);
+  }
+
   const {primaryKey} = context.resourceConfig
 
  if (primaryKey) {
-  if (primaryKey.length > 0) {
-    const primaryKeyTemplate = await renderPrimaryKey(context);
-    const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+   if (primaryKey.length > 0) {
+     const primaryKeyTemplate = await renderPrimaryKey(context);
+     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   }
+ } else {
+    // delete the primary key class if it has been created before
+    const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+    if (await fs.pathExists(primaryKeyPath)) await fs.rm(primaryKeyPath, { recursive: true });
  }
  
   await saveToFile(template, modelOutputPath);
@@ -41,6 +54,9 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
         const columnAnnotation = renderColumnWithDefault(attribute);
       }
     });
+
+    // Gerar as restrições únicas compostas
+  context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
 };
@@ -105,6 +121,25 @@ const renderColumnWithDefault = (attribute: Attribute) => {
 
   return ''; // Caso não tenha valor padrão, não retorna a anotação
 };
+
+// Função para validar as colunas de uniqueConstraints
+function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
+  const attributeNames = modelConfig.attributes.map(attr => attr.name); // Pegar todos os nomes dos atributos
+  const erros: string[] = [];
+
+  // Verificar cada uniqueConstraint
+  if (modelConfig.uniqueConstraints) {
+    modelConfig.uniqueConstraints.forEach(constraint => {
+      constraint.columns.forEach(column => {
+        if (!attributeNames.includes(column)) {
+          erros.push(`A coluna '${column}' definida em uniqueConstraints não corresponde a nenhum atributo.`);
+        }
+      });
+    });
+  }
+
+  return erros;
+}
 
 // Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 

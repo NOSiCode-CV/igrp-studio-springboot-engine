@@ -1,0 +1,24 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.services;
+/*
+ * Implementation class for {{resourceConfig.name}}ServiceInterface.
+ * 
+ * This class is generated once and serves as a placeholder for the business logic 
+ * of the {{resourceConfig.name}} service. Any custom implementations or modifications added here 
+ * will not be overridden by future code generations.
+ *
+ */
+import org.springframework.stereotype.Service;
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
+
+@Service
+public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name}}ServiceInterface {
+
+  {{#each resourceConfig.actions}}
+  @Override
+  public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
+    return null;
+  }
+
+  {{/each}}
+}

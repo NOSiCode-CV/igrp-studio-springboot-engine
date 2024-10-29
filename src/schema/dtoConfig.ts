@@ -1,27 +1,8 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { DTOBaseConfig, DTOConfig, GenericType, JavaAttribute, JavaType } from "../interfaces/types";
+import { DTOBaseConfig, DTOConfig, JavaAttribute, JavaType } from "../interfaces/types";
 import { PATTERNS } from "../utils/constants";
 
-const genericsTypeSchema: JSONSchemaType<GenericType> = {
-  type: "object",
-  properties: { 
-    name: { 
-      type: "string", pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.' 
-    },
-    namespace: { 
-      type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
-      errorMessage: 'The namespace must follow the package naming convention.'
-    },
-    ns: { 
-      type: "string", 
-      enum: ['model', 'dto', 'java'],
-      errorMessage: 'The abbreaviated namespace must model, dto, java.'
-    },
-  },
-  required: ["name"],
-};
 
 type JavaTypeUnion = string | JavaType;
 

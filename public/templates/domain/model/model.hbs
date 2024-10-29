@@ -22,7 +22,19 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="{{resourceConfig.tableName}}")
+@Table(name="{{resourceConfig.tableName}}"{{#if resourceConfig.uniqueConstraints}},
+    uniqueConstraints = {
+        {{#each resourceConfig.uniqueConstraints}}
+        @UniqueConstraint(
+            name = "{{this.name}}",
+            columnNames = {
+                {{#each this.columns}}"{{this}}"{{#if @last}}{{else}},{{/if}}{{/each}}
+            }
+        ){{#unless @last}},{{/unless}}
+        {{/each}}
+    }
+{{/if}})
+
 public class {{resourceConfig.name}} {
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId

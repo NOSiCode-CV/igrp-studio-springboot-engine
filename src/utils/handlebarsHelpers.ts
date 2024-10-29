@@ -1,6 +1,7 @@
 import * as Handlebars from 'handlebars';
-import { ControllerAction, ControllerConfig, GenericType, JavaAttribute, JavaType } from '../interfaces/types';
-import { REQUEST_BODY_NOT_IMPORT, RESPONSE_TYPES } from './constants';
+
+import { ControllerAction, JavaAttribute, JavaType } from '../interfaces/types';
+import { REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
@@ -53,10 +54,30 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
           const type = extractTypeFromList(action.response)
           imports.push(`import ${group}.${artifact}.dto.${type};`)
         }
+        if(action.response.startsWith('List'))
+          imports.push(`import java.util.List;`)
+
   }
   
   return [...new Set(imports)].join(" ")
 })
+
+
+// Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
+//   let imports: string [] = []
+//   for (const action of actions) {
+//     if (action.requestBody)
+//       if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody)) 
+//         imports.push(`import ${group}.${artifact}.dto.${action.requestBody};`)
+//       if (action.response)
+//         if (extractTypeFromList(action.response)){
+//           const type = extractTypeFromList(action.response)
+//           imports.push(`import ${group}.${artifact}.dto.${type};`)
+//         }
+//   }
+  
+//   return [...new Set(imports)].join(" ")
+// })
 
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {

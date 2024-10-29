@@ -1,10 +1,11 @@
 import path from 'path';
-import { ControllerAction, ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, RESPONSE_TYPES, SIMPLE_RESPONSE_TYPES, TEMPLATES } from '../../utils/constants';
-import { extractTypeFromList, getControllerDir } from '../../utils/helpers';
+
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDTOTypes } from '../dto/helpers';
+import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
+import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
+import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**
@@ -47,17 +48,15 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
 
   const errors: string[] = [];
   for (const action of actions) {
-    if (action.requestBody) {
-      if (!bodyTypes.includes(action.requestBody) ) {
-        errors.push(`Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`);
-      }
-    }
+    if (action.requestBody) 
+      if (!bodyTypes.includes(action.requestBody) )
+        throw `Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`
+    
     const responseType = extractTypeFromList(action.response)
-    if (responseType) {
+    if (responseType)
       if (!types.includes(responseType)){
-        errors.push(`The response type '${responseType}' in action '${action.actionName}' is not valid`)
+        throw `The response type '${responseType}' in action '${action.actionName}' is not valid`
       }
-    } 
   }
 
   if (errors.length > 0) {
