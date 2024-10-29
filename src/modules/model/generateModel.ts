@@ -4,6 +4,7 @@ import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
+import fs from 'fs-extra';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
@@ -19,11 +20,15 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const {primaryKey} = context.resourceConfig
 
  if (primaryKey) {
-  if (primaryKey.length > 0) {
-    const primaryKeyTemplate = await renderPrimaryKey(context);
-    const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+   if (primaryKey.length > 0) {
+     const primaryKeyTemplate = await renderPrimaryKey(context);
+     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   }
+ } else {
+    // delete the primary key class if it has been created before
+    const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+    if (await fs.pathExists(primaryKeyPath)) await fs.rm(primaryKeyPath, { recursive: true });
  }
  
   await saveToFile(template, modelOutputPath);

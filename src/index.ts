@@ -151,10 +151,11 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   const config:ModelConfig = cleaner(dirty)
   
   dirty.crud? config.crud = dirty.crud: ''
-
+  dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
+  
   // this function check is the request params in actions have duplicateds names
   checkDuplicated(config.attributes, [], [])
-
+  
   const valid = validateModelConfig(config); 
 
   if (!valid && validateModelConfig.errors) {
