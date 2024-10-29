@@ -12,10 +12,11 @@ import { checkDuplicated } from '../common/checkDuplicates';
  */
 export const checkPrimaryKeys = (model: ModelConfig) => {
   const { attributes, primaryKey } = model;
+  const extract_primarykeys = attributes.filter(attr => attr.primaryKey===true)
+  
   if (primaryKey && primaryKey.length > 0) {
     checkDuplicated(primaryKey)
   }
-  const extract_primarykeys = attributes.filter(attr => attr.primaryKey===true)
   
   /**
    * Checks if the model has more than one simple primary key.
@@ -46,7 +47,7 @@ export const checkPrimaryKeys = (model: ModelConfig) => {
   /**
    * Ensures that at least one type of primary key is provided.
    */
-  if (extract_primarykeys.length === 0 && primaryKey?.length === 0){
+  if (extract_primarykeys.length === 0 && (primaryKey?.length === 0 || !primaryKey)){
     throw ERROR_MESSAGE.MISSING_PRIMARY_KEY
   }
 
