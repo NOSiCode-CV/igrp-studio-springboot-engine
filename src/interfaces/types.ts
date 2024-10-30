@@ -35,6 +35,7 @@ export interface ModelConfig {
   primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
+  audit?: boolean;  // New audit field added
 }
 
 export interface GenericType {

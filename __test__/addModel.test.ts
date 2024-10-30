@@ -6,12 +6,13 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 
-const OUTPUT_DIR = ''
+const OUTPUT_DIR = 'C:/Users/UTIC/Desktop/projects/test-engine'
 
 const model: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_PESSOA',
   tableName: 'sips_t_pessoa',
+  audit: true, //New audit field used
   attributes: [
     { type: 'Long', name: 'idPessoa' },
     { type: 'String', name: 'numero', unique: false, nullable: false },
@@ -37,6 +38,7 @@ const model5: ModelConfig = {
   type: 'model',
   name: 'SIPS_T_PESSOA',
   tableName: 'sips_t_pessoa',
+  audit: true, //New audit field used
   attributes: [
     { type: 'Long', name: 'idPessoa' },
     { type: 'String', name: 'numero', unique: false, nullable: false,},
@@ -106,7 +108,7 @@ describe('Model generator', () => {
 
   it('should create a model in th api', async () => {
     //await addModel(model, OUTPUT_DIR);
-    await addModel(model3, OUTPUT_DIR);
+    await addModel(model, OUTPUT_DIR);
 
   });
 });

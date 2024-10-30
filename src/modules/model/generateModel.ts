@@ -9,6 +9,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
   const {primaryKey} = context.resourceConfig
+  const {audit} = context.resourceConfig
 
  if (primaryKey) {
   if (primaryKey.length > 0) {
@@ -17,6 +18,11 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   }
  }
+
+ if(audit){
+  const auditEntityOutputPath =getAuditEntityOutputPath(context)
+  await saveToFile(TEMPLATES.DOMAIN_MODEL_AUDIT, auditEntityOutputPath);
+}
  
   await saveToFile(template, modelOutputPath);
 };
@@ -112,6 +118,9 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
+
+const getAuditEntityOutputPath = (context: RenderContext<ModelConfig>) => 
+  path.join(getModelOutputDir(context), `AuditEntity${EXTENSIONS.JAVA}`)
 
 
 
