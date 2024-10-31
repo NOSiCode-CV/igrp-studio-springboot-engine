@@ -131,6 +131,7 @@ export const COMMON_FILES = {
   REPOSITORY: 'Repository.java',
   CONTROLLER: 'Controller.java',
   SERVICE: 'ServiceInterface.java',
+  AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   AUDIT_AWARE_IMPL: 'AuditorAwareImpl.java'
 };

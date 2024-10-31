@@ -31,13 +31,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     if (await fs.pathExists(primaryKeyPath)) await fs.rm(primaryKeyPath, { recursive: true });
  }
 
- if(audit){
-  const auditEntityOutputPath =getAuditEntityOutputPath(context)
-  const template = await _renderAudit(context)
-  await saveToFile(template, auditEntityOutputPath);
- 
-}
- 
   await saveToFile(template, modelOutputPath);
 };
 
@@ -70,10 +63,6 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
 
 const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
-}
-
-const _renderAudit = async (context: RenderContext<ModelConfig>) => {
-  return await renderTemplate(TEMPLATES.DOMAIN_MODEL_AUDIT, context);
 }
 
 const sqlUniquesAttributes = (attributes: Attribute[]) => {
@@ -159,8 +148,6 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
 
-const getAuditEntityOutputPath = (context: RenderContext<ModelConfig>) => 
-  path.join(getModelOutputDir(context), `AuditEntity${EXTENSIONS.JAVA}`)
 
 
 
