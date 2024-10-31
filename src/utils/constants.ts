@@ -87,8 +87,7 @@ export const TEMPLATES = {
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
   DOMAIN_MODEL_AUDIT: 'domain/model/audit.hbs',
-  DOMAIN_MODEL_AUDIT_CONFIG: 'domain/model/auditConfig.hbs',
-  DOMAIN_MODEL_AUDITOR_AWAREIMPL: 'domain/model/auditorAwareImpl.hbs',
+  APPLICATION_AUDIT_AWARE: 'domain/model/applicationAditorAware.hbs',
 
   DOMAIN_DTO: {
     'classic': 'domain/dto/lombok.hbs',
@@ -133,7 +132,7 @@ export const COMMON_FILES = {
   SERVICE: 'ServiceInterface.java',
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
-  AUDIT_AWARE_IMPL: 'AuditorAwareImpl.java'
+  APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java'
 };
 
 export const EXTENSIONS = {

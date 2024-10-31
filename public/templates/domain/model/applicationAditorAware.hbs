@@ -1,13 +1,15 @@
-import org.springframework.data.domain.config;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Optional;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.config;
 
-public class AuditorAwareImpl implements AuditorAware<String> {
+import java.util.Optional;
+import org.springframework.data.domain.AuditorAware;
+
+public class ApplicationAuditorAware implements AuditorAware<String> {
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+    // this method should return the current user
+    return Optional.of("engine_user").filter(s -> true);
+    {{!-- return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
             .filter(authentication -> authentication.isAuthenticated())
             .map(authentication -> {
                 Object principal = authentication.getPrincipal();
@@ -16,6 +18,6 @@ public class AuditorAwareImpl implements AuditorAware<String> {
                 } else {
                     return principal.toString();
                 }
-            });
+            }); --}}
   }
 }
