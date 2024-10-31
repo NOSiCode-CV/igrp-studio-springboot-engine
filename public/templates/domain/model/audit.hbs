@@ -1,12 +1,17 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}};
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Column;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Data
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class AuditEntity {
 
     @CreatedDate
@@ -17,15 +22,15 @@ public abstract class AuditEntity {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 
-    @CreatedBy
+    {{!-- @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)
     private String createdBy;
 
     @LastModifiedBy
     @Column(name = "last_modified_by")
-    private String lastModifiedBy;
+    private String lastModifiedBy; --}}
 
-    // Getters and Setters
+    {{!-- // Public Getters and Setters methods
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
@@ -57,5 +62,5 @@ public abstract class AuditEntity {
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
-    }
+    } --}}
 }

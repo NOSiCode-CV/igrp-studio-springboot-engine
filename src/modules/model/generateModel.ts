@@ -10,7 +10,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
 
-  // Validação dos uniqueConstraints antes de salvar o modelo
   const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
   if (errosUniqueConstraints.length > 0) {
@@ -34,7 +33,9 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
  if(audit){
   const auditEntityOutputPath =getAuditEntityOutputPath(context)
-  await saveToFile(TEMPLATES.DOMAIN_MODEL_AUDIT, auditEntityOutputPath);
+  const template = await _renderAudit(context)
+  await saveToFile(template, auditEntityOutputPath);
+ 
 }
  
   await saveToFile(template, modelOutputPath);
@@ -69,6 +70,10 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
 
 const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
+}
+
+const _renderAudit = async (context: RenderContext<ModelConfig>) => {
+  return await renderTemplate(TEMPLATES.DOMAIN_MODEL_AUDIT, context);
 }
 
 const sqlUniquesAttributes = (attributes: Attribute[]) => {

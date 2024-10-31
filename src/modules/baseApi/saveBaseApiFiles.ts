@@ -27,13 +27,18 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
+
   const mainPath = path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
   );
 
+  const configPath = path.join(mainPath, 'config')
+
   return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+    { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDIT_CONFIG, name: COMMON_FILES.AUDIT_CONFIG},
+    { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDITOR_AWAREIMPL, name: COMMON_FILES.AUDIT_AWARE_IMPL},
     {
       output: resourcePath,
       template: TEMPLATES.DOMAIN_RESOURCES,
