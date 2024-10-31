@@ -38,6 +38,8 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 {{/if}})
 
 public class {{resourceConfig.name}} {
+@Table(name="{{resourceConfig.tableName}}")
+public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditEntity {{/if}}{
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId
   private PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}{{#if this.primaryKey}}
