@@ -5,7 +5,6 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
 
-import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import java.math.{{this}};
 {{model-imports resourceConfig}}
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="{{resourceConfig.tableName}}"{{#if resourceConfig.uniqueConstraints}},
