@@ -10,7 +10,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   const modelOutputPath = getModelOutputPath(context);
 
-  // Validação dos uniqueConstraints antes de salvar o modelo
   const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
   if (errosUniqueConstraints.length > 0) {
@@ -18,6 +17,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   }
 
   const {primaryKey} = context.resourceConfig
+  const {audit} = context.resourceConfig
 
  if (primaryKey) {
    if (primaryKey.length > 0) {
@@ -30,7 +30,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     if (await fs.pathExists(primaryKeyPath)) await fs.rm(primaryKeyPath, { recursive: true });
  }
- 
+
   await saveToFile(template, modelOutputPath);
 };
 
@@ -147,6 +147,7 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
+
 
 
 

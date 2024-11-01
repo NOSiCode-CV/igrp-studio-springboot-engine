@@ -27,19 +27,19 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
+
   const mainPath = path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
   );
 
+  const configPath = path.join(mainPath, 'config')
+
   return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
-    {
-      output: resourcePath,
-      template: TEMPLATES.DOMAIN_RESOURCES,
-      name: COMMON_FILES.APPLICATION_PROPERTIES,
-    },
-  ];
+    { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDIT, name: COMMON_FILES.AUDIT_ENTITY},
+    { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES }
+  ]
 };
 
 const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {

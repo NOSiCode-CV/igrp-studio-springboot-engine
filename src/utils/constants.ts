@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
-// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+//export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -17,6 +17,7 @@ export const DIRECTORIES = {
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
+  AUDIT_CONFIG: 'config'
 };
 
 export const PACKAGES = {
@@ -77,6 +78,7 @@ export const ERROR_MESSAGE = {
 
 export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
+
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'domain/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'domain/service/serviceImpl.hbs',
@@ -84,6 +86,9 @@ export const TEMPLATES = {
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
+  DOMAIN_MODEL_AUDIT: 'domain/model/audit.hbs',
+  DOMAIN_MODEL_AUDIT_CONFIG: 'domain/model/auditConfig.hbs',
+  DOMAIN_MODEL_AUDITOR_AWAREIMPL: 'domain/model/auditorAwareImpl.hbs',
 
   DOMAIN_DTO: {
     'classic': 'domain/dto/lombok.hbs',
@@ -126,6 +131,9 @@ export const COMMON_FILES = {
   REPOSITORY: 'Repository.java',
   CONTROLLER: 'Controller.java',
   SERVICE: 'ServiceInterface.java',
+  AUDIT_ENTITY: 'AuditEntity.java',
+  AUDIT_CONFIG: 'AuditConfig.java',
+  AUDIT_AWARE_IMPL: 'AuditorAwareImpl.java'
 };
 
 export const EXTENSIONS = {
