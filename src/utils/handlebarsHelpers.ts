@@ -1,6 +1,6 @@
 import * as Handlebars from 'handlebars';
 
-import { ControllerAction, JavaAttribute, JavaType } from '../interfaces/types';
+import { Attribute, ControllerAction, JavaAttribute, JavaType, ModelConfig, Relation } from '../interfaces/types';
 import { REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList } from './helpers';
 
@@ -61,23 +61,6 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
   
   return [...new Set(imports)].join(" ")
 })
-
-
-// Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
-//   let imports: string [] = []
-//   for (const action of actions) {
-//     if (action.requestBody)
-//       if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody)) 
-//         imports.push(`import ${group}.${artifact}.dto.${action.requestBody};`)
-//       if (action.response)
-//         if (extractTypeFromList(action.response)){
-//           const type = extractTypeFromList(action.response)
-//           imports.push(`import ${group}.${artifact}.dto.${type};`)
-//         }
-//   }
-  
-//   return [...new Set(imports)].join(" ")
-// })
 
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
@@ -143,6 +126,28 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   }
   return rtype;
 });
+
+Handlebars.registerHelper('model-imports', function(this: any, config: ModelConfig) {
+  const imports = new Set();
+  
+  if (config.relations) {
+    config.relations.forEach((relation:Relation) => {
+      if ( relation.relationType !== 'ManyToOne' && relation.relationType !== 'OneToOne') 
+        imports.add('import java.util.List;')
+    });
+  }
+
+  config.attributes.forEach((attr:Attribute) => {
+    if ( attr.type === 'String' && attr.nullable === false) 
+      imports.add('import jakarta.validation.constraints.NotBlank;')
+
+    if (attr.type === 'Integer' && attr.nullable === false) 
+      imports.add('import jakarta.validation.constraints.NotNull;')
+  });
+
+  return Array.from(imports).sort().join('\n');
+
+})
 
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {
   const textTypes = [

@@ -17,6 +17,8 @@ export const DIRECTORIES = {
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
+  AUDIT_CONFIG: 'config',
+  SECURITY: 'security'
 };
 
 export const PACKAGES = {
@@ -77,6 +79,7 @@ export const ERROR_MESSAGE = {
 
 export const TEMPLATES = {
   APPLICATION: 'domain/application.hbs',
+
   DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'domain/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'domain/service/serviceImpl.hbs',
@@ -84,6 +87,8 @@ export const TEMPLATES = {
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
+  DOMAIN_MODEL_AUDIT: 'domain/model/audit.hbs',
+  APPLICATION_AUDIT_AWARE: 'domain/model/applicationAditorAware.hbs',
 
   DOMAIN_DTO: {
     'classic': 'domain/dto/lombok.hbs',
@@ -101,6 +106,7 @@ export const TEMPLATES = {
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
+  CONFIG_SECURITY: 'config/security.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -114,7 +120,7 @@ export const CONFIG_FILES = [
 ];
 
 export const COMMON_FILES = {
-  APPLICATION_PROPERTIES: 'application.properties',
+  APPLICATION_PROPERTIES: 'application.yml',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
@@ -126,6 +132,10 @@ export const COMMON_FILES = {
   REPOSITORY: 'Repository.java',
   CONTROLLER: 'Controller.java',
   SERVICE: 'ServiceInterface.java',
+  AUDIT_ENTITY: 'AuditEntity.java',
+  AUDIT_CONFIG: 'AuditConfig.java',
+  APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
+  APPLICATION_SECURITY: 'SecurityConfig.java'
 };
 
 export const EXTENSIONS = {

@@ -1,9 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES } from '../../utils/constants';
 import { getMainPath, getTestPath } from '../../utils/helpers';
-import { apiValidation } from '../../schema/apiConfig';
 
 /**
  * Function that creates the api directories
@@ -31,11 +30,16 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
 
   return [
     path.join(basePath, DIRECTORIES.RESOURCES),
+    
     path.join(mainPath, DIRECTORIES.MODELS),
     path.join(mainPath, DIRECTORIES.SERVICES),
     path.join(mainPath, DIRECTORIES.CONTROLLERS),
+    path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
+    path.join(mainPath, DIRECTORIES.SECURITY),
+
     path.join(testPath, DIRECTORIES.REPOSITORIES),
     path.join(testPath, DIRECTORIES.SERVICES),
+
     path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
     path.join(igrpstudioPath, DIRECTORIES.MODELS),
   ];

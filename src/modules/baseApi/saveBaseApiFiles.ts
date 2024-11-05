@@ -27,19 +27,23 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
-  const mainPath = path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
-  );
+
+  const mainPath = 
+    path.join(
+      context.basePath,
+      getMainPath(context.baseConfig.group, context.baseConfig.artifact)
+    );
+
+  const configPath = path.join(mainPath, 'config');
+  const securityPath = path.join(mainPath, 'security');
 
   return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
-    {
-      output: resourcePath,
-      template: TEMPLATES.DOMAIN_RESOURCES,
-      name: COMMON_FILES.APPLICATION_PROPERTIES,
-    },
-  ];
+    { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDIT, name: COMMON_FILES.AUDIT_ENTITY},
+    { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
+    { output: configPath, template: TEMPLATES.APPLICATION_AUDIT_AWARE, name: COMMON_FILES.APPLICATION_AUDIT_AWARE},
+    { output: securityPath, template: TEMPLATES.CONFIG_SECURITY, name: COMMON_FILES.APPLICATION_SECURITY}
+  ]
 };
 
 const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {

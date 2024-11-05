@@ -249,6 +249,11 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       nullable: true, 
       items: relationSchema,
       errorMessage: 'The relations, if provided, must be an array of valid relationship definitions.'
+    },
+    audit: {  // Definition of the new audit field
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The audit field, if provided, must be a boolean value.'
     }
   },
   required: ["type", "name", "attributes", "tableName"],
