@@ -16,20 +16,18 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     throw new Error(`Erros de uniqueConstraints encontrados:\n${errosUniqueConstraints.join('\n')}`);
   }
 
-  const {primaryKey} = context.resourceConfig
-  const {audit} = context.resourceConfig
+  // Before creating the model with the new configuration, the engine checks if a model directory already exists.
+  // If it does, the old model directory will be deleted to ensure a clean setup for the new model.
+  const modelDirector = modelDirectory(context);
+  if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
 
- if (primaryKey) {
-   if (primaryKey.length > 0) {
-     const primaryKeyTemplate = await renderPrimaryKey(context);
-     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
-    await saveToFile(primaryKeyTemplate, primaryKeyPath);
-  }
- } else {
-    // delete the primary key class if it has been created before
+  const {primaryKey} = context.resourceConfig
+
+  if (primaryKey) {
+    const primaryKeyTemplate = await renderPrimaryKey(context);
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
-    if (await fs.pathExists(primaryKeyPath)) await fs.rm(primaryKeyPath, { recursive: true });
- }
+    await saveToFile(primaryKeyTemplate, primaryKeyPath);
+  } 
 
   await saveToFile(template, modelOutputPath);
 };
@@ -147,6 +145,9 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
+
+const modelDirectory = (context: RenderContext<ModelConfig>) => 
+  path.join(getModelOutputDir(context))
 
 
 
