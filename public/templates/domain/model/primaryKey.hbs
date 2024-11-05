@@ -3,9 +3,11 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.nam
 import java.io.Serializable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Embeddable
 public class PrimaryKey implements Serializable {
   {{#each resourceConfig.primaryKey}}
