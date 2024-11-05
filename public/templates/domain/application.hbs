@@ -1,12 +1,20 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}};
+import {{baseConfig.group}}.{{baseConfig.artifact}}.config.ApplicationAuditorAware;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableJpaAuditing(auditorAwareRef = "auditAware")
 public class {{baseConfig.name}}Application {
+
+    @Bean
+    public AuditorAware<String> auditAware() {
+        return new ApplicationAuditorAware();
+    }
 
     public static void main(String[] args) { SpringApplication.run({{baseConfig.name}}Application.class, args); }
 }
