@@ -6,8 +6,10 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 {{#each sqlAttributes}}
 import java.sql.{{this}};
 {{/each}}
@@ -17,6 +19,8 @@ import java.math.{{this}};
 {{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 {{model-imports resourceConfig}}
 
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
