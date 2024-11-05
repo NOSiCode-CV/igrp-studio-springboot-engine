@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
-export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-//export const TEMPLATE_DIR = path.join(__dirname, './templates');
+// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -17,7 +17,8 @@ export const DIRECTORIES = {
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
-  AUDIT_CONFIG: 'config'
+  AUDIT_CONFIG: 'config',
+  SECURITY: 'security'
 };
 
 export const PACKAGES = {
@@ -105,6 +106,7 @@ export const TEMPLATES = {
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
+  CONFIG_SECURITY: 'config/security.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -118,7 +120,7 @@ export const CONFIG_FILES = [
 ];
 
 export const COMMON_FILES = {
-  APPLICATION_PROPERTIES: 'application.properties',
+  APPLICATION_PROPERTIES: 'application.yml',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
@@ -132,7 +134,8 @@ export const COMMON_FILES = {
   SERVICE: 'ServiceInterface.java',
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
-  APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java'
+  APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
+  APPLICATION_SECURITY: 'SecurityConfig.java'
 };
 
 export const EXTENSIONS = {

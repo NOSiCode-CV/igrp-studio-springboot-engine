@@ -1,23 +1,38 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.config;
 
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 public class ApplicationAuditorAware implements AuditorAware<String> {
+  @Value("${spring.profiles.active}")
+  private String activeProfile;
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    // this method should return the current user
-    return Optional.of("engine_user").filter(s -> true);
-    {{!-- return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-            .filter(authentication -> authentication.isAuthenticated())
-            .map(authentication -> {
-                Object principal = authentication.getPrincipal();
-                if (principal instanceof UserDetails) {
-                    return ((UserDetails) principal).getUsername();
-                } else {
-                    return principal.toString();
-                }
-            }); --}}
+    String preferred_username = getPreferredUsername();
+    return Optional.of(preferred_username);
   }
+
+  /**
+  * Retrieves the preferred username from the JWT token in the security context.
+  *
+  * @return preferred username
+  * @throws IllegalStateException if the JWT token is not found in the security context
+  */
+  public String getPreferredUsername() {
+    if ("dev".equals(activeProfile)) {
+      return "";
+    }
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+      return jwt.getClaimAsString("preferred_username");
+    }
+    throw new IllegalStateException("JWT token not found in security context");
+  }
+
 }
