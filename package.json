@@ -1,6 +1,6 @@
 {
   "name": "@igrp/spring-engine",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Spring API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
