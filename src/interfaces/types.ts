@@ -45,6 +45,20 @@ export interface ModelConfig {
   audit?: boolean;  // New audit field added
 }
 
+export interface PermissionConfig {
+  type: 'permission';
+  name: string;
+  description: string;
+  endpoints: IEndpoint[]
+}
+
+export interface IEndpoint {
+  type: string;
+  resource: string; // indicates the model name or controller name
+  method: HttpMethod;
+  path: string
+}
+
 export interface GenericType {
   name: string;
   namespace?: string;
@@ -153,6 +167,7 @@ export interface ControllerConfig {
 
 export interface ControllerAction {
   path?: string;
+  permission?: string;
   actionName: string;
   method: HttpMethod;
   accepts?: MimeTypes;
@@ -182,8 +197,6 @@ export type RenderContext<T = undefined> = {
   sqlAttributes?: string[];
   uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
 };
-
-
 
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

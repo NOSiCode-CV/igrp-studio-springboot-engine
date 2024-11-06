@@ -6,6 +6,7 @@ import { getDTOTypes } from '../dto/helpers';
 import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
 import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
 import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
+import { assignPermission } from '../permission/permissionManagement';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**
@@ -21,6 +22,9 @@ export const generateController = async (context: RenderContext<ControllerConfig
   const controllerOutputPath = getControllerPath(context);
 
   await saveToFile(controller, controllerOutputPath);
+
+  // once the controller was generated them, we will assign the permissions for his endpoints
+  await assignPermission(context.resourceConfig, context.basePath)
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
