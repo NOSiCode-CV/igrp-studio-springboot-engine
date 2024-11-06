@@ -9,13 +9,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 public class ApplicationAuditorAware implements AuditorAware<String> {
+
   @Value("${spring.profiles.active}")
   private String activeProfile;
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    String preferred_username = getPreferredUsername();
-    return Optional.of(preferred_username);
+    String preferredUsername = getPreferredUsername();
+    return Optional.of(preferredUsername);
   }
 
   /**
