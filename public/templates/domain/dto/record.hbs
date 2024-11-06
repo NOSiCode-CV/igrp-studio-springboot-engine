@@ -12,4 +12,4 @@ public record {{capitalize resourceConfig.name}}(
     {{/each}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-){};
+){}
