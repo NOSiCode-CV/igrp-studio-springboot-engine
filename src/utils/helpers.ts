@@ -1,8 +1,8 @@
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, REQUEST_BODY_NOT_IMPORT } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
-import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, RenderContext } from '../interfaces/types';
-import { config } from 'process';
+import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig, RenderContext } from '../interfaces/types';
+
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
@@ -36,6 +36,9 @@ export const getMainPath = (group: string, artifact: string) =>
 
 export const getModelConfigPath = (model: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
+
+export const getPermissionConfigPath = (permission: string, output: string) =>
+  path.join(output, DIRECTORIES.CONFIG_PERMISSION, `${permission}${EXTENSIONS.JSON}`);
 
 export const getDTOConfigPath = (dto: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_DTO, `${dto}${EXTENSIONS.JSON}`);
@@ -95,6 +98,11 @@ export const loadModelConfigs = async function (basePath: string): Promise<Model
 export const loadControllerConfigs = async function (basePath: string): Promise<ControllerConfig[]> {
   return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
 }
+
+export const loadPermissionConfigs = async function (basePath: string): Promise<PermissionConfig[]> {
+  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_PERMISSION));
+}
+
 
 export const extractTypeFromList = (typeString: string): string | null => {
   const listRegex = "^List<(.+)>$";

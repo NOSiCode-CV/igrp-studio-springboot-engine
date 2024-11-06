@@ -9,6 +9,7 @@ export const DIRECTORIES = {
   CONFIG_CONTROLLER: '.igrpstudio/controllers',
   CONFIG_ICONTROLLER: '.igrpstudio/controllers',
   CONFIG_MODEL: '.igrpstudio/models',
+  CONFIG_PERMISSION: '.igrpstudio/permissions',
   CONFIG_DTO: '.igrpstudio/dto',
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',

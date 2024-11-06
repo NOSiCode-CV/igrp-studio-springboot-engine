@@ -1,4 +1,4 @@
-import { DTOBaseConfig, DTOConfig, ModelConfig } from './interfaces/types';
+import { DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig } from './interfaces/types';
 import { 
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
   DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
@@ -33,6 +33,8 @@ import { checkDuplicated } from './modules/common/checkDuplicates';
 import { capitalize } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
+import { savePermission } from './modules/permission/savePermissionConfig';
+import { getPermissionConfig } from './modules/permission/getPermissionConfig';
 
 /**
  * Main Function that creates the base api
@@ -601,6 +603,28 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
 
 /**
  * 
+ * @param config 
+ * @param basePath 
+ */
+export const addPermission = async (config: PermissionConfig, basePath: string) => {
+  //TODO Implement the permission config validation
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  await savePermission(config, basePath)
+}
+
+/**
+ * 
+ * @param basePath 
+ * @returns 
+ */
+export const getAllPermissions = async(basePath: string) => {
+  return await getPermissionConfig(basePath)
+}
+
+/**
+ * 
  * @param basePath 
  * @returns 
  */
@@ -635,4 +659,3 @@ export const engineTypes = async (basePath: string) =>{
 
   return allTypes 
 }
-
