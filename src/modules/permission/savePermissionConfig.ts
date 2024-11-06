@@ -1,5 +1,5 @@
 import { saveToFile } from '../common/saveToFile';
-import { PermissionConfig, RenderContext } from '../../interfaces/types';
+import { PermissionConfig } from '../../interfaces/types';
 import { getPermissionConfigPath } from '../../utils/helpers'
 
 
