@@ -6,7 +6,7 @@ import { checkUsageInModel } from "./checkUsageInModel";
 import fs from 'fs-extra'
 
 
-export const deletePermission = async (context: RenderContext<PermissionConfig>) => {
+export const deletePerm = async (context: RenderContext<PermissionConfig>) => {
 
   const permissionPath = getPermissionConfigPath(context.resourceConfig.name, context.basePath)
 

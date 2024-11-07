@@ -35,6 +35,9 @@ import { generateServiceInmpl } from './modules/controller/generateService';
 import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { getPermissionConfig } from './modules/permission/getPermissionConfig';
+import { validatePermission } from './schema/permissionConfig';
+import { deletePerm } from './modules/permission/deletePermission';
+import { checkPermission } from './modules/permission/checkExistsPermission';
 
 /**
  * Main Function that creates the base api
@@ -147,16 +150,26 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
 * };
 */
 export const addModel = async (dirty: ModelConfig, basePath: string) => {
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
   /**
  * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
  */
   const config:ModelConfig = cleaner(dirty)
-  
-  dirty.crud? config.crud = dirty.crud: ''
+
+  if(dirty.crud) {
+    if (dirty.crud.permissions) {
+      //TODO IMPLEMENT CHECK DUPLICATED IN PERMISSIONS
+      // checkDuplicated(dirty.crud.permissions)
+
+
+    }
+    config.crud = dirty.crud
+  }
   dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
   
   // this function check is the request params in actions have duplicateds names
-  checkDuplicated(config.attributes, [], [])
+  checkDuplicated(config.attributes, [], []);
   
   const valid = validateModelConfig(config); 
 
@@ -169,13 +182,9 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
    */
   checkPrimaryKeys(config)
 
-  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name)
-
-  await saveModelConfig(config, basePath);
-
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
@@ -424,6 +433,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
  * import { deleteDTO } from "spring-engine";
  * import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
 import { checkDuplicated } from './modules/controller/checkDuplicates';
+import { validatePermission } from './schema/permissionConfig';
  * const config: DTOBaseConfig = {
  *   type: 'dto',
  *   name: 'User'
@@ -532,8 +542,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name)
 
-  await saveControllerConfig(config, basePath);
-
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
     basePath,
@@ -607,13 +615,31 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
  * @param basePath 
  */
 export const addPermission = async (config: PermissionConfig, basePath: string) => {
-  //TODO Implement the permission config validation
+  const valid = validatePermission(config);
+  if (!valid && validatePermission.errors) throw validatePermission.errors
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   await savePermission(config, basePath)
 }
 
+export const deletePermission = async(config: PermissionConfig, basePath: string)=> {
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const valid = validatePermission(config);
+  if (!valid && validatePermission.errors) throw validatePermission.errors
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<PermissionConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+  };
+
+  await deletePerm(context)
+}
+  
 /**
  * 
  * @param basePath 

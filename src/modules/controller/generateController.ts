@@ -7,6 +7,8 @@ import { RenderContext, ControllerConfig, ControllerAction } from '../../interfa
 import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
 import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
+import { checkPermission } from '../permission/checkExistsPermission';
+import { saveControllerConfig } from './saveControllerConfig';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**
@@ -16,10 +18,14 @@ const CONTROLLER_SUFFIX = 'Controller.java';
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
   const controller = await renderController(context);
   const allTypes = await getDtos(context)
+
   checkAcceptsAndRequestBody(context.resourceConfig.actions)
-  verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
+  await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
+  await checkPermission(context.resourceConfig, context.basePath)
   
   const controllerOutputPath = getControllerPath(context);
+
+  await saveControllerConfig(context.resourceConfig, context.basePath);
 
   await saveToFile(controller, controllerOutputPath);
 
@@ -27,6 +33,7 @@ export const generateController = async (context: RenderContext<ControllerConfig
   // This ensures that the newly created controller has the correct access rights configured 
   // for each endpoint based on its defined permissions.
   await assignPermission(context.resourceConfig, context.basePath)
+  console.log('siguioooooooo')
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
@@ -52,7 +59,6 @@ const getDtos = async(context: RenderContext<ControllerConfig>) => {
 const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], types: string[]) => {
   const bodyTypes = types.filter(type => !type.startsWith("List<") && !["String","Integer", "Boolean"].includes(type))
 
-  const errors: string[] = [];
   for (const action of actions) {
     if (action.requestBody) 
       if (!bodyTypes.includes(action.requestBody) )
@@ -63,10 +69,6 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
       if (!types.includes(responseType)){
         throw `The response type '${responseType}' in action '${action.actionName}' is not valid`
       }
-  }
-
-  if (errors.length > 0) {
-    throw errors.join("\n")
   }
 }
 
