@@ -149,9 +149,14 @@ export interface Relation {
 export interface Crud {
   enabled: boolean;
   path: string;
+  permissions?: IModelPermission[]
   disabledMethods: DisabledMethods[];
 }
 
+export interface IModelPermission {
+  method: HttpMethod;
+  permission: string
+}
 export interface Table {
   name: string;
   joinColumns: string;

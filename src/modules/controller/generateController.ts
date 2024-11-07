@@ -23,7 +23,9 @@ export const generateController = async (context: RenderContext<ControllerConfig
 
   await saveToFile(controller, controllerOutputPath);
 
-  // once the controller was generated them, we will assign the permissions for his endpoints
+  // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
+  // This ensures that the newly created controller has the correct access rights configured 
+  // for each endpoint based on its defined permissions.
   await assignPermission(context.resourceConfig, context.basePath)
 };
 

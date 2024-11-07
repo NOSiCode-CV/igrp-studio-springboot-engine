@@ -62,6 +62,8 @@ export const ERROR_MESSAGE = {
     'The provided controller configuration is invalid. Please verify the API details and try again.',
   INVALID_MODEL_CONFIG:
     'The provided Model configuration is invalid. Please verify the model details and try again.',
+  INVALID_PERMISSION_CONFIG:
+    'The provided Permission configuration is invalid. Please verify the model details and try again.',
   INVALID_OUTPUT_PATH: 'The provided output path is invalid or does not exist.',
   MODEL_REQUIRED:
     'The model is required. Please provide the model configuration to save your data.',

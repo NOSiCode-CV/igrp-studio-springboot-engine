@@ -1,7 +1,7 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribute, Relation, PrimaryKey, UniqueConstraint } from "../interfaces/types";
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES } from "../utils/constants";
+import { ModelConfig, Crud, Attribute, Relation, PrimaryKey, UniqueConstraint, IModelPermission } from "../interfaces/types";
+import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES, HTTP_METHOD_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
@@ -59,6 +59,21 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
+const permissionSchema: JSONSchemaType<IModelPermission> = {
+  type: "object",
+  properties: {
+    method: {
+      type: 'string',
+      enum: HTTP_METHOD_TYPES
+    },
+    permission: {
+      type: 'string'
+    }
+  },
+  required: ['method', 'permission'],
+  additionalProperties: false,
+}
+
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",
   properties: {
@@ -71,6 +86,12 @@ const crudSchema: JSONSchemaType<Crud> = {
       pattern: PATTERNS.PATH_VALIDATION,
       errorMessage: 'The path must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
+    permissions: {
+      type: "array",
+      items: permissionSchema,
+      nullable: true
+    },
+    
     disabledMethods: { 
       type: "array", 
       items: { 
