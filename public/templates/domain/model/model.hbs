@@ -37,13 +37,15 @@ import java.math.{{this}};
     }
 {{/if}})
 public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditEntity {{/if}}{
+
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId
-  private PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}{{#if this.primaryKey}}
+  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}{{#if this.primaryKey}}
   @Id
   @GeneratedValue(strategy = GenerationType.{{this.generationType}})
   @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
   private {{this.type}} {{toLowerCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+
   @NotBlank(message = "{{this.name}} is mandatory"){{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}

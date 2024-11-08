@@ -155,8 +155,8 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
 
-const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => 
-  path.join(getModelOutputDir(context), `PrimaryKey${EXTENSIONS.JAVA}`)
+const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getModelOutputDir(context),`${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`);
 
 const modelDirectory = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context))

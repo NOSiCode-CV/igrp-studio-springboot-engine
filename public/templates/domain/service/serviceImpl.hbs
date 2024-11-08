@@ -17,7 +17,8 @@ public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name
   {{#each resourceConfig.actions}}
   @Override
   public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
-    return null;
+    // TODO: implement this method
+  return null;
   }
 
   {{/each}}
