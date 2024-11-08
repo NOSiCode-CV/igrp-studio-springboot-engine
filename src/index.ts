@@ -158,12 +158,6 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   const config:ModelConfig = cleaner(dirty)
 
   if(dirty.crud) {
-    if (dirty.crud.permissions) {
-      //TODO IMPLEMENT CHECK DUPLICATED IN PERMISSIONS
-      // checkDuplicated(dirty.crud.permissions)
-
-
-    }
     config.crud = dirty.crud
   }
   dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
