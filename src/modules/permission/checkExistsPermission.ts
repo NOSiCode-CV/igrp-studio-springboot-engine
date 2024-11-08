@@ -10,7 +10,6 @@ import { loadPermissionConfigs } from "../../utils/helpers";
  */
 export const checkPermission = async (config: ModelConfig | ControllerConfig, basepath: string) => {
   const permissionsType = await loadPermissionConfigs(basepath)
-  let isFound = false;
 
   if (config.type === 'controller') {
     for (const action of config.actions) {
@@ -22,7 +21,6 @@ export const checkPermission = async (config: ModelConfig | ControllerConfig, ba
       }
     }
   } else if (config.type === 'model' && config.crud?.permissions) {
-    // Check permissions in model CRUD actions
     for (const crudPermission of config.crud.permissions) {
       const exists = permissionsType.some(p => p.name === crudPermission.permission);
       if (!exists) {

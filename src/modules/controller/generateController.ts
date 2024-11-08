@@ -33,7 +33,6 @@ export const generateController = async (context: RenderContext<ControllerConfig
   // This ensures that the newly created controller has the correct access rights configured 
   // for each endpoint based on its defined permissions.
   await assignPermission(context.resourceConfig, context.basePath)
-  console.log('siguioooooooo')
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
