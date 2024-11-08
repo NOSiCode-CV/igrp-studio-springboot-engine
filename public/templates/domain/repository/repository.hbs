@@ -11,7 +11,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @Repository
 @RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
-public interface {{resourceConfig.name}}Repository extends CrudRepository<{{resourceConfig.name}}, Long> {
+public interface {{resourceConfig.name}}Repository extends CrudRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}> {
 
   {{#if resourceConfig.crud.disabledMethods}}
   {{#each resourceConfig.crud.disabledMethods}}

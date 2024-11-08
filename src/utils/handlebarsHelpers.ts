@@ -43,6 +43,15 @@ Handlebars.registerHelper('ifNot', function(this: any, conditional: any, options
   }
 });
 
+Handlebars.registerHelper('keyType', function(config: ModelConfig) {
+  if(config.primaryKey) {
+    return `${config.name}PrimaryKey`
+  }
+  const primaryKeyAttr = config.attributes.find(p => p.primaryKey === true);
+
+  return primaryKeyAttr ? primaryKeyAttr.type : null
+});
+
 Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
   let imports: string [] = []
   for (const action of actions) {
@@ -60,8 +69,7 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
   }
   
   return [...new Set(imports)].join(" ")
-})
-
+});
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
   if (arg1 === arg2) {
@@ -77,7 +85,7 @@ Handlebars.registerHelper('contains', function(str, substring) {
 
 Handlebars.registerHelper('paramsFormat', function(str){
   return `{${str}}`
-})
+});
 
 Handlebars.registerHelper('resolve-mapping', function(this: any, action: ControllerAction) {
  let pathVariable = ""
@@ -91,7 +99,7 @@ Handlebars.registerHelper('resolve-mapping', function(this: any, action: Control
     }
   }
   
-})
+});
 
 Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
   if (!config) return null;
@@ -147,7 +155,7 @@ Handlebars.registerHelper('model-imports', function(this: any, config: ModelConf
 
   return Array.from(imports).sort().join('\n');
 
-})
+});
 
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {
   const textTypes = [

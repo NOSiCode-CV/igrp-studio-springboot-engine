@@ -1,10 +1,9 @@
 import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
+import { TEMPLATES } from '../../utils/constants';
 import { getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
-import { validateCrud, validateModelConfig } from '../../schema/modelConfig';
 
 const REPOSITORY_SUFFIX = 'Repository.java';
 
