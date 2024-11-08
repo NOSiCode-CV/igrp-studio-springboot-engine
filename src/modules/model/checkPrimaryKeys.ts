@@ -1,4 +1,4 @@
-import { ERROR_MESSAGE } from '../../utils/constants'
+import { ERROR_MESSAGE, VALID_PRIMARY_KEY } from '../../utils/constants';
 import { ModelConfig } from '../../interfaces/types';
 import { checkDuplicated } from '../common/checkDuplicates';
 
@@ -41,7 +41,10 @@ export const checkPrimaryKeys = (model: ModelConfig) => {
   
     if (primarykey_attr && !primarykey_attr.generationType)
       throw ERROR_MESSAGE.MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY
-    
+
+    if (!VALID_PRIMARY_KEY.includes(primarykey_attr.type)) {
+      throw new Error(`Type '${primarykey_attr.type}' of primary key '${primarykey_attr.name}' is not valid. The type must be one of ${VALID_PRIMARY_KEY.join(', ')}`);
+    }
   }
 
   /**

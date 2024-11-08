@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
+{{import-uuid resourceConfig}}
 
 
 @Repository

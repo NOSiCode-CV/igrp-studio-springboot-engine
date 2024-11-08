@@ -48,9 +48,19 @@ Handlebars.registerHelper('keyType', function(config: ModelConfig) {
     return `${config.name}PrimaryKey`
   }
   const primaryKeyAttr = config.attributes.find(p => p.primaryKey === true);
-
-  return primaryKeyAttr ? primaryKeyAttr.type : null
+  if (!primaryKeyAttr) {
+    return null;
+  }
+  if (primaryKeyAttr.type === 'int') {
+    return 'Integer';
+  } else if (primaryKeyAttr.type === 'long') {
+    return 'Long';
+  } else {
+    return primaryKeyAttr.type;
+  }
 });
+
+
 
 Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
   let imports: string [] = []
@@ -151,8 +161,20 @@ Handlebars.registerHelper('model-imports', function(this: any, config: ModelConf
 
     if (attr.type === 'Integer' && attr.nullable === false) 
       imports.add('import jakarta.validation.constraints.NotNull;')
+
+    if (attr.type === 'UUID')
+      imports.add('import java.util.UUID;')
   });
 
+  return Array.from(imports).sort().join('\n');
+
+});
+
+Handlebars.registerHelper('import-uuid', function(this: any, config: ModelConfig) {
+  const imports = new Set();
+  const uuid = config.attributes.find(attr => attr.type === 'UUID');
+  if (uuid)
+    imports.add('import java.util.UUID;')
   return Array.from(imports).sort().join('\n');
 
 });

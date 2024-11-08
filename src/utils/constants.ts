@@ -173,9 +173,18 @@ export const ATTRIBUTE_TYPES = [
   'BigDecimal',
   'Time',
   'Timestamp',
-  'Text'
+  'Text',
+  'boolean',
+  'char',
+  'short',
+  'int',
+  'long',
+  'float',
+  'double',
+  'UUID'
 ] as const;
 
+export const VALID_PRIMARY_KEY = ['int', 'long', 'Long', 'Integer', 'UUID']
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
@@ -287,4 +296,3 @@ export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyTo
 export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
-
