@@ -15,3 +15,4 @@ export const savePermission = async(config: PermissionConfig, basePath: string) 
    
   await saveToFile(JSON.stringify(config), output);
 };
+

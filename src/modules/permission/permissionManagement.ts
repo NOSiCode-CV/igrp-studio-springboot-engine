@@ -2,6 +2,7 @@ import { ControllerConfig, IEndpoint, ModelConfig, PermissionConfig } from "../.
 import { ERROR_MESSAGE } from "../../utils/constants";
 import { loadPermissionConfigs } from "../../utils/helpers";
 import { savePermission } from "./savePermissionConfig";
+import { saveAllPermissions } from "./savePermissions";
 
 /**
  * Assigns the appropriate permissions to an element (model or controller) by adding new endpoints 
@@ -101,7 +102,7 @@ const addEndpointIfNotExists = (permission: PermissionConfig, endpoint: IEndpoin
  */
 const removeControllerEndpointIfNoPermission = async (permission: PermissionConfig, element: ControllerConfig, basePath: string) => {
   let endpointsUpdated = false; 
-
+  
   permission.endpoints = permission.endpoints.filter(en => {
     const action = element.actions.find(a => `${element.name}.${a.actionName}` === en.resource);
     

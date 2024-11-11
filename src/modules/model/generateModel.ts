@@ -8,6 +8,7 @@ import fs from 'fs-extra';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
 import { saveModelConfig } from './saveModelConfig';
+import { saveAllPermissions } from '../permission/savePermissions';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
@@ -41,7 +42,10 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
   // for each endpoint based on its defined permissions.
-  await assignPermission(context.resourceConfig, context.basePath)
+  await assignPermission(context.resourceConfig, context.basePath);
+
+  // Save all permissions to a single file
+  await saveAllPermissions(context.basePath);
 };
 
 /**

@@ -4,6 +4,7 @@ import { checkUsageInController } from "./checkUsageInController";
 import { checkUsageInModel } from "./checkUsageInModel";
 
 import fs from 'fs-extra'
+import { saveAllPermissions } from "./savePermissions";
 
 
 export const deletePerm = async (context: RenderContext<PermissionConfig>) => {
@@ -15,6 +16,7 @@ export const deletePerm = async (context: RenderContext<PermissionConfig>) => {
     await checkUsageInModel(context)
     
     await fs.rm(permissionPath, { recursive: true });
+    await saveAllPermissions(context.basePath);
   }
 
   else throw `Permission '${context.resourceConfig.name}' does not exist.`

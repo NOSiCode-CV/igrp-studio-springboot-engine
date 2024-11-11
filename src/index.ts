@@ -34,10 +34,8 @@ import { capitalize } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
-import { getPermissionConfig } from './modules/permission/getPermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
-import { checkPermission } from './modules/permission/checkExistsPermission';
 
 /**
  * Main Function that creates the base api
@@ -632,15 +630,6 @@ export const deletePermission = async(config: PermissionConfig, basePath: string
   };
 
   await deletePerm(context)
-}
-  
-/**
- * 
- * @param basePath 
- * @returns 
- */
-export const getAllPermissions = async(basePath: string) => {
-  return await getPermissionConfig(basePath)
 }
 
 /**
