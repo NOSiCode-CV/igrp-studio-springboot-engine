@@ -1,0 +1,11 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name.toLowerCase}};
+
+import {{#each resourceConfig.actions}}{{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this}}Command;
+import org.springframework.stereotype.Service;
+
+public interface {{resourceConfig.name}}CmdService {
+
+   {{#each resourceConfig.actions}}
+     void {{this}}({{this}}Command cmd);
+   {{/each}}
+}

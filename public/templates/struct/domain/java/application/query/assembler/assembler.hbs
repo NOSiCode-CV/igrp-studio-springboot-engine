@@ -1,0 +1,6 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler;
+
+@FunctionalInterface
+public interface Assembler<T, R> {
+   R apply(T t);
+}

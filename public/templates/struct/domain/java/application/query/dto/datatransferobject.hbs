@@ -1,0 +1,14 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto;
+
+public abstract class DataTransferObject<T> {
+
+   private final T id;
+
+   public DataTransferObject(T id) {
+     this.id = id;
+   }
+
+   public T getId() {
+      return id;
+   }
+}

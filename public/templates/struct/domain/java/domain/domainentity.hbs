@@ -1,0 +1,42 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class DomainEntity<T extends Object> {
+
+   private final Logger log = LoggerFactory.getLogger(this.getClass());
+   private final List<Event> occurredEvents = new ArrayList<>();
+   private T id;
+
+   public DomainEntity(T id) {
+      this.id = id;
+   }
+
+   public List<Event> occurredEvents() {
+      List<Event> events = new ArrayList<>(this.occurredEvents);
+      this.occurredEvents.clear();
+      log.trace("Return occurred domain events. [numberOfEvents={}]", events.size());
+      return events;
+   }
+
+   protected void raise(Event event) {
+      occurredEvents.add(event);
+      log.debug("Raised new domain event. [type={}]", event.getClass().getSimpleName());
+   }
+
+   @Override
+   public boolean equals(Object other) {
+      if (this == other) return true;
+      if (getClass() != other.getClass()) return false;
+      DomainEntity<?> that = (DomainEntity<?>) other;
+      return id.equals(that.id);
+   }
+
+   @Override
+   public int hashCode() {
+      return id.hashCode();
+   }
+
+}

@@ -1,0 +1,27 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{resourceConfig.name.toLowerCase}};
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandBus;
+import {{#each resourceConfig.actions}}
+  import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+{{/each}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.name}}CmdService {
+
+   private final CommandBus commandBus;
+
+   public {{resourceConfig.name}}CmdServiceImpl(CommandBus commandBus) {
+      this.commandBus = commandBus;
+   }
+
+   {{#each resourceConfig.actions}}
+     @Override
+     public void {{this.actionName.toLowerCase}}({{this.actionName}}Command cmd) {
+        // TODO: Implement action logic
+        commandBus.send(cmd);
+     }
+   {{/each}}
+
+}

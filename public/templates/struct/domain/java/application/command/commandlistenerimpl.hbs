@@ -1,0 +1,28 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event.EventBus;
+import org.springframework.stereotype.Component;
+
+@Component
+public class {{listenerName}}CommandListener {
+
+   private final EventBus eventBus;
+
+   public {{listenerName}}CommandListener(EventBus eventBus) {
+      this.eventBus = eventBus;
+   }
+
+   @CommandListener
+   public void handle({{listenerName}}Command command) {
+      // TODO: Implement the command listening logic here
+      // Example content for demonstration purposes:
+      // String content = "The name sent is " + command.getName() + ".";
+      // System.out.println(content);
+
+      // Publish event to EventBus:
+      // eventBus.publish(new NamePrintedEvent(
+      //     command.getName(),
+      //     command.getNif()
+      // ));
+   }
+}

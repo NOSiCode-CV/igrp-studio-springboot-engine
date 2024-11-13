@@ -1,0 +1,12 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event;
+
+public interface EventBus {
+
+  void publish(Event event);
+
+  default void publishAll(List<Event> events) {
+    for (Event event : events) {
+       publish(event);
+    }
+  }
+}

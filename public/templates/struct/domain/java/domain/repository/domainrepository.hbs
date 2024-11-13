@@ -1,0 +1,16 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}};
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+
+public interface {{resourceConfig.name}}DomainRepository {
+
+   {{#if resourceConfig.idType}}
+     {{#ifEquals resourceConfig.idType "Long"}}
+     {{else}}
+       {{resourceConfig.idType}} findById({{resourceConfig.idType}} id);
+     {{/ifEquals}}
+   {{/if}}
+
+   void save({{resourceConfig.name}}AggregateRoot aggregate);
+
+}

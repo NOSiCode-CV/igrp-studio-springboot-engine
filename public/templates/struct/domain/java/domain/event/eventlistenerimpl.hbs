@@ -1,0 +1,17 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event.EventListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class {{listenerName}}EventListener {
+
+   @EventListener
+   public void handle({{listenerName}}Event event) {
+      // TODO: Implement the command listening logic here
+      // Example content for demonstration purposes:
+      // String content = "The name was sent successfully.";
+      // System.out.println(content);
+   }
+
+}

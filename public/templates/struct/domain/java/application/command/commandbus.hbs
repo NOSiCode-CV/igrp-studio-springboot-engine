@@ -1,0 +1,12 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
+
+public interface CommandBus {
+
+  void send(Command command);
+
+  default void sendAll(List<Command> commands) {
+    for (Command command : commands) {
+       send(command);
+    }
+  }
+}

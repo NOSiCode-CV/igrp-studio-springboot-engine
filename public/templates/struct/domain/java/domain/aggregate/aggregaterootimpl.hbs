@@ -1,0 +1,30 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
+
+{{#each resourceConfig.actions}}
+  import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+{{/each}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.Aggregate
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.AggregateRoot
+
+@Aggregate
+public class {{resourceConfig.name}}AggregateRoot extends AggregateRoot<{{resourceConfig.name}}AggregateRoot, {{resourceConfig.idType}}> {
+
+   private final {{resourceConfig.idType}} id;
+
+   {{#each resourceConfig.attributes}}
+     private {{{resolve-type this}}} {{this.name}};
+   {{/each}}
+
+   public {{resourceConfig.name}}({{resourceConfig.idType}} id{{#each resourceConfig.attributes}}, {{{resolve-type this}}} {{this.name}}{{/each}}) {
+      this.id = id;
+      {{#each resourceConfig.attributes}}
+        this.{{this.name}} = {{this.name}};
+      {{/each}}
+   }
+
+   {{#each resourceConfig.actions}}
+     public void handle({{this.actionName}}Command cmd) {
+        // TODO: Implement the {{this.actionName}} command handling logic here
+     }
+   {{/each}}
+}
