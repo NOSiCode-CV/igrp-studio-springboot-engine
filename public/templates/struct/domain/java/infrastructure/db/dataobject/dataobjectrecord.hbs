@@ -1,0 +1,17 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.{{toLowerCase resourceConfig.name}};
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.DataObject;
+
+{{resolve-imports resourceConfig}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public record {{capitalize resourceConfig.name}}DataObject (
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+) extends DataObject<{{resourceConfig.idType}}> {}

@@ -1,0 +1,48 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.impl.{{resourceConfig.name.toLowerCase}};
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}DomainRepository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.name}}.{{resourceConfig.name}}Entity;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}Repository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceConfig.name}}DomainRepository {
+
+   private final {{resourceConfig.name}}Repository {{toLowerCase resourceConfig.name}}Repository;
+
+   public {{resourceConfig.name}}DomainRepositoryImpl({{resourceConfig.name}}Repository {{toLowerCase resourceConfig.name}}Repository) {
+      this.{{toLowerCase resourceConfig.name}}Repository = {{toLowerCase resourceConfig.name}}Repository;
+   }
+
+   {{#if resourceConfig.idType}}
+     @Override
+     public {{#ifEquals resourceConfig.idType "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{resourceConfig.idType}}{{/ifEquals}} findById({{resourceConfig.idType}} id) {
+
+        {{resourceConfig.name}}Entity entity = {{toLowerCase resourceConfig.name}}Repository.findById(id).orElse(null);
+
+        if (entity == null) {
+           return null;
+        }
+
+        // Convert entity to aggregate root and return
+        return new {{resourceConfig.name}}AggregateRoot(
+           entity.getId(),
+           {{!-- Add other fields as necessary --}}
+        );
+
+     }
+   {{/if}}
+
+   @Override
+   public void save({{resourceConfig.name}}AggregateRoot aggregate) {
+      // Convert aggregate root to entity
+      {{resourceConfig.name}}Entity entity = new {{resourceConfig.name}}Entity();
+      entity.setId(aggregate.getAggregateIdentifier());
+      {{!-- Set other fields from aggregate to entity as necessary --}}
+
+      // Persist entity
+      {{toLowerCase resourceConfig.name}}Repository.save(entity);
+   }
+
+}

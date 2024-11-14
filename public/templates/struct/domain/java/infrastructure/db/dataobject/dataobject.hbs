@@ -1,0 +1,15 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject;
+
+public abstract class DataObject<T> {
+
+   private final T id;
+
+   protected DataObject(T id) {
+      this.id = id;
+   }
+
+   public T getId() {
+      return id;
+   }
+
+}

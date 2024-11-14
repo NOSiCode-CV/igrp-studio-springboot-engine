@@ -1,0 +1,22 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.spring;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.Command;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandBus;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpringCommandBus implements CommandBus {
+
+   private final ApplicationEventPublisher publisher;
+
+   public SpringCommandBus(ApplicationEventPublisher publisher) {
+      this.publisher = publisher;
+   }
+
+   @Override
+   public void send(Command command) {
+      publisher.publishEvent(command);
+   }
+
+}

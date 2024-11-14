@@ -1,0 +1,18 @@
+spring.application.name={{baseConfig.name}}
+
+######## Actuator Configuration  #########
+management.info.git.mode=full
+management.endpoints.web.exposure.include=*
+management.metrics.tags.application=${spring.application.name}
+management.tracing.enabled=false
+management.tracing.sampling.probability=1.0
+
+# Datasource
+spring.datasource.url={{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql://host.docker.internal:<PORT>/<DB_NAME>{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql://host.docker.internal:<PORT>/<DB_NAME>{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@host.docker.internal:<PORT>:<DB_NAME>{{/if}}
+spring.datasource.username=<DB_USERNAME>
+spring.datasource.password=<DB_PASSWORD>
+spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
