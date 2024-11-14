@@ -15,9 +15,9 @@ public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceCo
       this.{{toLowerCase resourceConfig.name}}Repository = {{toLowerCase resourceConfig.name}}Repository;
    }
 
-   {{#if resourceConfig.idType}}
+   {{#if keyType resourceConfig}}
      @Override
-     public {{#ifEquals resourceConfig.idType "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{resourceConfig.idType}}{{/ifEquals}} findById({{resourceConfig.idType}} id) {
+     public {{#ifEquals keyType resourceConfig "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{keyType resourceConfig}}{{/ifEquals}} findById({{keyType resourceConfig}} id) {
 
         {{resourceConfig.name}}Entity entity = {{toLowerCase resourceConfig.name}}Repository.findById(id).orElse(null);
 

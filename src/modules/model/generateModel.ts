@@ -2,7 +2,7 @@ import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
-import { getModelOutputDir } from '../../utils/helpers';
+import { getDDDModelOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
 import { assignPermission } from '../permission/permissionManagement';
@@ -12,7 +12,12 @@ import { saveAllPermissions } from '../permission/savePermissions';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
-  const modelOutputPath = getModelOutputPath(context);
+  let modelOutputPath: string;
+
+  if(context.baseConfig.struct == 'domain')
+    modelOutputPath = getDDDModelOutputPath(context);
+  else
+    modelOutputPath = getModelOutputPath(context);
 
   const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
@@ -72,7 +77,11 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
-  return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
+  if (context.baseConfig.struct === 'domain') {
+    return await renderTemplate(TEMPLATES.DDD_ENTITY_BASE_IMPL, context);
+  } else {
+    return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
+  }
 };
 
 const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
@@ -158,6 +167,10 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 // Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+
+// Caminho onde o arquivo é salvo
+const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}Entity${EXTENSIONS.JAVA}`)
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getModelOutputDir(context),`${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`);

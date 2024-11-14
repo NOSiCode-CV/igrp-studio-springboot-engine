@@ -14,4 +14,4 @@ public record {{capitalize resourceConfig.name}}DataObject (
     {{/each}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-) extends DataObject<{{resourceConfig.idType}}> {}
+) extends DataObject<{{keyType resourceConfig}}> {}

@@ -14,4 +14,4 @@ public record {{capitalize resourceConfig.name}}DomainEntity (
     {{/each}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-) extends DomainEntity<{{resourceConfig.idType}}> {}
+) extends DomainEntity<{{keyType resourceConfig}}> {}

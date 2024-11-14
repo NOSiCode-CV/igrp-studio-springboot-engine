@@ -7,7 +7,7 @@ import {
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  SIMPLE_RESPONSE_TYPES, STRUCT_TYPES,
+  SIMPLE_RESPONSE_TYPES, STRUCT_TYPES, OBJECT_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -80,7 +80,7 @@ export interface JavaAttribute {
 }
 
 export interface DTOBaseConfig {
-  type: 'dto';
+  type: ObjectTypes;
   name: string;
 }
 
@@ -112,7 +112,7 @@ export interface JavaAttribute {
 }
 
 export interface DTOBaseConfig {
-  type: 'dto';
+  type: ObjectTypes;
   name: string;
 }
 
@@ -209,6 +209,7 @@ export type RenderContext<T = undefined> = {
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+export type ObjectTypes = (typeof OBJECT_TYPES)[number];
 export type StructTypes = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];

@@ -1,7 +1,7 @@
 import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { TEMPLATES } from '../../utils/constants';
-import { getModelOutputDir } from '../../utils/helpers';
+import { getDDDModelOutputDir, getDDDRepositoryOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
 
@@ -15,7 +15,13 @@ const REPOSITORY_SUFFIX = 'Repository.java';
  */
 export const generateRepository = async (context: RenderContext<ModelConfig>) => {
   const template = await renderRepository(context);
-  const modelOutputPath = getRepositoryOutputPath(context);
+  let modelOutputPath
+  
+  if (context.baseConfig.struct === 'domain') {
+    modelOutputPath = getDDDRepositoryOutputPath(context);
+  } else {
+    modelOutputPath = getRepositoryOutputPath(context);
+  }
   await saveToFile(template, modelOutputPath);
 };
 
@@ -27,8 +33,10 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
  * @throws - Throws an error if the model configuration is invalid or if CRUD is not specified.
  */
 export const renderRepository = async (context: RenderContext<ModelConfig>) => {
-  
-  return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
+  if(context.baseConfig.struct === 'domain')
+    return await renderTemplate(TEMPLATES.DDD_BASE_REPOSITORY_IMPL, context);
+  else
+    return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
 };
 
 /**
@@ -39,3 +47,6 @@ export const renderRepository = async (context: RenderContext<ModelConfig>) => {
  */
 const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getModelOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+
+const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getDDDRepositoryOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);

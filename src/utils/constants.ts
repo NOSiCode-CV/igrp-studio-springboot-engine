@@ -125,6 +125,45 @@ export const TEMPLATES = {
     'record': 'domain/dto/record.hbs',
   },
 
+  DDD_DATA_TRANSFER_OBJECT_DTO: {
+    'classic': 'struct/domain/java/application/query/dto/dtolombok.hbs',
+    'record': 'struct/domain/java/application/query/dto/dtorecord.hbs',
+  },
+
+  DDD_COMMAND_DTO: {
+    'classic': 'struct/domain/java/application/command/commandlombok.hbs',
+    'record': 'struct/domain/java/application/command/commandrecord.hbs',
+  },
+
+  DDD_QUERY_DTO: {
+    'classic': 'struct/domain/java/application/query/querylombok.hbs',
+    'record': 'struct/domain/java/application/query/queryrecord.hbs',
+  },
+
+  DDD_DOMAIN_ENTITY_DTO: {
+    'classic': 'struct/domain/java/domain/aggregate/domainentitylombok.hbs',
+    'record': 'struct/domain/java/domain/aggregate/domainentityrecord.hbs',
+  },
+
+  DDD_VALUE_OBJECT_DTO: {
+    'classic': 'struct/domain/java/domain/aggregate/valueobjectlombok.hbs',
+    'record': 'struct/domain/java/domain/aggregate/valueobjectrecord.hbs',
+  },
+
+  DDD_EVENT_DTO: {
+    'classic': 'struct/domain/java/domain/event/eventlombok.hbs',
+    'record': 'struct/domain/java/domain/event/eventrecord.hbs',
+  },
+
+  DDD_DATA_OBJECT_DTO: {
+    'classic': 'struct/domain/java/infrastructure/db/dataobject/dataobjectlombok.hbs',
+    'record': 'struct/domain/java/infrastructure/db/dataobject/dataobjectrecord.hbs',
+  },
+
+  DDD_AGGREGATE_ROOT_DTO: {
+    'classic': 'struct/domain/java/domain/aggregate/aggregaterootimpl.hbs'
+  },
+
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
   IGRP_MODEL: 'igrpstudio/model.hbs',
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
@@ -161,7 +200,9 @@ export const TEMPLATES = {
   DDD_CONVERTER: 'struct/domain/java/application/infrastructure/db/converter/converter.hbs',
   DDD_DATA_OBJECT: 'struct/domain/java/application/infrastructure/db/dataobject/dataobject.hbs',
   DDD_ENTITY_BASE: 'struct/domain/java/application/infrastructure/db/entity/entitybase.hbs',
+  DDD_ENTITY_BASE_IMPL: 'struct/domain/java/application/infrastructure/db/entity/entitybaseimpl.hbs',
   DDD_BASE_REPOSITORY: 'struct/domain/java/application/infrastructure/db/repository/baserepository.hbs',
+  DDD_BASE_REPOSITORY_IMPL: 'struct/domain/java/application/infrastructure/db/repository/baserepositoryimpl.hbs',
   DDD_SPRING_COMMAND_BUS: 'struct/domain/java/application/infrastructure/spring/springcommandbus.hbs',
   DDD_SPRING_EVENT_BUS: 'struct/domain/java/application/infrastructure/spring/springeventbus.hbs',
 
@@ -315,6 +356,7 @@ export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const STRUCT_TYPES = ['domain', 'technical'] as const
+export const OBJECT_TYPES = ['dto', 'dataobject', 'command', 'query', 'event', 'valueobject', 'domainentity', 'aggregateroot', 'datatransferobject'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

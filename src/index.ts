@@ -174,7 +174,6 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
    */
   checkPrimaryKeys(config)
 
-
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name)
 
@@ -188,6 +187,19 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
 
   if (config.crud?.enabled) {
     await generateRepository(context);
+  }
+
+  if(context.baseConfig.struct === 'domain') {
+
+    const doContext: RenderContext<DTOConfig> = {
+      resourceConfig: await transformDTOConfig({name: config.name, template: 'classic', attributes: config.attributes.map(e => ({ name: e.name, type: e.type, ns: 'dto'})), type: 'dataobject'}, baseConfig, basePath),
+      basePath,
+      baseConfig,
+    };
+
+    await generateDTO(doContext);
+    // await generateConverter(context); // TODO: implement converter and assembler generation
+
   }
 
 };

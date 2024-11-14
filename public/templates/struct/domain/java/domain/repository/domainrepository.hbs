@@ -4,10 +4,10 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceC
 
 public interface {{resourceConfig.name}}DomainRepository {
 
-   {{#if resourceConfig.idType}}
-     {{#ifEquals resourceConfig.idType "Long"}}
+   {{#if keyType resourceConfig}}
+     {{#ifEquals keyType resourceConfig "Long"}}
      {{else}}
-       {{resourceConfig.idType}} findById({{resourceConfig.idType}} id);
+       {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
      {{/ifEquals}}
    {{/if}}
 

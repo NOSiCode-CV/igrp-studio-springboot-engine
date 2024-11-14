@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}};
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};

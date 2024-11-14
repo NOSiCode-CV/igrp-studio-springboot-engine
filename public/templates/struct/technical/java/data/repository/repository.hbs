@@ -3,7 +3,8 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{resourceConfig.nam
 /*This class should not be modified outside studio.*/
 
 import org.springframework.stereotype.Repository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
@@ -11,7 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @Repository
 @RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
-public interface {{resourceConfig.name}}Repository extends CrudRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}> {
+public interface {{resourceConfig.name}}Repository extends JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>, JpaSpecificationExecutor<{{resourceConfig.name}}> {
 
   {{#if resourceConfig.crud.disabledMethods}}
   {{#each resourceConfig.crud.disabledMethods}}
@@ -31,14 +32,14 @@ public interface {{resourceConfig.name}}Repository extends CrudRepository<{{reso
   @Override
   @RestResource(exported = false)
   void deleteAll();
-  {{else if (eq this 'deleteAllIterable')}}
+  {{else if (eq this 'deleteAllList')}}
   @Override
   @RestResource(exported = false)
-  void deleteAll(Iterable<? extends {{../resourceConfig.name}}> entities);
+  void deleteAll(List<? extends {{../resourceConfig.name}}> entities);
   {{else if (eq this 'findAll')}}
   @Override
   @RestResource(exported = false)
-  Iterable<{{../resourceConfig.name}}> findAll();
+  List<{{../resourceConfig.name}}> findAll();
   {{else if (eq this 'findById')}}
   @Override
   @RestResource(exported = false)
@@ -46,7 +47,7 @@ public interface {{resourceConfig.name}}Repository extends CrudRepository<{{reso
   {{else if (eq this 'findAllById')}}
   @Override
   @RestResource(exported = false)
-  Iterable<{{../resourceConfig.name}}> findAllById(Iterable<{{keyType resourceConfig}}> ids);
+  List<{{../resourceConfig.name}}> findAllById(List<{{keyType resourceConfig}}> ids);
   {{/if}}
 
   {{/each}}

@@ -12,4 +12,4 @@ public record {{capitalize resourceConfig.name}}DTO (
     {{/each}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-) extends DataTransferObject<{{resourceConfig.idType}}> {}
+) extends DataTransferObject<{{keyType resourceConfig}}> {}

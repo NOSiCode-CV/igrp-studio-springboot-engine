@@ -51,11 +51,110 @@ export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
     context.resourceConfig.name
   );
 
+export const getDDDModelOutputDir = (context: RenderContext<ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.INFRASTRUCTURE,
+    DIRECTORIES.DATABASE,
+    DIRECTORIES.ENTITY,
+    context.resourceConfig.name.toLowerCase()
+  );
+
+export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.INFRASTRUCTURE,
+    DIRECTORIES.DATABASE,
+    DIRECTORIES.REPOSITORY,
+    context.resourceConfig.name.toLowerCase()
+  );
+
 export const getDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DTO
+  );
+
+export const getDDDDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERY,
+    DIRECTORIES.DTO
+  );
+
+export const getDDDDataObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.INFRASTRUCTURE,
+    DIRECTORIES.DATABASE,
+    DIRECTORIES.DATA_OBJECT,
+    context.resourceConfig.name.toLowerCase()
+  );
+
+export const getDDDCommandOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.COMMAND
+  );
+
+export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERY
+  );
+
+export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.EVENT
+  );
+
+export const getDDDValueObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.AGGREGATE,
+    context.resourceConfig.name.toLowerCase() + "Aggregate",
+  );
+
+export const getDDDDomainEntityOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.AGGREGATE,
+    context.resourceConfig.name.toLowerCase() + "Aggregate",
+  );
+
+export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.AGGREGATE,
+    context.resourceConfig.name.toLowerCase() + "Aggregate",
+  );
+
+export const getDDDDataTransferObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERY,
+    DIRECTORIES.DTO,
   );
 
 export const getControllerConfigPath = (controller: string, output: string) =>

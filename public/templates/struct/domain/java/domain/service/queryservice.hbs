@@ -10,8 +10,8 @@ public interface {{resourceConfig.name}}QueryService {
 
    List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s({{#each resourceConfig.queryImports}} {{this}}Query query{{/each}});
 
-   {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{resourceConfig.idType}} id);
+   {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id);
 
-   {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate({{resourceConfig.idType}} id);
+   {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate({{keyType resourceConfig}} id);
 
 }

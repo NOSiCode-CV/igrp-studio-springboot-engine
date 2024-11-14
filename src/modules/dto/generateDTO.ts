@@ -2,7 +2,14 @@ import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadat
 import { renderTemplate } from '../common/renderTemplate';
 import { ERROR_MESSAGE, EXTENSIONS, JAVA_TYPES, PACKAGE_NS, PACKAGES, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
-import { getDtoOutputDir, getPackageNameFromConfig } from '../../utils/helpers';
+import {
+  getDDDAggregateRootOutputDir,
+  getDDDCommandOutputDir,
+  getDDDDataObjectOutputDir, getDDDDataTransferObjectOutputDir, getDDDDomainEntityOutputDir,
+  getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDDDValueObjectOutputDir,
+  getDtoOutputDir,
+  getPackageNameFromConfig,
+} from '../../utils/helpers';
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
@@ -27,21 +34,56 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
   if (context.resourceConfig.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
-  const tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+  let tn;
+  
+  switch (context.resourceConfig.type) {
+    case "dto":
+      tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      break;
+    case "dataobject":
+      tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
+      break;
+    case "command":
+      tn = TEMPLATES.DDD_COMMAND_DTO[context.resourceConfig.template];
+      break;
+    case "query":
+      tn = TEMPLATES.DDD_QUERY_DTO[context.resourceConfig.template];
+      break;
+    case "event":
+      tn = TEMPLATES.DDD_EVENT_DTO[context.resourceConfig.template];
+      break;
+    case "valueobject":
+      tn = TEMPLATES.DDD_VALUE_OBJECT_DTO[context.resourceConfig.template];
+      break;
+    case "domainentity":
+      tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
+      break;
+    case "aggregateroot":
+      tn = TEMPLATES.DDD_AGGREGATE_ROOT_DTO['classic'];
+      break;
+    case "datatransferobject":
+      tn = TEMPLATES.DDD_DATA_TRANSFER_OBJECT_DTO[context.resourceConfig.template];
+      break;
+  }
+  
   if (!tn) {
     throw ERROR_MESSAGE.TEMPLATE_NAME_NOT_REGISTERED;
   }
   return await renderTemplate(tn, context);
 };
 
-export const transformDTOConfig = async function (config: DTOConfig, api: ApiConfig, basePath: string): Promise<DTOConfig> {
+export const transformDTOConfig = async function (
+  config: DTOConfig,
+  api: ApiConfig,
+  basePath: string,
+): Promise<DTOConfig> {
   const ncfg = structuredClone(config);
   const errors = [];
 
   let mtypes: Map<string, ModelConfig> | undefined = undefined;
   let dtypes: Map<string, DTOConfig> | undefined = undefined;
 
-  for (const attr of  ncfg.attributes) {
+  for (const attr of ncfg.attributes) {
     let type: JavaType;
     if (typeof attr.type === 'string') {
       type = { name: attr.type };
@@ -51,7 +93,8 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
 
     let typeNotFound = false;
     if (attr.ns === PACKAGE_NS.java) {
-      const jt:{name: string, primitive: boolean, namespace?:string}|undefined = JAVA_TYPES.get(type.name);
+      const jt: { name: string; primitive: boolean; namespace?: string } | undefined =
+        JAVA_TYPES.get(type.name);
       if (jt) {
         if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
           type.namespace = jt.namespace;
@@ -59,7 +102,7 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
       } else {
         typeNotFound = true;
       }
-    } else if (attr.ns === PACKAGE_NS.model){
+    } else if (attr.ns === PACKAGE_NS.model) {
       if (mtypes === undefined) {
         mtypes = await getModelTypes(basePath);
       }
@@ -69,7 +112,6 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
       } else {
         typeNotFound = true;
       }
-      
     } else if (attr.ns === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(basePath);
@@ -84,7 +126,9 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
     }
 
     if (typeNotFound) {
-      errors.push({message: `on attribute ${attr.name}, Type ${type.name} not on the allowed '${attr.ns}' list`});
+      errors.push({
+        message: `on attribute ${attr.name}, Type ${type.name} not on the allowed '${attr.ns}' list`,
+      });
     }
 
     attr.type = type;
@@ -95,11 +139,33 @@ export const transformDTOConfig = async function (config: DTOConfig, api: ApiCon
   }
 
   return ncfg;
-}
+};
 
-
-const getDTOOutputPath = (context: RenderContext<DTOConfig>) => 
-  path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
-
+const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
+  if (context.baseConfig.struct === 'domain') {
+    switch (context.resourceConfig.type) {
+      case "dto":
+        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "dataobject":
+        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "command":
+        return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "query":
+        return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "event":
+        return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "valueobject":
+        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "domainentity":
+        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "aggregateroot":
+        return path.join(getDDDAggregateRootOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      case "datatransferobject":
+        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+    }
+  } else {
+    return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+  }
+};
 
 

@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}DataObject extends DataObject<{{resourceConfig.idType}}> {
+public class {{resourceConfig.name}}DataObject extends DataObject<{{keyType resourceConfig}}> {
 
   {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
