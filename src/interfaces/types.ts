@@ -7,7 +7,7 @@ import {
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  SIMPLE_RESPONSE_TYPES,
+  SIMPLE_RESPONSE_TYPES, STRUCT_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -30,7 +30,9 @@ export interface ApiConfig {
   database: DatabaseTypes;
   description?: string;
   package?: string;
+  struct: StructTypes;
   name?: string;
+  enableObservability: boolean;
 }
 
 export interface ModelConfig {
@@ -207,6 +209,7 @@ export type RenderContext<T = undefined> = {
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+export type StructTypes = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];

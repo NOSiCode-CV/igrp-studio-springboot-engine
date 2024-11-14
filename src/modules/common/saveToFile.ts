@@ -18,3 +18,22 @@ export const saveToFile = async (content: string, outputPath: string, override: 
   await fs.writeFile(outputPath, content, 'utf-8');
 
 };
+
+// New function for saving binary content to a file (for JAR files, etc.)
+export const saveBinaryToFile = async (
+  content: Buffer,  // Content should be a Buffer for binary files
+  outputPath: string,
+  override: boolean = true
+) => {
+  if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
+  if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  // Check if the file exists and override flag is false, return early
+  if (!override && (await fs.pathExists(outputPath))) return;
+
+  // Create directory structure if not already present
+  await fs.mkdir(dirname(outputPath), { recursive: true });
+
+  // Save the binary content as a file
+  await fs.writeFile(outputPath, content);
+};

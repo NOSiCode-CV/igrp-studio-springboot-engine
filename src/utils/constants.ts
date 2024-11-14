@@ -13,13 +13,37 @@ export const DIRECTORIES = {
   CONFIG_DTO: '.igrpstudio/dto',
   CONTROLLERS: 'controllers',
   IGRPSTUDIO: '.igrpstudio',
+  MONITORING: 'monitoring',
   MODELS: 'models',
   DTO: 'dto',
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
+  SERVICE: 'service',
   AUDIT_CONFIG: 'config',
-  SECURITY: 'security'
+  SECURITY: 'security',
+  API: 'api',
+  APPLICATION: 'application',
+  DOMAIN: 'domain',
+  INFRASTRUCTURE: 'infrastructure',
+  COMMAND: 'command',
+  QUERY: 'query',
+  ASSEMBLER: 'assembler',
+  AGGREGATE: 'aggregate',
+  EVENT: 'event',
+  EXCEPTIONS: 'exceptions',
+  IMPLEMENTATION: 'impl',
+  REPOSITORY: 'repository',
+  CACHE: 'cache',
+  DATABASE: 'db',
+  CONVERTER: 'converter',
+  DATA_OBJECT: 'dataobject',
+  ENTITY: 'entity',
+  SPRING: 'spring',
+  COLLECTOR: 'collector',
+  PROMETHEUS: 'prometheus',
+  PROMTAIL: 'promtail',
+  TEMPO: 'tempo'
 };
 
 export const PACKAGES = {
@@ -89,6 +113,9 @@ export const TEMPLATES = {
   DOMAIN_MODEL: 'domain/model/model.hbs',
   DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
   DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+  DDD_DOMAIN_RESOURCES: 'struct/domain/java/resources/application.properties.hbs',
+  DDD_DOMAIN_RESOURCES_LOCAL: 'struct/domain/java/resources/application-local.properties.hbs',
+  DDD_DOMAIN_RESOURCES_DOCKER: 'struct/domain/java/resources/application-docker.properties.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
   DOMAIN_MODEL_AUDIT: 'domain/model/audit.hbs',
   APPLICATION_AUDIT_AWARE: 'domain/model/applicationAditorAware.hbs',
@@ -104,12 +131,40 @@ export const TEMPLATES = {
 
   CONFIG_MVNW: 'config/mvnw.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
+  CONFIG_POM_XML_OBSERVABILITY: 'config/pom.xml-observability.hbs',
   CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
+  CONFIG_DOCKER_FILE_OBSERVABILITY: 'config/dockerfile-observability.hbs',
+  CONFIG_DOCKER_COMPOSE_OBSERVABILITY: 'config/dockercompose-observability.hbs',
+  CONFIG_OTEL_AGENT: 'config/opentelemetry-javaagent.jar',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+
+  // DOMAIN DRIVEN DESIGN
+  DDD_COMMAND: 'struct/domain/java/application/command/command.hbs',
+  DDD_COMMAND_BUS: 'struct/domain/java/application/command/commandbus.hbs',
+  DDD_COMMAND_HANDLER: 'struct/domain/java/application/command/commandhandler.hbs',
+  DDD_COMMAND_LISTENER: 'struct/domain/java/application/command/commandlistener.hbs',
+  DDD_ASSEMBLER: 'struct/domain/java/application/query/assembler/assembler.hbs',
+  DDD_DATA_TRANSFER_OBJECT: 'struct/domain/java/application/query/dto/datatransferobject.hbs',
+  DDD_AGGREGATE: 'struct/domain/java/application/domain/aggregate/aggregate.hbs',
+  DDD_AGGREGATE_IDENTIFIER: 'struct/domain/java/application/domain/aggregate/aggregateidentifier.hbs',
+  DDD_AGGREGATE_ROOT: 'struct/domain/java/application/domain/aggregate/aggregateroot.hbs',
+  DDD_VALUE_OBJECT: 'struct/domain/java/application/domain/aggregate/valueobject.hbs',
+  DDD_EVENT: 'struct/domain/java/application/domain/event/event.hbs',
+  DDD_EVENT_BUS: 'struct/domain/java/application/domain/event/eventbus.hbs',
+  DDD_EVENT_LISTENER: 'struct/domain/java/application/domain/event/eventlistener.hbs',
+  DDD_DOMAIN_ENTITY: 'struct/domain/java/application/domain/domainentity.hbs',
+  DDD_CACHE_SERVICE: 'struct/domain/java/application/infrastructure/cache/cacheservice.hbs',
+  DDD_CONVERTER: 'struct/domain/java/application/infrastructure/db/converter/converter.hbs',
+  DDD_DATA_OBJECT: 'struct/domain/java/application/infrastructure/db/dataobject/dataobject.hbs',
+  DDD_ENTITY_BASE: 'struct/domain/java/application/infrastructure/db/entity/entitybase.hbs',
+  DDD_BASE_REPOSITORY: 'struct/domain/java/application/infrastructure/db/repository/baserepository.hbs',
+  DDD_SPRING_COMMAND_BUS: 'struct/domain/java/application/infrastructure/spring/springcommandbus.hbs',
+  DDD_SPRING_EVENT_BUS: 'struct/domain/java/application/infrastructure/spring/springeventbus.hbs',
+
 };
 
 export const CONFIG_FILES = [
@@ -122,8 +177,26 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
+export const OBSERVABILITY_CONFIG_FILES = [
+  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
+  { template: TEMPLATES.CONFIG_POM_XML_OBSERVABILITY, output: 'pom.xml' },
+  { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE_OBSERVABILITY, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+];
+
+export const OBSERVABILITY_BINARY_FILES = [
+  { inputPath: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' }
+]
+
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES: 'application.yml',
+  APPLICATION_PROPERTIES_FILE: 'application.properties',
+  APPLICATION_PROPERTIES_FILE_LOCAL: 'application-local.properties',
+  APPLICATION_PROPERTIES_FILE_DOCKER: 'application-docker.properties',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
@@ -138,7 +211,31 @@ export const COMMON_FILES = {
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
-  APPLICATION_SECURITY: 'SecurityConfig.java'
+  APPLICATION_SECURITY: 'SecurityConfig.java',
+
+  // DOMAIN DRIVEN DESIGN
+  COMMAND: 'Command.java',
+  COMMAND_BUS: 'CommandBus.java',
+  COMMAND_HANDLER: 'CommandHandler.java',
+  COMMAND_LISTENER: 'CommandListener.java',
+  ASSEMBLER: 'Assembler.java',
+  DATA_TRANSFER_OBJECT: 'DataTransferObject.java',
+  AGGREGATE: 'Aggregate.java',
+  AGGREGATE_IDENTIFIER: 'AggregateIdentifier.java',
+  AGGREGATE_ROOT: 'AggregateRoot.java',
+  VALUE_OBJECT: 'ValueObject.java',
+  EVENT: 'Event.java',
+  EVENT_BUS: 'EventBus.java',
+  EVENT_LISTENER: 'EventListener.java',
+  DOMAIN_ENTITY: 'DomainEntity.java',
+  CACHE_SERVICE: 'CacheService.java',
+  CONVERTER: 'Converter.java',
+  DATA_OBJECT: 'DataObject.java',
+  ENTITY_BASE: 'EntityBase.java',
+  BASE_REPOSITORY: 'BaseRepository.java',
+  SPRING_COMMAND_BUS: 'SpringCommandBus.java',
+  SPRING_EVENT_BUS: 'SpringEventBus.java',
+
 };
 
 export const EXTENSIONS = {
@@ -217,6 +314,7 @@ export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPE
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
+export const STRUCT_TYPES = ['domain', 'technical'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

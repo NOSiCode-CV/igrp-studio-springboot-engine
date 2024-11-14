@@ -4,12 +4,13 @@ import {
   DIRECTORIES,
   TEMPLATES,
   COMMON_FILES,
-  CONFIG_FILES,
+  CONFIG_FILES, OBSERVABILITY_CONFIG_FILES, OBSERVABILITY_BINARY_FILES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
-import { saveToFile } from '../common/saveToFile';
+import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
+import fs from 'fs-extra';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -33,17 +34,114 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       context.basePath,
       getMainPath(context.baseConfig.group, context.baseConfig.artifact)
     );
+  
+  if (context.baseConfig.struct === 'domain') {
 
-  const configPath = path.join(mainPath, 'config');
-  const securityPath = path.join(mainPath, 'security');
+    const configPath = path.join(mainPath, 'config');
+    const securityPath = path.join(mainPath, 'security');
 
-  return [
-    { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
-    { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDIT, name: COMMON_FILES.AUDIT_ENTITY},
-    { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
-    { output: configPath, template: TEMPLATES.APPLICATION_AUDIT_AWARE, name: COMMON_FILES.APPLICATION_AUDIT_AWARE},
-    { output: securityPath, template: TEMPLATES.CONFIG_SECURITY, name: COMMON_FILES.APPLICATION_SECURITY}
-  ]
+    const apiPath = path.join(mainPath, DIRECTORIES.API);
+    const queryPath = path.join(apiPath, DIRECTORIES.QUERY);
+    const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
+    const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
+    const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
+    const dbPath = path.join(infraPath, DIRECTORIES.DATABASE);
+
+    return [
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+
+      // APPLICATION LAYER
+      { output: path.join(applicationPath, DIRECTORIES.COMMAND), template: TEMPLATES.DDD_COMMAND, name: COMMON_FILES.COMMAND},
+      { output: path.join(applicationPath, DIRECTORIES.COMMAND), template: TEMPLATES.DDD_COMMAND_BUS, name: COMMON_FILES.COMMAND_BUS},
+      { output: path.join(applicationPath, DIRECTORIES.COMMAND), template: TEMPLATES.DDD_COMMAND_HANDLER, name: COMMON_FILES.COMMAND_HANDLER},
+      { output: path.join(applicationPath, DIRECTORIES.COMMAND), template: TEMPLATES.DDD_COMMAND_LISTENER, name: COMMON_FILES.COMMAND_LISTENER},
+
+      { output: path.join(queryPath, DIRECTORIES.ASSEMBLER), template: TEMPLATES.DDD_ASSEMBLER, name: COMMON_FILES.ASSEMBLER},
+      { output: path.join(queryPath, DIRECTORIES.DTO), template: TEMPLATES.DDD_DATA_TRANSFER_OBJECT, name: COMMON_FILES.DATA_TRANSFER_OBJECT},
+
+      // DOMAIN LAYER
+      { output: path.join(domainPath, DIRECTORIES.AGGREGATE), template: TEMPLATES.DDD_AGGREGATE, name: COMMON_FILES.AGGREGATE},
+      { output: path.join(domainPath, DIRECTORIES.AGGREGATE), template: TEMPLATES.DDD_AGGREGATE_IDENTIFIER, name: COMMON_FILES.AGGREGATE_IDENTIFIER},
+      { output: path.join(domainPath, DIRECTORIES.AGGREGATE), template: TEMPLATES.DDD_AGGREGATE_ROOT, name: COMMON_FILES.AGGREGATE_ROOT},
+      { output: path.join(domainPath, DIRECTORIES.AGGREGATE), template: TEMPLATES.DDD_VALUE_OBJECT, name: COMMON_FILES.VALUE_OBJECT},
+
+      { output: path.join(domainPath, DIRECTORIES.EVENT), template: TEMPLATES.DDD_EVENT, name: COMMON_FILES.EVENT},
+      { output: path.join(domainPath, DIRECTORIES.EVENT), template: TEMPLATES.DDD_EVENT_BUS, name: COMMON_FILES.EVENT_BUS},
+      { output: path.join(domainPath, DIRECTORIES.EVENT), template: TEMPLATES.DDD_EVENT_LISTENER, name: COMMON_FILES.EVENT_LISTENER},
+
+      { output: path.join(domainPath, DIRECTORIES.DOMAIN), template: TEMPLATES.DDD_DOMAIN_ENTITY, name: COMMON_FILES.EVENT_LISTENER},
+
+      // INFRASTRUCTURE LAYER
+      { output: path.join(infraPath, DIRECTORIES.CACHE), template: TEMPLATES.DDD_CACHE_SERVICE, name: COMMON_FILES.CACHE_SERVICE},
+      
+      { output: path.join(dbPath, DIRECTORIES.CONVERTER), template: TEMPLATES.DDD_CONVERTER, name: COMMON_FILES.CACHE_SERVICE},
+      { output: path.join(dbPath, DIRECTORIES.DATA_OBJECT), template: TEMPLATES.DDD_DATA_OBJECT, name: COMMON_FILES.DATA_OBJECT},
+      { output: path.join(dbPath, DIRECTORIES.ENTITY), template: TEMPLATES.DDD_ENTITY_BASE, name: COMMON_FILES.ENTITY_BASE},
+      { output: path.join(dbPath, DIRECTORIES.REPOSITORY), template: TEMPLATES.DDD_BASE_REPOSITORY, name: COMMON_FILES.BASE_REPOSITORY},
+
+      { output: path.join(infraPath, DIRECTORIES.SPRING), template: TEMPLATES.DDD_SPRING_COMMAND_BUS, name: COMMON_FILES.SPRING_COMMAND_BUS},
+      { output: path.join(infraPath, DIRECTORIES.SPRING), template: TEMPLATES.DDD_SPRING_EVENT_BUS, name: COMMON_FILES.SPRING_EVENT_BUS},
+
+      {
+        output: configPath,
+        template: TEMPLATES.DOMAIN_MODEL_AUDIT,
+        name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES_LOCAL,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_LOCAL,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES_DOCKER,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_DOCKER,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.APPLICATION_AUDIT_AWARE,
+        name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_SECURITY,
+        name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+    ];
+
+  } else {
+    const configPath = path.join(mainPath, 'config');
+    const securityPath = path.join(mainPath, 'security');
+
+    return [
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+      {
+        output: configPath,
+        template: TEMPLATES.DOMAIN_MODEL_AUDIT,
+        name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DOMAIN_RESOURCES,
+        name: COMMON_FILES.APPLICATION_PROPERTIES,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.APPLICATION_AUDIT_AWARE,
+        name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_SECURITY,
+        name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+    ];
+  }
 };
 
 const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {
@@ -57,11 +155,28 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
   );
 
   // Generation and saving of additional configuration files.
-  await Promise.all(
-    CONFIG_FILES.map(async (file) => {
-      const outputPath = path.join(context.basePath, file.output);
-      const template = await renderTemplate(file.template, context);
-      await saveToFile(template, outputPath);
-    }),
-  );
+  if(context.baseConfig.enableObservability) {
+    await Promise.all(
+      OBSERVABILITY_CONFIG_FILES.map(async (file) => {
+        const outputPath = path.join(context.basePath, file.output);
+        const template = await renderTemplate(file.template, context);
+        await saveToFile(template, outputPath);
+      }),
+    );
+    await Promise.all(
+      OBSERVABILITY_BINARY_FILES.map(async (file) => {
+        const outputPath = path.join(context.basePath, file.output);
+        const binaryContent = await fs.readFile(file.inputPath);
+        await saveBinaryToFile(binaryContent, outputPath);
+      })
+    );
+  } else {
+    await Promise.all(
+      CONFIG_FILES.map(async (file) => {
+        const outputPath = path.join(context.basePath, file.output);
+        const template = await renderTemplate(file.template, context);
+        await saveToFile(template, outputPath);
+      }),
+    );
+  }
 };

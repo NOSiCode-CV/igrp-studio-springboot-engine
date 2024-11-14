@@ -27,22 +27,94 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const mainPath = path.join(basePath, getMainPath(group, artifact));
   const testPath = path.join(basePath, getTestPath(group, artifact));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
+  const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
 
-  return [
-    path.join(basePath, DIRECTORIES.RESOURCES),
-    
-    path.join(mainPath, DIRECTORIES.MODELS),
-    path.join(mainPath, DIRECTORIES.SERVICES),
-    path.join(mainPath, DIRECTORIES.CONTROLLERS),
-    path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
-    path.join(mainPath, DIRECTORIES.SECURITY),
+  const apiPath = path.join(mainPath, DIRECTORIES.API);
+  const queryPath = path.join(apiPath, DIRECTORIES.QUERY);
+  const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
+  const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
+  const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
 
-    path.join(testPath, DIRECTORIES.REPOSITORIES),
-    path.join(testPath, DIRECTORIES.SERVICES),
 
-    path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-    path.join(igrpstudioPath, DIRECTORIES.MODELS),
-  ];
+  if(config.struct === 'domain') {
+
+    const paths = [
+      path.join(basePath, DIRECTORIES.RESOURCES),
+
+      path.join(mainPath, DIRECTORIES.API),
+      path.join(mainPath, DIRECTORIES.APPLICATION),
+      path.join(mainPath, DIRECTORIES.DOMAIN),
+      path.join(mainPath, DIRECTORIES.INFRASTRUCTURE),
+
+      path.join(apiPath, DIRECTORIES.CONTROLLERS),
+
+      path.join(applicationPath, DIRECTORIES.COMMAND),
+      path.join(applicationPath, DIRECTORIES.QUERY),
+
+      path.join(queryPath, DIRECTORIES.ASSEMBLER),
+      path.join(queryPath, DIRECTORIES.DTO),
+
+      path.join(domainPath, DIRECTORIES.AGGREGATE),
+      path.join(domainPath, DIRECTORIES.EVENT),
+      path.join(domainPath, DIRECTORIES.EXCEPTIONS),
+      path.join(domainPath, DIRECTORIES.IMPLEMENTATION),
+      path.join(domainPath, DIRECTORIES.REPOSITORIES),
+      path.join(domainPath, DIRECTORIES.SERVICE),
+
+      path.join(infraPath, DIRECTORIES.CACHE),
+      path.join(infraPath, DIRECTORIES.DATABASE),
+      path.join(infraPath, DIRECTORIES.SPRING),
+
+      path.join(testPath, DIRECTORIES.REPOSITORIES),
+      path.join(testPath, DIRECTORIES.SERVICES),
+
+      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpstudioPath, DIRECTORIES.MODELS),
+    ];
+
+    if(config.enableObservability)
+      paths.push(
+        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
+        path.join(monitoringPath, DIRECTORIES.TEMPO),
+      )
+
+    return paths
+
+  } else {
+
+    const paths = [
+      path.join(basePath, DIRECTORIES.RESOURCES),
+
+      path.join(mainPath, DIRECTORIES.MODELS),
+      path.join(mainPath, DIRECTORIES.SERVICES),
+      path.join(mainPath, DIRECTORIES.CONTROLLERS),
+      path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
+      path.join(mainPath, DIRECTORIES.SECURITY),
+
+      path.join(testPath, DIRECTORIES.REPOSITORIES),
+      path.join(testPath, DIRECTORIES.SERVICES),
+
+      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpstudioPath, DIRECTORIES.MODELS),
+
+    ];
+
+    if(config.enableObservability)
+      paths.push(
+        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
+        path.join(monitoringPath, DIRECTORIES.TEMPO),
+      )
+
+    return paths
+
+  }
+
 };
 
 /**
