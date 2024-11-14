@@ -194,6 +194,12 @@ export interface PathVariables {
   name: string;
 }
 
+export interface ISelectPermissions {
+  label: string,
+  value: string
+}
+
+
 export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;

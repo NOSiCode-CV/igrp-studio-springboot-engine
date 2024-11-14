@@ -1,4 +1,4 @@
-import { DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig } from './interfaces/types';
+import { DTOBaseConfig, DTOConfig, ISelectPermissions, ModelConfig, PermissionConfig } from './interfaces/types';
 import { 
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
   DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
@@ -36,6 +36,8 @@ import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
+import { loadPermissionConfigs } from './utils/helpers';
+import { getAllPermissions } from './modules/permission/getPermissions';
 
 /**
  * Main Function that creates the base api
@@ -613,6 +615,16 @@ export const addPermission = async (config: PermissionConfig, basePath: string) 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   await savePermission(config, basePath)
+}
+
+/**
+ * 
+ * @param basePath 
+ * @returns the permissions select options to be used in the IGRP Studio frontend
+ */
+export const getPermissions = async (basePath: string) => {
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  return await getAllPermissions(basePath)
 }
 
 export const deletePermission = async(config: PermissionConfig, basePath: string)=> {
