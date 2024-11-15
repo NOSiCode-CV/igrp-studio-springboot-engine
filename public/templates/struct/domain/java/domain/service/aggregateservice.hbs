@@ -1,6 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name.toLowerCase}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{#each resourceConfig.actions}}{{this}}Command{{/each}};
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{#each resourceConfig.actions}}{{this.actionName}}Command{{/each}};
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
 import {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}};
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}AggregateDomainRepository;
@@ -18,7 +18,7 @@ public class {{resourceConfig.name}}AggregateService {
 
    {{#each resourceConfig.actions}}
      @Transactional
-     public void handle{{this}}Command({{this}}Command cmd) {
+     public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
         {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
         aggregate.handle(cmd);
         {{resourceConfig.name.toLowerCase}}AggregateRootRepository.save(aggregate);

@@ -1,7 +1,7 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.aggregate.toLowerCase}};
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.aggregate.toLowerCase}}.{{this.entity}};
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
 
@@ -36,9 +36,11 @@ import java.math.{{this}};
         {{/each}}
     }
 {{/if}})
-public class {{resourceConfig.name}} extends EntityBase<{{resourceConfig.name}}> {
+public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.name}}> {
 
-  @NotBlank(message = "{{this.name}} is mandatory"){{else}}
+  {{#each resourceConfig.attributes}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+  @NotBlank(message = "{{this.name}} is mandatory")
+  {{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})

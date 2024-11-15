@@ -58,7 +58,7 @@ export const getDDDModelOutputDir = (context: RenderContext<ModelConfig>) =>
     DIRECTORIES.INFRASTRUCTURE,
     DIRECTORIES.DATABASE,
     DIRECTORIES.ENTITY,
-    context.resourceConfig.name.toLowerCase()
+    context.resourceConfig.aggregate?.toLowerCase() ?? ""
   );
 
 export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig>) =>
@@ -103,7 +103,8 @@ export const getDDDDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.APPLICATION,
     DIRECTORIES.QUERY,
-    DIRECTORIES.DTO
+    DIRECTORIES.DTO,
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDDataObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -121,7 +122,8 @@ export const getDDDCommandOutputDir = (context: RenderContext<DTOBaseConfig>) =>
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.COMMAND
+    DIRECTORIES.COMMAND,
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -129,7 +131,8 @@ export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig>) =>
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERY
+    DIRECTORIES.QUERY,
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -137,7 +140,8 @@ export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig>) =>
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENT
+    DIRECTORIES.EVENT,
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDValueObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -167,6 +171,15 @@ export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfi
     context.resourceConfig.name.toLowerCase() + "Aggregate",
   );
 
+export const getDDDAggregateElementsOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.AGGREGATE,
+    context.resourceConfig.aggregate!.toLowerCase() + "Aggregate",
+  );
+
 export const getDDDDataTransferObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
   path.join(
     context.basePath,
@@ -174,6 +187,7 @@ export const getDDDDataTransferObjectOutputDir = (context: RenderContext<DTOBase
     DIRECTORIES.APPLICATION,
     DIRECTORIES.QUERY,
     DIRECTORIES.DTO,
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDConverterOutputDir = (context: RenderContext<ModelConfig>) =>

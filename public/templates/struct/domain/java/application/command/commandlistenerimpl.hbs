@@ -1,19 +1,21 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{resourceConfig.aggregate.toLowerCase}};
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandListener;
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event.EventBus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class {{listenerName}}CommandListener {
+public class {{resourceConfig.name}}CommandListener {
 
    private final EventBus eventBus;
 
-   public {{listenerName}}CommandListener(EventBus eventBus) {
+   public {{resourceConfig.name}}CommandListener(EventBus eventBus) {
       this.eventBus = eventBus;
    }
 
    @CommandListener
-   public void handle({{listenerName}}Command command) {
+   public void handle({{resourceConfig.name}}Command command) {
       // TODO: Implement the command listening logic here
       // Example content for demonstration purposes:
       // String content = "The name sent is " + command.getName() + ".";

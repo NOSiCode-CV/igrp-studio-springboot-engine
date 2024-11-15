@@ -38,6 +38,8 @@ import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
 import { generateConverter } from './modules/converter/generateConverter';
 import { generateAggregateRoot } from './modules/controller/generateAggregateRoot';
+import { generateHandlers } from './modules/handlers/generateHandlers';
+import { generateListeners } from './modules/listeners/generateListeners';
 
 /**
  * Main Function that creates the base api
@@ -426,7 +428,12 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
       resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
     };
     await generateConverter(implContext)
+  } else if(context.resourceConfig.type === 'command') {
+    await generateHandlers(context);
+    await generateListeners(context);
   }
+  else if(context.resourceConfig.type === 'event')
+    await generateListeners(context)
   
 };
 

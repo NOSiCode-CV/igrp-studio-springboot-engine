@@ -5,7 +5,6 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{resourceConfig.name}}FindByNameQuery;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.exceptions.ResourceNotException;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}AggregateDomainRepository;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}Converter;
@@ -38,23 +37,23 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
     }
 
     @Override
-    public List<{{resourceConfig.name}}DTO> query{{resourceConfig.namePlural}}() {
+    public List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s() {
         return repository.findAll().stream()
                 .map(entity -> assembler.apply(converter.serialize(entity)))
                 .toList();
     }
 
     @Override
-    public {{resourceConfig.name}}DTO query{{resourceConfig.name}}(Long id) {
+    public {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id) {
         return assembler.apply(converter.serialize(
-                repository.findById(id).orElseThrow(() -> new ResourceNotException("No {{resourceConfig.name.toLowerCase}} found with id " + id))
+                repository.findById(id).orElseThrow(() -> new Exception("No {{resourceConfig.name.toLowerCase}} found with id " + id))
         ));
     }
 
     @Override
-    public {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate(Long id) {
+    public {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate({{keyType resourceConfig}} id) {
         return aggregateRepository.findById(id)
                 .map(aggregateAssembler::apply)
-                .orElseThrow(() -> new ResourceNotException("No aggregate found with id " + id));
+                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
     }
 }

@@ -7,7 +7,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.DomainEntity;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public record {{capitalize resourceConfig.name}}DomainEntity (
+public record {{resourceConfig.name}}DomainEntity (
 {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
     @{{this.annotation}}
