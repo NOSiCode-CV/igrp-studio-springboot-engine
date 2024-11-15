@@ -47,7 +47,7 @@ public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.n
   private String {{toLowerCase this.name}};{{else}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
-  private {{this.type}} {{toLowerCase this.name}};{{/if}}{{/if}}
+  private {{this.type}} {{toLowerCase this.name}};{{/if}}
   {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
