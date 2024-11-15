@@ -1,11 +1,18 @@
 import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { TEMPLATES } from '../../utils/constants';
-import { getDDDModelOutputDir, getDDDRepositoryOutputDir, getModelOutputDir } from '../../utils/helpers';
+import {
+  getDDDAggregateRepositoryImplOutputDir,
+  getDDDAggregateRepositoryOutputDir,
+  getDDDModelOutputDir,
+  getDDDRepositoryOutputDir,
+  getModelOutputDir,
+} from '../../utils/helpers';
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
 
 const REPOSITORY_SUFFIX = 'Repository.java';
+const REPOSITORY_IMPL_SUFFIX = 'RepositoryImpl.java';
 
 /**
  * Generates a repository for the given model and saves it to the appropriate location.
@@ -18,7 +25,13 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
   let modelOutputPath
   
   if (context.baseConfig.struct === 'domain') {
-    modelOutputPath = getDDDRepositoryOutputPath(context);
+    if(context.resourceConfig.type === 'domain') {
+      modelOutputPath = getDDDAggregateRepositoryOutputPath(context);
+    } else if(context.resourceConfig.type === 'domainimpl')
+      modelOutputPath = getDDDAggregateRepositoryImplOutputPath(context);
+    else {
+      modelOutputPath = getDDDRepositoryOutputPath(context);
+    }
   } else {
     modelOutputPath = getRepositoryOutputPath(context);
   }
@@ -33,9 +46,14 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
  * @throws - Throws an error if the model configuration is invalid or if CRUD is not specified.
  */
 export const renderRepository = async (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.struct === 'domain')
-    return await renderTemplate(TEMPLATES.DDD_BASE_REPOSITORY_IMPL, context);
-  else
+  if(context.baseConfig.struct === 'domain') {
+    if(context.resourceConfig.type === 'domain')
+      return await renderTemplate(TEMPLATES.DDD_AGGREGATE_REPOSITORY, context);
+    else if(context.resourceConfig.type === 'domainimpl')
+      return await renderTemplate(TEMPLATES.DDD_AGGREGATE_REPOSITORY_IMPL, context);
+    else
+      return await renderTemplate(TEMPLATES.DDD_BASE_REPOSITORY_IMPL, context);
+  } else
     return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
 };
 
@@ -50,3 +68,9 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
 
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getDDDRepositoryOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+
+const getDDDAggregateRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getDDDAggregateRepositoryOutputDir(context), `${context.resourceConfig.name}AggregateDomain${REPOSITORY_SUFFIX}`);
+
+const getDDDAggregateRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getDDDAggregateRepositoryImplOutputDir(context), `${context.resourceConfig.name}AggregateDomain${REPOSITORY_IMPL_SUFFIX}`);

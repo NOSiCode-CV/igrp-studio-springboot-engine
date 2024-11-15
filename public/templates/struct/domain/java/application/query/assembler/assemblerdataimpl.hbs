@@ -1,17 +1,17 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.aggregate.toLowerCase}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{entityName}}DTO;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.{{entityNameLower}}.{{entityName}}DO;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.{{resourceConfig.aggregate.toLowerCase}}.{{resourceConfig.name}}DO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class {{entityName}}Assembler implements Assembler<{{entityName}}DO, {{entityName}}DTO> {
+public class {{resourceConfig.name}}Assembler implements Assembler<{{resourceConfig.name}}DO, {{resourceConfig.name}}DTO> {
 
    @Override
-   public {{entityName}}DTO apply({{entityName}}DO t) {
+   public {{resourceConfig.name}}DTO apply({{resourceConfig.name}}DO t) {
       // Replace the constructor with the actual implementation as needed.
       // Example:
-      return new {{entityName}}DTO(
+      return new {{resourceConfig.name}}DTO(
          // Map the fields here
       );
    }

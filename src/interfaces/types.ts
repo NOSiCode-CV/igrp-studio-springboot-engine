@@ -36,7 +36,7 @@ export interface ApiConfig {
 }
 
 export interface ModelConfig {
-  type: 'model';
+  type: 'model' | 'domain' | 'domainimpl';
   name: string;
   tableName: string;
   attributes: Attribute[];
@@ -45,6 +45,7 @@ export interface ModelConfig {
   crud?: Crud;
   relations?: Relation[];
   audit?: boolean;  // New audit field added
+  aggregate?: string;
 }
 
 export interface PermissionConfig {
@@ -82,6 +83,7 @@ export interface JavaAttribute {
 export interface DTOBaseConfig {
   type: ObjectTypes;
   name: string;
+  aggregate?: string;
 }
 
 export interface DTOConfig extends DTOBaseConfig {

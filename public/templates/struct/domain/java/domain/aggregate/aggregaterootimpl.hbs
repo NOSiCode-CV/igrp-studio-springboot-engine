@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.aggregate.toLowerCase}}Aggregate;
 
 {{#each resourceConfig.actions}}
   import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;

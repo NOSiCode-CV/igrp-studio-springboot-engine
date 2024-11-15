@@ -1,4 +1,4 @@
-import { DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig } from './interfaces/types';
+import { AttributeType, DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig } from './interfaces/types';
 import { 
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
   DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
@@ -36,6 +36,7 @@ import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
+import { generateConverter } from './modules/converter/generateConverter';
 
 /**
  * Main Function that creates the base api
@@ -198,7 +199,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     };
 
     await generateDTO(doContext);
-    // await generateConverter(context); // TODO: implement converter and assembler generation
+    await generateConverter(context);
 
   }
 
@@ -418,6 +419,28 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
   };
 
   await generateDTO(context);
+  
+  if(context.resourceConfig.type === 'aggregateroot') {
+
+    const dddContext: RenderContext<ModelConfig> = {
+      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+    };
+
+    const implContext: RenderContext<ModelConfig> = {
+      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+    };
+    
+    await generateRepository(dddContext)
+    await generateRepository(implContext)
+    await generateConverter(dddContext)
+
+  } else if(context.resourceConfig.type === 'datatransferobject') {
+    const implContext: RenderContext<ModelConfig> = {
+      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+    };
+    await generateConverter(implContext)
+  }
+  
 };
 
 /**
