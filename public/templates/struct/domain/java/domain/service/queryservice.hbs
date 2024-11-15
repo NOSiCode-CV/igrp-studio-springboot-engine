@@ -1,14 +1,12 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name.toLowerCase}};
 
-import {{#each resourceConfig.queryImports}}{{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{this}}Query;
-import {{#each resourceConfig.queryImports}}{{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{this}}DTO;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
 import java.util.List;
 
 public interface {{resourceConfig.name}}QueryService {
 
    List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s();
-
-   List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s({{#each resourceConfig.queryImports}} {{this}}Query query{{/each}});
 
    {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id);
 

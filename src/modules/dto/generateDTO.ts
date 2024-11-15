@@ -58,9 +58,6 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
     case "domainentity":
       tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
       break;
-    case "aggregateroot":
-      tn = TEMPLATES.DDD_AGGREGATE_ROOT_DTO['classic'];
-      break;
     case "datatransferobject":
       tn = TEMPLATES.DDD_DATA_TRANSFER_OBJECT_DTO[context.resourceConfig.template];
       break;
@@ -158,8 +155,6 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       case "domainentity":
         return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
-      case "aggregateroot":
-        return path.join(getDDDAggregateRootOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       case "datatransferobject":
         return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     }

@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.aggregate.toLowerCase}}Aggregate;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name.toLowerCase}}Aggregate;
 
 {{#each resourceConfig.actions}}
   import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
@@ -11,15 +11,11 @@ public class {{resourceConfig.name}}AggregateRoot extends AggregateRoot<{{resour
 
    private final {{keyType resourceConfig}} id;
 
-   {{#each resourceConfig.attributes}}
-     private {{{resolve-type this}}} {{this.name}};
-   {{/each}}
+   // TODO: define the aggregate attributes
 
    public {{resourceConfig.name}}({{keyType resourceConfig}} id{{#each resourceConfig.attributes}}, {{{resolve-type this}}} {{this.name}}{{/each}}) {
       this.id = id;
-      {{#each resourceConfig.attributes}}
-        this.{{this.name}} = {{this.name}};
-      {{/each}}
+      // TODO: define the aggregate attributes
    }
 
    {{#each resourceConfig.actions}}

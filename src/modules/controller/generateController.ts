@@ -5,7 +5,7 @@ import { saveToFile } from '../common/saveToFile';
 import { getDTOTypes } from '../dto/helpers';
 import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
 import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
-import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
+import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
 import { saveControllerConfig } from './saveControllerConfig';
@@ -45,8 +45,12 @@ const renderController = async (context: RenderContext<ControllerConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_CONTROLLER, context);
 };
 
-const getControllerPath = (context: RenderContext<ControllerConfig>) =>
-  path.join(getControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
+const getControllerPath = (context: RenderContext<ControllerConfig>) => {
+  if(context.baseConfig.struct === 'domain')
+    return path.join(getDDDControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
+  else
+    return path.join(getControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
+};
 
 
 const getDtos = async(context: RenderContext<ControllerConfig>) => {

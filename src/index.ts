@@ -37,6 +37,7 @@ import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
 import { generateConverter } from './modules/converter/generateConverter';
+import { generateAggregateRoot } from './modules/controller/generateAggregateRoot';
 
 /**
  * Main Function that creates the base api
@@ -420,21 +421,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   await generateDTO(context);
   
-  if(context.resourceConfig.type === 'aggregateroot') {
-
-    const dddContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
-    };
-
-    const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
-    };
-    
-    await generateRepository(dddContext)
-    await generateRepository(implContext)
-    await generateConverter(dddContext)
-
-  } else if(context.resourceConfig.type === 'datatransferobject') {
+  if(context.resourceConfig.type === 'datatransferobject') {
     const implContext: RenderContext<ModelConfig> = {
       resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
     };
@@ -549,7 +536,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
-  const config = cleaner(dirty)
+  const config: ControllerConfig = cleaner(dirty)
   
   // this function check is the request params in actions have duplicateds names
   checkDuplicated([], config.actions, [])
@@ -578,6 +565,22 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   await generateController(context);
   await generateServiceInterface(context);
   await generateServiceInmpl(context);
+
+  if(context.baseConfig.struct === 'domain') {
+    await generateAggregateRoot(context);
+
+    const dddContext: RenderContext<ModelConfig> = {
+      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+    };
+
+    const implContext: RenderContext<ModelConfig> = {
+      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+    };
+
+    await generateRepository(dddContext)
+    await generateRepository(implContext)
+    await generateConverter(dddContext)
+  }
 
 };
 

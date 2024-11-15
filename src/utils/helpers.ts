@@ -158,7 +158,7 @@ export const getDDDDomainEntityOutputDir = (context: RenderContext<DTOBaseConfig
     context.resourceConfig.aggregate!.toLowerCase() + "Aggregate",
   );
 
-export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfig>) =>
+export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfig> | RenderContext<ControllerConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
@@ -206,6 +206,13 @@ export const getControllerDir = (context: RenderContext<ControllerConfig | Model
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name
   );
+export const getDDDControllerDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.API,
+    DIRECTORIES.CONTROLLER
+  );
 export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,
@@ -213,6 +220,23 @@ export const getServiceDir = (context: RenderContext<ControllerConfig | ModelCon
     DIRECTORIES.SERVICES
   );
 
+export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.SERVICE,
+    context.resourceConfig.name
+  );
+
+export const getDDDServiceImplDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.IMPLEMENTATION,
+    context.resourceConfig.name
+  );
 
 export const loadConfig = async function<T> (basePath: string): Promise<T[]> {
   if (!(await fs.pathExists(basePath))) {
