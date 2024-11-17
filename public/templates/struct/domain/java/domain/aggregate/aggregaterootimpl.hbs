@@ -1,7 +1,11 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name.toLowerCase}}Aggregate;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.name}}Aggregate;
 
 {{#each resourceConfig.actions}}
-  import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{#if (eq this.method "POST")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{else if (eq this.method "PUT")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{/if}}
 {{/each}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.Aggregate
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.AggregateRoot
@@ -19,8 +23,14 @@ public class {{resourceConfig.name}}AggregateRoot extends AggregateRoot<{{resour
    }
 
    {{#each resourceConfig.actions}}
-     public void handle({{this.actionName}}Command cmd) {
-        // TODO: Implement the {{this.actionName}} command handling logic here
-     }
+     {{#if (eq this.method "POST")}}
+       public void handle({{this.actionName}}Command cmd) {
+       // TODO: Implement the {{this.actionName}} command handling logic here
+       }
+     {{else if (eq this.method "PUT")}}
+       public void handle({{this.actionName}}Command cmd) {
+       // TODO: Implement the {{this.actionName}} command handling logic here
+       }
+     {{/if}}
    {{/each}}
 }

@@ -1,25 +1,25 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.impl.{{resourceConfig.name.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.impl.{{toLowerCase resourceConfig.name}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}DomainRepository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}DomainRepository;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.name}}.{{resourceConfig.name}}Entity;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}Repository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Repository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceConfig.name}}DomainRepository {
 
-   private final {{resourceConfig.name}}Repository {{resourceConfig.name.toLowerCase}}Repository;
+   private final {{resourceConfig.name}}Repository {{toLowerCase resourceConfig.name}}Repository;
 
-   public {{resourceConfig.name}}DomainRepositoryImpl({{resourceConfig.name}}Repository {{resourceConfig.name.toLowerCase}}Repository) {
-      this.{{resourceConfig.name.toLowerCase}}Repository = {{toLowerCase resourceConfig.name.toLowerCase}}Repository;
+   public {{resourceConfig.name}}DomainRepositoryImpl({{resourceConfig.name}}Repository {{toLowerCase resourceConfig.name}}Repository) {
+      this.{{toLowerCase resourceConfig.name}}Repository = {{toLowerCase resourceConfig.name}}Repository;
    }
 
-   {{#if keyType resourceConfig}}
+   {{#if (keyType resourceConfig)}}
      @Override
-     public {{#ifEquals keyType resourceConfig "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{keyType resourceConfig}}{{/ifEquals}} findById({{keyType resourceConfig}} id) {
+     public {{#ifEquals (keyType resourceConfig) "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{keyType resourceConfig}}{{/ifEquals}} findById({{keyType resourceConfig}} id) {
 
-        {{resourceConfig.name}}Entity entity = {{resourceConfig.name.toLowerCase}}Repository.findById(id).orElse(null);
+        {{resourceConfig.name}}Entity entity = {{toLowerCase resourceConfig.name}}Repository.findById(id).orElse(null);
 
         if (entity == null) {
            return null;
@@ -42,7 +42,7 @@ public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceCo
       {{!-- Set other fields from aggregate to entity as necessary --}}
 
       // Persist entity
-      {{resourceConfig.name.toLowerCase}}Repository.save(entity);
+      {{toLowerCase resourceConfig.name}}Repository.save(entity);
    }
 
 }

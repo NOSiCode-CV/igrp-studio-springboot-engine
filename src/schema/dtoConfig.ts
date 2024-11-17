@@ -88,6 +88,12 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       items: attributeSchema,
       errorMessage: 'The attributes must be an array of valid attribute definitions.'
     },
+    aggregate: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
   },
   required: ["type", "template", "name", "attributes"],
   additionalProperties: false,
@@ -113,6 +119,12 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       type: "string", 
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+    },
+    aggregate: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
     }
   },
   required: ["type", "name"],

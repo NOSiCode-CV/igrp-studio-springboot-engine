@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
-// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+//export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -106,24 +106,24 @@ export const ERROR_MESSAGE = {
 };
 
 export const TEMPLATES = {
-  APPLICATION: 'domain/application.hbs',
+  APPLICATION: 'struct/technical/java/application.hbs',
 
-  DOMAIN_CONTROLLER: 'domain/controller/controller.hbs',
-  DOMAIN_ICONTROLLER: 'domain/controller/controllerInterface.hbs',
-  DOMAIN_SERVICE: 'domain/service/serviceImpl.hbs',
-  DOMAIN_MODEL: 'domain/model/model.hbs',
-  DOMAIN_REPOSITORY: 'domain/repository/repository.hbs',
-  DOMAIN_RESOURCES: 'domain/resource/application.properties.hbs',
+  DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
+  DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
+  DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
+  DOMAIN_MODEL: 'struct/technical/java/model/model.hbs',
+  DOMAIN_REPOSITORY: 'struct/technical/java/repository/repository.hbs',
+  DOMAIN_RESOURCES: 'struct/technical/java/resource/application.properties.hbs',
   DDD_DOMAIN_RESOURCES: 'struct/domain/java/resources/application.properties.hbs',
   DDD_DOMAIN_RESOURCES_LOCAL: 'struct/domain/java/resources/application-local.properties.hbs',
   DDD_DOMAIN_RESOURCES_DOCKER: 'struct/domain/java/resources/application-docker.properties.hbs',
-  DOMAIN_MODEL_PRIMARY_KEY: 'domain/model/primarykey.hbs',
-  DOMAIN_MODEL_AUDIT: 'domain/model/audit.hbs',
-  APPLICATION_AUDIT_AWARE: 'domain/model/applicationAditorAware.hbs',
+  DOMAIN_MODEL_PRIMARY_KEY: 'struct/technical/java/model/primarykey.hbs',
+  DOMAIN_MODEL_AUDIT: 'struct/technical/java/model/audit.hbs',
+  APPLICATION_AUDIT_AWARE: 'struct/technical/java/model/applicationAditorAware.hbs',
 
   DOMAIN_DTO: {
-    'classic': 'domain/dto/lombok.hbs',
-    'record': 'domain/dto/record.hbs',
+    'classic': 'struct/technical/java/dto/lombok.hbs',
+    'record': 'struct/technical/java/dto/record.hbs',
   },
 
   DDD_DATA_TRANSFER_OBJECT_DTO: {
@@ -189,33 +189,33 @@ export const TEMPLATES = {
   DDD_ASSEMBLER_DATA_IMPL: 'struct/domain/java/application/query/assembler/assemblerdataimpl.hbs',
   DDD_ASSEMBLER_AGGREGATE_IMPL: 'struct/domain/java/application/query/assembler/assembleraggimpl.hbs',
   DDD_DATA_TRANSFER_OBJECT: 'struct/domain/java/application/query/dto/datatransferobject.hbs',
-  DDD_AGGREGATE: 'struct/domain/java/application/domain/aggregate/aggregate.hbs',
-  DDD_AGGREGATE_IDENTIFIER: 'struct/domain/java/application/domain/aggregate/aggregateidentifier.hbs',
-  DDD_AGGREGATE_ROOT: 'struct/domain/java/application/domain/aggregate/aggregateroot.hbs',
+  DDD_AGGREGATE: 'struct/domain/java/domain/aggregate/aggregate.hbs',
+  DDD_AGGREGATE_IDENTIFIER: 'struct/domain/java/domain/aggregate/aggregateidentifier.hbs',
+  DDD_AGGREGATE_ROOT: 'struct/domain/java/domain/aggregate/aggregateroot.hbs',
   DDD_AGGREGATE_ROOT_IMPL: 'struct/domain/java/domain/aggregate/aggregaterootimpl.hbs',
-  DDD_VALUE_OBJECT: 'struct/domain/java/application/domain/aggregate/valueobject.hbs',
-  DDD_EVENT: 'struct/domain/java/application/domain/event/event.hbs',
-  DDD_EVENT_BUS: 'struct/domain/java/application/domain/event/eventbus.hbs',
-  DDD_EVENT_LISTENER: 'struct/domain/java/application/domain/event/eventlistener.hbs',
-  DDD_EVENT_LISTENER_IMPL: 'struct/domain/java/application/domain/event/eventlistenerimpl.hbs',
-  DDD_AGGREGATE_SERVICE: 'struct/domain/java/application/domain/service/aggregateservice.hbs',
-  DDD_CMD_SERVICE: 'struct/domain/java/application/domain/service/cmdservice.hbs',
-  DDD_CMD_SERVICE_IMPL: 'struct/domain/java/application/domain/impl/cmdserviceimpl.hbs',
-  DDD_QUERY_SERVICE: 'struct/domain/java/application/domain/service/queryservice.hbs',
-  DDD_QUERY_SERVICE_IMPL: 'struct/domain/java/application/domain/impl/queryserviceimpl.hbs',
-  DDD_DOMAIN_ENTITY: 'struct/domain/java/application/domain/domainentity.hbs',
-  DDD_CACHE_SERVICE: 'struct/domain/java/application/infrastructure/cache/cacheservice.hbs',
-  DDD_CONVERTER: 'struct/domain/java/application/infrastructure/db/converter/converter.hbs',
-  DDD_CONVERTER_IMPL: 'struct/domain/java/application/infrastructure/db/converter/converterimpl.hbs',
-  DDD_DATA_OBJECT: 'struct/domain/java/application/infrastructure/db/dataobject/dataobject.hbs',
-  DDD_ENTITY_BASE: 'struct/domain/java/application/infrastructure/db/entity/entitybase.hbs',
-  DDD_ENTITY_BASE_IMPL: 'struct/domain/java/application/infrastructure/db/entity/entitybaseimpl.hbs',
-  DDD_BASE_REPOSITORY: 'struct/domain/java/application/infrastructure/db/repository/baserepository.hbs',
-  DDD_BASE_REPOSITORY_IMPL: 'struct/domain/java/application/infrastructure/db/repository/baserepositoryimpl.hbs',
-  DDD_AGGREGATE_REPOSITORY: 'struct/domain/java/application/domain/repository/domainrepository.hbs',
-  DDD_AGGREGATE_REPOSITORY_IMPL: 'struct/domain/java/application/infrastructure/db/impl/domainrepositoryimpl.hbs',
-  DDD_SPRING_COMMAND_BUS: 'struct/domain/java/application/infrastructure/spring/springcommandbus.hbs',
-  DDD_SPRING_EVENT_BUS: 'struct/domain/java/application/infrastructure/spring/springeventbus.hbs',
+  DDD_VALUE_OBJECT: 'struct/domain/java/domain/aggregate/valueobject.hbs',
+  DDD_EVENT: 'struct/domain/java/domain/event/event.hbs',
+  DDD_EVENT_BUS: 'struct/domain/java/domain/event/eventbus.hbs',
+  DDD_EVENT_LISTENER: 'struct/domain/java/domain/event/eventlistener.hbs',
+  DDD_EVENT_LISTENER_IMPL: 'struct/domain/java/domain/event/eventlistenerimpl.hbs',
+  DDD_AGGREGATE_SERVICE: 'struct/domain/java/domain/service/aggregateservice.hbs',
+  DDD_CMD_SERVICE: 'struct/domain/java/domain/service/cmdservice.hbs',
+  DDD_CMD_SERVICE_IMPL: 'struct/domain/java/domain/impl/cmdserviceimpl.hbs',
+  DDD_QUERY_SERVICE: 'struct/domain/java/domain/service/queryservice.hbs',
+  DDD_QUERY_SERVICE_IMPL: 'struct/domain/java/domain/impl/queryserviceimpl.hbs',
+  DDD_DOMAIN_ENTITY: 'struct/domain/java/domain/domainentity.hbs',
+  DDD_CACHE_SERVICE: 'struct/domain/java/infrastructure/cache/cacheservice.hbs',
+  DDD_CONVERTER: 'struct/domain/java/infrastructure/db/converter/converter.hbs',
+  DDD_CONVERTER_IMPL: 'struct/domain/java/infrastructure/db/converter/converterimpl.hbs',
+  DDD_DATA_OBJECT: 'struct/domain/java/infrastructure/db/dataobject/dataobject.hbs',
+  DDD_ENTITY_BASE: 'struct/domain/java/infrastructure/db/entity/entitybase.hbs',
+  DDD_ENTITY_BASE_IMPL: 'struct/domain/java/infrastructure/db/entity/entitybaseimpl.hbs',
+  DDD_BASE_REPOSITORY: 'struct/domain/java/infrastructure/db/repository/baserepository.hbs',
+  DDD_BASE_REPOSITORY_IMPL: 'struct/domain/java/infrastructure/db/repository/baserepositoryimpl.hbs',
+  DDD_AGGREGATE_REPOSITORY: 'struct/domain/java/domain/repository/domainrepository.hbs',
+  DDD_AGGREGATE_REPOSITORY_IMPL: 'struct/domain/java/infrastructure/db/impl/domainrepositoryimpl.hbs',
+  DDD_SPRING_COMMAND_BUS: 'struct/domain/java/infrastructure/spring/springcommandbus.hbs',
+  DDD_SPRING_EVENT_BUS: 'struct/domain/java/infrastructure/spring/springeventbus.hbs',
 
 };
 

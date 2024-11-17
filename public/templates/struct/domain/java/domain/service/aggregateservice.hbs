@@ -1,27 +1,43 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{#each resourceConfig.actions}}{{this.actionName}}Command{{/each}};
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "POST")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{else if (eq this.method "PUT")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{/if}}
+{{/each}}
+
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
 import {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}};
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}AggregateDomainRepository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateDomainRepository;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
 public class {{resourceConfig.name}}AggregateService {
 
-   private final {{resourceConfig.name}}AggregateDomainRepository {{resourceConfig.name.toLowerCase}}AggregateRootRepository;
+   private final {{resourceConfig.name}}AggregateDomainRepository {{toLowerCase resourceConfig.name}}AggregateRootRepository;
 
-   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{resourceConfig.name.toLowerCase}}AggregateRootRepository) {
-      this.{{resourceConfig.name.toLowerCase}}AggregateRootRepository = {{resourceConfig.name.toLowerCase}}AggregateRootRepository;
+   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toLowerCase resourceConfig.name}}AggregateRootRepository) {
+      this.{{toLowerCase resourceConfig.name}}AggregateRootRepository = {{toLowerCase resourceConfig.name}}AggregateRootRepository;
    }
 
    {{#each resourceConfig.actions}}
-     @Transactional
-     public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
-        {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
-        aggregate.handle(cmd);
-        {{resourceConfig.name.toLowerCase}}AggregateRootRepository.save(aggregate);
-     }
+     {{#if (eq this.method "POST")}}
+       @Transactional
+       public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
+          {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
+          aggregate.handle(cmd);
+          {{toLowerCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
+       }
+     {{else if (eq this.method "PUT")}}
+       @Transactional
+       public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
+          {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
+          aggregate.handle(cmd);
+          {{toLowerCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
+       }
+     {{/if}}
    {{/each}}
 }

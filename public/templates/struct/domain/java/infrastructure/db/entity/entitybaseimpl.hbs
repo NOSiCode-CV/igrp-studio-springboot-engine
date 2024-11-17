@@ -1,7 +1,7 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.aggregate.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}};
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.aggregate.toLowerCase}}.{{this.entity}};
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}}.{{this.entity}};
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
 

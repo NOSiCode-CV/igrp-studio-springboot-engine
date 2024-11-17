@@ -1,14 +1,14 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{resourceConfig.name.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase resourceConfig.name}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}Assembler;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}AggregateAssembler;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{resourceConfig.name}}FindByNameQuery;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}AggregateDomainRepository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateDomainRepository;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}Converter;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{resourceConfig.name.toLowerCase}}.{{resourceConfig.name}}Repository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Converter;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
     @Override
     public {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id) {
         return assembler.apply(converter.serialize(
-                repository.findById(id).orElseThrow(() -> new Exception("No {{resourceConfig.name.toLowerCase}} found with id " + id))
+                repository.findById(id).orElseThrow(() -> new Exception("No {{toLowerCase resourceConfig.name}} found with id " + id))
         ));
     }
 

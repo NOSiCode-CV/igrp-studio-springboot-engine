@@ -2,18 +2,18 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.application.command;
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.event.EventBus;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandHandler;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.aggregate.toLowerCase}}.{{resourceConfig.aggregate}}AggregateDomainRepository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.aggregate}}.{{resourceConfig.aggregate}}AggregateDomainRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class {{resourceConfig.name}}CommandHandler {
 
    private final EventBus eventBus;
-   private final {{resourceConfig.aggregate}}AggregateDomainRepository {{resourceConfig.aggregate.toLowerCase}}AggregateDomainRepository
+   private final {{resourceConfig.aggregate}}AggregateDomainRepository {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository
 
-   public {{resourceConfig.name}}CommandHandler(EventBus eventBus, {{resourceConfig.aggregate}}AggregateDomainRepository {{resourceConfig.aggregate.toLowerCase}}AggregateDomainRepository) {
+   public {{resourceConfig.name}}CommandHandler(EventBus eventBus, {{resourceConfig.aggregate}}AggregateDomainRepository {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository) {
       this.eventBus = eventBus;
-      this.{{resourceConfig.aggregate.toLowerCase}}AggregateDomainRepository = {{resourceConfig.aggregate.toLowerCase}}AggregateDomainRepository;
+      this.{{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository = {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository;
    }
 
    @CommandHandler
@@ -27,7 +27,7 @@ public class {{resourceConfig.name}}CommandHandler {
       // aggregate.handle(command)
 
       // Persist the aggregate using the domain repository
-      // {{resourceConfig.aggregate.toLowerCase}}AggregateRootRepository.save(aggregate)
+      // {{toLowerCase resourceConfig.aggregate}}AggregateRootRepository.save(aggregate)
    }
 
 }

@@ -54,6 +54,14 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     name: {
       type: "string",
       nullable: true
+    },
+    struct: {
+      type: "string",
+      nullable: false
+    },
+    enableObservability: {
+      type: "boolean",
+      nullable: false
     }
   },
   required: ["type", "apiName", "group", "artifact", "database"],

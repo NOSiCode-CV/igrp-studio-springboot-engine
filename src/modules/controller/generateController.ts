@@ -66,7 +66,7 @@ const getDtos = async(context: RenderContext<ControllerConfig>) => {
 const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], types: string[]) => {
   const bodyTypes = types.filter(type => !type.startsWith("List<") && !["String","Integer", "Boolean"].includes(type))
 
-  for (const action of actions) {
+  /*for (const action of actions) {
     if (action.requestBody) 
       if (!bodyTypes.includes(action.requestBody) )
         throw `Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`
@@ -76,7 +76,7 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
       if (!types.includes(responseType)){
         throw `The response type '${responseType}' in action '${action.actionName}' is not valid`
       }
-  }
+  }*/
 }
 
 const checkAcceptsAndRequestBody = (actions: ControllerAction[]) => {

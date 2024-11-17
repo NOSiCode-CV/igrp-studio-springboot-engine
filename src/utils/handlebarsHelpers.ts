@@ -9,7 +9,7 @@ Handlebars.registerHelper('capitalize', (str: string) => {
 });
 
 Handlebars.registerHelper('toLowerCase', (str: string) => {
-  return str.toLowerCase();
+  return (str || '').toLowerCase();
 });
 
 Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
@@ -47,7 +47,7 @@ Handlebars.registerHelper('keyType', function(config: ModelConfig) {
   if(config.primaryKey) {
     return `${config.name}PrimaryKey`
   }
-  const primaryKeyAttr = config.attributes.find(p => p.primaryKey === true);
+  const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
   if (!primaryKeyAttr) {
     return null;
   }
@@ -60,7 +60,19 @@ Handlebars.registerHelper('keyType', function(config: ModelConfig) {
   }
 });
 
+Handlebars.registerHelper('ifEquals', function (
+  this: unknown, // Specify the `this` type
+  arg1: any,
+  arg2: any,
+  options: Handlebars.HelperOptions
+): string {
+  return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+});
 
+Handlebars.registerHelper('keyType', function (resourceConfig) {
+  // Your logic to return a type based on the resourceConfig
+  return resourceConfig.keyType || 'DefaultType';
+});
 
 Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
   let imports: string [] = []

@@ -1,12 +1,24 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
 
-import {{#each resourceConfig.actions}}{{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;{{/each}}
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "POST")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{else if (eq this.method "PUT")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{/if}}
+{{/each}}
+
 import org.springframework.stereotype.Service;
 
 public interface {{resourceConfig.name}}CmdService {
 
    {{#each resourceConfig.actions}}
-     void {{this.actionName}}({{this.actionName}}Command cmd);
+     {{#if (eq this.method "POST")}}
+       void {{this.actionName}}({{this.actionName}}Command cmd);
+     {{else if (eq this.method "PUT")}}
+       void {{this.actionName}}({{this.actionName}}Command cmd);
+     {{/if}}
    {{/each}}
+
 
 }

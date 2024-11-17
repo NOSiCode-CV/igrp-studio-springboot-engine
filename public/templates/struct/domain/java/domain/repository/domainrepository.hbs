@@ -1,11 +1,11 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{resourceConfig.name.toLowerCase}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
 
 public interface {{resourceConfig.name}}DomainRepository {
 
-   {{#if keyType resourceConfig}}
-     {{#ifEquals keyType resourceConfig "Long"}}
+   {{#if (keyType resourceConfig)}}
+     {{#ifEquals (keyType resourceConfig) "Long"}}
      {{else}}
        {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
      {{/ifEquals}}
