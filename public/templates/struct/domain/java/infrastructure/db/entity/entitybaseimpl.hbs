@@ -44,20 +44,20 @@ public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.n
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
-  private String {{toLowerCase this.name}};{{else}}{{#if this.defaultValue}}
+  private String {{toCamelCase this.name}};{{else}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
-  private {{this.type}} {{toLowerCase this.name}};{{/if}}
+  private {{this.type}} {{toCamelCase this.name}};{{/if}}
   {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toLowerCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
+  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
   {{else if (eq this.relationType 'ManyToOne') }}
   @ManyToOne{{#if this.joinColumn}}
   @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toLowerCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
+  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
   @ManyToMany{{#if this.joinTable}}
   @JoinTable(
     name = "{{this.joinTable}}"{{#if this.joinColumn}},

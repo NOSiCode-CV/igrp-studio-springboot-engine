@@ -172,12 +172,24 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}Entity${EXTENSIONS.JAVA}`)
 
-const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getModelOutputDir(context),`${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`);
+const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
+  if(context.baseConfig.struct === 'domain')
+    return path.join(
+      getDDDModelOutputDir(context),
+      `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
+    );
+  else
+    return path.join(
+        getModelOutputDir(context),
+        `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
+      );
+}
 
-const modelDirectory = (context: RenderContext<ModelConfig>) => 
-  path.join(getModelOutputDir(context))
-
-
+const modelDirectory = (context: RenderContext<ModelConfig>) => {
+  if(context.baseConfig.struct === 'domain')
+    return path.join(getDDDModelOutputDir(context));
+  else
+    return path.join(getModelOutputDir(context));
+}
 
 

@@ -199,7 +199,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   if(context.baseConfig.struct === 'domain') {
 
     const doContext: RenderContext<DTOConfig> = {
-      resourceConfig: await transformDTOConfig({name: config.name, template: 'classic', attributes: config.attributes.map(e => ({ name: e.name, type: e.type, ns: 'dto'})), type: 'dataobject'}, baseConfig, basePath),
+      resourceConfig: await transformDTOConfig({name: config.name, template: 'classic', attributes: config.attributes.map(e => ({ name: e.name, type: e.type, ns: 'dto', primaryKey: e.primaryKey})), type: 'dataobject'}, baseConfig, basePath),
       basePath,
       baseConfig,
     };

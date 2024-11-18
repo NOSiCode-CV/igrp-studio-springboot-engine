@@ -1,6 +1,14 @@
 import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadata } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { ERROR_MESSAGE, EXTENSIONS, JAVA_TYPES, PACKAGE_NS, PACKAGES, TEMPLATES } from '../../utils/constants';
+import {
+  DIRECTORIES,
+  ERROR_MESSAGE,
+  EXTENSIONS,
+  JAVA_TYPES,
+  PACKAGE_NS,
+  PACKAGES,
+  TEMPLATES,
+} from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import {
   getDDDAggregateRootOutputDir,
@@ -116,7 +124,17 @@ export const transformDTOConfig = async function (
 
       const dt = dtypes.get(type.name);
       if (!dt) {
-        typeNotFound = true;
+        if(api.struct === 'domain') {
+          mtypes = await getModelTypes(basePath);
+          const mt = mtypes.get(type.name);
+          if (mt) {
+            type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.INFRASTRUCTURE}.${DIRECTORIES.DATABASE}.${DIRECTORIES.ENTITY}`;
+          } else {
+            typeNotFound = true;
+          }
+        } else {
+          typeNotFound = true;
+        }
       }
     } else {
       typeNotFound = true;
