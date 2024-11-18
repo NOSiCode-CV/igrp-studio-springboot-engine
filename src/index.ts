@@ -1,5 +1,5 @@
-import { AttributeType, DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig } from './interfaces/types';
-import { 
+import { AttributeType, DTOBaseConfig, DTOConfig, ISelectPermissions, ModelConfig, PermissionConfig } from './interfaces/types';
+import {
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
   DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
   MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES 
@@ -43,6 +43,8 @@ import { generateListeners } from './modules/listeners/generateListeners';
 import { generateAggregateRootHandler } from './modules/controller/generateAggregateRootHandler';
 import { generateQueryServiceInterface } from './modules/controller/generateQueryServiceInterface';
 import { generateQueryServiceInmpl } from './modules/controller/generateQueryService';
+import { loadPermissionConfigs } from './utils/helpers';
+import { getAllPermissions } from './modules/permission/getPermissions';
 
 /**
  * Main Function that creates the base api
@@ -425,7 +427,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
   };
 
   await generateDTO(context);
-  
+
   if(context.resourceConfig.type === 'datatransferobject') {
     const implContext: RenderContext<ModelConfig> = {
       resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
@@ -437,7 +439,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
   }
   else if(context.resourceConfig.type === 'event')
     await generateListeners(context)
-  
+
 };
 
 /**
@@ -666,6 +668,16 @@ export const addPermission = async (config: PermissionConfig, basePath: string) 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   await savePermission(config, basePath)
+}
+
+/**
+ *
+ * @param basePath
+ * @returns the permissions select options to be used in the IGRP Studio frontend
+ */
+export const getPermissions = async (basePath: string) => {
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  return await getAllPermissions(basePath)
 }
 
 export const deletePermission = async(config: PermissionConfig, basePath: string)=> {
