@@ -121,12 +121,19 @@ export const transformDTOConfig = async function (
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(basePath);
       }
+      let dt;
 
-      const dt = dtypes.get(type.name);
+      // TODO: understand why it is getting the model config from attribute types names instead of model name
+
+      //if(api.struct === 'domain')
+      //  dt = dtypes.get(config.name);
+      //else
+        dt = dtypes.get(type.name);
+
       if (!dt) {
-        if(api.struct === 'domain') {
+        /*if(api.struct === 'domain') {
           mtypes = await getModelTypes(basePath);
-          const mt = mtypes.get(type.name);
+          const mt = mtypes.get(config.name);
           if (mt) {
             type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.INFRASTRUCTURE}.${DIRECTORIES.DATABASE}.${DIRECTORIES.ENTITY}`;
           } else {
@@ -134,7 +141,8 @@ export const transformDTOConfig = async function (
           }
         } else {
           typeNotFound = true;
-        }
+        }*/
+        typeNotFound = true;
       }
     } else {
       typeNotFound = true;

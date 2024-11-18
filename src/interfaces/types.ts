@@ -140,6 +140,7 @@ export interface Attribute {
   primaryKey?: boolean;
   generationType?: GenerationType
   defaultValue?: string;
+  ns?: 'dto'|'model'|'java';
 }
 
 export interface Relation {
