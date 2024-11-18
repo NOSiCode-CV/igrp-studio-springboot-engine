@@ -70,6 +70,7 @@ export const ERROR_MESSAGE = {
   BASE_API_NOT_FOUND: 'The base api json file configuration was not found.',
   CONTROLLER_FILE_CONFIG_NOT_FOUND: 'Controller file configuration not found',
   CONTROLLER_FILE_NOT_FOUND: 'Controller class not found',
+  AGGREGATE_NOT_FOUND: 'Aggregate package not found',
   DIRECTORY_DOES_NOT_EXIST:
     'The specified directory does not exist. Please select a different directory.',
   DIRECTORY_ALREADY_IN_USE:

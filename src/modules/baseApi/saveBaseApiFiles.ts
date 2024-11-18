@@ -40,9 +40,8 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
 
-    const apiPath = path.join(mainPath, DIRECTORIES.API);
-    const queryPath = path.join(apiPath, DIRECTORIES.QUERY);
     const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
+    const queryPath = path.join(applicationPath, DIRECTORIES.QUERY);
     const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
     const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
     const dbPath = path.join(infraPath, DIRECTORIES.DATABASE);

@@ -1,5 +1,15 @@
 import fs from 'fs-extra';
-import { getDTOConfigPath, getDtoOutputDir } from '../../utils/helpers';
+import {
+  getDDDCommandOutputDir,
+  getDDDDataObjectOutputDir,
+  getDDDDataTransferObjectOutputDir,
+  getDDDDomainEntityOutputDir,
+  getDDDEventOutputDir,
+  getDDDQueryOutputDir,
+  getDDDValueObjectOutputDir,
+  getDTOConfigPath,
+  getDtoOutputDir,
+} from '../../utils/helpers';
 import { DTOBaseConfig, DTOConfig, JavaType, RenderContext } from '../../interfaces/types';
 import { ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { getDTOTypes } from './helpers';
@@ -28,6 +38,24 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
   else throw ERROR_MESSAGE.DTO_FILE_CONFIG_NOT_FOUNT;
 };
 
-const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) =>
-  path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
+  switch (context.resourceConfig.type) {
+    case "dto":
+      return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+    case "dataobject":
+      return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);
+    case "command":
+      return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
+    case "query":
+      return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
+    case "event":
+      return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
+    case "valueobject":
+      return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
+    case "domainentity":
+      return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);
+    case "datatransferobject":
+      return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+  }
+};
 

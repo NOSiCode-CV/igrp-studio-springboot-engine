@@ -1,10 +1,26 @@
 import fs from 'fs-extra';
-import { getControllerConfigPath, getControllerDir } from '../../utils/helpers';
+import {
+  getControllerConfigPath,
+  getControllerDir,
+  getDDDAggregateRootOutputDir,
+  getDDDControllerDir, getDTOConfigPath,
+} from '../../utils/helpers';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import { ERROR_MESSAGE } from '../../utils/constants';
 
 export const deleteControllerConfig = async (context: RenderContext<ControllerConfig>) => {
-  const controllerPath = getControllerDir(context);
+
+  let controllerPath;
+
+  if (context.baseConfig.struct === 'domain') {
+    controllerPath = getDDDControllerDir(context);
+    const aggregatePath = getDDDAggregateRootOutputDir(context);
+    if (await fs.pathExists(aggregatePath)) await fs.rm(aggregatePath, { recursive: true });
+    else throw ERROR_MESSAGE.AGGREGATE_NOT_FOUND;
+  } else {
+    controllerPath = getControllerDir(context);
+  }
+  
   const controllerConfigPath = getControllerConfigPath(context.resourceConfig.name, context.basePath)
 
   if (await fs.pathExists(controllerPath)) await fs.rm(controllerPath, { recursive: true });
