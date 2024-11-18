@@ -1,15 +1,33 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "GET")}}
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.query.dto.{{../this.actionName}}DTO;
+  {{/if}}
+{{/each}}
 import java.util.List;
 
 public interface {{resourceConfig.name}}QueryService {
 
-   List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s();
+    {{resourceConfig.name}}AggregateDTO {{toCamelCase resourceConfig.name}}AggregateQuery({{keyType resourceConfig}} id);
 
-   {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id);
+    List<{{resourceConfig.name}}AggregateDTO> {{toCamelCase resourceConfig.name}}AggregatesQuery(List<{{keyType resourceConfig}}> ids);
 
-   {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate({{keyType resourceConfig}} id);
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "GET")}}
+    {{#if (like this.response "List")}}
+      {{#if (like this.actionName "all")}}
+    {{cleanStr this.response}} {{toCamelCase this.actionName}}Query();
 
+      {{else}}
+    {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query);
+
+      {{/if}}
+    {{else}}
+    {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query);
+
+    {{/if}}
+  {{/if}}
+{{/each}}
 }

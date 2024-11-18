@@ -192,6 +192,7 @@ export const TEMPLATES = {
   DDD_AGGREGATE: 'struct/domain/java/domain/aggregate/aggregate.hbs',
   DDD_AGGREGATE_IDENTIFIER: 'struct/domain/java/domain/aggregate/aggregateidentifier.hbs',
   DDD_AGGREGATE_ROOT: 'struct/domain/java/domain/aggregate/aggregateroot.hbs',
+  DDD_AGGREGATE_ROOT_ABSTRACT: 'struct/domain/java/domain/aggregate/aggregaterootabstract.hbs',
   DDD_AGGREGATE_ROOT_IMPL: 'struct/domain/java/domain/aggregate/aggregaterootimpl.hbs',
   DDD_VALUE_OBJECT: 'struct/domain/java/domain/aggregate/valueobject.hbs',
   DDD_EVENT: 'struct/domain/java/domain/event/event.hbs',

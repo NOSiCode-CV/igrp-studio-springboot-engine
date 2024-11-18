@@ -5,10 +5,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceC
 public interface {{resourceConfig.name}}DomainRepository {
 
    {{#if (keyType resourceConfig)}}
-     {{#ifEquals (keyType resourceConfig) "Long"}}
-     {{else}}
-       {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
-     {{/ifEquals}}
+   {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
    {{/if}}
 
    void save({{resourceConfig.name}}AggregateRoot aggregate);

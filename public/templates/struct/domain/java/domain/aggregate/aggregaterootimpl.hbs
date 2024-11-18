@@ -1,36 +1,38 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.name}}Aggregate;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.name}};
 
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "POST")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
   {{else if (eq this.method "PUT")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
   {{/if}}
 {{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.Aggregate
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.AggregateRoot
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot
 
-@Aggregate
-public class {{resourceConfig.name}}AggregateRoot extends AggregateRoot<{{resourceConfig.name}}AggregateRoot, {{keyType resourceConfig}}> {
+public class {{resourceConfig.name}}AggregateRootHandler extends {{resourceConfig.name}}AggregateRoot {
 
-   private final {{keyType resourceConfig}} id;
-
+{{#each resourceConfig.attributes}}
+  {{#if this.primaryKey}}
+   private {{keyType ../resourceConfig}} {{this.name}};
+  {{else}}
+   private {{{resolve-type this}}} {{this.name}};
+  {{/if}}
+{{/each}}
    // TODO: define the aggregate attributes
 
-   public {{resourceConfig.name}}({{keyType resourceConfig}} id{{#each resourceConfig.attributes}}, {{{resolve-type this}}} {{this.name}}{{/each}}) {
-      this.id = id;
+   public {{resourceConfig.name}}({{#each resourceConfig.attributes}}{{#if this.primaryKey}}{{keyType ../resourceConfig}} {{this.name}}{{else}}, {{{resolve-type this}}} {{this.name}}{{/if}}{{/each}}) {
+    {{#each resourceConfig.attributes}}
+      this.{{this.name}} = {{this.name}};
+    {{/each}}
       // TODO: define the aggregate attributes
    }
 
    {{#each resourceConfig.actions}}
-     {{#if (eq this.method "POST")}}
-       public void handle({{this.actionName}}Command cmd) {
-       // TODO: Implement the {{this.actionName}} command handling logic here
-       }
-     {{else if (eq this.method "PUT")}}
-       public void handle({{this.actionName}}Command cmd) {
-       // TODO: Implement the {{this.actionName}} command handling logic here
-       }
-     {{/if}}
+     {{#ifNot (eq this.method "GET")}}
+   @Override
+   public void handle({{this.actionName}}Command cmd) {
+   // TODO: Implement the {{this.actionName}} command handling logic here
+   }
+     {{/ifNot}}
    {{/each}}
 }

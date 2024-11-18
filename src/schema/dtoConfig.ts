@@ -53,6 +53,11 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       nullable: true,
       errorMessage: 'The isList attribute must be a boolean value.'
     },
+    primaryKey: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The primary key, if provided, must be a valid boolean.'
+    }
   },
   required: ["type", "name", "ns"],
   additionalProperties: false,

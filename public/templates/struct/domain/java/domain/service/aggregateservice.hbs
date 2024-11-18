@@ -1,11 +1,9 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
 
 {{#each resourceConfig.actions}}
-  {{#if (eq this.method "POST")}}
+  {{#ifNot (eq this.method "GET")}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{else if (eq this.method "PUT")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{/if}}
+  {{/ifNot}}
 {{/each}}
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
@@ -17,27 +15,20 @@ import javax.transaction.Transactional;
 @Service
 public class {{resourceConfig.name}}AggregateService {
 
-   private final {{resourceConfig.name}}AggregateDomainRepository {{toLowerCase resourceConfig.name}}AggregateRootRepository;
+   private final {{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository;
 
-   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toLowerCase resourceConfig.name}}AggregateRootRepository) {
-      this.{{toLowerCase resourceConfig.name}}AggregateRootRepository = {{toLowerCase resourceConfig.name}}AggregateRootRepository;
+   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository) {
+      this.{{toCamelCase resourceConfig.name}}AggregateRootRepository = {{toCamelCase resourceConfig.name}}AggregateRootRepository;
    }
 
    {{#each resourceConfig.actions}}
-     {{#if (eq this.method "POST")}}
-       @Transactional
-       public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
-          {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
-          aggregate.handle(cmd);
-          {{toLowerCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
-       }
-     {{else if (eq this.method "PUT")}}
-       @Transactional
-       public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
-          {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
-          aggregate.handle(cmd);
-          {{toLowerCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
-       }
-     {{/if}}
+     {{#ifNot (eq this.method "GET")}}
+   @Transactional
+   public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
+      {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
+      aggregate.handle(cmd);
+      {{toCamelCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
+   }
+     {{/ifNot}}
    {{/each}}
 }

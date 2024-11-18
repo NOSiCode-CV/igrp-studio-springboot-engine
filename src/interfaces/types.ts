@@ -77,7 +77,8 @@ export interface JavaAttribute {
   name: string;
   type: string | JavaType;
   ns: 'dto'|'model'|'java';
-  isList?: boolean
+  isList?: boolean,
+  primaryKey?: boolean;
 }
 
 export interface DTOBaseConfig {

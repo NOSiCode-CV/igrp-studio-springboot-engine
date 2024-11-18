@@ -18,7 +18,7 @@ export const generateAggregateRoot = async (context: RenderContext<ControllerCon
 };
 
 export const renderAggregateRoot = async (context: RenderContext<ControllerConfig>) => {
-    return await renderTemplate(TEMPLATES.DDD_AGGREGATE_ROOT_IMPL, context);
+    return await renderTemplate(TEMPLATES.DDD_AGGREGATE_ROOT_ABSTRACT, context);
 };
 
 const getAggregateRootPath = (context: RenderContext<ControllerConfig>) => {

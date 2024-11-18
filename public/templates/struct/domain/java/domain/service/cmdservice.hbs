@@ -1,11 +1,9 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
 
 {{#each resourceConfig.actions}}
-  {{#if (eq this.method "POST")}}
+  {{#ifNot (eq this.method "GET")}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{else if (eq this.method "PUT")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{/if}}
+  {{/ifNot}}
 {{/each}}
 
 import org.springframework.stereotype.Service;
@@ -13,12 +11,9 @@ import org.springframework.stereotype.Service;
 public interface {{resourceConfig.name}}CmdService {
 
    {{#each resourceConfig.actions}}
-     {{#if (eq this.method "POST")}}
-       void {{this.actionName}}({{this.actionName}}Command cmd);
-     {{else if (eq this.method "PUT")}}
-       void {{this.actionName}}({{this.actionName}}Command cmd);
-     {{/if}}
+     {{#ifNot (eq this.method "GET")}}
+   void {{toCamelCase this.actionName}}({{this.actionName}}Command cmd);
+     {{/ifNot}}
    {{/each}}
-
 
 }

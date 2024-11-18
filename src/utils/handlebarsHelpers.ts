@@ -1,11 +1,24 @@
 import * as Handlebars from 'handlebars';
 
-import { Attribute, ControllerAction, JavaAttribute, JavaType, ModelConfig, Relation } from '../interfaces/types';
+import {
+  Attribute,
+  ControllerAction,
+  ControllerConfig, DTOConfig,
+  JavaAttribute,
+  JavaType,
+  ModelConfig,
+  Relation,
+} from '../interfaces/types';
 import { REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
+Handlebars.registerHelper('toCamelCase', (str: string) => {
+  if (!str) return '';
+  return str.charAt(0).toLowerCase() + str.slice(1);
 });
 
 Handlebars.registerHelper('toLowerCase', (str: string) => {
@@ -60,6 +73,38 @@ Handlebars.registerHelper('keyType', function(config: ModelConfig) {
   }
 });
 
+Handlebars.registerHelper('like', function (value, substring) {
+  return value && value.includes(substring);
+});
+
+Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
+  const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
+  if (!primaryKeyAttr) {
+    return null;
+  }
+  if (primaryKeyAttr.type === 'int') {
+    return 'Integer';
+  } else if (primaryKeyAttr.type === 'long') {
+    return 'Long';
+  } else {
+    return primaryKeyAttr.type;
+  }
+});
+
+Handlebars.registerHelper('keyType', function(config: DTOConfig) {
+  const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
+  if (!primaryKeyAttr) {
+    return null;
+  }
+  if (primaryKeyAttr.type === 'int') {
+    return 'Integer';
+  } else if (primaryKeyAttr.type === 'long') {
+    return 'Long';
+  } else {
+    return primaryKeyAttr.type;
+  }
+});
+
 Handlebars.registerHelper('ifEquals', function (
   this: unknown, // Specify the `this` type
   arg1: any,
@@ -69,16 +114,15 @@ Handlebars.registerHelper('ifEquals', function (
   return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('keyType', function (resourceConfig) {
-  // Your logic to return a type based on the resourceConfig
-  return resourceConfig.keyType || 'DefaultType';
-});
+/*Handlebars.registerHelper('keyType', function (resourceConfig) {
+    return resourceConfig.keyType || 'DefaultType';
+});*/
 
 Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
   let imports: string [] = []
   for (const action of actions) {
     if (action.requestBody)
-      if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody)) 
+      if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody))
         imports.push(`import ${group}.${artifact}.dto.${action.requestBody};`)
       if (action.response)
         if (extractTypeFromList(action.response)){
@@ -189,6 +233,10 @@ Handlebars.registerHelper('import-uuid', function(this: any, config: ModelConfig
     imports.add('import java.util.UUID;')
   return Array.from(imports).sort().join('\n');
 
+});
+
+Handlebars.registerHelper('cleanStr', function (str) {
+  return new Handlebars.SafeString(str);
 });
 
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {

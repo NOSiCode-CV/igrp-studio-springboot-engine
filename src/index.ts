@@ -40,6 +40,9 @@ import { generateConverter } from './modules/converter/generateConverter';
 import { generateAggregateRoot } from './modules/controller/generateAggregateRoot';
 import { generateHandlers } from './modules/handlers/generateHandlers';
 import { generateListeners } from './modules/listeners/generateListeners';
+import { generateAggregateRootHandler } from './modules/controller/generateAggregateRootHandler';
+import { generateQueryServiceInterface } from './modules/controller/generateQueryServiceInterface';
+import { generateQueryServiceInmpl } from './modules/controller/generateQueryService';
 
 /**
  * Main Function that creates the base api
@@ -425,7 +428,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
   
   if(context.resourceConfig.type === 'datatransferobject') {
     const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
     await generateConverter(implContext)
   } else if(context.resourceConfig.type === 'command') {
@@ -574,14 +577,19 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   await generateServiceInmpl(context);
 
   if(context.baseConfig.struct === 'domain') {
+
+    await generateQueryServiceInterface(context);
+    await generateQueryServiceInmpl(context);
+
     await generateAggregateRoot(context);
+    await generateAggregateRootHandler(context);
 
     const dddContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
 
     const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
 
     await generateRepository(dddContext)

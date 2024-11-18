@@ -16,22 +16,22 @@ public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceCo
    }
 
    {{#if (keyType resourceConfig)}}
-     @Override
-     public {{#ifEquals (keyType resourceConfig) "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{keyType resourceConfig}}{{/ifEquals}} findById({{keyType resourceConfig}} id) {
+   @Override
+   public {{#ifEquals (keyType resourceConfig) "Long"}}{{resourceConfig.name}}AggregateRoot{{else}}{{keyType resourceConfig}}{{/ifEquals}} findById({{keyType resourceConfig}} id) {
 
-        {{resourceConfig.name}}Entity entity = {{toLowerCase resourceConfig.name}}Repository.findById(id).orElse(null);
+      {{resourceConfig.name}}Entity entity = {{toLowerCase resourceConfig.name}}Repository.findById(id).orElse(null);
 
-        if (entity == null) {
-           return null;
-        }
+      if (entity == null) {
+         return null;
+      }
 
-        // Convert entity to aggregate root and return
-        return new {{resourceConfig.name}}AggregateRoot(
-           entity.getId(),
-           {{!-- Add other fields as necessary --}}
-        );
+      // Convert entity to aggregate root and return
+      return new {{resourceConfig.name}}AggregateRoot(
+         entity.getId(),
+         {{!-- Add other fields as necessary --}}
+      );
 
-     }
+   }
    {{/if}}
 
    @Override

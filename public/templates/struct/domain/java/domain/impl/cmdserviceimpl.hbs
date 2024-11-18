@@ -1,12 +1,10 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase resourceConfig.aggregate}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase resourceConfig.name}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandBus;
 {{#each resourceConfig.actions}}
-  {{#if (eq this.method "POST")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{else if (eq this.method "PUT")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{/if}}
+  {{#ifNot (eq this.method "GET")}}
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{../this.actionName}}Command;
+  {{/ifNot}}
 {{/each}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;
 import org.springframework.stereotype.Service;
@@ -21,18 +19,13 @@ public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.n
    }
 
    {{#each resourceConfig.actions}}
-     {{#if (eq this.method "POST")}}
-       @Override
-       public void {{toLowerCase this.actionName}}({{this.actionName}}Command cmd) {
-          // TODO: Implement action logic
-          commandBus.send(cmd);
-       }
-     {{else if (eq this.method "PUT")}}
-       @Override
-       public void {{toLowerCase this.actionName}}({{this.actionName}}Command cmd) {
-          // TODO: Implement action logic
-          commandBus.send(cmd);
-       }
-     {{/if}}
+     {{#ifNot (eq this.method "GET")}}
+   @Override
+   public void {{toCamelCase this.actionName}}({{this.actionName}}Command cmd) {
+      // TODO: Implement action logic
+      commandBus.send(cmd);
+   }
+
+     {{/ifNot}}
    {{/each}}
 }

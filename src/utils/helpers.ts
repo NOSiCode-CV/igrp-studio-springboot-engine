@@ -48,7 +48,7 @@ export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.MODELS,
-    context.resourceConfig.name
+    context.resourceConfig.name.toLowerCase()
   );
 
 export const getDDDModelOutputDir = (context: RenderContext<ModelConfig>) =>
@@ -150,7 +150,7 @@ export const getDDDValueObjectOutputDir = (context: RenderContext<DTOBaseConfig>
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.AGGREGATE,
-    context.resourceConfig.aggregate!.toLowerCase() + "Aggregate",
+    context.resourceConfig.aggregate!.toLowerCase(),
   );
 
 export const getDDDDomainEntityOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -159,7 +159,7 @@ export const getDDDDomainEntityOutputDir = (context: RenderContext<DTOBaseConfig
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.AGGREGATE,
-    context.resourceConfig.aggregate!.toLowerCase() + "Aggregate",
+    context.resourceConfig.aggregate!.toLowerCase(),
   );
 
 export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfig> | RenderContext<ControllerConfig>) =>
@@ -168,7 +168,7 @@ export const getDDDAggregateRootOutputDir = (context: RenderContext<DTOBaseConfi
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.AGGREGATE,
-    context.resourceConfig.name.toLowerCase() + "Aggregate",
+    context.resourceConfig.name.toLowerCase(),
   );
 
 export const getDDDAggregateElementsOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -177,7 +177,7 @@ export const getDDDAggregateElementsOutputDir = (context: RenderContext<DTOBaseC
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.AGGREGATE,
-    context.resourceConfig.aggregate!.toLowerCase() + "Aggregate",
+    context.resourceConfig.aggregate!.toLowerCase(),
   );
 
 export const getDDDDataTransferObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>
@@ -218,7 +218,7 @@ export const getControllerDir = (context: RenderContext<ControllerConfig | Model
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.CONTROLLERS,
-    context.resourceConfig.name
+    context.resourceConfig.name.toLowerCase()
   );
 export const getDDDControllerDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
@@ -240,7 +240,7 @@ export const getDDDServiceDir = (context: RenderContext<ControllerConfig | Model
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.SERVICE,
-    context.resourceConfig.name
+    context.resourceConfig.name.toLowerCase()
   );
 
 export const getDDDServiceImplDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
@@ -249,7 +249,7 @@ export const getDDDServiceImplDir = (context: RenderContext<ControllerConfig | M
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
     DIRECTORIES.DOMAIN,
     DIRECTORIES.IMPLEMENTATION,
-    context.resourceConfig.name
+    context.resourceConfig.name.toLowerCase()
   );
 
 export const loadConfig = async function<T> (basePath: string): Promise<T[]> {

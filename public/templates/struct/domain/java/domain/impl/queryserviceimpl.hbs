@@ -2,9 +2,11 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase r
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}Assembler;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}AggregateAssembler;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}DTO;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{resourceConfig.name}}FindByNameQuery;
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "GET")}}
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.query.dto.{{this.actionName}}DTO;
+  {{/if}}
+{{/each}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateDomainRepository;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Converter;
@@ -37,23 +39,51 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
     }
 
     @Override
-    public List<{{resourceConfig.name}}DTO> query{{resourceConfig.name}}s() {
+    public {{resourceConfig.name}}AggregateDTO {{toCamelCase resourceConfig.name}}AggregateQuery({{keyType resourceConfig}} id) {
+        return aggregateRepository.findById(id)
+                .map(aggregateAssembler::apply)
+                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
+    }
+
+    @Override
+    public List<{{resourceConfig.name}}AggregateDTO> {{toCamelCase resourceConfig.name}}AggregatesQuery(List<{{keyType resourceConfig}}> ids) {
+        return aggregateRepository.findAllById(ids)
+                .map(aggregateAssembler::apply)
+                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
+    }
+
+    {{#each resourceConfig.actions}}
+    {{#if (eq this.method "GET")}}
+      {{#if (like this.response "List")}}
+        {{#if (like toLowerCase this.actionName "all")}}
+    @Override
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query() {
         return repository.findAll().stream()
                 .map(entity -> assembler.apply(converter.serialize(entity)))
                 .toList();
     }
 
+        {{else}}
     @Override
-    public {{resourceConfig.name}}DTO query{{resourceConfig.name}}({{keyType resourceConfig}} id) {
-        return assembler.apply(converter.serialize(
-                repository.findById(id).orElseThrow(() -> new Exception("No {{toLowerCase resourceConfig.name}} found with id " + id))
-        ));
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query) {
+        // TODO: implement query logic here
+        return null;
     }
 
+        {{/if}}
+      {{else}}
     @Override
-    public {{resourceConfig.name}}AggregateDTO query{{resourceConfig.name}}Aggregate({{keyType resourceConfig}} id) {
-        return aggregateRepository.findById(id)
-                .map(aggregateAssembler::apply)
-                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query) {
+        // TODO: implement query logic here
+        // e.g.: querying by ID
+        /*return assembler.apply(converter.serialize(
+                repository.findById(query.getId()).orElseThrow(() -> new Exception("No {{../resourceConfig.name}} found with id " + id))
+        ));*/
+
+        return null;
     }
+
+      {{/if}}
+    {{/if}}
+    {{/each}}
 }
