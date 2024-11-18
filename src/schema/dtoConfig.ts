@@ -74,9 +74,8 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
   type: "object",
   properties: {
     type: { 
-      type: "string", 
-      const: "dto",
-      errorMessage: 'The type must be "dto".'
+      type: "string",
+      errorMessage: 'The type must be valid.'
     },
     name: { 
       type: "string", 
