@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{toLowerCase resourceConfig.name}}.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{toLowerCase resourceConfig.name}}.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{toLowerCase resourceConfig.name}}.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}CmdService;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}QueryService;
 {{else}}
 {{importsTypes ../baseConfig.struct resourceConfig.actions baseConfig.group baseConfig.artifact}}
 {{/if}}
@@ -26,7 +28,6 @@ public class {{resourceConfig.name}}Controller {
 {{else}}
   private final {{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service;
 {{/if}}
-
 
 {{#if (eq baseConfig.struct "domain")}}
   public {{resourceConfig.name}}Controller({{resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){

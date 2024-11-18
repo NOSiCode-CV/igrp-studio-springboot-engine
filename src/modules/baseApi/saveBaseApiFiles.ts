@@ -68,7 +68,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       { output: path.join(domainPath, DIRECTORIES.EVENT), template: TEMPLATES.DDD_EVENT_BUS, name: COMMON_FILES.EVENT_BUS},
       { output: path.join(domainPath, DIRECTORIES.EVENT), template: TEMPLATES.DDD_EVENT_LISTENER, name: COMMON_FILES.EVENT_LISTENER},
 
-      { output: path.join(domainPath, DIRECTORIES.DOMAIN), template: TEMPLATES.DDD_DOMAIN_ENTITY, name: COMMON_FILES.EVENT_LISTENER},
+      { output: domainPath, template: TEMPLATES.DDD_DOMAIN_ENTITY, name: COMMON_FILES.DOMAIN_ENTITY},
 
       // INFRASTRUCTURE LAYER
       { output: path.join(infraPath, DIRECTORIES.CACHE), template: TEMPLATES.DDD_CACHE_SERVICE, name: COMMON_FILES.CACHE_SERVICE},

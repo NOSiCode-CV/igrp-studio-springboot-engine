@@ -207,7 +207,7 @@ export const getDDDDomainConverterOutputDir = (context: RenderContext<ModelConfi
     DIRECTORIES.APPLICATION,
     DIRECTORIES.QUERY,
     DIRECTORIES.ASSEMBLER,
-    context.resourceConfig.name.toLowerCase()
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getControllerConfigPath = (controller: string, output: string) =>

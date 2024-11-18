@@ -22,7 +22,7 @@ public abstract class AggregateRoot<R, T> {
          return false;
       }
 
-      AggregateRoot<?, ?> that = ({{resourceConfig.name}}Root<?, ?>) other;
+      AggregateRoot<?, ?> that = (AggregateRoot<?, ?>) other;
 
       return new EqualsBuilder()
                      .append(this.id, that.id)

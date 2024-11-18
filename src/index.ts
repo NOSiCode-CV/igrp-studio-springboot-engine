@@ -437,7 +437,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   if(context.resourceConfig.type === 'datatransferobject') {
     const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'domainimpl', aggregate: config.aggregate, name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
     await generateConverter(implContext)
   } else if(context.resourceConfig.type === 'command') {

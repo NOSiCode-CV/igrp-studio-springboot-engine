@@ -57,7 +57,7 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
       {{#if (like this.response "List")}}
         {{#if (like toLowerCase this.actionName "all")}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query() {
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}() {
         return repository.findAll().stream()
                 .map(entity -> assembler.apply(converter.serialize(entity)))
                 .toList();
@@ -65,7 +65,7 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
 
         {{else}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query) {
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
         // TODO: implement query logic here
         return null;
     }
@@ -73,7 +73,7 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
         {{/if}}
       {{else}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}Query({{this.actionName}}Query query) {
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
         // TODO: implement query logic here
         // e.g.: querying by ID
         /*return assembler.apply(converter.serialize(

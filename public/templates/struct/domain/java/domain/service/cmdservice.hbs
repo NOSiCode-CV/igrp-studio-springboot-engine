@@ -2,12 +2,13 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCas
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{toLowerCase ../resourceConfig.name}}.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
 
 import org.springframework.stereotype.Service;
 
+@Service
 public interface {{resourceConfig.name}}CmdService {
 
    {{#each resourceConfig.actions}}
