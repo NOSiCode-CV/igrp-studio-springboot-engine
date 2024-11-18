@@ -178,6 +178,12 @@ export const TEMPLATES = {
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
 
+  // OBSERVABILITY
+  MONITORING_COLLECTOR: 'monitoring/collector.hbs',
+  MONITORING_PROMETHEUS: 'monitoring/prometheus.hbs',
+  MONITORING_PROMTAIL: 'monitoring/promtail.hbs',
+  MONITORING_TEMPO: 'monitoring/tempo.hbs',
+
   // DOMAIN DRIVEN DESIGN
   DDD_COMMAND: 'struct/domain/java/application/command/command.hbs',
   DDD_COMMAND_BUS: 'struct/domain/java/application/command/commandbus.hbs',
@@ -241,8 +247,15 @@ export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
+export const OBSERVABILITY_YAML_CONFIG_FILES = [
+  { template: TEMPLATES.MONITORING_COLLECTOR, output: 'otel-collector.yml' },
+  { template: TEMPLATES.MONITORING_PROMETHEUS, output: 'prometheus.yml' },
+  { template: TEMPLATES.MONITORING_PROMTAIL, output: 'promtail-docker-config.yml' },
+  { template: TEMPLATES.MONITORING_TEMPO, output: 'tempo.yml' },
+];
+
 export const OBSERVABILITY_BINARY_FILES = [
-  { inputPath: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' }
+  { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' }
 ]
 
 export const COMMON_FILES = {

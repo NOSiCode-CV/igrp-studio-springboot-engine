@@ -4,7 +4,7 @@ import {
   DIRECTORIES,
   TEMPLATES,
   COMMON_FILES,
-  CONFIG_FILES, OBSERVABILITY_CONFIG_FILES, OBSERVABILITY_BINARY_FILES,
+  CONFIG_FILES, OBSERVABILITY_CONFIG_FILES, OBSERVABILITY_BINARY_FILES, TEMPLATE_DIR, OBSERVABILITY_YAML_CONFIG_FILES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
@@ -144,6 +144,21 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   }
 };
 
+function getSubfolder(file: {template: string; output: string}) {
+  switch (file.template) {
+    case TEMPLATES.MONITORING_COLLECTOR:
+      return "collector"
+    case TEMPLATES.MONITORING_PROMETHEUS:
+      return "prometheus"
+    case TEMPLATES.MONITORING_PROMTAIL:
+      return "promtail"
+    case TEMPLATES.MONITORING_TEMPO:
+      return "tempo"
+    default:
+      return ""
+  }
+}
+
 const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {
   // Generation and saving of the main files.
   await Promise.all(
@@ -157,6 +172,15 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
   // Generation and saving of additional configuration files.
   if(context.baseConfig.enableObservability) {
     await Promise.all(
+      OBSERVABILITY_YAML_CONFIG_FILES.map(async (file) => {
+        const basePath = path.join(context.basePath, DIRECTORIES.MONITORING);
+        const subPath = path.join(basePath, getSubfolder(file));
+        const outputPath = path.join(subPath, file.output);
+        const template = await renderTemplate(file.template, context);
+        await saveToFile(template, outputPath);
+      }),
+    );
+    await Promise.all(
       OBSERVABILITY_CONFIG_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
         const template = await renderTemplate(file.template, context);
@@ -166,7 +190,8 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
     await Promise.all(
       OBSERVABILITY_BINARY_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
-        const binaryContent = await fs.readFile(file.inputPath);
+        const templatePath = path.join(TEMPLATE_DIR, file.template);
+        const binaryContent = await fs.readFile(templatePath);
         await saveBinaryToFile(binaryContent, outputPath);
       })
     );

@@ -1,7 +1,6 @@
 import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadata } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
-  DIRECTORIES,
   ERROR_MESSAGE,
   EXTENSIONS,
   JAVA_TYPES,
@@ -11,7 +10,6 @@ import {
 } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import {
-  getDDDAggregateRootOutputDir,
   getDDDCommandOutputDir,
   getDDDDataObjectOutputDir, getDDDDataTransferObjectOutputDir, getDDDDomainEntityOutputDir,
   getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDDDValueObjectOutputDir,
@@ -121,27 +119,9 @@ export const transformDTOConfig = async function (
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(basePath);
       }
-      let dt;
-
-      // TODO: understand why it is getting the model config from attribute types names instead of model name
-
-      //if(api.struct === 'domain')
-      //  dt = dtypes.get(config.name);
-      //else
-        dt = dtypes.get(type.name);
+      const dt = dtypes.get(type.name);
 
       if (!dt) {
-        /*if(api.struct === 'domain') {
-          mtypes = await getModelTypes(basePath);
-          const mt = mtypes.get(config.name);
-          if (mt) {
-            type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.INFRASTRUCTURE}.${DIRECTORIES.DATABASE}.${DIRECTORIES.ENTITY}`;
-          } else {
-            typeNotFound = true;
-          }
-        } else {
-          typeNotFound = true;
-        }*/
         typeNotFound = true;
       }
     } else {
@@ -168,21 +148,21 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.struct === 'domain') {
     switch (context.resourceConfig.type) {
       case "dto":
-        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       case "dataobject":
-        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);
       case "command":
-        return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
       case "query":
-        return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
       case "event":
-        return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
       case "valueobject":
-        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
       case "domainentity":
-        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);
       case "datatransferobject":
-        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
     }
   } else {
     return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);

@@ -92,6 +92,12 @@ Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
 });
 
 Handlebars.registerHelper('keyType', function(config: DTOConfig) {
+  if(!config) {
+    return null;
+  }
+  if(!config.attributes) {
+    return null;
+  }
   const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
   if (!primaryKeyAttr) {
     return null;
@@ -99,9 +105,10 @@ Handlebars.registerHelper('keyType', function(config: DTOConfig) {
   if (primaryKeyAttr.type === 'int') {
     return 'Integer';
   } else if (primaryKeyAttr.type === 'long') {
-    return 'Long';
-  } else {
-    return primaryKeyAttr.type;
+    return 'Long'
+  }
+  else {
+      return (primaryKeyAttr.type as JavaAttribute | Attribute).name
   }
 });
 

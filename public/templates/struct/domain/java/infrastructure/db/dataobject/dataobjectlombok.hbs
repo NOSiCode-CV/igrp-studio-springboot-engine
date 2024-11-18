@@ -5,7 +5,6 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
 {{{resolve-imports resourceConfig}}}
 
 @Data
@@ -14,7 +13,7 @@ import lombok.AllArgsConstructor;
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}DataObject extends DataObject<{{keyType resourceConfig}}> {
+public class {{resourceConfig.name}}DO extends DataObject<{{keyType resourceConfig}}> {
 
   {{#each resourceConfig.attributes}}
     {{#each this.annotations}}

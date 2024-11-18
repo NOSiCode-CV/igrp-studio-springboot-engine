@@ -205,7 +205,8 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
         name: config.name,
         template: 'classic',
         attributes: config.attributes.map(e => ({ name: e.name, type: e.type, ns: e.ns!, primaryKey: e.primaryKey})),
-        type: 'dataobject'
+        type: 'dataobject',
+        aggregate: config.aggregate
         }, baseConfig, basePath
       ),
       basePath,
