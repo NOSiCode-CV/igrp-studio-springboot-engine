@@ -2,7 +2,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLow
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
 
-public interface {{resourceConfig.name}}DomainRepository {
+public interface {{resourceConfig.name}}AggregateDomainRepository {
 
    {{#if (keyType resourceConfig)}}
    {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);

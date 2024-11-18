@@ -1,8 +1,8 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{toLowerCase resourceConfig.aggregate}};
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.Converter;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}DO;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Entity;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.{{toLowerCase resourceConfig.aggregate}}.{{resourceConfig.name}}DO;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}}.{{resourceConfig.name}}Entity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class {{resourceConfig.name}}Converter implements Converter<{{resourceCon
    public {{resourceConfig.name}}DO serialize({{resourceConfig.name}}Entity t) {
       return new {{resourceConfig.name}}DO(
       {{#each resourceConfig.attributes}}
-        t.{{this.name}}{{#unless @last}}, {{/unless}}
+        t.get{{capitalize this.name}}(){{#unless @last}}, {{/unless}}
       {{/each}}
       );
    }
@@ -21,7 +21,7 @@ public class {{resourceConfig.name}}Converter implements Converter<{{resourceCon
    public {{resourceConfig.name}}Entity deserialize({{resourceConfig.name}}DO r) {
       return new {{resourceConfig.name}}Entity(
       {{#each resourceConfig.attributes}}
-        r.{{this.name}}{{#unless @last}}, {{/unless}}
+        r.get{{capitalize this.name}}{{#unless @last}}, {{/unless}}
       {{/each}}
       );
    }

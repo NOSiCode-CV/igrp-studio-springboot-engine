@@ -1,6 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.aggregate}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.ValueObject
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.ValueObject;
 
 {{resolve-imports resourceConfig}}
 
@@ -14,4 +14,4 @@ public record {{capitalize resourceConfig.name}}ValueObject (
     {{/each}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
-) extends ValueObject {}
+) implements ValueObject {}

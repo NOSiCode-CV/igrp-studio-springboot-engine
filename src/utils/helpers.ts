@@ -200,6 +200,16 @@ export const getDDDConverterOutputDir = (context: RenderContext<ModelConfig>) =>
     context.resourceConfig.aggregate!.toLowerCase()
   );
 
+export const getDDDAggDomainConverterOutputDir = (context: RenderContext<ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERY,
+    DIRECTORIES.ASSEMBLER,
+    context.resourceConfig.name!.toLowerCase()
+  );
+
 export const getDDDDomainConverterOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
     context.basePath,

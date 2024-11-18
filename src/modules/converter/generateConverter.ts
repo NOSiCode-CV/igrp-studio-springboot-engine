@@ -3,7 +3,12 @@ import { ControllerConfig, ModelConfig, RenderContext } from '../../interfaces/t
 import { TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDConverterOutputDir, getDDDDomainConverterOutputDir, getServiceDir } from '../../utils/helpers';
+import {
+  getDDDAggDomainConverterOutputDir,
+  getDDDConverterOutputDir,
+  getDDDDomainConverterOutputDir,
+  getServiceDir,
+} from '../../utils/helpers';
 
 const AGG_ASSEMBLER_SUFFIX = 'AggregateAssembler.java';
 const ASSEMBLER_SUFFIX = 'Assembler.java';
@@ -36,7 +41,7 @@ const getConverterPath = (context: RenderContext<ModelConfig>) => {
     case "model":
       return path.join(getDDDConverterOutputDir(context), `${context.resourceConfig.name}${CONVERTER_SUFFIX}`);
     case "domain":
-      return path.join(getDDDDomainConverterOutputDir(context), `${context.resourceConfig.name}${AGG_ASSEMBLER_SUFFIX}`);
+      return path.join(getDDDAggDomainConverterOutputDir(context), `${context.resourceConfig.name}${AGG_ASSEMBLER_SUFFIX}`);
     case "domainimpl":
       return path.join(getDDDDomainConverterOutputDir(context), `${context.resourceConfig.name}${ASSEMBLER_SUFFIX}`);
   }

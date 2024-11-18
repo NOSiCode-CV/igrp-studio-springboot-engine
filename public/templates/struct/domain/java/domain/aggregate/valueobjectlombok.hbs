@@ -1,6 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.aggregate}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.ValueObject
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.ValueObject;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}ValueObject extends ValueObject {
+public class {{resourceConfig.name}}ValueObject implements ValueObject {
 
   {{#each resourceConfig.attributes}}
     {{#each this.annotations}}

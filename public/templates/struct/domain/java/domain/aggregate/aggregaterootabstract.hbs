@@ -5,12 +5,10 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerC
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
-  {{else}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.Aggregate
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.AggregateRoot
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.Aggregate;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.AggregateRoot;
 
 @Aggregate
 public abstract class {{resourceConfig.name}}AggregateRoot extends AggregateRoot<{{resourceConfig.name}}AggregateRoot, {{keyType resourceConfig}}> {

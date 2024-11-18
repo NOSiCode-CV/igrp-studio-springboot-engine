@@ -1,13 +1,13 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.impl.{{toLowerCase resourceConfig.name}};
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateRoot;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}DomainRepository;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{resourceConfig.name}}.{{resourceConfig.name}}Entity;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Repository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class {{resourceConfig.name}}DomainRepositoryImpl implements {{resourceConfig.name}}DomainRepository {
+public class {{resourceConfig.name}}AggregateDomainRepositoryImpl implements {{resourceConfig.name}}DomainRepository {
 
    private final {{resourceConfig.name}}Repository {{toLowerCase resourceConfig.name}}Repository;
 

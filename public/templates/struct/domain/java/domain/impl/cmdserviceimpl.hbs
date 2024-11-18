@@ -3,7 +3,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase r
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandBus;
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{../this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;

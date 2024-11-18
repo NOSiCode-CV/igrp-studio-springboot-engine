@@ -30,8 +30,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
 
   const apiPath = path.join(mainPath, DIRECTORIES.API);
-  const queryPath = path.join(apiPath, DIRECTORIES.QUERY);
   const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
+  const queryPath = path.join(applicationPath, DIRECTORIES.QUERY);
   const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
   const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
 
