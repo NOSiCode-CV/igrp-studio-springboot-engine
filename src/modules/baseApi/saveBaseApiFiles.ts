@@ -40,6 +40,83 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
 
+    const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
+    const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
+    const commandPath = path.join(applicationPath, DIRECTORIES.COMMANDS);
+    const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);
+    const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
+    const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
+    const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+
+    return [
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+
+      // DOMAIN LAYER
+      { output: eventPath, template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER, name: COMMON_FILES.EVENT_PUBLISHER},
+
+      {
+        output: configPath,
+        template: TEMPLATES.DOMAIN_MODEL_AUDIT,
+        name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES_LOCAL,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_LOCAL,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DDD_DOMAIN_RESOURCES_DOCKER,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_DOCKER,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.APPLICATION_AUDIT_AWARE,
+        name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_SECURITY,
+        name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+    ];
+
+  } else {
+    const configPath = path.join(mainPath, 'config');
+    const securityPath = path.join(mainPath, 'security');
+
+    return [
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+      {
+        output: configPath,
+        template: TEMPLATES.DOMAIN_MODEL_AUDIT,
+        name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.DOMAIN_RESOURCES,
+        name: COMMON_FILES.APPLICATION_PROPERTIES,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.APPLICATION_AUDIT_AWARE,
+        name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_SECURITY,
+        name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+    ];
+
+    /*
+    DDD FULL
+
     const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
     const queryPath = path.join(applicationPath, DIRECTORIES.QUERY);
     const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
@@ -138,7 +215,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
       },
-    ];
+    ];*/
   }
 };
 

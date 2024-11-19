@@ -44,29 +44,29 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
   
   switch (context.resourceConfig.type) {
     case "dto":
-      tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      if(context.baseConfig.projectStructureStyle === 'domain')
+        tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
+      else
+        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
-    case "dataobject":
+    /*case "dataobject":
       tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
-      break;
+      break;*/
     case "command":
-      tn = TEMPLATES.DDD_COMMAND_DTO[context.resourceConfig.template];
+      tn = TEMPLATES.DDD_LITE_COMMAND[context.resourceConfig.template];
       break;
     case "query":
-      tn = TEMPLATES.DDD_QUERY_DTO[context.resourceConfig.template];
+      tn = TEMPLATES.DDD_LITE_QUERY[context.resourceConfig.template];
       break;
     case "event":
-      tn = TEMPLATES.DDD_EVENT_DTO[context.resourceConfig.template];
+      tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
       break;
-    case "valueobject":
+    /*case "valueobject":
       tn = TEMPLATES.DDD_VALUE_OBJECT_DTO[context.resourceConfig.template];
       break;
     case "domainentity":
       tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
-      break;
-    case "datatransferobject":
-      tn = TEMPLATES.DDD_DATA_TRANSFER_OBJECT_DTO[context.resourceConfig.template];
-      break;
+      break;*/
   }
   
   if (!tn) {
@@ -149,20 +149,18 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
     switch (context.resourceConfig.type) {
       case "dto":
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
-      case "dataobject":
-        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);
+      /*case "dataobject":
+        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
       case "command":
         return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
       case "query":
         return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
       case "event":
         return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
-      case "valueobject":
+      /*case "valueobject":
         return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
       case "domainentity":
-        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);
-      case "datatransferobject":
-        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
     }
   } else {
     return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);

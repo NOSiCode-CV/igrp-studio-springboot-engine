@@ -1,0 +1,69 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.infrastructure.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+
+{{importsTypes baseConfig.projectStructureStyle resourceConfig.actions baseConfig.group baseConfig.artifact}}
+
+@RestController
+@RequestMapping(path = "{{resourceConfig.basePath}}")
+public class {{resourceConfig.name}}Controller {
+
+{{#each resourceConfig.actions}}
+  {{#if (eq method "GET")}}
+  private final {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
+  {{else}}
+  private final {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
+  {{/if}}
+{{/each}}
+
+  public {{resourceConfig.name}}Controller(
+  {{#each resourceConfig.actions}}
+    {{#if (eq method "GET")}}
+    {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{#unless @last}},{{/unless}}
+    {{else}}
+    {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{#unless @last}},{{/unless}}
+    {{/if}}
+  {{/each}}
+  ) {
+    {{#each resourceConfig.actions}}
+      {{#if (eq method "GET")}}
+      this.{{toCamelCase actionName}}QueryHandler = {{toCamelCase actionName}}QueryHandler;
+      {{else}}
+      this.{{toCamelCase actionName}}CommandHandler = {{toCamelCase actionName}}CommandHandler;
+      {{/if}}
+    {{/each}}
+  }
+
+
+  {{#each resourceConfig.actions}}
+  @ResponseStatus(HttpStatus.OK)
+  @RequestMapping(
+    method = RequestMethod.{{method}}{{#if path}},
+    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{else}}{{#if pathVariables}},
+    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if this.accepts}},
+    consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}},
+    produces = "{{this.contentType}}"{{/if}}
+  )
+  public ResponseEntity<{{{this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
+
+    {{#if (eq method "GET")}}
+    {{#if requestParams}}final var query = new {{actionName}}Query({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
+    final var result = {{toCamelCase actionName}}QueryHandler.handle({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{/if}});
+    return ResponseEntity.ok(result);
+    {{else}}
+    {{#if requestBody}}{{else if requestParams}}final var command = new {{actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
+    final var response = {{toCamelCase actionName}}CommandHandler.handle({{#if requestBody}}{{toCamelCase requestBody}}{{else if requestParams}}command{{/if}});
+    return ResponseEntity.ok(response);
+    {{/if}}
+
+  }
+  {{/each}}
+
+}

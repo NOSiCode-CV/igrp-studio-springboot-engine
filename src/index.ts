@@ -1,4 +1,12 @@
-import { AttributeType, DTOBaseConfig, DTOConfig, ISelectPermissions, ModelConfig, PermissionConfig } from './interfaces/types';
+import {
+  AttributeType,
+  DTOBaseConfig,
+  DTOConfig,
+  HandlerConfig,
+  ISelectPermissions, JavaAttribute,
+  ModelConfig,
+  PermissionConfig,
+} from './interfaces/types';
 import {
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
   DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
@@ -13,7 +21,11 @@ import { deleteModelConfig } from './modules/model/deleteModel';
 import { saveModelConfig } from './modules/model/saveModelConfig';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 import { getBaseApiConfig } from './modules/common/getBaseApiConfig';
-import { generateAggregateRepository, generateRepository } from './modules/model/generateRepository';
+import {
+  generateAggregateRepository,
+  generateRepository,
+  generateRepositoryImpl,
+} from './modules/model/generateRepository';
 import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
@@ -47,8 +59,9 @@ import { generateListeners } from './modules/listeners/generateListeners';
 import { generateAggregateRootHandler } from './modules/controller/generateAggregateRootHandler';
 import { generateQueryServiceInterface } from './modules/controller/generateQueryServiceInterface';
 import { generateQueryServiceInmpl } from './modules/controller/generateQueryService';
-import { loadPermissionConfigs } from './utils/helpers';
+import { loadDTOConfig, loadPermissionConfigs } from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
+import { template } from 'handlebars';
 
 /**
  * Main Function that creates the base api
@@ -204,7 +217,10 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
 
   if(context.baseConfig.projectStructureStyle === 'domain') {
 
-    const doContext: RenderContext<DTOConfig> = {
+    await generateRepositoryImpl(context);
+
+    // DDD FULL
+    /*const doContext: RenderContext<DTOConfig> = {
       resourceConfig: await transformDTOConfig({
         name: config.name,
         template: 'classic',
@@ -218,7 +234,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     };
 
     await generateDTO(doContext);
-    await generateDomainConverter(context);
+    await generateDomainConverter(context);*/
 
   }
 
@@ -439,17 +455,28 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   await generateDTO(context);
 
-  if(context.resourceConfig.type === 'datatransferobject') {
-    const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'model', aggregate: config.aggregate, name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
-    };
-    await generateConverter(implContext)
-  } else if(context.resourceConfig.type === 'command') {
-    await generateHandlers(context);
-    await generateListeners(context);
+  if(context.baseConfig.projectStructureStyle === 'domain') {
+    if (context.resourceConfig.type === 'dto') {
+      /*const implContext: RenderContext<ModelConfig> = {
+        resourceConfig: {
+          type: 'model',
+          aggregate: config.aggregate,
+          name: config.name,
+          attributes: config.attributes.map((e) => ({
+            name: e.name,
+            type: e.type as AttributeType,
+            primaryKey: e.primaryKey,
+          })),
+          tableName: config.name,
+        },
+        baseConfig,
+        basePath,
+      };*/
+      //await generateConverter(implContext);
+    } else if (context.resourceConfig.type === 'command' || context.resourceConfig.type === 'event' || context.resourceConfig.type === 'query') {
+      await generateHandlers(context);
+    }
   }
-  else if(context.resourceConfig.type === 'event')
-    await generateListeners(context)
 
 };
 
@@ -586,12 +613,51 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   };
   
   await generateController(context);
-  await generateServiceInterface(context);
-  await generateServiceInmpl(context);
 
   if(context.baseConfig.projectStructureStyle === 'domain') {
 
-    await generateQueryServiceInterface(context);
+    for (const act of config.actions) {
+      const config: DTOConfig = await loadDTOConfig(context.basePath, act.actionName)
+      await addDTO({
+        type: act.method === 'GET' ? 'query' : 'command',
+        name: act.actionName,
+        template: 'classic',
+        attributes: act?.requestBody
+          ? config.attributes
+          : (act?.pathVariables
+            ? act.pathVariables.map(e => ({
+              name: e.name,
+              type: e.type,
+              ns: 'java'
+            })).concat(
+              act?.requestParams
+                ? act.requestParams.map(e => ({
+                  name: e.name,
+                  type: e.type,
+                  ns: 'java'
+                }))
+                : []
+            )
+            : act?.requestParams
+              ? act.requestParams.map(e => ({
+                name: e.name,
+                type: e.type as 'Long' | 'String' | 'Integer' | 'Character' | 'Boolean' | 'Object',
+                ns: 'java'
+              })).concat(
+                act?.pathVariables
+                  ? act.pathVariables.map(e => ({
+                    name: e.name,
+                    type: e.type as 'Long' | 'String' | 'Integer' | 'Character' | 'Boolean' | 'Object',
+                    ns: 'java'
+                  }))
+                  : []
+              )
+              : []) as JavaAttribute[]
+      }, context.basePath);
+    }
+
+    // DDD FULL
+    /*await generateQueryServiceInterface(context);
     await generateQueryServiceInmpl(context);
 
     await generateAggregateRoot(context);
@@ -602,7 +668,11 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     };
 
     await generateAggregateRepository(dddContext)
-    await generateAggregateConverter(dddContext)
+    await generateAggregateConverter(dddContext)*/
+
+  } else {
+    await generateServiceInterface(context);
+    await generateServiceInmpl(context);
   }
 
 };

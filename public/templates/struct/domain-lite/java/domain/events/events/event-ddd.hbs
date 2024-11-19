@@ -1,0 +1,22 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.domain.events;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+{{{resolve-imports resourceConfig}}}
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+public class {{resourceConfig.name}}Event {
+
+{{#each resourceConfig.attributes}}
+  {{#each this.annotations}}
+    @{{this.annotation}}
+  {{/each}}
+  private {{{resolve-type this}}} {{this.name}};
+
+{{/each}}
+}

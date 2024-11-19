@@ -1,0 +1,15 @@
+package {{baseConfig.group}}.{{baseConfig.artifact}}.application.domain.events;
+
+{{resolve-imports resourceConfig}}
+
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+public record {{capitalize resourceConfig.name}}Event (
+{{#each resourceConfig.attributes}}
+  {{#each this.annotations}}
+    @{{this.annotation}}
+  {{/each}}
+  {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+) {}

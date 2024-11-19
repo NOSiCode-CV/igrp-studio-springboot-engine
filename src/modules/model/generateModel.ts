@@ -78,7 +78,7 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
   if (context.baseConfig.projectStructureStyle === 'domain') {
-    return await renderTemplate(TEMPLATES.DDD_ENTITY_BASE_IMPL, context);
+    return await renderTemplate(TEMPLATES.DDD_LITE_MODEL, context);
   } else {
     return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
   }
@@ -170,7 +170,7 @@ const getModelOutputPath = (context: RenderContext<ModelConfig>) =>
 
 // Caminho onde o arquivo é salvo
 const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}Entity${EXTENSIONS.JAVA}`)
+  path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
   if(context.baseConfig.projectStructureStyle === 'domain')

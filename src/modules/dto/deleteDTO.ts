@@ -41,7 +41,10 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
 const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
   switch (context.resourceConfig.type) {
     case "dto":
-      return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      if(context.baseConfig.projectStructureStyle === 'domain')
+        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+      else
+        return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     case "dataobject":
       return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);
     case "command":
@@ -54,8 +57,6 @@ const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
       return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
     case "domainentity":
       return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);
-    case "datatransferobject":
-      return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }
 };
 

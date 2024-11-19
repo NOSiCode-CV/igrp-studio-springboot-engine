@@ -281,7 +281,7 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       nullable: true,
       errorMessage: 'The audit field, if provided, must be a boolean value.'
     },
-    aggregate: {
+    module: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',

@@ -45,7 +45,7 @@ export interface ModelConfig {
   crud?: Crud;
   relations?: Relation[];
   audit?: boolean;  // New audit field added
-  aggregate?: string;
+  module?: string;
 }
 
 export interface PermissionConfig {
@@ -84,12 +84,18 @@ export interface JavaAttribute {
 export interface DTOBaseConfig {
   type: ObjectTypes;
   name: string;
-  aggregate?: string;
+  module?: string;
 }
 
 export interface DTOConfig extends DTOBaseConfig {
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
+}
+
+export interface HandlerConfig extends DTOBaseConfig {
+  template: 'classic' | 'record';
+  attributes: JavaAttribute[];
+  response: string
 }
 
 export interface UniqueConstraint {
@@ -175,6 +181,7 @@ export interface ControllerConfig {
   basePath: string;
   actions: ControllerAction[];
   attributes?: Attribute[];
+  module?: string
 }
 
 export interface ControllerAction {

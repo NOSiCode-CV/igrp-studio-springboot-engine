@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-//export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -16,6 +16,7 @@ export const DIRECTORIES = {
   IGRPSTUDIO: '.igrpstudio',
   MONITORING: 'monitoring',
   MODELS: 'models',
+  MODEL: 'model',
   DTO: 'dto',
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
@@ -28,10 +29,13 @@ export const DIRECTORIES = {
   DOMAIN: 'domain',
   INFRASTRUCTURE: 'infrastructure',
   COMMAND: 'command',
+  COMMANDS: 'commands',
   QUERY: 'query',
+  QUERIES: 'queries',
   ASSEMBLER: 'assembler',
   AGGREGATE: 'aggregate',
   EVENT: 'event',
+  EVENTS: 'events',
   EXCEPTIONS: 'exceptions',
   IMPLEMENTATION: 'impl',
   REPOSITORY: 'repository',
@@ -44,7 +48,13 @@ export const DIRECTORIES = {
   COLLECTOR: 'collector',
   PROMETHEUS: 'prometheus',
   PROMTAIL: 'promtail',
-  TEMPO: 'tempo'
+  TEMPO: 'tempo',
+  SHARED: 'shared',
+  HANDLERS: 'handlers',
+  MESSAGING: 'messaging',
+  PERSISTENCE: 'persistence',
+
+
 };
 
 export const PACKAGES = {
@@ -107,7 +117,7 @@ export const ERROR_MESSAGE = {
 };
 
 export const TEMPLATES = {
-  APPLICATION: 'struct/technical/java/application.hbs',
+  APPLICATION: 'struct/application.hbs',
 
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
@@ -225,6 +235,38 @@ export const TEMPLATES = {
   DDD_SPRING_COMMAND_BUS: 'struct/domain/java/infrastructure/spring/springcommandbus.hbs',
   DDD_SPRING_EVENT_BUS: 'struct/domain/java/infrastructure/spring/springeventbus.hbs',
 
+  // DOMAIN DRIVEN DESIGN LITE
+  DDD_LITE_COMMAND: {
+    'classic': 'struct/domain-lite/java/application/commands/commands/command-ddd.hbs',
+    'record': 'struct/domain-lite/java/application/commands/commands/command-record-ddd.hbs',
+  },
+
+  DDD_LITE_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd.hbs',
+
+  DDD_LITE_DTO: {
+    'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
+    'record': 'struct/domain-lite/java/application/dto/dto-record-ddd.hbs',
+  },
+
+  DDD_LITE_QUERY: {
+    'classic': 'struct/domain-lite/java/application/queries/queries/query-ddd.hbs',
+    'record': 'struct/domain-lite/java/application/queries/queries/query-record-ddd.hbs',
+  },
+
+  DDD_LITE_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd.hbs',
+
+  DDD_LITE_EVENT: {
+    'classic': 'struct/domain-lite/java/domain/events/events/event-ddd.hbs',
+    'record': 'struct/domain-lite/java/domain/events/events/event-record-ddd.hbs',
+  },
+
+  DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/events/eventhandler-ddd.hbs',
+  DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
+  DDD_LITE_MODEL: 'struct/domain-lite/java/domain/model/model-ddd.hbs',
+  DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',
+  DDD_LITE_CONTROLLER: 'struct/domain-lite/java/infrastructure/controller/controller-ddd.hbs',
+  DDD_LITE_REPOSITORY_IMPL: 'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
+
 };
 
 export const CONFIG_FILES = [
@@ -294,6 +336,7 @@ export const COMMON_FILES = {
   EVENT: 'Event.java',
   EVENT_BUS: 'EventBus.java',
   EVENT_LISTENER: 'EventListener.java',
+  EVENT_PUBLISHER: 'EventPublisher.java',
   DOMAIN_ENTITY: 'DomainEntity.java',
   CACHE_SERVICE: 'CacheService.java',
   CONVERTER: 'Converter.java',
@@ -382,7 +425,7 @@ export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const STRUCT_TYPES = ['domain', 'technical'] as const
-export const OBJECT_TYPES = ['dto', 'dataobject', 'command', 'query', 'event', 'valueobject', 'domainentity', 'datatransferobject'] as const
+export const OBJECT_TYPES = ['dto', 'command', 'query', 'event'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

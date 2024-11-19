@@ -29,16 +29,62 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
   const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
 
+  /*
+  FULL DDD
   const apiPath = path.join(mainPath, DIRECTORIES.API);
   const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
   const queryPath = path.join(applicationPath, DIRECTORIES.QUERY);
   const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
   const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
+  */
 
+  const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
+  const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
+  const commandPath = path.join(applicationPath, DIRECTORIES.COMMANDS);
+  const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);
+  const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
+  const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
+  const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
 
   if(config.projectStructureStyle === 'domain') {
 
     const paths = [
+
+      path.join(basePath, DIRECTORIES.RESOURCES),
+
+      sharedPath,
+
+      applicationPath,
+      domainPath,
+      infraPath,
+
+      commandPath,
+      queryPath,
+
+      path.join(commandPath, DIRECTORIES.COMMANDS),
+      path.join(commandPath, DIRECTORIES.HANDLERS),
+      path.join(queryPath, DIRECTORIES.QUERIES),
+      path.join(queryPath, DIRECTORIES.HANDLERS),
+
+      path.join(applicationPath, DIRECTORIES.DTO),
+
+      eventPath,
+
+      path.join(eventPath, DIRECTORIES.EVENTS),
+      path.join(eventPath, DIRECTORIES.HANDLERS),
+
+      path.join(domainPath, DIRECTORIES.MODELS),
+      path.join(domainPath, DIRECTORIES.REPOSITORY),
+      path.join(domainPath, DIRECTORIES.SERVICE),
+
+      path.join(infraPath, DIRECTORIES.CONTROLLER),
+      path.join(infraPath, DIRECTORIES.MESSAGING),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE),
+
+      /*
+
+      FULL DDD
+
       path.join(basePath, DIRECTORIES.RESOURCES),
 
       path.join(mainPath, DIRECTORIES.API),
@@ -70,6 +116,9 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
 
       path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpstudioPath, DIRECTORIES.MODELS),
+
+      */
+
     ];
 
     if(config.enableObservability)

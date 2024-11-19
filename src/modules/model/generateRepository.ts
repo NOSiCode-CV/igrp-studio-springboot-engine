@@ -4,7 +4,7 @@ import { TEMPLATES } from '../../utils/constants';
 import {
   getDDDAggregateRepositoryImplOutputDir,
   getDDDAggregateRepositoryOutputDir,
-  getDDDModelOutputDir,
+  getDDDModelOutputDir, getDDDRepositoryImplOutputDir,
   getDDDRepositoryOutputDir,
   getModelOutputDir,
 } from '../../utils/helpers';
@@ -33,6 +33,12 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
   }
 };
 
+export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>) => {
+  const template = await renderImplRepository(context);
+  const modelOutputPath = getDDDRepositoryImplOutputDir(context);
+  await saveToFile(template, modelOutputPath);
+};
+
 export const generateAggregateRepository = async (context: RenderContext<ModelConfig>) => {
   const template = await renderRepository(context);
   const implTemplate = await renderImplRepository(context);
@@ -59,11 +65,11 @@ export const renderRepository = async (context: RenderContext<ModelConfig>) => {
 };
 
 export const renderImplRepository = async (context: RenderContext<ModelConfig>) => {
-  return await renderTemplate(TEMPLATES.DDD_AGGREGATE_REPOSITORY_IMPL, context);
+  return await renderTemplate(TEMPLATES.DDD_LITE_REPOSITORY_IMPL, context);
 };
 
 export const renderDDDRepository = async (context: RenderContext<ModelConfig>) => {
-  return await renderTemplate(TEMPLATES.DDD_BASE_REPOSITORY_IMPL, context);
+  return await renderTemplate(TEMPLATES.DDD_LITE_REPOSITORY, context);
 };
 
 /**
