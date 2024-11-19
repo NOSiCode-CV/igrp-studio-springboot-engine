@@ -46,7 +46,7 @@ const renderController = async (context: RenderContext<ControllerConfig>) => {
 };
 
 const getControllerPath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.struct === 'domain')
+  if(context.baseConfig.projectStructureStyle === 'domain')
     return path.join(getDDDControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
   else
     return path.join(getControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);

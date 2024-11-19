@@ -19,14 +19,14 @@ export const generateServiceInterface = async (context: RenderContext<Controller
 };
 
 export const renderServiceInterface = async (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.struct === 'domain')
+  if(context.baseConfig.projectStructureStyle === 'domain')
     return await renderTemplate(TEMPLATES.DDD_CMD_SERVICE, context);
   else
     return await renderTemplate(TEMPLATES.DOMAIN_ICONTROLLER, context);
 };
 
 const getServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.struct === 'domain')
+  if(context.baseConfig.projectStructureStyle === 'domain')
     return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
   else
     return path.join(getControllerDir(context), `${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`);

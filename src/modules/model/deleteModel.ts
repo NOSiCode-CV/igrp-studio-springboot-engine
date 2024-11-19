@@ -7,7 +7,7 @@ export const deleteModelConfig = async (context: RenderContext<ModelConfig>) => 
 
   let modelPath;
 
-  if(context.baseConfig.struct === 'domain') {
+  if(context.baseConfig.projectStructureStyle === 'domain') {
     modelPath = getDDDModelOutputDir(context);
   } else {
     modelPath = getModelOutputDir(context);

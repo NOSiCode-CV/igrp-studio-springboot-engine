@@ -55,7 +55,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       type: "string",
       nullable: true
     },
-    struct: {
+    projectStructureStyle: {
       type: "string",
       nullable: false
     },

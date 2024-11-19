@@ -145,7 +145,7 @@ export const transformDTOConfig = async function (
 };
 
 const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
-  if (context.baseConfig.struct === 'domain') {
+  if (context.baseConfig.projectStructureStyle === 'domain') {
     switch (context.resourceConfig.type) {
       case "dto":
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);

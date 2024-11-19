@@ -30,13 +30,13 @@ export interface ApiConfig {
   database: DatabaseTypes;
   description?: string;
   package?: string;
-  struct: StructTypes;
+  projectStructureStyle: ProjectStructureStyle;
   name?: string;
   enableObservability: boolean;
 }
 
 export interface ModelConfig {
-  type: 'model' | 'domain' | 'domainimpl';
+  type: 'model';
   name: string;
   tableName: string;
   attributes: Attribute[];
@@ -221,7 +221,7 @@ export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];
-export type StructTypes = (typeof STRUCT_TYPES)[number];
+export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];

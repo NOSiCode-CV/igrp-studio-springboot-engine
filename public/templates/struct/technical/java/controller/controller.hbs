@@ -1,4 +1,4 @@
-{{#if (eq baseConfig.struct "domain")}}
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
 package {{baseConfig.group}}.{{baseConfig.artifact}}.api.controller;
 {{else}}
 package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{toLowerCase resourceConfig.name}};
@@ -8,28 +8,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-{{#if (eq baseConfig.struct "domain")}}
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{toLowerCase resourceConfig.name}}.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{toLowerCase resourceConfig.name}}.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{toLowerCase resourceConfig.name}}.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}CmdService;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}QueryService;
 {{else}}
-{{importsTypes ../baseConfig.struct resourceConfig.actions baseConfig.group baseConfig.artifact}}
+{{importsTypes ../baseConfig.projectStructureStyle resourceConfig.actions baseConfig.group baseConfig.artifact}}
 {{/if}}
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 public class {{resourceConfig.name}}Controller {
 
-{{#if (eq baseConfig.struct "domain")}}
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
   private final {{resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService;
   private final {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
 {{else}}
   private final {{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service;
 {{/if}}
 
-{{#if (eq baseConfig.struct "domain")}}
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
   public {{resourceConfig.name}}Controller({{resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){
     this.{{toCamelCase resourceConfig.name}}CmdService = {{toCamelCase resourceConfig.name}}CmdService;
     this.{{toCamelCase resourceConfig.name}}QueryService = {{toCamelCase resourceConfig.name}}QueryService;
@@ -51,7 +51,7 @@ public class {{resourceConfig.name}}Controller {
   )
   public ResponseEntity<{{{this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
 
-  {{#if (eq ../baseConfig.struct "domain")}}
+  {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
     {{#if requestParams}}final var query = new {{actionName}}Query({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
     {{else}}

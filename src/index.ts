@@ -13,7 +13,7 @@ import { deleteModelConfig } from './modules/model/deleteModel';
 import { saveModelConfig } from './modules/model/saveModelConfig';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 import { getBaseApiConfig } from './modules/common/getBaseApiConfig';
-import { generateRepository } from './modules/model/generateRepository';
+import { generateAggregateRepository, generateRepository } from './modules/model/generateRepository';
 import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
@@ -36,7 +36,11 @@ import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
-import { generateConverter } from './modules/converter/generateConverter';
+import {
+  generateAggregateConverter,
+  generateConverter,
+  generateDomainConverter,
+} from './modules/converter/generateConverter';
 import { generateAggregateRoot } from './modules/controller/generateAggregateRoot';
 import { generateHandlers } from './modules/handlers/generateHandlers';
 import { generateListeners } from './modules/listeners/generateListeners';
@@ -198,7 +202,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     await generateRepository(context);
   }
 
-  if(context.baseConfig.struct === 'domain') {
+  if(context.baseConfig.projectStructureStyle === 'domain') {
 
     const doContext: RenderContext<DTOConfig> = {
       resourceConfig: await transformDTOConfig({
@@ -214,7 +218,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     };
 
     await generateDTO(doContext);
-    await generateConverter(context);
+    await generateDomainConverter(context);
 
   }
 
@@ -437,7 +441,7 @@ export const addDTO = async (dirty: DTOConfig, basePath: string) => {
 
   if(context.resourceConfig.type === 'datatransferobject') {
     const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', aggregate: config.aggregate, name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'model', aggregate: config.aggregate, name: config.name, attributes: config.attributes.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
     await generateConverter(implContext)
   } else if(context.resourceConfig.type === 'command') {
@@ -585,7 +589,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   await generateServiceInterface(context);
   await generateServiceInmpl(context);
 
-  if(context.baseConfig.struct === 'domain') {
+  if(context.baseConfig.projectStructureStyle === 'domain') {
 
     await generateQueryServiceInterface(context);
     await generateQueryServiceInmpl(context);
@@ -594,16 +598,11 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     await generateAggregateRootHandler(context);
 
     const dddContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domain', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
+      resourceConfig: {type: 'model', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
     };
 
-    const implContext: RenderContext<ModelConfig> = {
-      resourceConfig: {type: 'domainimpl', name: config.name, attributes: config.attributes!.map(e => ({ name: e.name, type: e.type as AttributeType, primaryKey: e.primaryKey})), tableName: config.name}, baseConfig, basePath,
-    };
-
-    await generateRepository(dddContext)
-    await generateRepository(implContext)
-    await generateConverter(dddContext)
+    await generateAggregateRepository(dddContext)
+    await generateAggregateConverter(dddContext)
   }
 
 };

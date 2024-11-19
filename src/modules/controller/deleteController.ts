@@ -12,7 +12,7 @@ export const deleteControllerConfig = async (context: RenderContext<ControllerCo
 
   let controllerPath;
 
-  if (context.baseConfig.struct === 'domain') {
+  if (context.baseConfig.projectStructureStyle === 'domain') {
     controllerPath = getDDDControllerDir(context);
     const aggregatePath = getDDDAggregateRootOutputDir(context);
     if (await fs.pathExists(aggregatePath)) await fs.rm(aggregatePath, { recursive: true });

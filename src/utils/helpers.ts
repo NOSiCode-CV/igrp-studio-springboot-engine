@@ -68,7 +68,7 @@ export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig>) =
     DIRECTORIES.INFRASTRUCTURE,
     DIRECTORIES.DATABASE,
     DIRECTORIES.REPOSITORY,
-    context.resourceConfig.name.toLowerCase()
+    context.resourceConfig.aggregate!.toLowerCase()
   );
 
 export const getDDDAggregateRepositoryOutputDir = (context: RenderContext<ModelConfig>) =>

@@ -35,7 +35,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       getMainPath(context.baseConfig.group, context.baseConfig.artifact)
     );
   
-  if (context.baseConfig.struct === 'domain') {
+  if (context.baseConfig.projectStructureStyle === 'domain') {
 
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
@@ -56,7 +56,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       { output: path.join(applicationPath, DIRECTORIES.COMMAND), template: TEMPLATES.DDD_COMMAND_LISTENER, name: COMMON_FILES.COMMAND_LISTENER},
 
       { output: path.join(queryPath, DIRECTORIES.ASSEMBLER), template: TEMPLATES.DDD_ASSEMBLER, name: COMMON_FILES.ASSEMBLER},
-      { output: path.join(queryPath, DIRECTORIES.DTO), template: TEMPLATES.DDD_DATA_TRANSFER_OBJECT, name: COMMON_FILES.DATA_TRANSFER_OBJECT},
 
       // DOMAIN LAYER
       { output: path.join(domainPath, DIRECTORIES.AGGREGATE), template: TEMPLATES.DDD_AGGREGATE, name: COMMON_FILES.AGGREGATE},

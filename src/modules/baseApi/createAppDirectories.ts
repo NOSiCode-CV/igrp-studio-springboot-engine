@@ -36,7 +36,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
 
 
-  if(config.struct === 'domain') {
+  if(config.projectStructureStyle === 'domain') {
 
     const paths = [
       path.join(basePath, DIRECTORIES.RESOURCES),

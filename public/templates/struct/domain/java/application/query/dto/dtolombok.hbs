@@ -3,7 +3,6 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{toL
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.DataTransferObject;
 
 {{{resolve-imports resourceConfig}}}
 
@@ -13,7 +12,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.DataTr
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}DTO extends DataTransferObject<{{keyType resourceConfig}}> {
+public class {{resourceConfig.name}}DTO {
 
   {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
