@@ -262,7 +262,7 @@ export const OBSERVABILITY_BINARY_FILES = [
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES: 'application.yml',
   APPLICATION_PROPERTIES_FILE: 'application.properties',
-  APPLICATION_PROPERTIES_FILE_LOCAL: 'application-local.properties',
+  APPLICATION_PROPERTIES_FILE_LOCAL: 'application-dev.properties',
   APPLICATION_PROPERTIES_FILE_DOCKER: 'application-docker.properties',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',

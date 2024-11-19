@@ -36,7 +36,7 @@ import java.math.{{this}};
         {{/each}}
     }
 {{/if}})
-public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.name}}> {
+public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.name}}, {{keyType resourceConfig}}> {
 
   {{#each resourceConfig.attributes}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
   @NotBlank(message = "{{this.name}} is mandatory")

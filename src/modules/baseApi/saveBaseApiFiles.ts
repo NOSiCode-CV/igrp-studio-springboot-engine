@@ -72,7 +72,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       // INFRASTRUCTURE LAYER
       { output: path.join(infraPath, DIRECTORIES.CACHE), template: TEMPLATES.DDD_CACHE_SERVICE, name: COMMON_FILES.CACHE_SERVICE},
       
-      { output: path.join(dbPath, DIRECTORIES.CONVERTER), template: TEMPLATES.DDD_CONVERTER, name: COMMON_FILES.CACHE_SERVICE},
+      { output: path.join(dbPath, DIRECTORIES.CONVERTER), template: TEMPLATES.DDD_CONVERTER, name: COMMON_FILES.CONVERTER},
       { output: path.join(dbPath, DIRECTORIES.DATA_OBJECT), template: TEMPLATES.DDD_DATA_OBJECT, name: COMMON_FILES.DATA_OBJECT},
       { output: path.join(dbPath, DIRECTORIES.ENTITY), template: TEMPLATES.DDD_ENTITY_BASE, name: COMMON_FILES.ENTITY_BASE},
       { output: path.join(dbPath, DIRECTORIES.REPOSITORY), template: TEMPLATES.DDD_BASE_REPOSITORY, name: COMMON_FILES.BASE_REPOSITORY},

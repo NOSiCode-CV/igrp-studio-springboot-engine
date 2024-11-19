@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @MappedSuperclass
-public abstract class EntityBase<T extends EntityBase<T>> {
+public abstract class EntityBase<T extends EntityBase<T, ID>, ID> {
 
    @Id
-   @GeneratedValue(strategy = GenerationType.{{resourceConfig.genType}})
-   private {{keyType resourceConfig}} id;
+   @GeneratedValue(strategy = GenerationType.AUTO)
+   private ID id;
 
    private static final Logger log = LoggerFactory.getLogger(EntityBase.class);
 
@@ -21,7 +21,7 @@ public abstract class EntityBase<T extends EntityBase<T>> {
    *
    * @return the entity ID
    */
-   public Long getId() {
+   public ID getId() {
       return id;
    }
 
@@ -39,7 +39,7 @@ public abstract class EntityBase<T extends EntityBase<T>> {
    public boolean equals(Object other) {
       if (this == other) return true;
       if (other == null || getClass() != other.getClass()) return false;
-      EntityBase<?> that = (EntityBase<?>) other;
+      EntityBase<?, ?> that = (EntityBase<?, ?>) other;
       checkIdentity(this);
       checkIdentity(that);
       return id != null && id.equals(that.id);
@@ -51,7 +51,7 @@ public abstract class EntityBase<T extends EntityBase<T>> {
    * @param entity the entity to check
    * @throws IllegalStateException if identity is missing
    */
-   private void checkIdentity(EntityBase<?> entity) {
+   private void checkIdentity(EntityBase<?, ?> entity) {
       if (entity.id == null) {
          throw new IllegalStateException("Entity identity is not set: " + entity);
       }
