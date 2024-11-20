@@ -5,7 +5,7 @@ import {
   COMMON_FILES, CONFIG_FILES,
   DIRECTORIES, EXTENSIONS, OBSERVABILITY_BINARY_FILES,
   OBSERVABILITY_CONFIG_FILES,
-  OBSERVABILITY_YAML_CONFIG_FILES, TEMPLATE_DIR,
+  OBSERVABILITY_YAML_CONFIG_FILES, PROJECT_STRUCTURE_STYLE, TEMPLATE_DIR,
   TEMPLATES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
@@ -39,7 +39,7 @@ const generateBaseModuleFiles = (context: RenderContext<ModuleConfig>): BASE_API
       getMainPath(context.baseConfig.group, context.baseConfig.artifact)
     );
 
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const modulePath = path.join(mainPath, context.resourceConfig.name);
     const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);

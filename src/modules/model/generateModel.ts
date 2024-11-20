@@ -1,6 +1,6 @@
 import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { ERROR_MESSAGE, EXTENSIONS, TEMPLATES } from '../../utils/constants';
+import { ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getDDDModelOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
@@ -14,7 +14,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
   let modelOutputPath: string;
 
-  if(context.baseConfig.projectStructureStyle == 'domain')
+  if(context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(context);
   else
     modelOutputPath = getModelOutputPath(context);
@@ -79,7 +79,7 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     return await renderTemplate(TEMPLATES.DDD_LITE_MODEL, context);
   } else {
     return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
@@ -183,7 +183,7 @@ const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return path.join(
       getDDDModelOutputDir(context),
       `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
@@ -196,7 +196,7 @@ const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
 }
 
 const modelDirectory = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return path.join(getDDDModelOutputDir(context));
   else
     return path.join(getModelOutputDir(context));

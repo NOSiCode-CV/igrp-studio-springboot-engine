@@ -6,7 +6,7 @@ import {
   EXTENSIONS,
   JAVA_TYPES,
   PACKAGE_NS,
-  PACKAGES,
+  PACKAGES, PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
 } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
@@ -46,7 +46,7 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
   
   switch (context.resourceConfig.type) {
     case "dto":
-      if(context.baseConfig.projectStructureStyle === 'domain')
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
@@ -150,7 +150,7 @@ export const transformDTOConfig = async function (
 };
 
 const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
       case "dto":
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);

@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -69,6 +69,11 @@ export const PACKAGE_NS = {
   dto: 'dto',
   controller: 'controller'
 };
+
+export const PROJECT_STRUCTURE_STYLE = {
+  DOMAIN_DRIVEN_DESIGN: 'domain',
+  TECHNICAL: 'technical'
+}
 
 export const SUCCESS_MESSAGE = {
   DIRECTORY_CREATED: 'Directories created',
@@ -426,7 +431,7 @@ export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPE
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
-export const STRUCT_TYPES = ['domain', 'technical'] as const
+export const STRUCT_TYPES = [PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN, PROJECT_STRUCTURE_STYLE.TECHNICAL] as const
 export const OBJECT_TYPES = ['dto', 'command', 'query', 'event'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',

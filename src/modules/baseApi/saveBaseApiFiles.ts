@@ -4,7 +4,12 @@ import {
   DIRECTORIES,
   TEMPLATES,
   COMMON_FILES,
-  CONFIG_FILES, OBSERVABILITY_CONFIG_FILES, OBSERVABILITY_BINARY_FILES, TEMPLATE_DIR, OBSERVABILITY_YAML_CONFIG_FILES,
+  CONFIG_FILES,
+  OBSERVABILITY_CONFIG_FILES,
+  OBSERVABILITY_BINARY_FILES,
+  TEMPLATE_DIR,
+  OBSERVABILITY_YAML_CONFIG_FILES,
+  PROJECT_STRUCTURE_STYLE,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
@@ -35,7 +40,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       getMainPath(context.baseConfig.group, context.baseConfig.artifact)
     );
   
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
     const configPath = path.join(sharedPath, 'config');

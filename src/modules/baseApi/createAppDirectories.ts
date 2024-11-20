@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES } from '../../utils/constants';
+import { DIRECTORIES, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 import { getMainPath, getTestPath } from '../../utils/helpers';
 
 /**
@@ -46,7 +46,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
 
-  if(config.projectStructureStyle === 'domain') {
+  if(config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const paths = [
 

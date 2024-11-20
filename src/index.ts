@@ -10,7 +10,7 @@ import {
 import {
   ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES, DIRECTORIES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES,
-  MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES,
+  MIME_TYPES, PARAMS_TYPES, PROJECT_STRUCTURE_STYLE, RELATIONSHIP_TYPES, RESPONSE_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
 import path from 'path';
@@ -249,7 +249,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     await generateRepository(context);
   }
 
-  if(context.baseConfig.projectStructureStyle === 'domain') {
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     await generateRepositoryImpl(context);
 
@@ -490,7 +490,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
 
   await generateDTO(context);
 
-  if(context.baseConfig.projectStructureStyle === 'domain') {
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     if (context.resourceConfig.type === 'command' || context.resourceConfig.type === 'event' || context.resourceConfig.type === 'query') {
       await generateHandlers(context);
     }
@@ -632,7 +632,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   
   await generateController(context);
 
-  if(context.baseConfig.projectStructureStyle === 'domain') {
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
 

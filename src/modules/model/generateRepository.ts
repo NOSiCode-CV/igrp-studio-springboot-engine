@@ -1,6 +1,6 @@
 import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { TEMPLATES } from '../../utils/constants';
+import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import {
   getDDDAggregateRepositoryImplOutputDir,
   getDDDAggregateRepositoryOutputDir,
@@ -24,7 +24,7 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
   const template = await renderRepository(context);
   const dddTemplate = await renderDDDRepository(context);
 
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const modelOutputPath = getDDDRepositoryOutputPath(context);
     await saveToFile(dddTemplate, modelOutputPath, false);
   } else {
@@ -58,7 +58,7 @@ export const generateAggregateRepository = async (context: RenderContext<ModelCo
  * @throws - Throws an error if the model configuration is invalid or if CRUD is not specified.
  */
 export const renderRepository = async (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return await renderTemplate(TEMPLATES.DDD_AGGREGATE_REPOSITORY, context);
   else
     return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);

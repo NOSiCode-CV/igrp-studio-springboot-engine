@@ -6,13 +6,13 @@ import {
   getDDDControllerDir, getDTOConfigPath,
 } from '../../utils/helpers';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 
 export const deleteControllerConfig = async (context: RenderContext<ControllerConfig>) => {
 
   let controllerPath;
 
-  if (context.baseConfig.projectStructureStyle === 'domain') {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     controllerPath = getDDDControllerDir(context);
     const aggregatePath = getDDDAggregateRootOutputDir(context);
     if (await fs.pathExists(aggregatePath)) await fs.rm(aggregatePath, { recursive: true });

@@ -4,7 +4,13 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDTOTypes } from '../dto/helpers';
 import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
-import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES, DIRECTORIES } from '../../utils/constants';
+import {
+  ERROR_MESSAGE,
+  TEMPLATES,
+  RESPONSE_TYPES,
+  DIRECTORIES,
+  PROJECT_STRUCTURE_STYLE,
+} from '../../utils/constants';
 import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
@@ -41,14 +47,14 @@ export const generateController = async (context: RenderContext<ControllerConfig
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
   if (!context.resourceConfig) throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return await renderTemplate(TEMPLATES.DDD_LITE_CONTROLLER, context);
   else
     return await renderTemplate(TEMPLATES.DOMAIN_CONTROLLER, context);
 };
 
 const getControllerPath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return path.join(getDDDControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
   else
     return path.join(getControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);

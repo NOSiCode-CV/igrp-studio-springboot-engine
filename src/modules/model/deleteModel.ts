@@ -1,13 +1,13 @@
 import fs from 'fs-extra';
 import { getDDDModelOutputDir, getModelConfigPath, getModelOutputDir } from '../../utils/helpers';
 import { ModelConfig, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 
 export const deleteModelConfig = async (context: RenderContext<ModelConfig>) => {
 
   let modelPath;
 
-  if(context.baseConfig.projectStructureStyle === 'domain') {
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     modelPath = getDDDModelOutputDir(context);
   } else {
     modelPath = getModelOutputDir(context);

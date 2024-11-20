@@ -1,6 +1,6 @@
 import path from 'path';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, TEMPLATES } from '../../utils/constants';
+import { ERROR_MESSAGE, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '../../utils/helpers';
@@ -19,14 +19,14 @@ export const generateServiceInterface = async (context: RenderContext<Controller
 };
 
 export const renderServiceInterface = async (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return await renderTemplate(TEMPLATES.DDD_CMD_SERVICE, context);
   else
     return await renderTemplate(TEMPLATES.DOMAIN_ICONTROLLER, context);
 };
 
 const getServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === 'domain')
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
   else
     return path.join(getControllerDir(context), `${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`);

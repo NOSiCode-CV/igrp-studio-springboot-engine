@@ -11,7 +11,7 @@ import {
   getDtoOutputDir,
 } from '../../utils/helpers';
 import { DTOBaseConfig, DTOConfig, JavaType, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 import { getDTOTypes } from './helpers';
 import { checkDependencyInDTO } from './checkDependencyInDTO';
 import { checkDependencyInModel } from './checkDependencyInModel';
@@ -42,7 +42,7 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
 const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
   switch (context.resourceConfig.type) {
     case "dto":
-      if(context.baseConfig.projectStructureStyle === 'domain')
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
