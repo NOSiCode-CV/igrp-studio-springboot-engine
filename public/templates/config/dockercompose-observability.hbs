@@ -1,8 +1,8 @@
-name: '{{baseConfig.name}}-monitoring'
+name: '{{toLowerCase baseConfig.name}}-api-service'
 
 networks:
   default:
-    name: {{baseConfig.name}}
+    name: {{toLowerCase baseConfig.name}}
     external: false
 
 services:
@@ -86,16 +86,16 @@ services:
       - postgres-data-14:/var/lib/postgresql/data
     restart: unless-stopped
 
-  {{baseConfig.name}}-service:
+  {{toLowerCase baseConfig.name}}-service:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: {{baseConfig.name}}-service
+    container_name: {{toLowerCase baseConfig.name}}-service
     depends_on:
       - postgres
     environment:
       - SERVER_PORT=8080
-      - SERVICE_NAME={{baseConfig.name}}-service
+      - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
       - SPRING_PROFILES_ACTIVE=docker
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411

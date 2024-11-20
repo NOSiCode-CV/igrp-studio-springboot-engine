@@ -33,11 +33,11 @@ ENV SPRING_PROFILES_ACTIVE=docker
 WORKDIR /app
 
 # Copy the JAR file and OpenTelemetry agent from the build stage
-COPY --from=build /app/target/{{baseConfig.name}}-0.0.1-SNAPSHOT.jar ./
+COPY --from=build /app/target/{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar ./
 COPY --from=build /app/opentelemetry-javaagent.jar ./
 
 # Expose the port that the application will run on
 EXPOSE 8080
 
 # Command to run the application
-CMD ["sh", "-c", "java -javaagent:./opentelemetry-javaagent.jar -Dotel.traces.exporter=otlp -Dotel.metrics.exporter=otlp -Dotel.logs.exporter=otlp -Dotel.exporter.otlp.endpoint=http://host.docker.internal:<PORT> -Dotel.service.name=${SERVICE_NAME} -jar ./{{baseConfig.name}}-0.0.1-SNAPSHOT.jar"]
+CMD ["sh", "-c", "java -javaagent:./opentelemetry-javaagent.jar -Dotel.traces.exporter=otlp -Dotel.metrics.exporter=otlp -Dotel.logs.exporter=otlp -Dotel.exporter.otlp.endpoint=http://host.docker.internal:<PORT> -Dotel.service.name=${SERVICE_NAME} -jar ./{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar"]

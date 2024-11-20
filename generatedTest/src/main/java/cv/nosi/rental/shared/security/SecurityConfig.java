@@ -1,8 +1,4 @@
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.shared.security;
-{{else}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.security;
-{{/if}}
+package cv.nosi.rental.shared.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

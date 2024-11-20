@@ -1,0 +1,46 @@
+name: '{{toLowerCase baseConfig.name}}-api-service'
+
+networks:
+  default:
+    name: {{toLowerCase baseConfig.name}}
+    external: false
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: <DB_USERNAME>
+      POSTGRES_PASSWORD: <DB_PASSWORD>
+      POSTGRES_DB: <DB_NAME>
+    ports:
+      - "<PORT>:5432"
+    volumes:
+      - postgres-data-14:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  {{toLowerCase baseConfig.name}}-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{toLowerCase baseConfig.name}}-service
+    depends_on:
+      - postgres
+    environment:
+      - SERVER_PORT=8080
+      - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/<DB_NAME>
+      - SPRING_DATASOURCE_USERNAME=<DB_USERNAME>
+      - SPRING_DATASOURCE_PASSWORD=<DB_PASSWORD>
+    ports:
+      - "8080:8080"
+    #restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+
+volumes:
+  postgres-data-14:
+    driver: local

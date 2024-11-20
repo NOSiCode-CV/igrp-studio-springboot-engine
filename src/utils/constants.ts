@@ -178,11 +178,13 @@ export const TEMPLATES = {
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
 
   CONFIG_MVNW: 'config/mvnw.hbs',
+  CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
   CONFIG_POM_XML_OBSERVABILITY: 'config/pom.xml-observability.hbs',
   CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
+  CONFIG_DOCKER_COMPOSE: 'config/dockercompose.hbs',
   CONFIG_DOCKER_FILE_OBSERVABILITY: 'config/dockerfile-observability.hbs',
   CONFIG_DOCKER_COMPOSE_OBSERVABILITY: 'config/dockercompose-observability.hbs',
   CONFIG_OTEL_AGENT: 'config/opentelemetry-javaagent.jar',
@@ -272,9 +274,11 @@ export const TEMPLATES = {
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
+  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
   { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
@@ -282,6 +286,7 @@ export const CONFIG_FILES = [
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
+  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML_OBSERVABILITY, output: 'pom.xml' },
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
