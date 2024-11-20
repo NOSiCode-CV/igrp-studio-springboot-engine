@@ -393,7 +393,7 @@ export const ATTRIBUTE_TYPES = [
   'UUID'
 ] as const;
 
-export const VALID_PRIMARY_KEY = ['int', 'long', 'Long', 'Integer', 'UUID']
+export const VALID_PRIMARY_KEY = ['int', 'long', 'Long', 'Integer', 'UUID', 'String']
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
