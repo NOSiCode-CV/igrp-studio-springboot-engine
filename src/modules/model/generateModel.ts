@@ -60,7 +60,9 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
  * @throws - Throws an error if the model configuration is invalid or has no attributes.
  */
 const renderModel = async (context: RenderContext<ModelConfig>) => {
+
   context.sqlAttributes = sqlUniquesAttributes(context.resourceConfig.attributes)
+
   context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
 
   if (context.resourceConfig.attributes.length === 0) {
@@ -84,20 +86,28 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   }
 };
 
-const renderPrimaryKey = async(context: RenderContext<ModelConfig>) => {
+const renderPrimaryKey = async (context: RenderContext<ModelConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
-}
+};
 
 const sqlUniquesAttributes = (attributes: Attribute[]) => {
   let sqlAttributes: string[] = [];
-  attributes.forEach(attribute => {
-    if (attribute.type === "Date" || attribute.type === "Time" || attribute.type === "Timestamp"){
-      sqlAttributes.push(attribute.type)
+  attributes.forEach((attribute) => {
+    if (
+      attribute.type === 'LocalTime' ||
+      attribute.type === 'LocalDate' ||
+      attribute.type === 'LocalDateTime' ||
+      attribute.type === 'ZoneDateTime' ||
+      attribute.type === 'OffsetDateTime' ||
+      attribute.type === 'Instant'
+    ) {
+      sqlAttributes.push(attribute.type);
     }
-  })
+  });
 
-  return [...new Set(sqlAttributes)]
-}
+  return [...new Set(sqlAttributes)];
+};
+
 // Verefica existencia de atributos de alta precisão
 const mathUniquesAttributes = (attributes: Attribute[]) => {
   let mathAttributes: string[] = [];
