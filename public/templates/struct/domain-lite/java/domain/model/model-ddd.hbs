@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-{{#each sqlAttributes}}
-import java.sql.{{this}};
+{{#each dateTimeAttributes}}
+import java.time.{{this}};
 {{/each}}
 {{#each mathAttributes}}
 import java.math.{{this}};

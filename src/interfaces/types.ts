@@ -222,7 +222,7 @@ export type RenderContext<T = undefined> = {
   basePath: string;
   baseConfig: ApiConfig;
   mathAttributes?: string[];
-  sqlAttributes?: string[];
+  dateTimeAttributes?: string[];
   uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
 };
 

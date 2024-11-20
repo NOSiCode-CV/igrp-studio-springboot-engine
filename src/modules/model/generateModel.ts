@@ -55,13 +55,13 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
 /**
  * Generates the model in the API using the provided configuration.
- * @param ontext - The configuration of the model including the model name and attributes.
+ * @param context - The configuration of the model including the model name and attributes.
  * @returns - A string representing the model generated from the template.
  * @throws - Throws an error if the model configuration is invalid or has no attributes.
  */
 const renderModel = async (context: RenderContext<ModelConfig>) => {
 
-  context.sqlAttributes = sqlUniquesAttributes(context.resourceConfig.attributes)
+  context.dateTimeAttributes = dateTimeUniqueAttributes(context.resourceConfig.attributes)
 
   context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
 
@@ -90,8 +90,8 @@ const renderPrimaryKey = async (context: RenderContext<ModelConfig>) => {
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL_PRIMARY_KEY, context);
 };
 
-const sqlUniquesAttributes = (attributes: Attribute[]) => {
-  let sqlAttributes: string[] = [];
+const dateTimeUniqueAttributes = (attributes: Attribute[]) => {
+  let dateTimeAttributes: string[] = [];
   attributes.forEach((attribute) => {
     if (
       attribute.type === 'LocalTime' ||
@@ -101,11 +101,11 @@ const sqlUniquesAttributes = (attributes: Attribute[]) => {
       attribute.type === 'OffsetDateTime' ||
       attribute.type === 'Instant'
     ) {
-      sqlAttributes.push(attribute.type);
+      dateTimeAttributes.push(attribute.type);
     }
   });
 
-  return [...new Set(sqlAttributes)];
+  return [...new Set(dateTimeAttributes)];
 };
 
 // Verefica existencia de atributos de alta precisão
