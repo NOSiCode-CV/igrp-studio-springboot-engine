@@ -21,6 +21,19 @@ Handlebars.registerHelper('toCamelCase', (str: string) => {
   return str.charAt(0).toLowerCase() + str.slice(1);
 });
 
+Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
+
+  if (!str) return '';
+
+  return str
+    .toLowerCase()
+    .split('_')
+    .map((word, index) =>
+      index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join('');
+});
+
 Handlebars.registerHelper('toTitleCase', (str: string) => {
   if (!str) return '';
   return str

@@ -44,26 +44,26 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   @Id
   @GeneratedValue(strategy = GenerationType.{{this.generationType}})
   @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
-  private {{this.type}} {{toCamelCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+  private {{this.type}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
 
   @NotBlank(message = "{{this.name}} is mandatory"){{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
-  private String {{toCamelCase this.name}};{{else}}{{#if this.defaultValue}}
+  private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
-  private {{this.type}} {{toCamelCase this.name}};{{/if}}{{/if}}
+  private {{this.type}} {{toFullCamelCaseFromSnakeCase this.name}};{{/if}}{{/if}}
   {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
+  private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
   {{else if (eq this.relationType 'ManyToOne') }}
   @ManyToOne{{#if this.joinColumn}}
   @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
+  private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
   @ManyToMany{{#if this.joinTable}}
   @JoinTable(
     name = "{{this.joinTable}}"{{#if this.joinColumn}},
