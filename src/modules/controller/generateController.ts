@@ -47,10 +47,7 @@ export const generateController = async (context: RenderContext<ControllerConfig
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
   if (!context.resourceConfig) throw ERROR_MESSAGE.INVALID_CONTROLLER_CONFIG;
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-    return await renderTemplate(TEMPLATES.DDD_LITE_CONTROLLER, context);
-  else
-    return await renderTemplate(TEMPLATES.DOMAIN_CONTROLLER, context);
+  return await renderTemplate(TEMPLATES.DOMAIN_CONTROLLER, context);
 };
 
 const getControllerPath = (context: RenderContext<ControllerConfig>) => {
