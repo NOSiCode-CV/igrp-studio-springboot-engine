@@ -17,6 +17,7 @@ import { checkDependencyInDTO } from './checkDependencyInDTO';
 import { checkDependencyInModel } from './checkDependencyInModel';
 import { checkDependencyInController } from './checkDependencyInController';
 import path from 'path';
+import { normalizeName } from './saveDTOConfig';
 
 /**
 * @param {boolean} force - Delete without checking dependency.
@@ -29,7 +30,7 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
   }
 
   const dtoPath = getDtoFilePath(context);
-  const dtoConfigPath = getDTOConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath);
+  const dtoConfigPath = getDTOConfigPath(context.resourceConfig.type, context.resourceConfig.module ?? DIRECTORIES.SHARED, normalizeName(context.resourceConfig.name, context.resourceConfig.type), context.basePath);
 
   if (await fs.pathExists(dtoPath)) await fs.rm(dtoPath, { recursive: true });
   else throw ERROR_MESSAGE.DTO_FILE_NOT_FOUND;
