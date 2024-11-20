@@ -308,7 +308,6 @@ export const OBSERVABILITY_BINARY_FILES = [
 ]
 
 export const COMMON_FILES = {
-  APPLICATION_PROPERTIES: 'application.yml',
   APPLICATION_PROPERTIES_FILE: 'application.properties',
   APPLICATION_PROPERTIES_FILE_LOCAL: 'application-dev.properties',
   APPLICATION_PROPERTIES_FILE_DOCKER: 'application-docker.properties',
@@ -351,7 +350,6 @@ export const COMMON_FILES = {
   BASE_REPOSITORY: 'BaseRepository.java',
   SPRING_COMMAND_BUS: 'SpringCommandBus.java',
   SPRING_EVENT_BUS: 'SpringEventBus.java',
-
 };
 
 export const EXTENSIONS = {

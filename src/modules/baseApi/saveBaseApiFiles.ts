@@ -99,7 +99,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       {
         output: resourcePath,
         template: TEMPLATES.DOMAIN_RESOURCES,
-        name: COMMON_FILES.APPLICATION_PROPERTIES,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE,
       },
       {
         output: configPath,

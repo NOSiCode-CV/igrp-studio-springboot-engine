@@ -1,20 +1,22 @@
-spring:
-  application:
-    name: {{baseConfig.name}}
+# Application name
+spring.application.name={{baseConfig.name}}
 
-  profiles:
-    active: ${APP_ENVIRONMENT:dev}
+# Active profile (defaults to 'dev' if APP_ENVIRONMENT is not set)
+spring.profiles.active=${APP_ENVIRONMENT:dev}
 
-  datasource:
-    url: {{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql:{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql:{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@{{/if}}//<HOST>:<PORT>/<DATABASE_NAME>?<OPTIONAL_PARAMETERS>
-    username: username
-    password: password
-    driver-class-name: {{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
+#Disable database queries performed during view rendering
+spring.jpa.open-in-view=false
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
+#Swagguer
+springdoc.swagger-ui.operationsSorter=method
+
+# Datasource configuration
+spring.datasource.url={{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql:{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql:{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@{{/if}}//<HOST>:<PORT>/<DATABASE_NAME>?<OPTIONAL_PARAMETERS>
+  spring.datasource.username=username
+  spring.datasource.password=password
+  spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
+
+  # JPA and Hibernate settings
+  spring.jpa.hibernate.ddl-auto=update
+  spring.jpa.show-sql=true
+  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
