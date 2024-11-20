@@ -1,6 +1,6 @@
 {
   "name": "@igrp/spring-engine",
-  "version": "0.3.0-alpha-3",
+  "version": "0.3.0-alpha-4.1",
   "description": "Spring API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -25,7 +25,7 @@
     "API",
     "API-Rest"
   ],
-  "author": "Eduardo - Wayvant",
+  "author": "Marcelo Monteiro - NOSi",
   "license": "ISC",
   "dependencies": {
     "ajv": "^8.17.1",

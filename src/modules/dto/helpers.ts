@@ -1,4 +1,4 @@
-import { ApiConfig, DTOConfig, JavaAttribute } from '../../interfaces/types';
+import { ApiConfig, DTOConfig, JavaAttribute, ObjectTypes } from '../../interfaces/types';
 import { PACKAGES } from "../../utils/constants";
 import { getPackageNameFromConfig, loadConfig, loadDTOConfig, loadDTOConfigs } from '../../utils/helpers';
 
@@ -9,7 +9,7 @@ export const getDTOTypes = async function (module:string, basePath: string): Pro
     return types;
 }
 
-export const getDTOAttributes = async function (basePath: string, name: string): Promise<JavaAttribute[]> {
-    const configs: DTOConfig = await loadDTOConfig(basePath, name)
+export const getDTOAttributes = async function (type: ObjectTypes, basePath: string, name: string): Promise<JavaAttribute[]> {
+    const configs: DTOConfig = await loadDTOConfig(type, basePath, name)
     return configs.attributes
 }
