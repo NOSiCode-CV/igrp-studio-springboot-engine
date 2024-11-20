@@ -662,13 +662,13 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
             : act?.requestParams
               ? act.requestParams.map(e => ({
                 name: e.name,
-                type: e.type as 'Long' | 'String' | 'Integer' | 'Character' | 'Boolean' | 'Object',
+                type: e.type as 'Long' | 'String' | 'Integer' | 'Boolean' | 'Object',
                 ns: 'java'
               })).concat(
                 act?.pathVariables
                   ? act.pathVariables.map(e => ({
                     name: e.name,
-                    type: e.type as 'Long' | 'String' | 'Integer' | 'Character' | 'Boolean' | 'Object',
+                    type: e.type as 'Long' | 'String' | 'Integer' | 'Boolean' | 'Object',
                     ns: 'java'
                   }))
                   : [{name: "none", type: "Object", ns: "java"}]

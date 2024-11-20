@@ -269,7 +269,7 @@ Handlebars.registerHelper('cleanStr', function (str) {
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {
   const textTypes = [
     'String', 'Text', 'VARCHAR', 'CHAR', 'TEXT', 'CLOB', 'LONGTEXT', 'MEDIUMTEXT', 
-    'TINYTEXT', 'NVARCHAR', 'NCHAR', 'NCLOB', 'Character'
+    'TINYTEXT', 'NVARCHAR', 'NCHAR', 'NCLOB'
   ];
   if (textTypes.includes(type))
     return true
