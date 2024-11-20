@@ -1,7 +1,7 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute,
+  Attribute, AttributeType,
   ControllerAction,
   ControllerConfig, DTOConfig,
   JavaAttribute,
@@ -69,7 +69,7 @@ Handlebars.registerHelper('keyType', function(config: ModelConfig) {
   } else if (primaryKeyAttr.type === 'long') {
     return 'Long';
   } else {
-    return primaryKeyAttr.type;
+    return (primaryKeyAttr.type as AttributeType)
   }
 });
 
@@ -77,7 +77,7 @@ Handlebars.registerHelper('like', function (value, substring) {
   return value && value.includes(substring);
 });
 
-Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
+/*Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
   const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
   if (!primaryKeyAttr) {
     return null;
@@ -89,7 +89,7 @@ Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
   } else {
     return primaryKeyAttr.type;
   }
-});
+});*/
 
 Handlebars.registerHelper('keyType', function(config: DTOConfig) {
   if(!config) {

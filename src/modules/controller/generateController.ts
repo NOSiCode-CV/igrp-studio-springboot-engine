@@ -4,7 +4,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDTOTypes } from '../dto/helpers';
 import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
-import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
+import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES, DIRECTORIES } from '../../utils/constants';
 import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
@@ -57,7 +57,7 @@ const getControllerPath = (context: RenderContext<ControllerConfig>) => {
 
 const getDtos = async(context: RenderContext<ControllerConfig>) => {
   let dtos = []
-  const typesDTOs = await getDTOTypes(context.basePath);
+  const typesDTOs = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   for (const dto of typesDTOs.values()) {
     dtos.push(dto.name)
   }

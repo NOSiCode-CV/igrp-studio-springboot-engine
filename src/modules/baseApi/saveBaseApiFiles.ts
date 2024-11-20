@@ -37,10 +37,9 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   
   if (context.baseConfig.projectStructureStyle === 'domain') {
 
-    const configPath = path.join(mainPath, 'config');
-    const securityPath = path.join(mainPath, 'security');
-
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
+    const configPath = path.join(sharedPath, 'config');
+    const securityPath = path.join(sharedPath, 'security');
     const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
     const commandPath = path.join(applicationPath, DIRECTORIES.COMMANDS);
     const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);

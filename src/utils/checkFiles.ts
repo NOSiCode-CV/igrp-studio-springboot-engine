@@ -17,3 +17,7 @@ export const isFile = async (filePath: string) => (await fs.stat(filePath)).isFi
 
 export const checkIfDirectoryIsEmpty = async (directoryPath: string) =>
   (await fs.readdir(directoryPath)).length === 0;
+
+export const checkIfDirectoryExists = async (directoryPath: string): Promise<boolean> => {
+  return fs.existsSync(directoryPath);
+};

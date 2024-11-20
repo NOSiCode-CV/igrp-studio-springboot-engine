@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{toLowerCase resourceConfig.name}}.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.{{toLowerCase resourceConfig.name}}.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{toLowerCase resourceConfig.name}}.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}CmdService;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}QueryService;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
 {{else}}
-{{importsTypes ../baseConfig.projectStructureStyle resourceConfig.actions baseConfig.group baseConfig.artifact}}
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact}}
 {{/if}}
 
 @RestController
@@ -49,7 +49,7 @@ public class {{resourceConfig.name}}Controller {
     consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
     produces = "{{this.contentType}}"{{/if}}
   )
-  public ResponseEntity<{{{this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
+  public ResponseEntity<{{{clearStr this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
 
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
@@ -57,9 +57,9 @@ public class {{resourceConfig.name}}Controller {
     {{else}}
     {{#if requestBody}}{{else if requestParams}}final var command = new {{actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
     {{/if}}
-    {{#if (eq method "GET")}}final var result = {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{/if}});{{else}}{{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{else if requestParams}}command{{/if}});{{/if}}
+    {{#if (eq method "GET")}}final var result = {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{/if}});{{else}}final var response = {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{else if requestParams}}command{{/if}});{{/if}}
 
-    {{#if (eq method "GET")}}return ResponseEntity.ok(result);{{else}}return ResponseEntity.ok("Command executed successfully!");{{/if}}
+    {{#if (eq method "GET")}}return ResponseEntity.ok(result);{{else}}return ResponseEntity.ok(response);{{/if}}
 
   {{else}}
     final var result = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});

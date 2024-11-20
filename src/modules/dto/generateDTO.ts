@@ -1,6 +1,7 @@
 import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadata } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
+  DIRECTORIES,
   ERROR_MESSAGE,
   EXTENSIONS,
   JAVA_TYPES,
@@ -107,7 +108,7 @@ export const transformDTOConfig = async function (
       }
     } else if (attr.ns === PACKAGE_NS.model) {
       if (mtypes === undefined) {
-        mtypes = await getModelTypes(basePath);
+        mtypes = await getModelTypes(config.module ?? DIRECTORIES.SHARED, basePath);
       }
       const mt = mtypes.get(type.name);
       if (mt) {
@@ -117,7 +118,7 @@ export const transformDTOConfig = async function (
       }
     } else if (attr.ns === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
-        dtypes = await getDTOTypes(basePath);
+        dtypes = await getDTOTypes(config.module ?? DIRECTORIES.SHARED, basePath);
       }
       const dt = dtypes.get(type.name);
 

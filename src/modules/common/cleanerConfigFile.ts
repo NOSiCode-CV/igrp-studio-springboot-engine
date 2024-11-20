@@ -1,6 +1,6 @@
-import { ApiConfig, ModelConfig, ControllerConfig, DTOConfig } from "../../interfaces/types";
+import { ApiConfig, ModelConfig, ControllerConfig, DTOConfig, ModuleConfig } from '../../interfaces/types';
 
-export const cleaner = (config: ApiConfig | ModelConfig | ControllerConfig | DTOConfig) => {
+export const cleaner = (config: ApiConfig | ModelConfig | ControllerConfig | DTOConfig | ModuleConfig) => {
   
   const cleanObject = (dirty: any): any => {
     return Object.entries(dirty).reduce((acc, [key, value]) => {

@@ -3,7 +3,7 @@ import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import { TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
+import { getDDDServiceDir, getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
 
 const QUERY_SERVICE_SUFFIX = 'QueryServiceImpl.java';
 
@@ -22,5 +22,5 @@ export const renderQueryServiceImpl = async (context: RenderContext<ControllerCo
 };
 
 const getQueryServiceImplPath = (context: RenderContext<ControllerConfig>) => {
-  return path.join(getDDDServiceImplDir(context), `${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
+  return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
 };

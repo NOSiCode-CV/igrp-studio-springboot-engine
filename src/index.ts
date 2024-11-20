@@ -4,17 +4,18 @@ import {
   DTOConfig,
   HandlerConfig,
   ISelectPermissions, JavaAttribute,
-  ModelConfig,
+  ModelConfig, ModuleConfig,
   PermissionConfig,
 } from './interfaces/types';
 import {
-  ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
-  DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
-  MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES 
+  ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS,
+  DATABASE_TYPES, DIRECTORIES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES,
+  MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/apiConfig';
+import path from 'path';
 import { validateModelConfig } from './schema/modelConfig';
-import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
+import { checkIfDirectoryExists, checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { generateModel } from './modules/model/generateModel';
 import { validateController } from './schema/controllerConfig';
 import { deleteModelConfig } from './modules/model/deleteModel';
@@ -59,9 +60,12 @@ import { generateListeners } from './modules/listeners/generateListeners';
 import { generateAggregateRootHandler } from './modules/controller/generateAggregateRootHandler';
 import { generateQueryServiceInterface } from './modules/controller/generateQueryServiceInterface';
 import { generateQueryServiceInmpl } from './modules/controller/generateQueryService';
-import { loadDTOConfig, loadPermissionConfigs } from './utils/helpers';
+import { getMainPath, loadDTOConfig, loadPermissionConfigs, replaceTemplate } from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
 import { template } from 'handlebars';
+import { saveModuleConfig } from './modules/module/saveModuleConfig';
+import { createModuleDirectory } from './modules/module/createModuleDirectory';
+import { moduleValidation } from './schema/moduleConfig';
 
 /**
  * Main Function that creates the base api
@@ -133,6 +137,36 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
   await saveFileConfig(context);
 
 };
+
+export const addModule = async (dirty: ModuleConfig, basePath: string) => {
+
+  const config = cleaner(dirty)
+  const valid = moduleValidation(config);
+
+  if (!valid && moduleValidation.errors)
+    throw moduleValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<ModuleConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig: baseConfig,
+  };
+
+  if (await checkIfDirectoryExists(path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.artifact), context.resourceConfig.name))) {
+    throw ERROR_MESSAGE.MODULE_CREATED_ALREADY;
+  }
+
+  await createModuleDirectory(context);
+
+  await saveModuleConfig(context, basePath);
+
+}
 
 /**
 * Generates and saves a model to the API.
@@ -616,14 +650,16 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
   if(context.baseConfig.projectStructureStyle === 'domain') {
 
+    const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+
     for (const act of config.actions) {
-      const config: DTOConfig = await loadDTOConfig(context.basePath, act.actionName)
+      const config: DTOConfig | null = act?.requestBody? await loadDTOConfig(path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })), act.requestBody.replace('DTO', '')) : null
       await addDTO({
         type: act.method === 'GET' ? 'query' : 'command',
         name: act.actionName,
         template: 'classic',
         attributes: act?.requestBody
-          ? config.attributes
+          ? config!.attributes
           : (act?.pathVariables
             ? act.pathVariables.map(e => ({
               name: e.name,
@@ -655,6 +691,12 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
               : []) as JavaAttribute[]
       }, context.basePath);
     }
+
+    await generateQueryServiceInterface(context);
+    await generateQueryServiceInmpl(context);
+
+    await generateServiceInterface(context);
+    await generateServiceInmpl(context);
 
     // DDD FULL
     /*await generateQueryServiceInterface(context);
@@ -774,15 +816,16 @@ export const deletePermission = async(config: PermissionConfig, basePath: string
 }
 
 /**
- * 
- * @param basePath 
- * @returns 
+ *
+ * @param module
+ * @param basePath
+ * @returns
  */
-export const engineTypes = async (basePath: string) =>{
+export const engineTypes = async (module: string, basePath: string) =>{
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   let dtos = [];
-  const typesDTOs = await getDTOTypes(basePath);
+  const typesDTOs = await getDTOTypes(module, basePath);
   
   for (const dto of typesDTOs.values()) {
     dtos.push(dto.name)

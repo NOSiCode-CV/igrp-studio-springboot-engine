@@ -178,6 +178,12 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
+    module: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: 'The name attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
+    },
     basePath: { 
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,

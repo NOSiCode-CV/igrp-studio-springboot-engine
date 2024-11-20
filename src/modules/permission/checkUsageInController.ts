@@ -8,7 +8,7 @@ export const checkUsageInController = async function (context: RenderContext<Per
 
   const permissionName = context.resourceConfig.name
 
-  const controllerTypes = await getControllerTypes(context.basePath); 
+  const controllerTypes = await getControllerTypes("", context.basePath);
 
   for (const controller of controllerTypes.values()) {
     for (const action of controller.actions) {

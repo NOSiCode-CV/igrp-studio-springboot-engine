@@ -48,6 +48,11 @@ export interface ModelConfig {
   module?: string;
 }
 
+export interface ModuleConfig {
+  type: 'module';
+  name: string;
+}
+
 export interface PermissionConfig {
   type: 'permission';
   name: string;
@@ -180,7 +185,7 @@ export interface ControllerConfig {
   name: string;
   basePath: string;
   actions: ControllerAction[];
-  attributes?: Attribute[];
+  //attributes?: Attribute[];
   module?: string
 }
 

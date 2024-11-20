@@ -1,6 +1,6 @@
 import { saveToFile } from '../common/saveToFile';
 import { ModelConfig } from '../../interfaces/types';
-import { ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 import { getModelConfigPath } from '../../utils/helpers';
 
 /**
@@ -19,6 +19,6 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
   //   throw `The model '${config.name}' must have at least one primary key`
   // }
 
-  const output = getModelConfigPath(config.name, basePath);
+  const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
   await saveToFile(JSON.stringify(config), output);
 };

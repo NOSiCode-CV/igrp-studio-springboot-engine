@@ -44,7 +44,7 @@ const getHandlerPath = (context: RenderContext<DTOConfig>) => {
     case "event":
       return path.join(getDDDEventHandlerOutputDir(context), `${context.resourceConfig.name}${EVENT_HANDLER_SUFFIX}`);
     case "query":
-      return path.join(getDDDQueryHandlerOutputDir(context), `${context.resourceConfig.name}${EVENT_HANDLER_SUFFIX}`);
+      return path.join(getDDDQueryHandlerOutputDir(context), `${context.resourceConfig.name}${QUERY_HANDLER_SUFFIX}`);
     default:
       throw Error("Invalid object type")
   }

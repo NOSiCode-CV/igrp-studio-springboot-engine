@@ -3,7 +3,7 @@ import { getModelTypes } from '../model/helpers';
 
 export const checkUsageInModel = async function (context: RenderContext<PermissionConfig>) {
   const permissionName = context.resourceConfig.name;
-  const modelTypes = await getModelTypes(context.basePath);
+  const modelTypes = await getModelTypes("", context.basePath);
 
   for (const model of modelTypes.values()) {
     if (model.crud?.permissions) {

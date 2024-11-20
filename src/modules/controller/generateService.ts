@@ -3,7 +3,7 @@ import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import { TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
+import { getDDDServiceDir, getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
 
 const SERVICE_SUFFIX = 'ServiceImpl.java';
 const CMD_SERVICE_SUFFIX = 'CmdServiceImpl.java';
@@ -27,7 +27,7 @@ export const renderServiceImpl = async (context: RenderContext<ControllerConfig>
 
 const getServiceImplPath = (context: RenderContext<ControllerConfig>) => {
   if(context.baseConfig.projectStructureStyle === 'domain') {
-    return path.join(getDDDServiceImplDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
+    return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
   } else
     return path.join(getServiceDir(context), `${context.resourceConfig.name}${SERVICE_SUFFIX}`);
 };

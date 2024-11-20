@@ -35,7 +35,7 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
 
 export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>) => {
   const template = await renderImplRepository(context);
-  const modelOutputPath = getDDDRepositoryImplOutputDir(context);
+  const modelOutputPath = getDDDRepositoryImplOutputPath(context);
   await saveToFile(template, modelOutputPath);
 };
 
@@ -83,6 +83,9 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
 
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getDDDRepositoryOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+
+const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) =>
+  path.join(getDDDRepositoryImplOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
 
 const getDDDAggregateRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
   path.join(getDDDAggregateRepositoryOutputDir(context), `${context.resourceConfig.name}AggregateDomain${REPOSITORY_SUFFIX}`);

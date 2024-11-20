@@ -4,12 +4,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
 
-{{importsTypes baseConfig.projectStructureStyle resourceConfig.actions baseConfig.group baseConfig.artifact}}
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact}}
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
@@ -41,7 +41,6 @@ public class {{resourceConfig.name}}Controller {
     {{/each}}
   }
 
-
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
   @RequestMapping(
@@ -51,7 +50,7 @@ public class {{resourceConfig.name}}Controller {
     consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}},
     produces = "{{this.contentType}}"{{/if}}
   )
-  public ResponseEntity<{{{this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
+  public ResponseEntity<{{cleanStr response}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
 
     {{#if (eq method "GET")}}
     {{#if requestParams}}final var query = new {{actionName}}Query({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
@@ -64,6 +63,7 @@ public class {{resourceConfig.name}}Controller {
     {{/if}}
 
   }
+
   {{/each}}
 
 }

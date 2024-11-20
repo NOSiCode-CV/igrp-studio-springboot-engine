@@ -1,6 +1,7 @@
 import { DTOBaseConfig, RenderContext } from "../../interfaces/types";
 import { getControllerTypes } from "../controller/getControllerTypes";
 import { getDTOTypes } from "./helpers";
+import { DIRECTORIES } from '../../utils/constants';
 
 export const checkDependencyInController = async function (context: RenderContext<DTOBaseConfig>) {
 
@@ -8,7 +9,7 @@ export const checkDependencyInController = async function (context: RenderContex
   /**
    * get all controllers types
    */
-  const controllerTypes = await getControllerTypes(context.basePath);  
+  const controllerTypes = await getControllerTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const errors: Array<{ message: string }> = [];
 
   for (const controller of controllerTypes.values()) {

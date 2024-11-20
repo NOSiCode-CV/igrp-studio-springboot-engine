@@ -2,8 +2,8 @@ import { ApiConfig, DTOConfig, JavaAttribute } from '../../interfaces/types';
 import { PACKAGES } from "../../utils/constants";
 import { getPackageNameFromConfig, loadConfig, loadDTOConfig, loadDTOConfigs } from '../../utils/helpers';
 
-export const getDTOTypes = async function (basePath: string): Promise<Map<string, DTOConfig>> {
-    const configs = await loadDTOConfigs(basePath)
+export const getDTOTypes = async function (module:string, basePath: string): Promise<Map<string, DTOConfig>> {
+    const configs = await loadDTOConfigs(module, basePath)
     const types: Map<string, DTOConfig> = new Map<string, DTOConfig>();
     configs.forEach(cfg => types.set(`${cfg.name}`, cfg));
     return types;

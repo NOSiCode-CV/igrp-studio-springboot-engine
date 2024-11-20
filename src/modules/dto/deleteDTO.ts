@@ -11,7 +11,7 @@ import {
   getDtoOutputDir,
 } from '../../utils/helpers';
 import { DTOBaseConfig, DTOConfig, JavaType, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { getDTOTypes } from './helpers';
 import { checkDependencyInDTO } from './checkDependencyInDTO';
 import { checkDependencyInModel } from './checkDependencyInModel';
@@ -29,7 +29,7 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
   }
 
   const dtoPath = getDtoFilePath(context);
-  const dtoConfigPath = getDTOConfigPath(context.resourceConfig.name, context.basePath);
+  const dtoConfigPath = getDTOConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath);
 
   if (await fs.pathExists(dtoPath)) await fs.rm(dtoPath, { recursive: true });
   else throw ERROR_MESSAGE.DTO_FILE_NOT_FOUND;
@@ -45,18 +45,18 @@ const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
         return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
-    case "dataobject":
-      return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);
+    /*case "dataobject":
+      return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
     case "command":
       return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
     case "query":
       return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
     case "event":
       return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
-    case "valueobject":
+    /*case "valueobject":
       return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
     case "domainentity":
-      return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);
+      return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
   }
 };
 

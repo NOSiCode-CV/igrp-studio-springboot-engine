@@ -6,7 +6,7 @@ import {
   getDDDControllerDir, getDTOConfigPath,
 } from '../../utils/helpers';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 
 export const deleteControllerConfig = async (context: RenderContext<ControllerConfig>) => {
 
@@ -21,7 +21,7 @@ export const deleteControllerConfig = async (context: RenderContext<ControllerCo
     controllerPath = getControllerDir(context);
   }
   
-  const controllerConfigPath = getControllerConfigPath(context.resourceConfig.name, context.basePath)
+  const controllerConfigPath = getControllerConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath)
 
   if (await fs.pathExists(controllerPath)) await fs.rm(controllerPath, { recursive: true });
   else throw ERROR_MESSAGE.CONTROLLER_FILE_NOT_FOUND;

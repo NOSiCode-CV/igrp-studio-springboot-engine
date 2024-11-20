@@ -1,6 +1,6 @@
 import { saveToFile } from '../common/saveToFile';
 import { DTOConfig } from '../../interfaces/types';
-import { ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 import { getDTOConfigPath } from '../../utils/helpers';
 
 /**
@@ -15,6 +15,6 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
-  const output = getDTOConfigPath(config.name, basePath);
+  const output = getDTOConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
   await saveToFile(JSON.stringify(config), output);
 };

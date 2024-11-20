@@ -34,14 +34,14 @@ export const getTestPath = (group: string, artifact: string) =>
 export const getMainPath = (group: string, artifact: string) =>
   `src/main/java/${formatPackageName(group, artifact)}`;
 
-export const getModelConfigPath = (model: string, output: string) =>
-  path.join(output, DIRECTORIES.CONFIG_MODEL, `${model}${EXTENSIONS.JSON}`);
+export const getModelConfigPath = (module:string, model: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_MODEL, { module }), `${model}${EXTENSIONS.JSON}`);
 
 export const getPermissionConfigPath = (permission: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_PERMISSION, `${permission}${EXTENSIONS.JSON}`);
 
-export const getDTOConfigPath = (dto: string, output: string) =>
-  path.join(output, DIRECTORIES.CONFIG_DTO, `${dto}${EXTENSIONS.JSON}`);
+export const getDTOConfigPath = (module: string, dto: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }), `${dto}${EXTENSIONS.JSON}`);
 
 export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
@@ -259,8 +259,8 @@ export const getDDDDomainConverterOutputDir = (context: RenderContext<ModelConfi
     context.resourceConfig.module!.toLowerCase()
   );
 
-export const getControllerConfigPath = (controller: string, output: string) =>
-  path.join(output, DIRECTORIES.CONFIG_CONTROLLER, `${controller}${EXTENSIONS.JSON}`);
+export const getControllerConfigPath = (module: string, controller: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_CONTROLLER, { module }), `${controller}${EXTENSIONS.JSON}`);
 
 export const getControllerDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
@@ -288,9 +288,9 @@ export const getDDDServiceDir = (context: RenderContext<ControllerConfig | Model
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.artifact),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.SERVICE,
-    context.resourceConfig.name.toLowerCase()
+    DIRECTORIES.SERVICE
   );
 
 export const getDDDServiceImplDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
@@ -335,22 +335,25 @@ export const loadDTOConfig = async function <DTOConfig>(basePath: string, name: 
   return jsonContent as DTOConfig;
 };
 
-export const loadDTOConfigs = async function (basePath: string): Promise<DTOConfig[]> {
-  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_DTO));
+export const loadDTOConfigs = async function (module: string, basePath: string): Promise<DTOConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })));
 }
 
-export const loadModelConfigs = async function (basePath: string): Promise<ModelConfig[]> {
-  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_MODEL));
+export const loadModelConfigs = async function (module: string, basePath: string): Promise<ModelConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_MODEL, { module })));
 }
 
-export const loadControllerConfigs = async function (basePath: string): Promise<ControllerConfig[]> {
-  return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_CONTROLLER));
+export const loadControllerConfigs = async function (module: string, basePath: string): Promise<ControllerConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_CONTROLLER, { module })));
 }
 
 export const loadPermissionConfigs = async function (basePath: string): Promise<PermissionConfig[]> {
   return await loadConfig(path.join(basePath, DIRECTORIES.CONFIG_PERMISSION));
 }
 
+export const replaceTemplate = (template: string, replacements: Record<string, string>): string => {
+  return template.replace(/{{(.*?)}}/g, (_, key) => replacements[key] || '');
+};
 
 export const extractTypeFromList = (typeString: string): string | null => {
   const listRegex = "^List<(.+)>$";

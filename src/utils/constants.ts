@@ -1,16 +1,16 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
-  CONFIG_CONTROLLER: '.igrpstudio/controllers',
-  CONFIG_ICONTROLLER: '.igrpstudio/controllers',
-  CONFIG_MODEL: '.igrpstudio/models',
+  CONFIG_CONTROLLER: '.igrpstudio/{{module}}/controllers',
+  CONFIG_ICONTROLLER: '.igrpstudio/{{module}}/controllers',
+  CONFIG_MODEL: '.igrpstudio/{{module}}/models',
   CONFIG_PERMISSION: '.igrpstudio/permissions',
-  CONFIG_DTO: '.igrpstudio/dto',
+  CONFIG_DTO: '.igrpstudio/{{module}}/dto',
   CONTROLLERS: 'controllers',
   CONTROLLER: 'controller',
   IGRPSTUDIO: '.igrpstudio',
@@ -53,8 +53,7 @@ export const DIRECTORIES = {
   HANDLERS: 'handlers',
   MESSAGING: 'messaging',
   PERSISTENCE: 'persistence',
-
-
+  MODULE: 'module',
 };
 
 export const PACKAGES = {
@@ -85,6 +84,8 @@ export const ERROR_MESSAGE = {
     'The specified directory does not exist. Please select a different directory.',
   DIRECTORY_ALREADY_IN_USE:
     'The specified directory is already in use. Please select a different directory or remove the existing files.',
+  MODULE_CREATED_ALREADY:
+    'The specified module is created already. Please try to define a different module name.',
   EMPTY_CONTEXT: 'Provide a valid context. The context must not be empty.',
   ERROR_SAVING_FILE_CONFIG:
     'An error occurred while saving the file. Please check the log for more details.',
@@ -260,7 +261,7 @@ export const TEMPLATES = {
     'record': 'struct/domain-lite/java/domain/events/events/event-record-ddd.hbs',
   },
 
-  DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/events/eventhandler-ddd.hbs',
+  DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd.hbs',
   DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
   DDD_LITE_MODEL: 'struct/domain-lite/java/domain/model/model-ddd.hbs',
   DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',
