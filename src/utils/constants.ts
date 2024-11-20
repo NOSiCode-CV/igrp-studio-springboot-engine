@@ -414,11 +414,9 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
   'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
   'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  'LocalTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-
+  'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
 }));
-
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
