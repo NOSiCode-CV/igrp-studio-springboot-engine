@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.events;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

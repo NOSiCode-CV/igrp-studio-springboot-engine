@@ -9,7 +9,7 @@ import {
   ModelConfig,
   Relation,
 } from '../interfaces/types';
-import { REQUEST_BODY_NOT_IMPORT } from './constants';
+import { DIRECTORIES, REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
@@ -125,23 +125,32 @@ Handlebars.registerHelper('ifEquals', function (
     return resourceConfig.keyType || 'DefaultType';
 });*/
 
-Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string) {
+Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string, module: string, domainDriven?: boolean) {
   let imports: string [] = []
+
+  const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED
+
   for (const action of actions) {
     if (action.requestBody)
       if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody))
-        imports.push(`import ${group}.${artifact}.dto.${action.requestBody};`)
+        if(domainDriven === true)
+          imports.push(`import ${group}.${artifact}.${mod}.application.dto.${action.requestBody};`)
+        else
+          imports.push(`import ${group}.${artifact}.${mod}.dto.${action.requestBody};`)
       if (action.response)
         if (extractTypeFromList(action.response)){
           const type = extractTypeFromList(action.response)
-          imports.push(`import ${group}.${artifact}.dto.${type};`)
+          if(domainDriven === true)
+            imports.push(`import ${group}.${artifact}.${mod}.application.dto.${type};`)
+          else
+            imports.push(`import ${group}.${artifact}.${mod}.dto.${type};`)
         }
         if(action.response.startsWith('List'))
           imports.push(`import java.util.List;`)
 
   }
   
-  return [...new Set(imports)].join(" ")
+  return [...new Set(imports)].join("\n")
 });
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
@@ -174,9 +183,9 @@ Handlebars.registerHelper('resolve-mapping', function(this: any, action: Control
   
 });
 
-Handlebars.registerHelper('resolve-imports', function (this: any, config: any) {
+Handlebars.registerHelper('resolve-imports', function (config: any) {
   if (!config) return null;
-  if (!config.type || config.type !== 'dto') return null;
+  if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return;
 
@@ -268,5 +277,43 @@ Handlebars.registerHelper('breakEach', function (context, options) {
   return result;
 });
 
+Handlebars.registerHelper('filterCommandActions', function(array: ControllerAction[], options) {
+  if (!array || !Array.isArray(array)) {
+    throw new Error('Expected an array for filtering');
+  }
+  const filteredArray = array.filter((item) => item.method !== 'GET');
+  return filteredArray
+    .map((item, index) => {
+      const context = {
+        ...item,
+        '@index': index,
+        '@last': index === filteredArray.length - 1,
+      };
+
+      const rendered = options.fn(context);
+      // Append a comma if it's not the last element
+      return rendered + (index === filteredArray.length - 1 ? '' : ',\n\t\t');
+    })
+    .join('');
+});
+
+Handlebars.registerHelper('filterQueryActions', function(array: ControllerAction[], options) {
+  if (!array || !Array.isArray(array)) {
+    throw new Error('Expected an array for filtering');
+  }
+  const filteredArray = array.filter((item) => item.method === 'GET');
+  return filteredArray
+    .map((item, index) => {
+      const context = {
+        ...item,
+        '@index': index,
+        '@last': index === filteredArray.length - 1,
+      };
+      const rendered = options.fn(context);
+      // Append a comma if it's not the last element
+      return rendered + (index === filteredArray.length - 1 ? '' : ',\n\t\t');
+    })
+    .join('');
+});
 
 export { Handlebars };

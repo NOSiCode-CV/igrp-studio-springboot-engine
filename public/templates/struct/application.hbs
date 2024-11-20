@@ -1,5 +1,10 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}};
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.shared.config.ApplicationAuditorAware;
+{{else}}
 import {{baseConfig.group}}.{{baseConfig.artifact}}.config.ApplicationAuditorAware;
+{{/if}}
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;

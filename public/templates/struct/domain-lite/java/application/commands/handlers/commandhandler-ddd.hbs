@@ -1,6 +1,12 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.application.commands.handlers;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers;
 
 import org.springframework.stereotype.Service;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{resourceConfig.name}}Command;
+
+import java.util.List;
 
 @Service
 public class {{resourceConfig.name}}CommandHandler {
@@ -11,6 +17,7 @@ public class {{resourceConfig.name}}CommandHandler {
 
    public {{resourceConfig.response}} handle({{resourceConfig.name}}Command command) {
       // TODO: Implement the command handling logic here
+      return null;
    }
 
 }

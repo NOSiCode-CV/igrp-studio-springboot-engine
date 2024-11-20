@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
@@ -6,7 +6,9 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{toLowerCase ../resou
   {{/ifNot}}
 {{/each}}
 
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public interface {{resourceConfig.name}}CmdService {

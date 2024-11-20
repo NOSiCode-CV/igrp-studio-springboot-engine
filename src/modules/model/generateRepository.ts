@@ -26,7 +26,7 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
 
   if (context.baseConfig.projectStructureStyle === 'domain') {
     const modelOutputPath = getDDDRepositoryOutputPath(context);
-    await saveToFile(dddTemplate, modelOutputPath);
+    await saveToFile(dddTemplate, modelOutputPath, false);
   } else {
     const modelOutputPath = getRepositoryOutputPath(context);
     await saveToFile(template, modelOutputPath);
@@ -36,7 +36,7 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
 export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>) => {
   const template = await renderImplRepository(context);
   const modelOutputPath = getDDDRepositoryImplOutputPath(context);
-  await saveToFile(template, modelOutputPath);
+  await saveToFile(template, modelOutputPath, false);
 };
 
 export const generateAggregateRepository = async (context: RenderContext<ModelConfig>) => {

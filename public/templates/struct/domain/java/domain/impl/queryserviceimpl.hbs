@@ -2,6 +2,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +17,7 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
 {{/each}}
 
     public {{resourceConfig.name}}QueryServiceImpl(
-    {{#each resourceConfig.actions}}
-      {{#if (eq method "GET")}}
-        {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{#unless @last}},{{/unless}}
-      {{/if}}
-    {{/each}}
+        {{#filterQueryActions resourceConfig.actions}}{{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{/filterQueryActions}}
     ) {
     {{#each resourceConfig.actions}}
       {{#if (eq method "GET")}}

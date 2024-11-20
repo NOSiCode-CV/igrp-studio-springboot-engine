@@ -1,6 +1,11 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.application.queries.handlers;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers;
 
 import org.springframework.stereotype.Service;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
+
+import java.util.List;
 
 @Service
 public class {{resourceConfig.name}}QueryHandler {
@@ -9,8 +14,9 @@ public class {{resourceConfig.name}}QueryHandler {
 
    }
 
-   public {{resourceConfig.response}} handle({{resourceConfig.name}}Query query) {
+   public {{cleanStr resourceConfig.response}} handle({{resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
+      return null;
    }
 
 }

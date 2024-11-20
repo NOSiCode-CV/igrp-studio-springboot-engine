@@ -459,7 +459,7 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
 *   }
 * };
 */
-export const addDTO = async (dirty: DTOConfig, basePath: string) => {
+export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
@@ -658,6 +658,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         type: act.method === 'GET' ? 'query' : 'command',
         name: act.actionName,
         template: 'classic',
+        module: module,
         attributes: act?.requestBody
           ? config!.attributes
           : (act?.pathVariables
@@ -688,8 +689,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                   }))
                   : []
               )
-              : []) as JavaAttribute[]
-      }, context.basePath);
+              : []) as JavaAttribute[], response: act.response
+      } as HandlerConfig, context.basePath);
     }
 
     await generateQueryServiceInterface(context);

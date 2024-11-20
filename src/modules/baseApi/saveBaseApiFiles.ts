@@ -258,7 +258,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
       OBSERVABILITY_CONFIG_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
         const template = await renderTemplate(file.template, context);
-        await saveToFile(template, outputPath);
+        await saveToFile(template, outputPath, false);
       }),
     );
     await Promise.all(
@@ -266,7 +266,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         const outputPath = path.join(context.basePath, file.output);
         const templatePath = path.join(TEMPLATE_DIR, file.template);
         const binaryContent = await fs.readFile(templatePath);
-        await saveBinaryToFile(binaryContent, outputPath);
+        await saveBinaryToFile(binaryContent, outputPath, false);
       })
     );
   } else {
@@ -274,7 +274,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
       CONFIG_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
         const template = await renderTemplate(file.template, context);
-        await saveToFile(template, outputPath);
+        await saveToFile(template, outputPath, false);
       }),
     );
   }

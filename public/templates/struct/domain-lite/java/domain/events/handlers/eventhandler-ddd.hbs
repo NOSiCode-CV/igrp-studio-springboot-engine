@@ -1,4 +1,6 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.events.handlers;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events.handlers;
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events.events.{{resourceConfig.name}}Event;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;

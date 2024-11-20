@@ -1,6 +1,6 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repository;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.repository;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.model.{{resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.model.{{resourceConfig.name}};
 import java.util.List;
 import java.util.Optional;
 

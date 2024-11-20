@@ -82,7 +82,13 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "string",
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
-    }
+    },
+    module: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
   },
   required: ["type", "name"],
   additionalProperties: false,

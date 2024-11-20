@@ -97,9 +97,7 @@ export interface DTOConfig extends DTOBaseConfig {
   attributes: JavaAttribute[];
 }
 
-export interface HandlerConfig extends DTOBaseConfig {
-  template: 'classic' | 'record';
-  attributes: JavaAttribute[];
+export interface HandlerConfig extends DTOConfig {
   response: string
 }
 

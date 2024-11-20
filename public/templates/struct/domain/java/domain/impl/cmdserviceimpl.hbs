@@ -1,11 +1,8 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
 
-{{#each resourceConfig.actions}}
-  {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{#if ../resourceConfig.module}}{{toLowerCase module}}{{else}}shared{{/if}}.application.commands.commands.{{this.actionName}}Command;
-  {{/ifNot}}
-{{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service.{{resourceConfig.name}}CmdService;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,16 +15,12 @@ public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.n
 {{/each}}
 
     public {{resourceConfig.name}}CmdServiceImpl(
-    {{#each resourceConfig.actions}}
-      {{#if (eq method "GET")}}
-        {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{#unless @last}},{{/unless}}
-      {{/if}}
-    {{/each}}
+        {{#filterCommandActions resourceConfig.actions}}{{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{/filterCommandActions}}
     ) {
     {{#each resourceConfig.actions}}
-      {{#if (eq method "GET")}}
+      {{#ifNot (eq method "GET")}}
         this.{{toCamelCase actionName}}CommandHandler = {{toCamelCase actionName}}CommandHandler;
-      {{/if}}
+      {{/ifNot}}
     {{/each}}
     }
 

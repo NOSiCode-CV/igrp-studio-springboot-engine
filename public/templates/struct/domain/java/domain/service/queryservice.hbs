@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.domain.service;
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
 
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
@@ -7,6 +7,7 @@ import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{toLowerCase ../resou
 {{/each}}
 import java.util.List;
 import org.springframework.stereotype.Service;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 
 @Service
 public interface {{resourceConfig.name}}QueryService {

@@ -57,7 +57,18 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
-    }
+    },
+    response: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The response, if provided, must be a valid string.'
+    },
+    module: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
   },
   required: ["type", "name", "ns"],
   additionalProperties: false,
@@ -95,8 +106,13 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
     module: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true
+    },
+    response: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The response, if provided, must be a valid string.'
     },
   },
   required: ["type", "template", "name", "attributes"],

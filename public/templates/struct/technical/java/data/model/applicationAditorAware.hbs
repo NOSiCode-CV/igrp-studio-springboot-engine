@@ -1,4 +1,8 @@
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+package {{baseConfig.group}}.{{baseConfig.artifact}}.shared.config;
+{{else}}
 package {{baseConfig.group}}.{{baseConfig.artifact}}.config;
+{{/if}}
 
 import java.util.Optional;
 
