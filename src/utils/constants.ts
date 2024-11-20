@@ -368,23 +368,22 @@ export const PATTERNS = {
 };
 
 export const ATTRIBUTE_TYPES = [
-  'Boolean',
-  'Byte',
-  'Short',
-  'Character',
+  'String',
   'Integer',
   'Long',
-  'Float',
-  'Double',
-  'String',
-  'BigInteger',
-  'BigDecimal',
   'LocalTime',
   'LocalDate',
   'LocalDateTime',
   'ZoneDateTime',
   'OffsetDateTime',
   'Instant',
+  'Boolean',
+  'BigInteger',
+  'BigDecimal',
+  'Short',
+  'Byte',
+  'Float',
+  'Double',
   'boolean',
   'char',
   'short',
@@ -392,7 +391,8 @@ export const ATTRIBUTE_TYPES = [
   'long',
   'float',
   'double',
-  'UUID'
+  'UUID',
+  'Character',
 ] as const;
 
 export const VALID_PRIMARY_KEY = ['int', 'long', 'Long', 'Integer', 'UUID', 'String']
