@@ -367,8 +367,6 @@ export const PATTERNS = {
   PATH_VALIDATION: '^[a-zA-Z_/]+$',  
 };
 
-export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'] as const;
-
 export const ATTRIBUTE_TYPES = [
   'Boolean',
   'Byte',
