@@ -543,9 +543,8 @@ export type RenderContext<T = undefined> = {
   basePath: string;
   baseConfig: ApiConfig;
   mathAttributes?: string[];
-  sqlAttributes?: string[];
+  dateTimeUniqueAttributes?: string[];
 };
-
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
