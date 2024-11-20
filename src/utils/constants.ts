@@ -369,8 +369,11 @@ export const PATTERNS = {
 
 export const ATTRIBUTE_TYPES = [
   'String',
+  'UUID',
   'Integer',
+  'int',
   'Long',
+  'long',
   'LocalTime',
   'LocalDate',
   'LocalDateTime',
@@ -378,28 +381,22 @@ export const ATTRIBUTE_TYPES = [
   'OffsetDateTime',
   'Instant',
   'Boolean',
+  'boolean',
   'BigInteger',
   'BigDecimal',
   'Short',
+  'short',
   'Byte',
   'Float',
-  'Double',
-  'boolean',
-  'char',
-  'short',
-  'int',
-  'long',
   'float',
+  'Double',
   'double',
-  'UUID',
-  'Character',
 ] as const;
 
-export const VALID_PRIMARY_KEY = ['int', 'long', 'Long', 'Integer', 'UUID', 'String']
+export const VALID_PRIMARY_KEY = ['int','Integer', 'long', 'Long', 'UUID', 'String']
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
-  'char': { name: 'char', primitive: true },
   'short': { name: 'short', primitive: true },
   'int': { name: 'int', primitive: true },
   'long': { name: 'long', primitive: true },
@@ -411,7 +408,6 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'Long': { name: 'Long', primitive: false },
   'Double': { name: 'Double', primitive: false },
   'String': { name: 'String', primitive: false },
-  'Character': { name: 'Character', primitive: false },
   'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
   'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
   'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
@@ -421,7 +417,7 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'OffsetDateTime': { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
   'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
-  'Object': { name: 'List', primitive: false },
+  'Object': { name: 'Object', primitive: false },
 }));
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
@@ -508,6 +504,6 @@ export const CRUD_DISABLED_OPTIONS = [
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Character', 'Boolean', 'Object'] as const
+export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Boolean', 'Object'] as const
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
