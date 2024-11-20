@@ -1,16 +1,7 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}Assembler;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.assembler.{{resourceConfig.name}}AggregateAssembler;
-{{#each resourceConfig.actions}}
-  {{#if (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.query.dto.{{this.actionName}}DTO;
-  {{/if}}
-{{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateDomainRepository;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.converter.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Converter;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}Repository;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,72 +9,33 @@ import java.util.List;
 @Service
 public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig.name}}QueryService {
 
-    private final {{resourceConfig.name}}Repository repository;
-    private final {{resourceConfig.name}}AggregateDomainRepository aggregateRepository;
-    private final {{resourceConfig.name}}Assembler assembler;
-    private final {{resourceConfig.name}}AggregateAssembler aggregateAssembler;
-    private final {{resourceConfig.name}}Converter converter;
+{{#each resourceConfig.actions}}
+  {{#if (eq method "GET")}}
+    private final {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
+  {{/if}}
+{{/each}}
 
     public {{resourceConfig.name}}QueryServiceImpl(
-        {{resourceConfig.name}}Repository repository,
-        {{resourceConfig.name}}AggregateDomainRepository aggregateRepository,
-        {{resourceConfig.name}}Assembler assembler,
-        {{resourceConfig.name}}AggregateAssembler aggregateAssembler,
-        {{resourceConfig.name}}Converter converter
-    ) {
-        this.repository = repository;
-        this.aggregateRepository = aggregateRepository;
-        this.assembler = assembler;
-        this.aggregateAssembler = aggregateAssembler;
-        this.converter = converter;
-    }
-
-    @Override
-    public {{resourceConfig.name}}AggregateDTO {{toCamelCase resourceConfig.name}}AggregateQuery({{keyType resourceConfig}} id) {
-        return aggregateRepository.findById(id)
-                .map(aggregateAssembler::apply)
-                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
-    }
-
-    @Override
-    public List<{{resourceConfig.name}}AggregateDTO> {{toCamelCase resourceConfig.name}}AggregatesQuery(List<{{keyType resourceConfig}}> ids) {
-        return aggregateRepository.findAllById(ids)
-                .map(aggregateAssembler::apply)
-                .orElseThrow(() -> new Exception("No aggregate found with id " + id));
-    }
-
     {{#each resourceConfig.actions}}
-    {{#if (eq this.method "GET")}}
-      {{#if (like this.response "List")}}
-        {{#if (like toLowerCase this.actionName "all")}}
-    @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}() {
-        return repository.findAll().stream()
-                .map(entity -> assembler.apply(converter.serialize(entity)))
-                .toList();
-    }
-
-        {{else}}
-    @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
-        // TODO: implement query logic here
-        return null;
-    }
-
-        {{/if}}
-      {{else}}
-    @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
-        // TODO: implement query logic here
-        // e.g.: querying by ID
-        /*return assembler.apply(converter.serialize(
-                repository.findById(query.getId()).orElseThrow(() -> new Exception("No {{../resourceConfig.name}} found with id " + id))
-        ));*/
-
-        return null;
-    }
-
+      {{#if (eq method "GET")}}
+        {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{#unless @last}},{{/unless}}
       {{/if}}
-    {{/if}}
     {{/each}}
+    ) {
+    {{#each resourceConfig.actions}}
+      {{#if (eq method "GET")}}
+        this.{{toCamelCase actionName}}QueryHandler = {{toCamelCase actionName}}QueryHandler;
+      {{/if}}
+    {{/each}}
+    }
+
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "GET")}}
+    @Override
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
+    return {{toCamelCase this.actionName}}QueryHandler.handle(query);
+    }
+
+  {{/if}}
+{{/each}}
 }

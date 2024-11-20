@@ -1,31 +1,43 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.impl.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.CommandBus;
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{#if ../resourceConfig.module}}{{toLowerCase module}}{{else}}shared{{/if}}.application.commands.commands.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service.{{resourceConfig.name}}CmdService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.name}}CmdService {
 
-   private final CommandBus commandBus;
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq method "GET")}}
+    private final {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
+  {{/ifNot}}
+{{/each}}
 
-   public {{resourceConfig.name}}CmdServiceImpl(CommandBus commandBus) {
-      this.commandBus = commandBus;
-   }
+    public {{resourceConfig.name}}CmdServiceImpl(
+    {{#each resourceConfig.actions}}
+      {{#if (eq method "GET")}}
+        {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{#unless @last}},{{/unless}}
+      {{/if}}
+    {{/each}}
+    ) {
+    {{#each resourceConfig.actions}}
+      {{#if (eq method "GET")}}
+        this.{{toCamelCase actionName}}CommandHandler = {{toCamelCase actionName}}CommandHandler;
+      {{/if}}
+    {{/each}}
+    }
 
-   {{#each resourceConfig.actions}}
-     {{#ifNot (eq this.method "GET")}}
-   @Override
-   public void {{toCamelCase this.actionName}}({{this.actionName}}Command cmd) {
-      // TODO: Implement action logic
-      commandBus.send(cmd);
-   }
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq this.method "GET")}}
+    @Override
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Command cmd) {
+    return {{toCamelCase this.actionName}}CommandHandler.handle(cmd);
+    }
 
-     {{/ifNot}}
-   {{/each}}
+  {{/ifNot}}
+{{/each}}
 }

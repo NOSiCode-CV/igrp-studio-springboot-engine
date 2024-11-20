@@ -1,9 +1,8 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.domain.service;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.query.dto.{{this.actionName}}DTO;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{toLowerCase ../resourceConfig.module}}.application.queries.queries.{{this.actionName}}Query;
   {{/if}}
 {{/each}}
 import java.util.List;
@@ -12,24 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface {{resourceConfig.name}}QueryService {
 
-    {{resourceConfig.name}}AggregateDTO {{toCamelCase resourceConfig.name}}AggregateQuery({{keyType resourceConfig}} id);
-
-    List<{{resourceConfig.name}}AggregateDTO> {{toCamelCase resourceConfig.name}}AggregatesQuery(List<{{keyType resourceConfig}}> ids);
-
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
-    {{#if (like this.response "List")}}
-      {{#if (like this.actionName "all")}}
-    {{cleanStr this.response}} {{toCamelCase this.actionName}}();
 
-      {{else}}
-    {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query);
+     {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query);
 
-      {{/if}}
-    {{else}}
-    {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query);
-
-    {{/if}}
   {{/if}}
 {{/each}}
 }

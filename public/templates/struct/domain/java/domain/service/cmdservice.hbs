@@ -1,8 +1,8 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service;
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{toLowerCase ../resourceConfig.name}}.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{toLowerCase ../resourceConfig.module}}.application.commands.commands.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
 
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface {{resourceConfig.name}}CmdService {
 
-   {{#each resourceConfig.actions}}
-     {{#ifNot (eq this.method "GET")}}
-   void {{toCamelCase this.actionName}}({{this.actionName}}Command cmd);
-     {{/ifNot}}
-   {{/each}}
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq this.method "GET")}}
+    {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Command cmd);
+  {{/ifNot}}
+{{/each}}
 
 }

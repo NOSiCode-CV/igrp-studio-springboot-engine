@@ -22,8 +22,8 @@ export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, bas
   const baseApiFileOutputPah = path.join(
     basePath,
     DIRECTORIES.IGRPSTUDIO,
-    DIRECTORIES.MODULE,
-    `${context.resourceConfig.name}${EXTENSIONS.JSON}`,
+    context.resourceConfig.name,
+    `${context.resourceConfig.type}${EXTENSIONS.JSON}`,
   );
   await saveToFile(JSON.stringify(context.resourceConfig), baseApiFileOutputPah);
 }
