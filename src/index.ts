@@ -479,7 +479,8 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name)
   const baseConfig = await getBaseApiConfig(basePath);
 
-  await saveDTOConfig(config, basePath);
+  if(config.type === 'dto')
+    await saveDTOConfig(config, basePath);
 
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
@@ -490,24 +491,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   await generateDTO(context);
 
   if(context.baseConfig.projectStructureStyle === 'domain') {
-    if (context.resourceConfig.type === 'dto') {
-      /*const implContext: RenderContext<ModelConfig> = {
-        resourceConfig: {
-          type: 'model',
-          aggregate: config.aggregate,
-          name: config.name,
-          attributes: config.attributes.map((e) => ({
-            name: e.name,
-            type: e.type as AttributeType,
-            primaryKey: e.primaryKey,
-          })),
-          tableName: config.name,
-        },
-        baseConfig,
-        basePath,
-      };*/
-      //await generateConverter(implContext);
-    } else if (context.resourceConfig.type === 'command' || context.resourceConfig.type === 'event' || context.resourceConfig.type === 'query') {
+    if (context.resourceConfig.type === 'command' || context.resourceConfig.type === 'event' || context.resourceConfig.type === 'query') {
       await generateHandlers(context);
     }
   }
@@ -687,9 +671,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                     type: e.type as 'Long' | 'String' | 'Integer' | 'Character' | 'Boolean' | 'Object',
                     ns: 'java'
                   }))
-                  : []
+                  : [{name: "none", type: "Object", ns: "java"}]
               )
-              : []) as JavaAttribute[], response: act.response
+              : [{name: "none", type: "Object", ns: "java"}]) as JavaAttribute[], response: act.response
       } as HandlerConfig, context.basePath);
     }
 

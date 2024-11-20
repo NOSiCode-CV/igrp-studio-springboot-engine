@@ -416,6 +416,7 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
   'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
+  'Object': { name: 'List', primitive: false },
 }));
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
