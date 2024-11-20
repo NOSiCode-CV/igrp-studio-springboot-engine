@@ -146,9 +146,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(testPath, DIRECTORIES.REPOSITORIES),
       path.join(testPath, DIRECTORIES.SERVICES),
 
-      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpstudioPath, DIRECTORIES.MODELS),
-
     ];
 
     if(config.enableObservability)

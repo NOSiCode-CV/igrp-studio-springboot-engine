@@ -5,7 +5,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.dto;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public record {{capitalize resourceConfig.name}}(
+public record {{capitalize resourceConfig.name}}DTO(
 {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
     @{{this.annotation}}

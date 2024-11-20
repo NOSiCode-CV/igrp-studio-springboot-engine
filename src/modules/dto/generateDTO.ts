@@ -168,7 +168,7 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
     }
   } else {
-    return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+    return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }
 };
 
