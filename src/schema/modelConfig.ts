@@ -1,6 +1,15 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { ModelConfig, Crud, Attribute, Relation, PrimaryKey, UniqueConstraint, IModelPermission } from "../interfaces/types";
+import {
+  ModelConfig,
+  Crud,
+  Attribute,
+  Relation,
+  PrimaryKey,
+  UniqueConstraint,
+  IModelPermission,
+  EntityIndex,
+} from '../interfaces/types';
 import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES, HTTP_METHOD_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
@@ -222,6 +231,28 @@ const uniqueConstraintSchema: JSONSchemaType<UniqueConstraint> = {
   additionalProperties: false
 };
 
+const entityIndexSchema: JSONSchemaType<EntityIndex> = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: "The index name must follow the naming convention."
+    },
+    columns: {
+      type: "array",
+      items: {
+        type: "string",
+        pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+        errorMessage: "Each column name in the index must follow the naming convention."
+      },
+      errorMessage: "The columns field must be an array of valid column names."
+    }
+  },
+  required: ["name", "columns"],
+  additionalProperties: false
+};
+
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
@@ -264,6 +295,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       nullable: true,
       items: uniqueConstraintSchema,
       errorMessage: 'The uniqueConstraints must be an array of valid unique constraint definitions.'
+    },
+    indexes: {
+      type: "array",
+      nullable: true,
+      items: entityIndexSchema,
+      errorMessage: 'The indexes must be an array of valid unique constraint definitions.'
     },
     relations: { 
       type: "array", 
