@@ -32,7 +32,7 @@ export const normalizeDTOType = (type: ObjectTypes): string => {
   }
 }
 
-const normalizeName = (name: string, type: ObjectTypes): string => {
+export const normalizeName = (name: string, type: ObjectTypes): string => {
   switch (type.toLowerCase()) {
     case "dto":
       return name.replace(/dto$/i, "");

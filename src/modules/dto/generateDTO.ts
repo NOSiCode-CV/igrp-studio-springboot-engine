@@ -20,6 +20,7 @@ import {
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
+import { normalizeName } from './saveDTOConfig';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const template = await _renderDTO(context);
@@ -137,6 +138,9 @@ export const transformDTOConfig = async function (
 
     attr.type = type;
   }
+
+  // normalize the name of the DTO
+  config.name = normalizeName(config.name, config.type)
 
   if (errors.length > 0) {
     throw errors;
