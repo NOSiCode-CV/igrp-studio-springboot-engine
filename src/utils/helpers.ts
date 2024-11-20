@@ -1,7 +1,17 @@
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, REQUEST_BODY_NOT_IMPORT } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
-import { ApiConfig, ControllerConfig, DTOBaseConfig, DTOConfig, ModelConfig, PermissionConfig, RenderContext } from '../interfaces/types';
+import {
+  ApiConfig,
+  ControllerConfig,
+  DTOBaseConfig,
+  DTOConfig,
+  ModelConfig,
+  ObjectTypes,
+  PermissionConfig,
+  RenderContext,
+} from '../interfaces/types';
+import { normalizeDTOType } from '../modules/dto/saveDTOConfig';
 
 
 export const getPackage = async (outputDir: string) => {
@@ -40,8 +50,8 @@ export const getModelConfigPath = (module:string, model: string, output: string)
 export const getPermissionConfigPath = (permission: string, output: string) =>
   path.join(output, DIRECTORIES.CONFIG_PERMISSION, `${permission}${EXTENSIONS.JSON}`);
 
-export const getDTOConfigPath = (module: string, dto: string, output: string) =>
-  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }), `${dto}${EXTENSIONS.JSON}`);
+export const getDTOConfigPath = (type: string, module: string, dto: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }), `${dto}${type}${EXTENSIONS.JSON}`);
 
 export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
@@ -313,7 +323,7 @@ export const loadConfig = async function<T> (basePath: string): Promise<T[]> {
   return await Promise.all<T>(files);
 }
 
-export const loadDTOConfig = async function <DTOConfig>(basePath: string, name: string): Promise<DTOConfig> {
+export const loadDTOConfig = async function <DTOConfig>(type: ObjectTypes, basePath: string, name: string): Promise<DTOConfig> {
   if (!name || name.trim() === '') {
     throw new Error("Invalid DTO config name");
   }
@@ -323,7 +333,7 @@ export const loadDTOConfig = async function <DTOConfig>(basePath: string, name: 
   }
 
   const files = await fs.readdir(basePath);
-  const matchingFile = files.find(f => f === `${name}.json`);
+  const matchingFile = files.find(f => f === `${name}${normalizeDTOType(type)}.json`);
 
   if (!matchingFile) {
     throw new Error(`DTO config file "${name}.json" not found in the directory.`);

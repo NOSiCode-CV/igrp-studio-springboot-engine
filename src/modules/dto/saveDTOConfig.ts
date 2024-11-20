@@ -1,5 +1,5 @@
 import { saveToFile } from '../common/saveToFile';
-import { DTOConfig } from '../../interfaces/types';
+import { DTOConfig, ObjectTypes } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
 import { getDTOConfigPath } from '../../utils/helpers';
 
@@ -15,6 +15,34 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
-  const output = getDTOConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
+  const output = getDTOConfigPath(normalizeDTOType(config.type), config.module ?? DIRECTORIES.SHARED, normalizeName(config.name, config.type), basePath);
   await saveToFile(JSON.stringify(config), output);
+};
+
+export const normalizeDTOType = (type: ObjectTypes): string => {
+  switch (type) {
+    case "dto":
+      return "DTO";
+    case "command":
+      return "Command";
+    case "query":
+      return "Query";
+    case "event":
+      return "Event";
+  }
+}
+
+const normalizeName = (name: string, type: ObjectTypes): string => {
+  switch (type.toLowerCase()) {
+    case "dto":
+      return name.replace(/dto$/i, "");
+    case "command":
+      return name.replace(/command$/i, "");
+    case "query":
+      return name.replace(/query$/i, "");
+    case "event":
+      return name.replace(/event$/i, "");
+    default:
+      return name;
+  }
 };
