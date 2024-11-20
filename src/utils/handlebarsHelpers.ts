@@ -21,6 +21,15 @@ Handlebars.registerHelper('toCamelCase', (str: string) => {
   return str.charAt(0).toLowerCase() + str.slice(1);
 });
 
+Handlebars.registerHelper('toTitleCase', (str: string) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+});
+
 Handlebars.registerHelper('toLowerCase', (str: string) => {
   return (str || '').toLowerCase();
 });
