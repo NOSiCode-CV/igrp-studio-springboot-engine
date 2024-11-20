@@ -137,6 +137,8 @@ Handlebars.registerHelper('ifEquals', function (
 Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string, module: string, domainDriven?: boolean) {
   let imports: string [] = []
 
+  console.log("Module: ", module)
+
   const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED
 
   for (const action of actions) {

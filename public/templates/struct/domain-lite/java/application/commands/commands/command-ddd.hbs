@@ -19,7 +19,7 @@ public class {{resourceConfig.name}}Command {
   {{#if (and (eq (resolve-type this) "Object") (eq this.name "none"))}}
   {{!-- Skip attribute if type is "Object" and name is "none" --}}
   {{else}}
-    private {{{resolve-type this}}} {{this.name}};
+  private {{{resolve-type this}}} {{this.name}};
   {{/if}}
 {{/each}}
 
