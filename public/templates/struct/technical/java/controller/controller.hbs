@@ -42,8 +42,7 @@ public class {{resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
-  @RequestMapping(
-    method = RequestMethod.{{method}}{{#if path}},
+  @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{else}}{{#if pathVariables}},
     value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if this.accepts}},
     consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
