@@ -8,13 +8,13 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 import java.util.List;
 
 @Service
-public class {{resourceConfig.name}}QueryHandler {
+public class {{capitalize resourceConfig.name}}QueryHandler {
 
-   public {{resourceConfig.name}}QueryHandler() {
+   public {{capitalize resourceConfig.name}}QueryHandler() {
 
    }
 
-   public {{cleanStr resourceConfig.response}} handle({{resourceConfig.name}}Query query) {
+   public {{cleanStr resourceConfig.response}} handle({{capitalize resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
       return null;
    }

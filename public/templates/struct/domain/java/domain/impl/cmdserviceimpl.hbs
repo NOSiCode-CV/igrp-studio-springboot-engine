@@ -6,16 +6,16 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 import org.springframework.stereotype.Service;
 
 @Service
-public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.name}}CmdService {
+public class {{capitalize resourceConfig.name}}CmdServiceImpl implements {{capitalize resourceConfig.name}}CmdService {
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq method "GET")}}
-    private final {{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
+    private final {{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
   {{/ifNot}}
 {{/each}}
 
-    public {{resourceConfig.name}}CmdServiceImpl(
-        {{#filterCommandActions resourceConfig.actions}}{{actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{/filterCommandActions}}
+    public {{capitalize resourceConfig.name}}CmdServiceImpl(
+        {{#filterCommandActions resourceConfig.actions}}{{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{/filterCommandActions}}
     ) {
     {{#each resourceConfig.actions}}
       {{#ifNot (eq method "GET")}}
@@ -27,8 +27,8 @@ public class {{resourceConfig.name}}CmdServiceImpl implements {{resourceConfig.n
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Command cmd) {
-    return {{toCamelCase this.actionName}}CommandHandler.handle(cmd);
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command cmd) {
+        return {{toCamelCase this.actionName}}CommandHandler.handle(cmd);
     }
 
   {{/ifNot}}

@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface {{resourceConfig.name}}CmdService {
+public interface {{capitalize resourceConfig.name}}CmdService {
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-    {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Command cmd);
+    {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command cmd);
   {{/ifNot}}
 {{/each}}
 

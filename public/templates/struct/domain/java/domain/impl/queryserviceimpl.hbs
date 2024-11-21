@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig.name}}QueryService {
+public class {{capitalize resourceConfig.name}}QueryServiceImpl implements {{resourceConfig.name}}QueryService {
 
 {{#each resourceConfig.actions}}
   {{#if (eq method "GET")}}
-    private final {{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
+    private final {{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
   {{/if}}
 {{/each}}
 
-    public {{resourceConfig.name}}QueryServiceImpl(
-        {{#filterQueryActions resourceConfig.actions}}{{actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{/filterQueryActions}}
+    public {{capitalize resourceConfig.name}}QueryServiceImpl(
+        {{#filterQueryActions resourceConfig.actions}}{{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{/filterQueryActions}}
     ) {
     {{#each resourceConfig.actions}}
       {{#if (eq method "GET")}}
@@ -29,8 +29,8 @@ public class {{resourceConfig.name}}QueryServiceImpl implements {{resourceConfig
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{this.actionName}}Query query) {
-    return {{toCamelCase this.actionName}}QueryHandler.handle(query);
+    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query) {
+        return {{toCamelCase this.actionName}}QueryHandler.handle(query);
     }
 
   {{/if}}

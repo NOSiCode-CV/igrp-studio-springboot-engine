@@ -9,13 +9,13 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 import java.util.List;
 
 @Service
-public class {{resourceConfig.name}}CommandHandler {
+public class {{capitalize resourceConfig.name}}CommandHandler {
 
-   public {{resourceConfig.name}}CommandHandler() {
+   public {{capitalize resourceConfig.name}}CommandHandler() {
 
    }
 
-   public {{resourceConfig.response}} handle({{resourceConfig.name}}Command command) {
+   public {{resourceConfig.response}} handle({{capitalize resourceConfig.name}}Command command) {
       // TODO: Implement the command handling logic here
       return null;
    }
