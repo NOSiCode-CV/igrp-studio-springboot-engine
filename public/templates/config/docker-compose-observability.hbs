@@ -35,16 +35,19 @@ services:
   promtail:
     image: grafana/promtail:3.0.0
     container_name: promtail
+    environment:
+      - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_INTERNAL_PORT}
+      - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_INTERNAL_PORT}
     volumes:
       - ./monitoring/promtail/promtail-docker-config.yml:/etc/promtail/docker-config.yml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    command: "--config.file=/etc/promtail/docker-config.yml"
+    command: "--config.expand-env=true --config.file=/etc/promtail/docker-config.yml"
 
   loki:
     image: grafana/loki:3.0.0
     container_name: loki
-    command: "-config.file=/etc/loki/local-config.yaml"
+    command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
     ports:
       - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
     depends_on:
@@ -53,7 +56,9 @@ services:
   tempo:
     image: grafana/tempo:2.4.1
     container_name: tempo
-    command: "-config.file /etc/tempo-config.yml"
+    command: "-config.expand-env=true -config.file /etc/tempo-config.yml"
+    environment:
+      - TEMPO_SERVICE_HTTP_PORT=${TEMPO_SERVICE_HTTP_PORT}
     ports:
       - ${TEMPO_SERVICE_HTTP_PORT}:${TEMPO_SERVICE_HTTP_PORT} # Tempo
       - ${TEMPO_SERVICE_ZIPKIN_PORT}:${TEMPO_SERVICE_ZIPKIN_PORT}     # Zipkin

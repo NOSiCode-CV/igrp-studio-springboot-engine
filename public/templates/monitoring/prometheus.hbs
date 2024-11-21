@@ -1,3 +1,4 @@
+# TODO: replace with your own configuration if necessary
 # global config
 global:
   scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
@@ -8,14 +9,14 @@ scrape_configs:
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
-      - targets: ['localhost:${PROMETHEUS_SERVICE_INTERNAL_PORT}']
+      - targets: ['localhost:9090']
 
   - job_name: 'template-service'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['template-service:${SERVICE_PORT}']
+      - targets: ['template-service:8080']
 
   - job_name: 'otel-collector'
     static_configs:
-      - targets: ['otel-collector:${OTEL_PROMETHEUS_COLLECTOR_METRICS_EXPORTER_PORT}']
+      - targets: ['otel-collector:8889']
