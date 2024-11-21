@@ -6,7 +6,7 @@ import { readJsonFile } from '../src/utils/readJsonFiles';
 import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
 
-const basePath = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
+const OUTPUT_DIR = 'generatedTest'
 
 describe('DTO deletion', () => {
     it('should delete a dto', async () => {
@@ -19,12 +19,12 @@ describe('DTO deletion', () => {
             ]
         };
 
-        await addDTO(model, basePath);
+        await addDTO(model, OUTPUT_DIR);
 
-        const configPath = path.join(basePath, DIRECTORIES.BASE_API);
+        const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
         const config: ApiConfig = await readJsonFile(configPath);
         const modelPath = path.join(
-            basePath,
+            OUTPUT_DIR,
             getMainPath(config.group, config.artifact),
             DIRECTORIES.DTO,
             `${model.name}${EXTENSIONS.JAVA}`
@@ -32,7 +32,7 @@ describe('DTO deletion', () => {
         
         const pathExists = await fs.pathExists(modelPath);
         
-        await deleteDTO(model, basePath)
+        await deleteDTO(model, OUTPUT_DIR)
         const pathNotExists = !await fs.pathExists(modelPath);
         expect(pathExists&&pathNotExists).toBeTruthy();
     });
@@ -57,13 +57,13 @@ describe('DTO deletion', () => {
             ]
         };
 
-        await addDTO(dto11, basePath);
-        await addDTO(model, basePath);
+        await addDTO(dto11, OUTPUT_DIR);
+        await addDTO(model, OUTPUT_DIR);
 
-        const configPath = path.join(basePath, DIRECTORIES.BASE_API);
+        const configPath = path.join(OUTPUT_DIR, DIRECTORIES.BASE_API);
         const config: ApiConfig = await readJsonFile(configPath);
         const modelPath = path.join(
-            basePath,
+            OUTPUT_DIR,
             getMainPath(config.group, config.artifact),
             DIRECTORIES.DTO,
             `${model.name}${EXTENSIONS.JAVA}`
@@ -74,7 +74,7 @@ describe('DTO deletion', () => {
         let errors;
         
         try {
-            await deleteDTO(dto11, basePath)
+            await deleteDTO(dto11, OUTPUT_DIR)
         } catch(e) {
             errors = e;
         }

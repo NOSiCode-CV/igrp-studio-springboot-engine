@@ -1,7 +1,7 @@
 import { deleteModel } from '../src/index';
 import { BaseApiConfig, ModelConfig } from '../src/interfaces/types';
 
-const basePath = 'generatedTest'
+const OUTPUT_DIR = 'generatedTest'
 
 const model: ModelConfig = {
   type: 'model',
@@ -46,7 +46,7 @@ afterAll(async () => {
 
 describe('Model deletion', () => {
   it('should should delete a model', async () => {
-    await deleteModel(model, basePath)
+    await deleteModel(model, OUTPUT_DIR)
   });
 
 });
