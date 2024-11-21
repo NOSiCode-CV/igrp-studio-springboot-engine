@@ -1,11 +1,11 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.{{toLowerCase resourceConfig.name}};
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.application.command.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
 
 public class {{resourceConfig.name}}AggregateRootHandler extends {{resourceConfig.name}}AggregateRoot {
 

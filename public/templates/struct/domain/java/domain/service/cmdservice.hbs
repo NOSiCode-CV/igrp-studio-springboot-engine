@@ -1,12 +1,12 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
+package {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.{{toLowerCase ../resourceConfig.module}}.application.commands.commands.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{toLowerCase ../resourceConfig.module}}.application.commands.commands.{{this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 

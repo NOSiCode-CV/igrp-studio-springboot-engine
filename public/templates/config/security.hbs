@@ -1,7 +1,7 @@
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.shared.security;
+package {{baseConfig.group}}.{{baseConfig.packageName}}.shared.security;
 {{else}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.security;
+package {{baseConfig.group}}.{{baseConfig.packageName}}.security;
 {{/if}}
 
 import org.springframework.beans.factory.annotation.Value;

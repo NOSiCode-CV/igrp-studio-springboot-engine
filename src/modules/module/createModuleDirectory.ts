@@ -22,10 +22,10 @@ export const createModuleDirectory = async (context: RenderContext<ModuleConfig>
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
 
-  const { group, artifact } = context.baseConfig;
+  const { group, packageName } = context.baseConfig;
   const basePath = context.basePath
 
-  const mainPath = path.join(basePath, getMainPath(group, artifact));
+  const mainPath = path.join(basePath, getMainPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
 
   const modulePath = path.join(mainPath, context.resourceConfig.name);

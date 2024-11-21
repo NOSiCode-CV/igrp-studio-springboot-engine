@@ -29,7 +29,7 @@ export const saveFileConfig = async (context: RenderContext) => {
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
   context.baseConfig.name = capitalize(context.baseConfig.apiName);
-  context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.artifact}`;
+  context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
   const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
@@ -37,7 +37,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   const mainPath = 
     path.join(
       context.basePath,
-      getMainPath(context.baseConfig.group, context.baseConfig.artifact)
+      getMainPath(context.baseConfig.group, context.baseConfig.packageName)
     );
   
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {

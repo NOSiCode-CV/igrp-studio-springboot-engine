@@ -16,7 +16,21 @@ export interface TypeMetadata {
   namespace?: string;
 }
 
-export interface ApiConfig {
+export interface ApiConfig extends BaseApiConfig {
+  type: 'baseApi';
+  apiName: string;
+  group: string;
+  artifact: string;
+  packageName: string;
+  database: DatabaseTypes;
+  description?: string;
+  package?: string;
+  projectStructureStyle: ProjectStructureStyle;
+  name?: string;
+  enableObservability: boolean;
+}
+
+export interface BaseApiConfig {
   type: 'baseApi';
   apiName: string;
   group: string;
@@ -28,6 +42,7 @@ export interface ApiConfig {
   name?: string;
   enableObservability: boolean;
 }
+
 
 export interface ModelConfig {
   type: 'model';

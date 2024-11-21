@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeType, BaseApiConfig,
   DTOBaseConfig,
   DTOConfig,
   HandlerConfig,
@@ -60,7 +60,13 @@ import { generateListeners } from './modules/listeners/generateListeners';
 import { generateAggregateRootHandler } from './modules/controller/generateAggregateRootHandler';
 import { generateQueryServiceInterface } from './modules/controller/generateQueryServiceInterface';
 import { generateQueryServiceInmpl } from './modules/controller/generateQueryService';
-import { getMainPath, loadDTOConfig, loadPermissionConfigs, replaceTemplate } from './utils/helpers';
+import {
+  getMainPath,
+  loadDTOConfig,
+  loadPermissionConfigs,
+  normalizePackageName,
+  replaceTemplate,
+} from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
 import { template } from 'handlebars';
 import { saveModuleConfig } from './modules/module/saveModuleConfig';
@@ -87,7 +93,7 @@ import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFile
  *    type: 'baseApi'
  *    apiName: 'my_api' //Names with hyphens or spaces are not accepted.
  *    group: 'example'
- *    artifact: 'demo'
+ *    packageName: 'demo'
  *    database: 'MySQL' //you can choose between MySQL and PostgreSQL
  *    description: 'your project descripcion' //optional field
  * }
@@ -103,12 +109,28 @@ import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFile
  * }
  * 
  */
-export const newApi = async (dirty: ApiConfig, basePath: string) => {
-  const config = cleaner(dirty)
-  const valid = apiValidation(config);
+export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
-  if (!valid && apiValidation.errors) 
+  const baseConfig = cleaner(dirty)
+
+  const valid = apiValidation(baseConfig);
+
+  if (!valid && apiValidation.errors)
     throw apiValidation.errors;
+
+  const config: ApiConfig = {
+    type: baseConfig.type,
+    apiName: baseConfig.apiName,
+    group: baseConfig.group,
+    artifact: baseConfig.artifact,
+    packageName: normalizePackageName(baseConfig.artifact),
+    database: baseConfig.database,
+    description: baseConfig.description,
+    package: baseConfig.package,
+    projectStructureStyle: baseConfig.projectStructureStyle,
+    name: baseConfig.name,
+    enableObservability: baseConfig.enableObservability
+  }
 
   if (!basePath) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
@@ -162,7 +184,7 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
     baseConfig: baseConfig,
   };
 
-  if (await checkIfDirectoryExists(path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.artifact), context.resourceConfig.name))) {
+  if (await checkIfDirectoryExists(path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName), context.resourceConfig.name))) {
     throw ERROR_MESSAGE.MODULE_CREATED_ALREADY;
   }
 

@@ -22,10 +22,10 @@ export const createAppDirectories = async (context: RenderContext) => {
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
 
-  const { group, artifact } = config;
+  const { group, packageName } = config;
 
-  const mainPath = path.join(basePath, getMainPath(group, artifact));
-  const testPath = path.join(basePath, getTestPath(group, artifact));
+  const mainPath = path.join(basePath, getMainPath(group, packageName));
+  const testPath = path.join(basePath, getTestPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
   const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
 

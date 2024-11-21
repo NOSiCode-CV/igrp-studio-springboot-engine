@@ -1,7 +1,7 @@
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.controller;
+package {{baseConfig.group}}.{{baseConfig.packageName}}.infrastructure.controller;
 {{else}}
-package {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}};
 {{/if}}
 
 import org.springframework.http.ResponseEntity;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.application.dto.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}CmdService;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.service.{{resourceConfig.name}}CmdService;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
 {{else}}
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact resourceConfig.module false}}

@@ -22,9 +22,9 @@ export const createTestDirectories = async (context: RenderContext) => {
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
 
-  const { group, artifact } = config;
+  const { group, packageName } = config;
 
-  const testPath = path.join(basePath, getTestPath(group, artifact));
+  const testPath = path.join(basePath, getTestPath(group, packageName));
 
   const sharedPath = path.join(testPath, DIRECTORIES.SHARED);
   const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);

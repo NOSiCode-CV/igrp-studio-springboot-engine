@@ -31,12 +31,12 @@ export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, bas
 const generateBaseModuleFiles = (context: RenderContext<ModuleConfig>): BASE_API_FILES => {
 
   context.baseConfig.name = capitalize(context.baseConfig.apiName);
-  context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.artifact}`;
+  context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
 
   const mainPath =
     path.join(
       context.basePath,
-      getMainPath(context.baseConfig.group, context.baseConfig.artifact)
+      getMainPath(context.baseConfig.group, context.baseConfig.packageName)
     );
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {

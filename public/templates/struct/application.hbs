@@ -1,9 +1,9 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}};
+package {{baseConfig.group}}.{{baseConfig.packageName}};
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.shared.config.ApplicationAuditorAware;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.ApplicationAuditorAware;
 {{else}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.config.ApplicationAuditorAware;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.ApplicationAuditorAware;
 {{/if}}
 
 import org.springframework.boot.SpringApplication;

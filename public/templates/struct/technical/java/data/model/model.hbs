@@ -1,9 +1,9 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.models.{{ toLowerCase resourceConfig.name}};
+package {{baseConfig.group}}.{{baseConfig.packageName}}.models.{{ toLowerCase resourceConfig.name}};
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
-import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

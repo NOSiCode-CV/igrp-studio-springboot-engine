@@ -148,7 +148,7 @@ Handlebars.registerHelper('ifEquals', function (
     return resourceConfig.keyType || 'DefaultType';
 });*/
 
-Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, artifact: string, module: string, domainDriven?: boolean) {
+Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], group: string, packageName: string, module: string, domainDriven?: boolean) {
   let imports: string [] = []
 
   console.log("Module: ", module)
@@ -159,16 +159,16 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
     if (action.requestBody)
       if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody))
         if(domainDriven === true)
-          imports.push(`import ${group}.${artifact}.${mod}.application.dto.${action.requestBody};`)
+          imports.push(`import ${group}.${packageName}.${mod}.application.dto.${action.requestBody};`)
         else
-          imports.push(`import ${group}.${artifact}.${mod}.dto.${action.requestBody};`)
+          imports.push(`import ${group}.${packageName}.${mod}.dto.${action.requestBody};`)
       if (action.response)
         if (extractTypeFromList(action.response)){
           const type = extractTypeFromList(action.response)
           if(domainDriven === true)
-            imports.push(`import ${group}.${artifact}.${mod}.application.dto.${type};`)
+            imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`)
           else
-            imports.push(`import ${group}.${artifact}.${mod}.dto.${type};`)
+            imports.push(`import ${group}.${packageName}.${mod}.dto.${type};`)
         }
         if(action.response.startsWith('List'))
           imports.push(`import java.util.List;`)

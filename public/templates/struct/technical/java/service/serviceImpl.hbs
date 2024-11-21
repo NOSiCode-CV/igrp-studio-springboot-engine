@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.services;
+package {{baseConfig.group}}.{{baseConfig.packageName}}.services;
 /*
  * Implementation class for {{resourceConfig.name}}ServiceInterface.
  * 
@@ -8,8 +8,8 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.services;
  *
  */
 import org.springframework.stereotype.Service;
-{{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
 
 @Service
 public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name}}ServiceInterface {

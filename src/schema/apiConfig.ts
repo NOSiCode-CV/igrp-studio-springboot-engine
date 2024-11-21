@@ -1,14 +1,14 @@
-import { ApiConfig } from "../interfaces/types";
+import { BaseApiConfig } from "../interfaces/types";
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
 
 
-const apiSchema: JSONSchemaType<ApiConfig> = {
+const apiSchema: JSONSchemaType<BaseApiConfig> = {
   type: 'object',
   properties: {
     type: { 
-      type: "string", 
+      type: "string",
       const: "baseApi",
       errorMessage: "The 'type' attribute must have the value 'baseApi'."  
     },
@@ -26,13 +26,14 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
         pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
       }
     },
-    artifact: { 
+    artifact: {
       type: "string",
-      pattern: "^[a-zA-Z0-9._]+$",
+      pattern: "^[a-zA-Z0-9._-]+$",
       errorMessage: {
         pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
       }
     },
+
     database: { 
       type: "string", 
       enum: DATABASE_TYPES,
@@ -64,7 +65,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "database"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -72,13 +73,15 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       apiName: "The 'apiName' attribute is required and cannot be left blank.",
       group: "The 'group' attribute is required and must be provided.",
       artifact: "The 'artifact' attribute is required and cannot be empty.",
-      database: "The 'database' attribute is required and must specify a valid database type."
+      database: "The 'database' attribute is required and must specify a valid database type.",
+      projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
+      enableObservability: "The 'enableObservability' attribute is required and must specify a valid database type."
     },
     additionalProperties: "Extra attributes are not allowed in the API configuration."
   }
 };
 
 
-export const apiValidation: ValidateFunction<ApiConfig> = ajvInstance.compile<ApiConfig>(apiSchema);
+export const apiValidation: ValidateFunction<BaseApiConfig> = ajvInstance.compile<BaseApiConfig>(apiSchema);
 
 
