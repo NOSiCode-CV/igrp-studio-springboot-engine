@@ -1,25 +1,19 @@
 import {
   ATTRIBUTE_TYPES,
-  MIME_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
-  HTTP_METHOD_TYPES,
-  PARAMS_TYPES,
-  RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  SIMPLE_RESPONSE_TYPES, STRUCT_TYPES, OBJECT_TYPES,
+  HTTP_METHOD_TYPES,
+  MIME_TYPES,
+  OBJECT_TYPES,
+  PARAMS_TYPES,
+  STRUCT_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
   name: string;
-  primitive: boolean; 
-  namespace?:string;
-}
-
-export interface TypeMetadata {
-  name: string;
-  primitive: boolean; 
-  namespace?:string;
+  primitive: boolean;
+  namespace?: string;
 }
 
 export interface ApiConfig {
@@ -44,7 +38,7 @@ export interface ModelConfig {
   primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
-  audit?: boolean;  // New audit field added
+  audit?: boolean; // New audit field added
   module?: string;
 }
 
@@ -57,20 +51,14 @@ export interface PermissionConfig {
   type: 'permission';
   name: string;
   description: string;
-  endpoints: IEndpoint[]
+  endpoints: IEndpoint[];
 }
 
 export interface IEndpoint {
   type: string;
   resource: string; // indicates the model name or controller name
   method: HttpMethod;
-  path: string
-}
-
-export interface GenericType {
-  name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
+  path: string;
 }
 
 export interface JavaType {
@@ -81,8 +69,8 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | JavaType;
-  ns: 'dto'|'model'|'java';
-  isList?: boolean,
+  ns: 'dto' | 'model' | 'java';
+  isList?: boolean;
   primaryKey?: boolean;
 }
 
@@ -98,18 +86,12 @@ export interface DTOConfig extends DTOBaseConfig {
 }
 
 export interface HandlerConfig extends DTOConfig {
-  response: string
+  response: string;
 }
 
 export interface UniqueConstraint {
   name: string;
   columns: string[];
-}
-
-export interface GenericType {
-  name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
 }
 
 export interface JavaType {
@@ -120,7 +102,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | JavaType;
-  ns: 'dto'|'model'|'java';
+  ns: 'dto' | 'model' | 'java';
 }
 
 export interface DTOBaseConfig {
@@ -133,11 +115,6 @@ export interface DTOConfig extends DTOBaseConfig {
   attributes: JavaAttribute[];
 }
 
-export interface Icontroller {
-  type: 'icontroller';
-  name: string;
-}
-
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
@@ -147,9 +124,9 @@ export interface Attribute {
   nullable?: boolean;
   unique?: boolean;
   primaryKey?: boolean;
-  generationType?: GenerationType
+  generationType?: GenerationType;
   defaultValue?: string;
-  ns?: 'dto'|'model'|'java';
+  ns?: 'dto' | 'model' | 'java';
 }
 
 export interface Relation {
@@ -164,18 +141,13 @@ export interface Relation {
 export interface Crud {
   enabled: boolean;
   path: string;
-  permissions?: IModelPermission[]
+  permissions?: IModelPermission[];
   disabledMethods: DisabledMethods[];
 }
 
 export interface IModelPermission {
   method: HttpMethod;
-  permission: string
-}
-export interface Table {
-  name: string;
-  joinColumns: string;
-  inverseJoinColumns: string;
+  permission: string;
 }
 
 export interface ControllerConfig {
@@ -184,7 +156,7 @@ export interface ControllerConfig {
   basePath: string;
   actions: ControllerAction[];
   //attributes?: Attribute[];
-  module?: string
+  module?: string;
 }
 
 export interface ControllerAction {
@@ -205,17 +177,15 @@ export interface RequestParams {
   name: string;
 }
 
-
 export interface PathVariables {
   type: string;
   name: string;
 }
 
 export interface ISelectPermissions {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
-
 
 export type RenderContext<T = undefined> = {
   resourceConfig: T;
@@ -223,9 +193,8 @@ export type RenderContext<T = undefined> = {
   baseConfig: ApiConfig;
   mathAttributes?: string[];
   dateTimeAttributes?: string[];
-  uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
+  uniqueConstraints?: UniqueConstraint[];
 };
-
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
@@ -233,9 +202,6 @@ export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];
 export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
-export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
-export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
-export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`
-export type GenerationType = (typeof GENERATION_TYPES)[number]
+export type GenerationType = (typeof GENERATION_TYPES)[number];
