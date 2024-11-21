@@ -127,11 +127,17 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: {{toLowerCase baseConfig.name}}-service
+    env_file:
+      - .env
     depends_on:
       - {{#if (eq baseConfig.database "Postgresql")}}postgres{{else if (eq baseConfig.database "MySQL")}}mysql{{else if (eq baseConfig.database "Oracle")}}oracle{{/if}}
     environment:
       - SERVER_PORT=${SERVICE_PORT}
-      - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_METRICS_EXPORTER=${OTEL_METRICS_EXPORTER}
+      - OTEL_LOGS_EXPORTER=${OTEL_LOGS_EXPORTER}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
       - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:${TEMPO_SERVICE_ZIPKIN_PORT}
