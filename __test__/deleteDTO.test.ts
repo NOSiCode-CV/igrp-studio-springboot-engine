@@ -8,7 +8,7 @@ import { getMainPath } from '../src/utils/helpers';
 
 const basePath = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
 
-describe('DTO generator', () => {
+describe('DTO deletion', () => {
     it('should delete a dto', async () => {
         const model: DTOConfig = {
             type: 'dto',
