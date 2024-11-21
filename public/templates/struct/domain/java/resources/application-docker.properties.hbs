@@ -8,9 +8,9 @@ management.tracing.enabled=false
 management.tracing.sampling.probability=1.0
 
 # Datasource
-spring.datasource.url={{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql://host.docker.internal:<PORT>/<DB_NAME>{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql://host.docker.internal:<PORT>/<DB_NAME>{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@host.docker.internal:<PORT>:<DB_NAME>{{/if}}
-spring.datasource.username=<DB_USERNAME>
-spring.datasource.password=<DB_PASSWORD>
+spring.datasource.url={{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql://host.docker.internal:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql://host.docker.internal:${MYSQL_INTERNAL_PORT}/${MYSQL_DATABASE}{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@host.docker.internal:${ORACLE_INTERNAL_PORT}:${ORACLE_DATABASE}{{/if}}
+spring.datasource.username={{#if (eq baseConfig.database "Postgresql")}}${POSTGRES_USER}{{else if (eq baseConfig.database "MySQL")}}${MYSQL_USER}{{else if (eq baseConfig.database "Oracle")}}${ORACLE_USER}{{/if}}
+spring.datasource.password={{#if (eq baseConfig.database "Postgresql")}}${POSTGRES_PASSWORD}{{else if (eq baseConfig.database "MySQL")}}${MYSQL_PASSWORD}{{else if (eq baseConfig.database "Oracle")}}${ORACLE_PASSWORD}{{/if}}
 spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
 
 spring.jpa.hibernate.ddl-auto=update

@@ -6,7 +6,7 @@ ARG SERVICE_NAME
 
 # Set the working directory
 ENV APP_HOME /app
-ENV SPRING_PROFILES_ACTIVE=docker
+ENV SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
 
 # Copy the pom.xml and install dependencies
 COPY .mvn $APP_HOME/.mvn
@@ -34,7 +34,7 @@ WORKDIR /app
 COPY --from=build /app/target/{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar ./
 
 # Expose the port that the application will run on
-EXPOSE 8080
+EXPOSE ${SERVICE_PORT}
 
 # Command to run the application
 CMD ["sh", "-c", "java -jar ./{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar"]

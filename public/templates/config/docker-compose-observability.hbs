@@ -15,19 +15,19 @@ services:
     volumes:
       - ./monitoring/collector/otel-collector.yml:/etc/otelcol-cont/otel-collector.yml
     ports:
-      - "1888:1888" # pprof extension
-      - "8888:8888" # Prometheus' metrics exposed by the collector
-      - "8889:8889" # Prometheus exporter metrics
-      - "13133:13133" # health_check extension
-      - "4317:4317" # OTLP gRPC receiver
-      - "4318:4318" # OTLP http receiver
-      - "55679:55679" # zpages extension
+      - ${OTEL_PPROF_EXTENSION}:${OTEL_PPROF_EXTENSION} # pprof extension
+      - ${OTEL_PROMETHEUS_METRICS_EXPORTER_PORT}:${OTEL_PROMETHEUS_METRICS_EXPORTER_PORT} # Prometheus' metrics exposed by the collector
+      - ${OTEL_PROMETHEUS_COLLECTOR_METRICS_EXPORTER_PORT}:${OTEL_PROMETHEUS_COLLECTOR_METRICS_EXPORTER_PORT} # Prometheus exporter metrics
+      - ${OTEL_HEALTH_CHECK_PORT}:${OTEL_HEALTH_CHECK_PORT} # health_check extension
+      - ${OTEL_GRPC_PORT}:${OTEL_GRPC_PORT} # OTLP gRPC receiver
+      - ${OTEL_HTTP_PORT}:${OTEL_HTTP_PORT} # OTLP http receiver
+      - ${OTEL_ZPAGES_PORT}:${OTEL_ZPAGES_PORT} # zpages extension
 
   prometheus:
     image: prom/prometheus:v2.51.2
     container_name: prometheus
     ports:
-      - "9090:9090"
+      - ${PROMETHEUS_SERVICE_EXTERNAL_PORT}:${PROMETHEUS_SERVICE_INTERNAL_PORT}
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml"
@@ -46,7 +46,7 @@ services:
     container_name: loki
     command: "-config.file=/etc/loki/local-config.yaml"
     ports:
-      - "3100:3100"
+      - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
     depends_on:
       - promtail
 
@@ -55,9 +55,9 @@ services:
     container_name: tempo
     command: "-config.file /etc/tempo-config.yml"
     ports:
-      - "3200:3200"     # Tempo
-      - "9411:9411"     # Zipkin
-      - "4317"  # otlp grpc
+      - ${TEMPO_SERVICE_HTTP_PORT}:${TEMPO_SERVICE_HTTP_PORT} # Tempo
+      - ${TEMPO_SERVICE_ZIPKIN_PORT}:${TEMPO_SERVICE_ZIPKIN_PORT}     # Zipkin
+      - ${OTEL_GRPC_PORT}  # otlp grpc
     volumes:
       - ./monitoring/tempo/tempo.yml:/etc/tempo-config.yml
 
@@ -65,26 +65,57 @@ services:
     image: grafana/grafana:10.4.2
     container_name: grafana
     ports:
-      - "3000:3000"
+      - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=<GF_USER>
-      - GF_SECURITY_ADMIN_PASSWORD=<GF_PASSWORD>
-      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=${GRAFANA_ALLOW_SIGN_UP}
 
+{{#if (eq baseConfig.database "Postgresql")}}
   postgres:
-    image: postgres:14-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_USER: <DB_USERNAME>
-      POSTGRES_PASSWORD: <DB_PASSWORD>
-      POSTGRES_DB: <DB_NAME>
-    ports:
-      - "<PORT>:5432"
-    volumes:
-      - postgres-data-14:/var/lib/postgresql/data
-    restart: unless-stopped
+      image: postgres:14-alpine
+      container_name: postgres
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DATABASE}
+      ports:
+        - ${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}
+      volumes:
+        - postgres-data-14:/var/lib/postgresql/data
+      restart: unless-stopped
+
+{{else if (eq baseConfig.database "MySQL")}}
+  mysql:
+      image: mysql:8.0
+      container_name: mysql
+      environment:
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      ports:
+        - ${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}
+      volumes:
+        - mysql-data-8:/var/lib/mysql
+      restart: unless-stopped
+
+{{else if (eq baseConfig.database "Oracle")}}
+  oracle:
+      image: gvenzl/oracle-xe:21-slim
+      container_name: oracle
+      environment:
+        ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+        ORACLE_DATABASE: ${ORACLE_DATABASE}
+        ORACLE_USER: ${ORACLE_USER}
+      ports:
+        - ${ORACLE_EXTERNAL_PORT}:${ORACLE_INTERNAL_PORT}
+      volumes:
+        - oracle-data-21:/opt/oracle/oradata
+      restart: unless-stopped
+{{/if}}
 
   {{toLowerCase baseConfig.name}}-service:
     build:
@@ -94,16 +125,16 @@ services:
     depends_on:
       - postgres
     environment:
-      - SERVER_PORT=8080
+      - SERVER_PORT=${SERVICE_PORT}
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
       - MANAGEMENT_TRACING_ENABLED=true
-      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/<DB_NAME>
-      - SPRING_DATASOURCE_USERNAME=<DB_USERNAME>
-      - SPRING_DATASOURCE_PASSWORD=<DB_PASSWORD>
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:${TEMPO_SERVICE_ZIPKIN_PORT}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "8080:8080"
+      - ${SERVICE_PORT}:${SERVICE_PORT}
     #restart: unless-stopped
     deploy:
       resources:
@@ -115,5 +146,13 @@ services:
 volumes:
   grafana_data:
     driver: local
+{{#if (eq baseConfig.database "Postgresql")}}
   postgres-data-14:
-    driver: local
+  driver: local
+{{else if (eq baseConfig.database "MySQL")}}
+  mysql-data-8:
+  driver: local
+{{else if (eq baseConfig.database "Oracle")}}
+  oracle-data-21:
+  driver: local
+{{/if}}
