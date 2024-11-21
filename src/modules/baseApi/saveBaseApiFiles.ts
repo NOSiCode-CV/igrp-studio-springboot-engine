@@ -9,7 +9,7 @@ import {
   OBSERVABILITY_BINARY_FILES,
   TEMPLATE_DIR,
   OBSERVABILITY_YAML_CONFIG_FILES,
-  PROJECT_STRUCTURE_STYLE,
+  PROJECT_STRUCTURE_STYLE, CONFIG_BINARY_FILES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
@@ -281,6 +281,14 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         const template = await renderTemplate(file.template, context);
         await saveToFile(template, outputPath, false);
       }),
+    );
+    await Promise.all(
+      CONFIG_BINARY_FILES.map(async (file) => {
+        const outputPath = path.join(context.basePath, file.output);
+        const templatePath = path.join(TEMPLATE_DIR, file.template);
+        const binaryContent = await fs.readFile(templatePath);
+        await saveBinaryToFile(binaryContent, outputPath, false);
+      })
     );
   }
 };

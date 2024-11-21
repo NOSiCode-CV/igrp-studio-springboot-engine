@@ -8,14 +8,14 @@ scrape_configs:
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['localhost:${PROMETHEUS_SERVICE_INTERNAL_PORT}']
 
   - job_name: 'template-service'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['template-service:8080']
+      - targets: ['template-service:${SERVICE_PORT}']
 
   - job_name: 'otel-collector'
     static_configs:
-      - targets: ['otel-collector:8889']
+      - targets: ['otel-collector:${OTEL_PROMETHEUS_COLLECTOR_METRICS_EXPORTER_PORT}']

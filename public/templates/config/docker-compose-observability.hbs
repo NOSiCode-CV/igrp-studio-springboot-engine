@@ -123,16 +123,27 @@ services:
       dockerfile: Dockerfile
     container_name: {{toLowerCase baseConfig.name}}-service
     depends_on:
-      - postgres
+      - {{#if (eq baseConfig.database "Postgresql")}}postgres{{else if (eq baseConfig.database "MySQL")}}mysql{{else if (eq baseConfig.database "Oracle")}}oracle{{/if}}
     environment:
       - SERVER_PORT=${SERVICE_PORT}
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
       - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:${TEMPO_SERVICE_ZIPKIN_PORT}
+      {{#if (eq baseConfig.database "Postgresql")}}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      {{else if (eq baseConfig.database "MySQL")}}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:${MYSQL_INTERNAL_PORT}/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      {{else if (eq baseConfig.database "Oracle")}}
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle:${ORACLE_INTERNAL_PORT}:${ORACLE_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${ORACLE_USER}
+      - SPRING_DATASOURCE_PASSWORD=${ORACLE_PASSWORD}
+{{/if}}
+
     ports:
       - ${SERVICE_PORT}:${SERVICE_PORT}
     #restart: unless-stopped
@@ -148,11 +159,11 @@ volumes:
     driver: local
 {{#if (eq baseConfig.database "Postgresql")}}
   postgres-data-14:
-  driver: local
+    driver: local
 {{else if (eq baseConfig.database "MySQL")}}
   mysql-data-8:
-  driver: local
+    driver: local
 {{else if (eq baseConfig.database "Oracle")}}
   oracle-data-21:
-  driver: local
+    driver: local
 {{/if}}

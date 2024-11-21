@@ -66,6 +66,8 @@ import { template } from 'handlebars';
 import { saveModuleConfig } from './modules/module/saveModuleConfig';
 import { createModuleDirectory } from './modules/module/createModuleDirectory';
 import { moduleValidation } from './schema/moduleConfig';
+import { createTestDirectories } from './modules/baseApi/createTestDirectories';
+import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFiles';
 
 /**
  * Main Function that creates the base api
@@ -127,6 +129,7 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
    * Creates the folder structure needed for the API.
    */
   await createAppDirectories(context);
+  await createTestDirectories(context);
 
   /**
    * With the base config sent to the newAPI, this function should create the following:
@@ -135,6 +138,7 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
   await saveFileConfig(context);
+  await saveBaseTestApiFileConfig(context);
 
 };
 

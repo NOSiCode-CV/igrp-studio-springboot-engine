@@ -124,6 +124,7 @@ export const ERROR_MESSAGE = {
 
 export const TEMPLATES = {
   APPLICATION: 'struct/application.hbs',
+  APPLICATION_TEST: 'struct/application-test.hbs',
 
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
@@ -183,7 +184,7 @@ export const TEMPLATES = {
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
 
   ENV_FILE: 'config/env.hbs',
-  CONFIG_MVNW: 'config/mvnw.hbs',
+  CONFIG_MVNW: 'config/mvnw',
   CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
   CONFIG_POM_XML_OBSERVABILITY: 'config/pom.xml-observability.hbs',
@@ -280,7 +281,6 @@ export const TEMPLATES = {
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
   { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -290,6 +290,10 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
+
+export const CONFIG_BINARY_FILES = [
+  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
+]
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
