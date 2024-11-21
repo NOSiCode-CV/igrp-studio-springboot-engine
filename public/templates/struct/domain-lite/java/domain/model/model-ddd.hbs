@@ -3,7 +3,7 @@ package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module
 {{#each resourceConfig.relations}}
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.config.AuditEntity;{{/if}}
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

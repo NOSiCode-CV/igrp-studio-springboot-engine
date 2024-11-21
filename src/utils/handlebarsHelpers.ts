@@ -130,7 +130,8 @@ Handlebars.registerHelper('keyType', function(config: DTOConfig) {
     return 'Long'
   }
   else {
-      return (primaryKeyAttr.type as JavaAttribute | Attribute).name
+      const result: JavaType | string = primaryKeyAttr.type
+      return result
   }
 });
 
