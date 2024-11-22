@@ -48,6 +48,51 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       enum: ['model', 'dto', 'java'],
       errorMessage: 'The abbreaviated namespace must model, dto, java.'
     },
+    required: {
+      type: "boolean",
+      nullable: false,
+      errorMessage: 'The required attribute must be a boolean value.'
+    },
+    before: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The before attribute must be a boolean value.'
+    },
+    after: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The after attribute must be a boolean value.'
+    },
+    positive: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The positive attribute must be a boolean value.'
+    },
+    maxLength: {
+      type: "number",
+      nullable: true,
+      errorMessage: 'The max length must be a number.'
+    },
+    minLength: {
+      type: "number",
+      nullable: true,
+      errorMessage: 'The max length must be a number.'
+    },
+    regex: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The regex must be a string.'
+    },
+    isEmail: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The isEmail attribute must be a boolean value.'
+    },
+    isUrl: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The isUrl attribute must be a boolean value.'
+    },
     isList: { 
       type: "boolean", 
       nullable: true,

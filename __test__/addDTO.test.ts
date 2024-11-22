@@ -80,9 +80,9 @@ describe('DTO generator', () => {
       name: 'RentalCreated',
       template: 'classic',
       attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'LocalDate', ns: 'java', name: 'rentalDate' },
+        { type: 'Long', ns: 'java', name: 'id', primaryKey: true, required: false },
+        { type: 'String', ns: 'java', name: 'customerName', required: false },
+        { type: 'LocalDate', ns: 'java', name: 'rentalDate', required: false },
       ],
     };
 
@@ -214,18 +214,75 @@ describe('DTO generator', () => {
       name: 'Rental', // DTO name
       template: 'classic',
       attributes: [
-        { type: 'Long', ns: 'java', name: 'rentalId', primaryKey: true },    // Primary key for the rental
-        { type: 'Long', ns: 'java', name: 'carId' },                          // Field for car ID
-        { type: 'String', ns: 'java', name: 'customerName' },                 // Field for the customer name
-        { type: 'String', ns: 'java', name: 'rentalStartDate' },                // Field for rental start date
-        { type: 'String', ns: 'java', name: 'rentalEndDate' },                  // Field for rental end date
-        { type: 'String', ns: 'java', name: 'rentalStatus' },                 // Field for rental status
-        { type: 'BigDecimal', ns: 'java', name: 'rentalPrice' },              // Field for rental price
+        { type: 'Long', ns: 'java', name: 'rentalId', primaryKey: true, required: false },    // Primary key for the rental
+        { type: 'Long', ns: 'java', name: 'carId', required: false },                          // Field for car ID
+        { type: 'String', ns: 'java', name: 'customerName', required: false },                 // Field for the customer name
+        { type: 'String', ns: 'java', name: 'rentalStartDate', required: false },                // Field for rental start date
+        { type: 'String', ns: 'java', name: 'rentalEndDate', required: false },                  // Field for rental end date
+        { type: 'String', ns: 'java', name: 'rentalStatus', required: false },                 // Field for rental status
+        { type: 'BigDecimal', ns: 'java', name: 'rentalPrice', required: false },              // Field for rental price
       ],
     };
 
     await addDTO(model, OUTPUT_DIR);
   });
+
+  it('should generate DTOs with proper Jakarta Validation annotations for various scenarios', async () => {
+    const testCases: DTOConfig[] = [
+      {
+        module: 'CarRental',
+        type: 'dto',
+        name: 'Rental',
+        template: 'classic',
+        attributes: [
+          { type: 'Long', ns: 'java', name: 'rentalId', primaryKey: true, required: true },
+          { type: 'String', ns: 'java', name: 'customerName', required: true, minLength: 3, maxLength: 50 },
+          { type: 'BigDecimal', ns: 'java', name: 'rentalPrice', positive: true, required: true },
+          { type: 'String', ns: 'java', name: 'rentalStatus', regex: '^(ACTIVE|CANCELLED|COMPLETED)$', required: false },
+        ],
+      },
+      {
+        module: 'CarRental',
+        type: 'dto',
+        name: 'User',
+        template: 'classic',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'username', required: true, minLength: 5, maxLength: 20 },
+          { type: 'String', ns: 'java', name: 'email', isEmail: true, required: true },
+          { type: 'LocalDate', ns: 'java', name: 'dateOfBirth', before: true, required: false },
+        ],
+      },
+      {
+        module: 'CarRental',
+        type: 'dto',
+        name: 'Endpoint',
+        template: 'classic',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'url', isUrl: true, required: true },
+          { type: 'String', ns: 'java', name: 'regexPattern', regex: '^https?://.*', required: false },
+        ],
+      },
+      {
+        module: 'CarRental',
+        type: 'dto',
+        name: 'Transaction',
+        template: 'classic',
+        attributes: [
+          { type: 'Long', ns: 'java', name: 'transactionId', primaryKey: true, required: false },
+          { type: 'BigDecimal', ns: 'java', name: 'amount', positive: true, required: true, minLength: 1 },
+          { type: 'LocalDate', ns: 'java', name: 'transactionDate', after: true, required: false },
+        ],
+      },
+    ];
+
+    for (const testCase of testCases) {
+      await addDTO(testCase, OUTPUT_DIR);
+    }
+
+    // Assertions for annotations can be done by reading the generated DTO files
+    // and validating their content matches the expected output for each case.
+  });
+
 
 
 });

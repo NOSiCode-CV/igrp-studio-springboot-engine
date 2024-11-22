@@ -85,7 +85,16 @@ export interface JavaAttribute {
   name: string;
   type: string | JavaType;
   ns: 'dto' | 'model' | 'java';
+  required: boolean;
+  before?: boolean,
+  after?: boolean,
+  positive?: boolean,
+  minLength?: number,
+  maxLength?: number,
+  regex?: string,
   isList?: boolean;
+  isEmail?: boolean;
+  isUrl?: boolean;
   primaryKey?: boolean;
 }
 

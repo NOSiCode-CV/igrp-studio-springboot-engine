@@ -1,5 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.packageName}}.dto;
 
+import jakarta.validation.*;
 {{resolve-imports resourceConfig}}
 
 {{#each resourceConfig.annotations}}
@@ -10,6 +11,7 @@ public record {{capitalize resourceConfig.name}}DTO(
     {{#each this.annotations}}
     @{{this.annotation}}
     {{/each}}
+    {{{resolve-annotations this}}}
     {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
 ){}

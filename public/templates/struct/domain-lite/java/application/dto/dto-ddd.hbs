@@ -1,5 +1,6 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto;
 
+import jakarta.validation.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class {{resourceConfig.name}}DTO {
   {{#each this.annotations}}
     @{{this.annotation}}
   {{/each}}
+  {{{resolve-annotations this}}}
   private {{{resolve-type this}}} {{this.name}};
 {{/each}}
 

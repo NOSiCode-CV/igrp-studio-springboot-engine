@@ -178,6 +178,79 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
   return [...new Set(imports)].join("\n")
 });
 
+Handlebars.registerHelper('resolve-annotations', function (attribute) {
+  const annotations = [];
+
+  // Required validation
+  if (attribute.required) {
+    if (attribute.type.name === 'String') {
+      console.log(`This is a String <${attribute.name}>`)
+      annotations.push(`@NotBlank(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
+    } else {
+      console.log(`This is a Not a String <${attribute.name}>, this is ${attribute.type}`)
+      annotations.push(`@NotNull(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
+    }
+  }
+
+  // String-specific validations
+  if (attribute.type.name === 'String') {
+    if (attribute.minLength !== undefined || attribute.maxLength !== undefined) {
+      annotations.push(
+        `@Size(${[
+          attribute.minLength !== undefined ? `min = ${attribute.minLength}, message = "O tamanho do campo <${attribute.name}> tem de ser pelo menos de ${attribute.minLength} caracteres."` : '',
+          attribute.maxLength !== undefined ? `max = ${attribute.maxLength}, message = "O tamanho do campo <${attribute.name}> não pode ultrapassar ${attribute.maxLength} caracteres.` : '',
+        ]
+          .filter(Boolean)
+          .join(', ')})`
+      );
+    }
+    if (attribute.regex) {
+      annotations.push(`@Pattern(message = "O formato do valor do campo <${attribute.name}> é inválido.", regexp = "${attribute.regex}")`);
+    }
+  }
+
+  // Number-specific validations
+  if (['Integer', 'Long', 'Double', 'Float', 'BigDecimal', 'BigInteger'].includes(attribute.type.name)) {
+    if (attribute.minLength !== undefined) {
+      annotations.push(`@Min(${attribute.minLength})`);
+    }
+    if (attribute.maxLength !== undefined) {
+      annotations.push(`@Max(${attribute.maxLength})`);
+    }
+    if (attribute.positive) {
+      annotations.push(attribute.minLength === 0 ? `@PositiveOrZero(message = "O valor do campo <${attribute.name}> deve ser maior ou igual a zero.")` : `@Positive(message = "O valor do campo <${attribute.name}> deve ser maior do que zero.")`);
+    }
+  }
+
+  // Date-specific validations
+  if (['Date', 'LocalDate', 'LocalDateTime', 'ZonedDateTime'].includes(attribute.type.name)) {
+    if (attribute.before) {
+      annotations.push(`@Past(message = "A data do campo <${attribute.name}> deve ser anterior à data atual.")`);
+    }
+    if (attribute.after) {
+      annotations.push(`@Future(message = "A data do campo <${attribute.name}> deve ser superior à data atual.")`);
+    }
+  }
+
+  // Email validation
+  if (attribute.isEmail) {
+    annotations.push(`@Email(message = "O formato do campo <${attribute.name}> não corresponde ao formato válido de um email.")`);
+  }
+
+  // URL validation
+  if (attribute.isUrl) {
+    annotations.push(`@URL(message = "O formato do campo <${attribute.name}> não corresponde ao formato válido de um URL.")`);
+  }
+
+  // Custom pattern validation
+  if (attribute.regex && !['String', 'Number', 'Date'].includes(attribute.type.name)) {
+    annotations.push(`@Pattern(message = "O formato do valor do campo <${attribute.name}> é inválido.", regexp = "${attribute.regex}")`);
+  }
+
+  // Return the generated annotations as a joined string
+  return annotations.join('\n  ');
+});
+
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
   if (arg1 === arg2) {
     return true;
@@ -226,6 +299,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
     }
     if (attr.isList)
       imports.add(`import java.util.List;`);
+
   });
 
   return Array.from(imports).sort().join('\n');
