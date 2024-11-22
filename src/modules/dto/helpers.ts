@@ -5,7 +5,7 @@ import { getPackageNameFromConfig, loadConfig, loadDTOConfig, loadDTOConfigs } f
 export const getDTOTypes = async function (module:string, basePath: string): Promise<Map<string, DTOConfig>> {
     const configs = await loadDTOConfigs(module, basePath)
     const types: Map<string, DTOConfig> = new Map<string, DTOConfig>();
-    configs.forEach(cfg => types.set(`${cfg.name}`, cfg));
+    configs.forEach(cfg => types.set(`${cfg.name}DTO`, cfg));
     return types;
 }
 

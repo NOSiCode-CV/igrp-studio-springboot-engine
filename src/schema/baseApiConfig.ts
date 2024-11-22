@@ -1,10 +1,10 @@
-import { ApiConfig } from "../interfaces/types";
+import { BaseApiConfig } from "../interfaces/types";
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
 
 
-const apiSchema: JSONSchemaType<ApiConfig> = {
+const apiSchema: JSONSchemaType<BaseApiConfig> = {
   type: 'object',
   properties: {
     type: { 
@@ -56,10 +56,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       type: "string",
       nullable: true
     },
-    packageName: {
-      type: "string",
-      nullable: false
-    },
     projectStructureStyle: {
       type: "string",
       nullable: false
@@ -69,7 +65,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -77,7 +73,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       apiName: "The 'apiName' attribute is required and cannot be left blank.",
       group: "The 'group' attribute is required and must be provided.",
       artifact: "The 'artifact' attribute is required and cannot be empty.",
-      packageName: "The 'packageName' attribute is required and cannot be empty.",
       database: "The 'database' attribute is required and must specify a valid database type.",
       projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
       enableObservability: "The 'enableObservability' attribute is required and must specify a valid database type."
@@ -87,6 +82,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
 };
 
 
-export const apiValidation: ValidateFunction<ApiConfig> = ajvInstance.compile<ApiConfig>(apiSchema);
+export const apiValidation: ValidateFunction<BaseApiConfig> = ajvInstance.compile<BaseApiConfig>(apiSchema);
 
 

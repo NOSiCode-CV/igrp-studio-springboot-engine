@@ -3,6 +3,7 @@ import { addDTO } from '../src';
 import { DTOConfig } from '../src/interfaces/types';
 
 const OUTPUT_DIR = 'generatedTest';
+const HUB_DIR = 'C:\\Users\\marcelo.monteiro\\IdeaProjects\\inss-sisgb-portal-integration-hub-service';
 
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
@@ -282,6 +283,119 @@ describe('DTO generator', () => {
     // Assertions for annotations can be done by reading the generated DTO files
     // and validating their content matches the expected output for each case.
   });
+
+  it('should generate DTOs for integration hub', async () => {
+    const testCases: DTOConfig[] = [
+      {
+        module: 'reembolso',
+        type: 'dto',
+        name: 'DadosFactura',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'valor', required: false },
+          { type: 'String', ns: 'java', name: 'medico', required: false },
+          { type: 'String', ns: 'java', name: 'farmacia', required: false },
+        ],
+      },
+      {
+        module: 'shared',
+        type: 'dto',
+        name: 'Documento',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'tipoDocumento', required: true },
+          { type: 'String', ns: 'java', name: 'ficheiro', required: true }
+        ],
+      },
+      {
+        module: 'reembolso',
+        type: 'dto',
+        name: 'Refund',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'tipoPedido', required: false },
+          { type: 'String', ns: 'java', name: 'numUtente', required: false },
+          { type: 'String', ns: 'java', name: 'tipoUtente', required: false },
+          { type: 'DadosFacturaDTO', ns: 'dto', name: 'dadosFactura', required: false },
+          { type: 'String', ns: 'java', name: 'origemPedido', required: false },
+          { type: 'String', ns: 'java', name: 'dataPrescricao', required: false },
+          { type: 'String', ns: 'java', name: 'observacoes', required: false },
+          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, isList: true },
+
+
+
+        ],
+      },
+
+      {
+        module: 'subsidiofuneral',
+        type: 'dto',
+        name: 'IdentificacaoRequerente',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'tipo_documento_req', required: true },
+          { type: 'String', ns: 'java', name: 'numero_doc_req', required: true },
+          { type: 'String', ns: 'java', name: 'data_nascimento_req', required: true },
+          { type: 'String', ns: 'java', name: 'nome_pai_req', required: true },
+          { type: 'String', ns: 'java', name: 'nome_mae_req', required: true }
+        ],
+      },
+      {
+        module: 'subsidiofuneral',
+        type: 'dto',
+        name: 'IdentificacaoFalecido',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'num_utente', required: true },
+          { type: 'String', ns: 'java', name: 'nome_utente', required: true },
+          { type: 'String', ns: 'java', name: 'data_nascimento', required: true },
+          { type: 'String', ns: 'java', name: 'data_obito', required: true },
+          { type: 'String', ns: 'java', name: 'tipo_utente', required: true }
+        ],
+      },
+
+      {
+        module: 'subsidiofuneral',
+        type: 'dto',
+        name: 'SubsidioFuneral',
+        template: 'record',
+        attributes: [
+          { type: 'String', ns: 'java', name: 'tipo_subsidio', required: true },
+          { type: 'String', ns: 'java', name: 'observacoes', required: false },
+          { type: 'IdentificacaoFalecidoDTO', ns: 'dto', name: 'identificacao_falecido', required: true },
+          { type: 'IdentificacaoRequerenteDTO', ns: 'dto', name: 'identificacao_requerente', required: true },
+          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, isList: true, minLength: 1 },
+        ],
+      },
+
+      {
+        module: 'shared',
+        type: 'dto',
+        name: 'Utente',
+        template: 'record',
+        attributes: [
+          { type: 'Long', ns: 'java', name: 'id', required: false },
+          { type: 'Long', ns: 'java', name: 'idGeografiaNat', required: false },
+          { type: 'String', ns: 'java', name: 'nome', required: false },
+          { type: 'String', ns: 'java', name: 'cidnome', required: false },
+          { type: 'String', ns: 'java', name: 'naturalidade', required: false },
+          { type: 'String', ns: 'java', name: 'dataNascimento', required: false },
+          { type: 'String', ns: 'java', name: 'nomePai', required: false },
+          { type: 'String', ns: 'java', name: 'nomeMae', required: false },
+          { type: 'String', ns: 'java', name: 'numSegurado', required: false },
+        ],
+      },
+
+    ];
+
+    for (const testCase of testCases) {
+      await addDTO(testCase, HUB_DIR);
+    }
+
+    // Assertions for annotations can be done by reading the generated DTO files
+    // and validating their content matches the expected output for each case.
+  });
+
 
 
 

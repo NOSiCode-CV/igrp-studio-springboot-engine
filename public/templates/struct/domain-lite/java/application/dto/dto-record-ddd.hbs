@@ -1,6 +1,7 @@
 package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto;
 
 import jakarta.validation.*;
+import jakarta.validation.constraints.*;
 {{resolve-imports resourceConfig}}
 
 {{#each resourceConfig.annotations}}

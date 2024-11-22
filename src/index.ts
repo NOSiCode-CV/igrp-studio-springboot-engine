@@ -12,7 +12,7 @@ import {
   DATABASE_TYPES, DIRECTORIES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES,
   MIME_TYPES, PARAMS_TYPES, PROJECT_STRUCTURE_STYLE, RELATIONSHIP_TYPES, RESPONSE_TYPES,
 } from './utils/constants';
-import { apiValidation } from './schema/apiConfig';
+import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
 import { validateModelConfig } from './schema/modelConfig';
 import { checkIfDirectoryExists, checkIfDirectoryIsEmpty } from './utils/checkFiles';

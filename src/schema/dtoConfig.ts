@@ -115,12 +115,13 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       nullable: true
     },
   },
-  required: ["type", "name", "ns"],
+  required: ["type", "name", "ns", "required"],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The attribute type is required.',
-      name: 'The attribute name is required.'
+      name: 'The attribute name is required.',
+      required: 'The attribute required is required.'
     },
     additionalProperties: 'No additional properties are allowed in the attribute schema.'
   }
