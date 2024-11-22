@@ -184,10 +184,8 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
   // Required validation
   if (attribute.required) {
     if (attribute.type.name === 'String') {
-      console.log(`This is a String <${attribute.name}>`)
       annotations.push(`@NotBlank(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
     } else {
-      console.log(`This is a Not a String <${attribute.name}>, this is ${attribute.type}`)
       annotations.push(`@NotNull(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
     }
   }
