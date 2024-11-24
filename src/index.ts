@@ -244,7 +244,9 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   if(dirty.crud) {
     config.crud = dirty.crud
   }
+
   dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
+  dirty.indexes? config.indexes = dirty.indexes: ''
   
   // this function check is the request params in actions have duplicateds names
   checkDuplicated(config.attributes, [], []);

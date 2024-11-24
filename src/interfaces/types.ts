@@ -39,13 +39,21 @@ export interface ModelConfig {
   name: string;
   tableName: string;
   attributes: Attribute[];
-  uniqueConstraints?: UniqueConstraint[]; // Novo campo para Compound Unique
+  uniqueConstraints?: UniqueConstraint[];
+  indexes?: EntityIndex[];
   primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
-  audit?: boolean; // New audit field added
+  audit?: boolean;
   module?: string;
 }
+
+export interface EntityIndex {
+  name: string;
+  columns: string[];
+  unique: boolean
+}
+
 
 export interface ModuleConfig {
   type: 'module';

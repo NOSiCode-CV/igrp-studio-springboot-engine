@@ -3,7 +3,7 @@ import * as Handlebars from 'handlebars';
 import {
   Attribute, AttributeType,
   ControllerAction,
-  ControllerConfig, DTOConfig,
+  DTOConfig,
   JavaAttribute,
   JavaType,
   ModelConfig,
@@ -355,9 +355,7 @@ Handlebars.registerHelper('isText-type', function (this: any, type: any) {
     'String', 'Text', 'VARCHAR', 'CHAR', 'TEXT', 'CLOB', 'LONGTEXT', 'MEDIUMTEXT', 
     'TINYTEXT', 'NVARCHAR', 'NCHAR', 'NCLOB'
   ];
-  if (textTypes.includes(type))
-    return true
-  return false
+  return textTypes.includes(type);
 });
 
 Handlebars.registerHelper('breakEach', function (context, options) {
@@ -412,7 +410,7 @@ Handlebars.registerHelper('filterQueryActions', function(array: ControllerAction
 });
 
 Handlebars.registerHelper('and', function (...args) {
-  const options = args.pop(); // Remove the last element, which is the Handlebars options object
+  args.pop(); // Remove the last element, which is the Handlebars options object
   return args.every(Boolean); // Check if all arguments are truthy
 });
 
