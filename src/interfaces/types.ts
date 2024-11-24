@@ -17,17 +17,7 @@ export interface TypeMetadata {
 }
 
 export interface ApiConfig extends BaseApiConfig {
-  type: 'baseApi';
-  apiName: string;
-  group: string;
-  artifact: string;
   packageName: string;
-  database: DatabaseTypes;
-  description?: string;
-  package?: string;
-  projectStructureStyle: ProjectStructureStyle;
-  name?: string;
-  enableObservability: boolean;
 }
 
 export interface BaseApiConfig {
