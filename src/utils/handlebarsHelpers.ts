@@ -10,7 +10,7 @@ import {
   Relation,
 } from '../interfaces/types';
 import { DIRECTORIES, REQUEST_BODY_NOT_IMPORT } from './constants';
-import { extractTypeFromList } from './helpers';
+import { extractTypeFromList, validateAnnotations } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -181,12 +181,14 @@ Handlebars.registerHelper('importsTypes', function(actions: ControllerAction[], 
 Handlebars.registerHelper('resolve-annotations', function (attribute) {
   const annotations = [];
 
+  validateAnnotations(attribute)
+
   // Required validation
   if (attribute.required) {
     if (attribute.type.name === 'String') {
-      annotations.push(`@NotBlank(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
+      annotations.push(`@NotBlank(message = "The field <${attribute.name}> is required.")`);
     } else {
-      annotations.push(`@NotNull(message = "O campo <${attribute.name}> é de preenchimento obrigatório.")`);
+      annotations.push(`@NotNull(message = "The field <${attribute.name}> is required.")`);
     }
   }
 
@@ -195,15 +197,15 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
     if (attribute.minLength !== undefined || attribute.maxLength !== undefined) {
       annotations.push(
         `@Size(${[
-          attribute.minLength !== undefined ? `min = ${attribute.minLength}, message = "O tamanho do campo <${attribute.name}> tem de ser pelo menos de ${attribute.minLength} caracteres."` : '',
-          attribute.maxLength !== undefined ? `max = ${attribute.maxLength}, message = "O tamanho do campo <${attribute.name}> não pode ultrapassar ${attribute.maxLength} caracteres.` : '',
+          attribute.minLength !== undefined ? `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres.")` : '',
+          attribute.maxLength !== undefined ? `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres.")` : '',
         ]
           .filter(Boolean)
           .join(', ')})`
       );
     }
     if (attribute.regex) {
-      annotations.push(`@Pattern(message = "O formato do valor do campo <${attribute.name}> é inválido.", regexp = "${attribute.regex}")`);
+      annotations.push(`@Pattern(message = "Invalid value format for field <${attribute.name}>.", regexp = "${attribute.regex}")`);
     }
   }
 
@@ -216,33 +218,33 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
       annotations.push(`@Max(${attribute.maxLength})`);
     }
     if (attribute.positive) {
-      annotations.push(attribute.minLength === 0 ? `@PositiveOrZero(message = "O valor do campo <${attribute.name}> deve ser maior ou igual a zero.")` : `@Positive(message = "O valor do campo <${attribute.name}> deve ser maior do que zero.")`);
+      annotations.push(attribute.minLength === 0 ? `@PositiveOrZero(message = "<${attribute.name}> must be greater than or equal to zero.")` : `@Positive(message = "<${attribute.name}> must be greater than zero.")`);
     }
   }
 
   // Date-specific validations
   if (['Date', 'LocalDate', 'LocalDateTime', 'ZonedDateTime'].includes(attribute.type.name)) {
     if (attribute.before) {
-      annotations.push(`@Past(message = "A data do campo <${attribute.name}> deve ser anterior à data atual.")`);
+      annotations.push(`@Past(message = "The date <${attribute.name}> must be before today's date.")`);
     }
     if (attribute.after) {
-      annotations.push(`@Future(message = "A data do campo <${attribute.name}> deve ser superior à data atual.")`);
+      annotations.push(`@Future(message = "The date <${attribute.name}> must be after today's date.")`);
     }
   }
 
   // Email validation
   if (attribute.isEmail) {
-    annotations.push(`@Email(message = "O formato do campo <${attribute.name}> não corresponde ao formato válido de um email.")`);
+    annotations.push(`@Email(message = "Invalid email format for field <${attribute.name}>.")`);
   }
 
   // URL validation
   if (attribute.isUrl) {
-    annotations.push(`@URL(message = "O formato do campo <${attribute.name}> não corresponde ao formato válido de um URL.")`);
+    annotations.push(`@URL(message = "Invalid URL format for field <${attribute.name}>.")`);
   }
 
   // Custom pattern validation
   if (attribute.regex && !['String', 'Number', 'Date'].includes(attribute.type.name)) {
-    annotations.push(`@Pattern(message = "O formato do valor do campo <${attribute.name}> é inválido.", regexp = "${attribute.regex}")`);
+    annotations.push(`@Pattern(message = "Invalid format for field <${attribute.name}>.", regexp = "${attribute.regex}")`);
   }
 
   // Return the generated annotations as a joined string
@@ -250,11 +252,7 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
 });
 
 Handlebars.registerHelper('eq', function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
-  if (arg1 === arg2) {
-    return true;
-  } else {
-    return false;
-  }
+  return arg1 === arg2;
 });
 
 Handlebars.registerHelper('contains', function(str, substring) {

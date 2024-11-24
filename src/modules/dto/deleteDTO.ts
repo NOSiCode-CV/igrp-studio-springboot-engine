@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import {
   getDDDCommandOutputDir,
-  getDDDDataObjectOutputDir,
   getDDDDataTransferObjectOutputDir,
   getDDDDomainEntityOutputDir,
   getDDDEventOutputDir,

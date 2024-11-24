@@ -76,7 +76,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=${ORACLE_USER}
       - SPRING_DATASOURCE_PASSWORD=${ORACLE_PASSWORD}
 {{/if}}
-
+      - ENABLE_SWAGGER=${ENABLE_SWAGGER}
 
 volumes:
 {{#if (eq baseConfig.database "Postgresql")}}

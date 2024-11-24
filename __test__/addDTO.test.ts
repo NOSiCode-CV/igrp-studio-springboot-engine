@@ -386,6 +386,36 @@ describe('DTO generator', () => {
         ],
       },
 
+      {
+        module: 'shared',
+        type: 'dto',
+        name: 'Empresa',
+        template: 'record',
+        attributes: [
+          { type: 'Long', ns: 'java', name: 'id', required: false },
+          { type: 'String', ns: 'java', name: 'estatutoJuridico', required: false },
+          { type: 'String', ns: 'java', name: 'denominacaoSocial', required: false },
+          { type: 'String', ns: 'java', name: 'cidNom', required: false },
+          { type: 'String', ns: 'java', name: 'numeroContribuinte', required: false },
+          { type: 'String', ns: 'java', name: 'idTipoDocumento', required: false },
+        ],
+      },
+
+      {
+        module: 'shared',
+        type: 'dto',
+        name: 'UtenteDeceased',
+        template: 'record',
+        attributes: [
+          { type: 'Long', ns: 'java', name: 'id', required: false },
+          { type: 'String', ns: 'java', name: 'cidnome', required: false },
+          { type: 'String', ns: 'java', name: 'dataNascimento', required: false },
+          { type: 'String', ns: 'java', name: 'dataFalecimento', required: false },
+          { type: 'String', ns: 'java', name: 'numero', required: false },
+          { type: 'String', ns: 'java', name: 'idtipoUtente', required: false },
+        ],
+      },
+
     ];
 
     for (const testCase of testCases) {
@@ -396,7 +426,38 @@ describe('DTO generator', () => {
     // and validating their content matches the expected output for each case.
   });
 
+  it('should create DTO', async() => {
+    const testCases: DTOConfig[] = [
+      {
+        "type": "dto",
+        "module": "shared",
+        "name": "trtrt",
+        "template": "classic",
+        "attributes": [
+          {
+            "name": "retert",
+            "ns": "java",
+            "type": "String",
+            "required": true,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "minLength": 0,
+            "maxLength": 10,
+            "regex": "",
+            "isList": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
+          }
+        ]
+      }
+    ];
 
+    for (const testCase of testCases) {
+      await addDTO(testCase, OUTPUT_DIR);
+    }
+  })
 
 
 });

@@ -1,0 +1,25 @@
+#Disable database queries performed during view rendering
+spring.jpa.open-in-view=false
+
+{{#if baseConfig.enableObservability}}
+######## Actuator Configuration  #########
+management.info.git.mode=full
+management.endpoints.web.exposure.include=*
+management.metrics.tags.application=${spring.application.name}
+management.tracing.enabled=false
+management.tracing.sampling.probability=1.0
+{{/if}}
+
+# Swagger
+springdoc.swagger-ui.enabled=${ENABLE_SWAGGER:false}
+springdoc.swagger-ui.operationsSorter=method
+
+# Datasource configuration
+spring.datasource.url=${DATABASE_URL}
+spring.datasource.username=${DATABASE_USERNAME}
+spring.datasource.password=${DATABASE_PASSWORD}
+spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
+
+# JPA and Hibernate settings
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}

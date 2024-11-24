@@ -370,6 +370,53 @@ export const normalizePackageName = (artifactName: string): string => {
   return artifactName.replace(/-/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
 };
 
+/**
+ * Validates the annotations for the provided attribute object.
+ * Ensures specific rules are adhered to and throws an error if violations occur.
+ *
+ * @param {any} attribute - The attribute object to validate.
+ * @throws {Error} If validation rules are violated.
+ */
+export const validateAnnotations = (attribute: any) => {
+  const errors: Error[] = [];
+
+  // Check if isEmail and isUrl are applied only to String types and not simultaneously
+  if (attribute.isEmail && attribute.type.name !== 'String') {
+    errors.push(new Error(`The "isEmail" attribute can only be applied to String types. Found: ${attribute.type.name}`));
+  }
+  if (attribute.isUrl && attribute.type.name !== 'String') {
+    errors.push(new Error(`The "isUrl" attribute can only be applied to String types. Found: ${attribute.type.name}`));
+  }
+  if (attribute.isEmail && attribute.isUrl) {
+    errors.push(new Error(`The "isEmail" and "isUrl" attributes cannot be applied simultaneously.`));
+  }
+
+  // Check if before and after are applied only to LocalDate or LocalDateTime and not simultaneously
+  if ((attribute.before || attribute.after) &&
+    !['LocalDate', 'LocalDateTime'].includes(attribute.type.name)) {
+    errors.push(new Error(`The "before" and "after" attributes can only be applied to LocalDate or LocalDateTime types. Found: ${attribute.type.name}`));
+  }
+  if (attribute.before && attribute.after) {
+    errors.push(new Error(`The "before" and "after" attributes cannot be applied simultaneously.`));
+  }
+
+  // Check if positive is applied only to numeric types
+  if (attribute.positive && !['Integer', 'Long', 'Double', 'Float', 'BigDecimal', 'BigInteger'].includes(attribute.type.name)) {
+    errors.push(new Error(`The "positive" attribute can only be applied to numeric types. Found: ${attribute.type.name}`));
+  }
+
+  // Check if maxLength and minLength are applied only to String types
+  if ((attribute.minLength !== undefined || attribute.maxLength !== undefined) &&
+    attribute.type.name !== 'String') {
+    errors.push(new Error(`The "minLength" and "maxLength" attributes can only be applied to String types. Found: ${attribute.type.name}`));
+  }
+
+  // If there are any validation errors, throw them as an Error
+  if (errors.length > 0) {
+    throw errors
+  }
+};
+
 export const extractTypeFromList = (typeString: string): string | null => {
   const listRegex = "^List<(.+)>$";
   const match = typeString.match(listRegex);

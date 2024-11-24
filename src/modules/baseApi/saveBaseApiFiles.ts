@@ -65,18 +65,23 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       },
       {
         output: resourcePath,
-        template: TEMPLATES.DDD_DOMAIN_RESOURCES,
+        template: TEMPLATES.DOMAIN_RESOURCES,
         name: COMMON_FILES.APPLICATION_PROPERTIES_FILE,
       },
       {
         output: resourcePath,
-        template: TEMPLATES.DDD_DOMAIN_RESOURCES_LOCAL,
-        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_LOCAL,
+        template: TEMPLATES.APPLICATION_RESOURCES_DEVELOPMENT,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_DEVELOPMENT,
       },
       {
         output: resourcePath,
-        template: TEMPLATES.DDD_DOMAIN_RESOURCES_DOCKER,
-        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_DOCKER,
+        template: TEMPLATES.APPLICATION_RESOURCES_STAGING,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_STAGING,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_PRODUCTION,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_PRODUCTION,
       },
       {
         output: configPath,
@@ -89,7 +94,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         name: COMMON_FILES.APPLICATION_SECURITY,
       },
     ];
-
   } else {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
@@ -105,6 +109,21 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: resourcePath,
         template: TEMPLATES.DOMAIN_RESOURCES,
         name: COMMON_FILES.APPLICATION_PROPERTIES_FILE,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_DEVELOPMENT,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_DEVELOPMENT,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_STAGING,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_STAGING,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_PRODUCTION,
+        name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_PRODUCTION,
       },
       {
         output: configPath,
