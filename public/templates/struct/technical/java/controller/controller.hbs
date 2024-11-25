@@ -43,8 +43,8 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
   @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{else}}{{#if pathVariables}},
-    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if this.accepts}},
+    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}", {{else}}{{#if pathVariables}}
+    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}", {{/if}}{{/if}}{{#if this.accepts}}
     consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
     produces = "{{this.contentType}}"{{/if}}
   )
