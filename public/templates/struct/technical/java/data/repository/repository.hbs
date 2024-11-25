@@ -5,51 +5,10 @@ package {{baseConfig.group}}.{{baseConfig.packageName}}.models.{{resourceConfig.
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
-import org.springframework.data.rest.core.annotation.RestResource;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
 {{import-uuid resourceConfig}}
 
 @Repository
-@RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
 public interface {{resourceConfig.name}}Repository extends JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>, JpaSpecificationExecutor<{{resourceConfig.name}}> {
 
-  {{#if resourceConfig.crud.disabledMethods}}
-  {{#each resourceConfig.crud.disabledMethods}}
-  {{#if (eq this 'save')}}
-  @Override
-  @RestResource(exported = false)
-  <S extends {{../resourceConfig.name}}> S save(S entity);
-  {{else if (eq this 'deleteById')}}
-  @Override
-  @RestResource(exported = false)
-  void deleteById({{keyType resourceConfig}} id);
-  {{else if (eq this 'delete')}}
-  @Override
-  @RestResource(exported = false)
-  void delete({{../resourceConfig.name}} entity);
-  {{else if (eq this 'deleteAll')}}
-  @Override
-  @RestResource(exported = false)
-  void deleteAll();
-  {{else if (eq this 'deleteAllList')}}
-  @Override
-  @RestResource(exported = false)
-  void deleteAll(List<? extends {{../resourceConfig.name}}> entities);
-  {{else if (eq this 'findAll')}}
-  @Override
-  @RestResource(exported = false)
-  List<{{../resourceConfig.name}}> findAll();
-  {{else if (eq this 'findById')}}
-  @Override
-  @RestResource(exported = false)
-  Optional<{{../resourceConfig.name}}> findById({{keyType resourceConfig}} id);
-  {{else if (eq this 'findAllById')}}
-  @Override
-  @RestResource(exported = false)
-  List<{{../resourceConfig.name}}> findAllById(List<{{keyType resourceConfig}}> ids);
-  {{/if}}
-
-  {{/each}}
-  {{/if}}
 }
