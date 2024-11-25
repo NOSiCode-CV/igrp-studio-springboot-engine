@@ -559,6 +559,7 @@ export const MIME_TYPES = [
   "",
   "font/woff2",
   "application/json",
+  "multipart/form-data",
   "video/ogg",
   "application/ogg",
   "audio/3gpp",
