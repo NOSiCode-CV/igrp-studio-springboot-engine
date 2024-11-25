@@ -2,7 +2,7 @@ import {
   ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
-  GENERATION_TYPES,
+  GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_TYPES,
   HTTP_METHOD_TYPES,
   MIME_TYPES,
   OBJECT_TYPES,
@@ -81,7 +81,7 @@ export interface JavaType {
 
 export interface JavaAttribute {
   name: string;
-  type: string | JavaType;
+  type: string | AttributeType;
   ns: 'dto' | 'model' | 'java';
   required: boolean;
   before?: boolean,
@@ -123,7 +123,7 @@ export interface JavaType {
 
 export interface JavaAttribute {
   name: string;
-  type: string | JavaType;
+  type: string | AttributeType;
   ns: 'dto' | 'model' | 'java';
 }
 
@@ -219,7 +219,7 @@ export type RenderContext<T = undefined> = {
 };
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
-export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
+export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];
 export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];

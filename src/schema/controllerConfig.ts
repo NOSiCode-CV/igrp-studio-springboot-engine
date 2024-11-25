@@ -1,5 +1,5 @@
 import {
-  ATTRIBUTE_TYPES, GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES, GENERATION_TYPES,
   HTTP_METHOD_TYPES,
   MIME_TYPES,
   PARAMS_TYPES,
@@ -39,8 +39,8 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   properties: {
     type: {
       type: "string",
-      enum: ATTRIBUTE_TYPES,
-      errorMessage: `The attribute type must be one of ${ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: GENERIC_ATTRIBUTE_TYPES,
+      errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
     },
     name: {
       type: "string",

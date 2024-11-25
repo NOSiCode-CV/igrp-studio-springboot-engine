@@ -1,42 +1,21 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { DTOBaseConfig, DTOConfig, JavaAttribute, JavaType } from "../interfaces/types";
+import { Attribute, AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute, JavaType } from '../interfaces/types';
 import { PATTERNS } from "../utils/constants";
 
-
-type JavaTypeUnion = string | JavaType;
-
-const javaTypeSchema: JSONSchemaType<JavaTypeUnion> = {
-  anyOf: [
-    {
-      type: "object",
-      properties: { 
-        name: { 
-          type: "string", pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-          errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
-        },
-        namespace: { 
-          type: "string", pattern: PATTERNS.NAMESPACE_VALIDATION_PATTERN, nullable: true,
-          errorMessage: 'The namespace must follow the package naming convention.'
-        }
-      },
-      required: ["name"],
-    },
-    {
-      type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
-    }
-  ]
-  
-};
+const genericAttributeSchema: JSONSchemaType<AttributeType> = {
+  type: "string",
+  nullable: false,
+  pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+  errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+}
 
 const attributeSchema: JSONSchemaType<JavaAttribute> = {
   type: "object",
   properties: {
-    type: { 
-      type: ["object", "string"],
-      anyOf: javaTypeSchema.anyOf
+    type: {
+      type: "string",
+      oneOf: genericAttributeSchema.oneOf
     },
     name: { 
       type: "string",

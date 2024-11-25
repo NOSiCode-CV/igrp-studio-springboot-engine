@@ -3,8 +3,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
-  EXTENSIONS,
-  JAVA_TYPES,
+  EXTENSIONS, GENERIC_TYPES,
   PACKAGE_NS,
   PACKAGES, PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
@@ -12,9 +11,7 @@ import {
 import { saveToFile } from '../common/saveToFile';
 import {
   getDDDCommandOutputDir,
-  getDDDDataObjectOutputDir, getDDDDataTransferObjectOutputDir, getDDDDomainEntityOutputDir,
-  getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDDDValueObjectOutputDir,
-  getDtoOutputDir,
+  getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDtoOutputDir,
   getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
@@ -90,17 +87,14 @@ export const transformDTOConfig = async function (
 
   for (const attr of ncfg.attributes) {
     let type: JavaType;
-    if (typeof attr.type === 'string') {
-      type = { name: attr.type };
-    } else {
-      type = attr.type;
-    }
+    type = { name: attr.type };
 
     let typeNotFound = false;
     if (attr.ns === PACKAGE_NS.java) {
-      const jt: { name: string; primitive: boolean; namespace?: string } | undefined =
-        JAVA_TYPES.get(type.name);
-      if (jt) {
+      const jtOpt: { java: { name: string, primitive: boolean, namespace?: string }, dotnet: { name: string, primitive: boolean, namespace?: string }, python: { name: string, primitive: boolean, namespace?: string }, kotlin: { name: string, primitive: boolean, namespace?: string } } | undefined =
+        GENERIC_TYPES.get(type.name)
+      if (jtOpt) {
+        const jt = jtOpt.java;
         if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
           type.namespace = jt.namespace;
         }
@@ -141,7 +135,7 @@ export const transformDTOConfig = async function (
       });
     }
 
-    attr.type = type;
+    attr.type = type.name;
   }
 
   // normalize the name of the DTO

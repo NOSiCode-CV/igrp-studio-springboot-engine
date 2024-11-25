@@ -437,7 +437,7 @@ describe('DTO generator', () => {
           {
             "name": "retert",
             "ns": "java",
-            "type": "String",
+            "type": "string",
             "required": true,
             "before": false,
             "after": false,

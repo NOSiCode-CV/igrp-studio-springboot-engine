@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -431,6 +431,110 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
   'Object': { name: 'Object', primitive: false },
+}));
+
+export const GENERIC_ATTRIBUTE_TYPES = [
+  'boolean',
+  'integer',
+  'long',
+  'short',
+  'float',
+  'double',
+  'string',
+  'decimal',
+  'big-integer',
+  'date',
+  'datetime',
+  'time',
+  'object',
+  'list'
+]
+
+export const GENERIC_TYPES: Map<string, { java: TypeMetadata, dotnet: TypeMetadata, python: TypeMetadata, kotlin: TypeMetadata }> = new Map(Object.entries({
+  'boolean': {
+    java: { name: 'boolean', primitive: true },
+    dotnet: { name: 'bool', primitive: true },
+    python: { name: 'bool', primitive: true },
+    kotlin: { name: 'Boolean', primitive: true },
+  },
+  'integer': {
+    java: { name: 'Integer', primitive: true },
+    dotnet: { name: 'int', primitive: true },
+    python: { name: 'int', primitive: true },
+    kotlin: { name: 'Int', primitive: true },
+  },
+  'long': {
+    java: { name: 'long', primitive: true },
+    dotnet: { name: 'long', primitive: true },
+    python: { name: 'int', primitive: true }, // Python uses int for long
+    kotlin: { name: 'Long', primitive: true },
+  },
+  'short': {
+    java: { name: 'short', primitive: true },
+    dotnet: { name: 'short', primitive: true },
+    python: { name: 'int', primitive: true }, // Python does not differentiate
+    kotlin: { name: 'Short', primitive: true },
+  },
+  'float': {
+    java: { name: 'float', primitive: true },
+    dotnet: { name: 'float', primitive: true },
+    python: { name: 'float', primitive: true },
+    kotlin: { name: 'Float', primitive: true },
+  },
+  'double': {
+    java: { name: 'double', primitive: true },
+    dotnet: { name: 'double', primitive: true },
+    python: { name: 'float', primitive: true }, // Python uses float for double precision
+    kotlin: { name: 'Double', primitive: true },
+  },
+  'string': {
+    java: { name: 'String', primitive: false },
+    dotnet: { name: 'string', primitive: false },
+    python: { name: 'str', primitive: false },
+    kotlin: { name: 'String', primitive: false },
+  },
+  'decimal': {
+    java: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
+    dotnet: { name: 'decimal', primitive: false },
+    python: { name: 'Decimal', primitive: false, namespace: 'decimal' },
+    kotlin: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
+  },
+  'big-integer': {
+    java: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+    dotnet: { name: 'BigInteger', primitive: false, namespace: 'System.Numerics' },
+    python: { name: 'int', primitive: false },
+    kotlin: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+  },
+  'date': {
+    java: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+    dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
+    python: { name: 'date', primitive: false, namespace: 'datetime' },
+    kotlin: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+  },
+  'datetime': {
+    java: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+    dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
+    python: { name: 'datetime', primitive: false, namespace: 'datetime' },
+    kotlin: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+  },
+  'time': {
+    java: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+    dotnet: { name: 'TimeSpan', primitive: false, namespace: 'System' },
+    python: { name: 'time', primitive: false, namespace: 'datetime' },
+    kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+  },
+  'object': {
+    java: { name: 'Object', primitive: false },
+    dotnet: { name: 'object', primitive: false },
+    python: { name: 'object', primitive: false },
+    kotlin: { name: 'Any', primitive: false },
+  },
+  'list': {
+    java: { name: 'List', primitive: false, namespace: 'java.util' },
+    dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
+    python: { name: 'list', primitive: false },
+    kotlin: { name: 'List', primitive: false },
+  }
 }));
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;

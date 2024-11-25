@@ -381,11 +381,11 @@ export const validateAnnotations = (attribute: any) => {
   const errors: Error[] = [];
 
   // Check if isEmail and isUrl are applied only to String types and not simultaneously
-  if (attribute.isEmail && attribute.type.name !== 'String') {
-    errors.push(new Error(`The "isEmail" attribute can only be applied to String types. Found: ${attribute.type.name}`));
+  if (attribute.isEmail && attribute.type !== 'string') {
+    errors.push(new Error(`The "isEmail" attribute can only be applied to String types. Found: ${attribute.type}`));
   }
-  if (attribute.isUrl && attribute.type.name !== 'String') {
-    errors.push(new Error(`The "isUrl" attribute can only be applied to String types. Found: ${attribute.type.name}`));
+  if (attribute.isUrl && attribute.type !== 'string') {
+    errors.push(new Error(`The "isUrl" attribute can only be applied to String types. Found: ${attribute.type}`));
   }
   if (attribute.isEmail && attribute.isUrl) {
     errors.push(new Error(`The "isEmail" and "isUrl" attributes cannot be applied simultaneously.`));
@@ -393,22 +393,22 @@ export const validateAnnotations = (attribute: any) => {
 
   // Check if before and after are applied only to LocalDate or LocalDateTime and not simultaneously
   if ((attribute.before || attribute.after) &&
-    !['LocalDate', 'LocalDateTime'].includes(attribute.type.name)) {
-    errors.push(new Error(`The "before" and "after" attributes can only be applied to LocalDate or LocalDateTime types. Found: ${attribute.type.name}`));
+    !['datetime'].includes(attribute.type)) {
+    errors.push(new Error(`The "before" and "after" attributes can only be applied to LocalDate or LocalDateTime types. Found: ${attribute.type}`));
   }
   if (attribute.before && attribute.after) {
     errors.push(new Error(`The "before" and "after" attributes cannot be applied simultaneously.`));
   }
 
   // Check if positive is applied only to numeric types
-  if (attribute.positive && !['Integer', 'Long', 'Double', 'Float', 'BigDecimal', 'BigInteger'].includes(attribute.type.name)) {
-    errors.push(new Error(`The "positive" attribute can only be applied to numeric types. Found: ${attribute.type.name}`));
+  if (attribute.positive && !['int', 'long', 'double', 'float', 'big-decimal', 'big-integer'].includes(attribute.type)) {
+    errors.push(new Error(`The "positive" attribute can only be applied to numeric types. Found: ${attribute.type}`));
   }
 
   // Check if maxLength and minLength are applied only to String types
   if ((attribute.minLength !== undefined || attribute.maxLength !== undefined) &&
-    attribute.type.name !== 'String') {
-    errors.push(new Error(`The "minLength" and "maxLength" attributes can only be applied to String types. Found: ${attribute.type.name}`));
+    attribute.type !== 'string') {
+    errors.push(new Error(`The "minLength" and "maxLength" attributes can only be applied to String types. Found: ${attribute.type}`));
   }
 
   // If there are any validation errors, throw them as an Error
