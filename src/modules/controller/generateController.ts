@@ -23,6 +23,7 @@ const CONTROLLER_SUFFIX = 'Controller.java';
   * @param context 
   */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
+
   const controller = await renderController(context);
   const allTypes = await getDtos(context)
 

@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{resourceConfig.name}}.{{toLowerCase resourceConfig.name}}ServiceInterface;
 
 @Service
 public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name}}ServiceInterface {
