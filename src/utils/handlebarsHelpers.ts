@@ -198,10 +198,10 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
       annotations.push(
         `@Size(${[
           attribute.minLength !== undefined
-            ? `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres.")`
+            ? `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres."`
             : '',
           attribute.maxLength !== undefined
-            ? `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres.")`
+            ? `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres."`
             : '',
         ]
           .filter(Boolean)
