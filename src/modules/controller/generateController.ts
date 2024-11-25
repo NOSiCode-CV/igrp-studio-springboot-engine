@@ -26,7 +26,6 @@ export const generateController = async (context: RenderContext<ControllerConfig
   const controller = await renderController(context);
   const allTypes = await getDtos(context)
 
-  checkAcceptsAndRequestBody(context.resourceConfig.actions)
   await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
   await checkPermission(context.resourceConfig, context.basePath)
   
@@ -83,15 +82,3 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
       }
   }*/
 }
-
-const checkAcceptsAndRequestBody = (actions: ControllerAction[]) => {
-  const method = ['POST', 'PUT', 'PATCH']
-  actions.map(action => {
-    if (method.includes(action.method) && !action.requestBody)
-      throw ERROR_MESSAGE.REQUEST_BODY_REQUIRED
-    
-    if (method.includes(action.method) && !action.accepts)
-      throw ERROR_MESSAGE.ACCEPTS_REQUIRED
-  })
-}
-
