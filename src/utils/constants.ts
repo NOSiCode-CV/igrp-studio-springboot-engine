@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- //export const TEMPLATE_DIR = path.join(__dirname, './templates');
- //export const TEMPLATE_DIR = path.join(__dirname, './templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',

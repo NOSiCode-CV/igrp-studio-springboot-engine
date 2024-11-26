@@ -15,7 +15,6 @@ import { extractTypeFromList, validateAnnotations } from './helpers';
 
 // Register partials
 fs.readdirSync(PARTIALS_DIR).forEach(file => {
-  console.log("FE")
   const partialName = file.replace('.hbs', '');
   const partialContent = fs.readFileSync(`${PARTIALS_DIR}/${file}`, 'utf8');
   Handlebars.registerPartial(partialName, partialContent);
@@ -276,9 +275,6 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   if (!fullPath || !basePath) {
     throw new Error('Both fullPath and basePath are required to resolve the package.');
   }
-
-  console.log("Full path : " + fullPath);
-  console.log("Base path : " + basePath);
 
   // Normalize paths to handle both Unix and Windows formats
   const normalizedFullPath = fullPath.replace(/\\/g, '/');
