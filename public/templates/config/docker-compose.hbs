@@ -6,10 +6,17 @@ networks:
     external: false
 
 services:
-  {{> (eq baseConfig.enableObservability) "observability-docker-services"}}
-  {{> (eq baseConfig.database "Postgresql") "postgres-docker-service"}}
-  {{> (eq baseConfig.database "MySQL") "mysql-docker-service"}}
-  {{> (eq baseConfig.database "Oracle") "oracle-docker-service"}}
+  {{#if baseConfig.enableObservability}}
+  {{> observability-docker-services }}
+  {{/if}}
+
+  {{#if (eq baseConfig.database "Postgresql")}}
+  {{> postgres-docker-service }}
+  {{else if (eq baseConfig.database "MySQL")}}
+  {{> mysql-docker-service }}
+  {{else if (eq baseConfig.database "Oracle")}}
+  {{> oracle-docker-service }}
+  {{/if}}
 
   {{toLowerCase baseConfig.name}}-service:
     build:
@@ -25,7 +32,9 @@ services:
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
       - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
       {{> database-docker-env }}
-      {{> (eq baseConfig.enableObservability) "observability-docker-env"}}
+      {{#if baseConfig.enableObservability}}
+      {{> observability-docker-env }}
+      {{/if}}
       - ENABLE_SWAGGER=${ENABLE_SWAGGER}
     ports:
       - ${SERVICE_PORT}:${SERVICE_PORT}
@@ -34,11 +43,13 @@ services:
       resources:
         limits:
           memory: 700m
-  {{#if baseConfig.enableObservability}}
+    {{#if baseConfig.enableObservability}}
     labels:
       logging: "promtail"
-  {{/if}}
+    {{/if}}
 
 volumes:
-  {{> (eq baseConfig.enableObservability) "observability-docker-volumes"}}
+  {{#if baseConfig.enableObservability}}
+  {{> observability-docker-volumes }}
+  {{/if}}
   {{> database-docker-volumes }}

@@ -27,6 +27,7 @@ public class {{capitalize resourceConfig.name}}QueryServiceImpl implements {{res
     }
 
 {{#each resourceConfig.actions}}
+    {{> method-documentation }}
   {{#if (eq this.method "GET")}}
     @Override
     public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query) {

@@ -301,10 +301,10 @@ export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
   { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
   { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
-  { template: TEMPLATES.CONFIG_POM_XML_OBSERVABILITY, output: 'pom.xml' },
+  { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
-  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE_OBSERVABILITY, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
   { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
@@ -382,31 +382,400 @@ export const PATTERNS = {
   PATH_VALIDATION: '^[a-zA-Z_/]+$',  
 };
 
-export const ATTRIBUTE_TYPES = [
+const IMPORT_MAP = {
+    // Core Java imports
+    List: 'java.util.List',
+    Map: 'java.util.Map',
+    Set: 'java.util.Set',
+    HashMap: 'java.util.HashMap',
+    HashSet: 'java.util.HashSet',
+    Optional: 'java.util.Optional',
+    Date: 'java.util.Date',
+    UUID: 'java.util.UUID',
+
+    // Java time API
+    LocalDate: 'java.time.LocalDate',
+    LocalDateTime: 'java.time.LocalDateTime',
+    LocalTime: 'java.time.LocalTime',
+    ZonedDateTime: 'java.time.ZonedDateTime',
+    ZoneId: 'java.time.ZoneId',
+    Instant: 'java.time.Instant',
+    Duration: 'java.time.Duration',
+    Period: 'java.time.Period',
+
+    // I/O and Serialization
+    Serializable: 'java.io.Serializable',
+    InputStream: 'java.io.InputStream',
+    OutputStream: 'java.io.OutputStream',
+    File: 'java.io.File',
+    BufferedReader: 'java.io.BufferedReader',
+    BufferedWriter: 'java.io.BufferedWriter',
+    PrintWriter: 'java.io.PrintWriter',
+
+    // Concurrency
+    Thread: 'java.lang.Thread',
+    Runnable: 'java.lang.Runnable',
+    ExecutorService: 'java.util.concurrent.ExecutorService',
+    Executors: 'java.util.concurrent.Executors',
+    CompletableFuture: 'java.util.concurrent.CompletableFuture',
+
+    // Exceptions
+    IOException: 'java.io.IOException',
+    IllegalArgumentException: 'java.lang.IllegalArgumentException',
+    NullPointerException: 'java.lang.NullPointerException',
+    RuntimeException: 'java.lang.RuntimeException',
+    Exception: 'java.lang.Exception',
+
+    // Annotations
+    Override: 'java.lang.Override',
+    Deprecated: 'java.lang.Deprecated',
+
+    // Utility
+    Objects: 'java.util.Objects',
+    Collections: 'java.util.Collections',
+    Arrays: 'java.util.Arrays',
+    Comparator: 'java.util.Comparator',
+    Stream: 'java.util.stream.Stream',
+
+    // Core Spring Framework
+    Autowired: 'org.springframework.beans.factory.annotation.Autowired',
+    Component: 'org.springframework.stereotype.Component',
+    Service: 'org.springframework.stereotype.Service',
+    Repository: 'org.springframework.stereotype.Repository',
+    Configuration: 'org.springframework.context.annotation.Configuration',
+    Bean: 'org.springframework.context.annotation.Bean',
+
+    // Spring Boot
+    SpringApplication: 'org.springframework.boot.SpringApplication',
+    SpringBootApplication: 'org.springframework.boot.autoconfigure.SpringBootApplication',
+    Value: 'org.springframework.beans.factory.annotation.Value',
+    Environment: 'org.springframework.core.env.Environment',
+
+    // Validation
+    NotNull: 'jakarta.validation.constraints.NotNull',
+    NotEmpty: 'jakarta.validation.constraints.NotEmpty',
+    NotBlank: 'jakarta.validation.constraints.NotBlank',
+    Size: 'jakarta.validation.constraints.Size',
+    Email: 'jakarta.validation.constraints.Email',
+    Pattern: 'jakarta.validation.constraints.Pattern',
+    Min: 'jakarta.validation.constraints.Min',
+    Max: 'jakarta.validation.constraints.Max',
+    Past: 'jakarta.validation.constraints.Past',
+    Future: 'jakarta.validation.constraints.Future',
+
+    // Web
+    RestController: 'org.springframework.web.bind.annotation.RestController',
+    RequestMapping: 'org.springframework.web.bind.annotation.RequestMapping',
+    GetMapping: 'org.springframework.web.bind.annotation.GetMapping',
+    PostMapping: 'org.springframework.web.bind.annotation.PostMapping',
+    PutMapping: 'org.springframework.web.bind.annotation.PutMapping',
+    DeleteMapping: 'org.springframework.web.bind.annotation.DeleteMapping',
+    RequestParam: 'org.springframework.web.bind.annotation.RequestParam',
+    PathVariable: 'org.springframework.web.bind.annotation.PathVariable',
+    RequestBody: 'org.springframework.web.bind.annotation.RequestBody',
+    ResponseBody: 'org.springframework.web.bind.annotation.ResponseBody',
+
+    // Spring Data
+    JpaRepository: 'org.springframework.data.jpa.repository.JpaRepository',
+    CrudRepository: 'org.springframework.data.repository.CrudRepository',
+    PagingAndSortingRepository: 'org.springframework.data.repository.PagingAndSortingRepository',
+    Query: 'org.springframework.data.jpa.repository.Query',
+
+    // Spring Security
+    PreAuthorize: 'org.springframework.security.access.prepost.PreAuthorize',
+    PostAuthorize: 'org.springframework.security.access.prepost.PostAuthorize',
+    Secured: 'org.springframework.security.access.annotation.Secured',
+    RolesAllowed: 'jakarta.annotation.security.RolesAllowed',
+    Authentication: 'org.springframework.security.core.Authentication',
+    SecurityContextHolder: 'org.springframework.security.core.context.SecurityContextHolder',
+
+    // Spring Scheduling
+    Scheduled: 'org.springframework.scheduling.annotation.Scheduled',
+    EnableScheduling: 'org.springframework.scheduling.annotation.EnableScheduling',
+
+    // Jackson
+    JsonIgnore: 'com.fasterxml.jackson.annotation.JsonIgnore',
+    JsonProperty: 'com.fasterxml.jackson.annotation.JsonProperty',
+    JsonCreator: 'com.fasterxml.jackson.annotation.JsonCreator',
+    JsonInclude: 'com.fasterxml.jackson.annotation.JsonInclude',
+
+    // Lombok
+    Getter: 'lombok.Getter',
+    Setter: 'lombok.Setter',
+    Builder: 'lombok.Builder',
+    AllArgsConstructor: 'lombok.AllArgsConstructor',
+    NoArgsConstructor: 'lombok.NoArgsConstructor',
+    Data: 'lombok.Data',
+    EqualsAndHashCode: 'lombok.EqualsAndHashCode',
+    ToString: 'lombok.ToString',
+
+    // Apache Commons
+    StringUtils: 'org.apache.commons.lang3.StringUtils',
+    CollectionUtils: 'org.apache.commons.collections4.CollectionUtils',
+
+    // Hibernate
+    Entity: 'jakarta.persistence.Entity',
+    Id: 'jakarta.persistence.Id',
+    Table: 'jakarta.persistence.Table',
+    Column: 'jakarta.persistence.Column',
+    GeneratedValue: 'jakarta.persistence.GeneratedValue',
+    GenerationType: 'jakarta.persistence.GenerationType',
+
+    // Validation
+    ValidationException: 'jakarta.validation.ValidationException',
+    Validator: 'jakarta.validation.Validator',
+
+    // SLF4J
+    Logger: 'org.slf4j.Logger',
+    LoggerFactory: 'org.slf4j.LoggerFactory',
+
+    // Mockito
+    Mock: 'org.mockito.Mock',
+    InjectMocks: 'org.mockito.InjectMocks',
+    MockitoAnnotations: 'org.mockito.MockitoAnnotations',
+
+};
+
+const MEDIA_TYPE_MAP = {
+  JSON: 'org.springframework.http.MediaType.APPLICATION_JSON_VALUE',
+  XML: 'org.springframework.http.MediaType.APPLICATION_XML_VALUE',
+  FORM_URLENCODED: 'org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE',
+  MULTIPART: 'org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE',
+  TEXT_HTML: 'org.springframework.http.MediaType.TEXT_HTML_VALUE',
+  TEXT_PLAIN: 'org.springframework.http.MediaType.TEXT_PLAIN_VALUE',
+  TEXT_XML: 'org.springframework.http.MediaType.TEXT_XML_VALUE',
+  OCTET_STREAM: 'org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE',
+  ANY: 'org.springframework.http.MediaType.ALL_VALUE',
+};
+
+const ANNOTATION_MAP = {
+  // REST Controller
+  RestController: 'org.springframework.web.bind.annotation.RestController',
+  RequestMapping: 'org.springframework.web.bind.annotation.RequestMapping',
+  GetMapping: 'org.springframework.web.bind.annotation.GetMapping',
+  PostMapping: 'org.springframework.web.bind.annotation.PostMapping',
+  PutMapping: 'org.springframework.web.bind.annotation.PutMapping',
+  DeleteMapping: 'org.springframework.web.bind.annotation.DeleteMapping',
+  PatchMapping: 'org.springframework.web.bind.annotation.PatchMapping',
+
+  // Request Handling
+  RequestParam: 'org.springframework.web.bind.annotation.RequestParam',
+  PathVariable: 'org.springframework.web.bind.annotation.PathVariable',
+  RequestBody: 'org.springframework.web.bind.annotation.RequestBody',
+  ResponseBody: 'org.springframework.web.bind.annotation.ResponseBody',
+
+  // Exception Handling
+  ExceptionHandler: 'org.springframework.web.bind.annotation.ExceptionHandler',
+  ControllerAdvice: 'org.springframework.web.bind.annotation.ControllerAdvice',
+
+  // Cross-Origin
+  CrossOrigin: 'org.springframework.web.bind.annotation.CrossOrigin',
+
+  // Validation
+  Valid: 'jakarta.validation.Valid',
+
+  // Response Status
+  ResponseStatus: 'org.springframework.http.HttpStatus',
+};
+
+const HTTP_STATUS_MAP = {
+  OK: 'org.springframework.http.HttpStatus.OK',
+  CREATED: 'org.springframework.http.HttpStatus.CREATED',
+  ACCEPTED: 'org.springframework.http.HttpStatus.ACCEPTED',
+  NO_CONTENT: 'org.springframework.http.HttpStatus.NO_CONTENT',
+  BAD_REQUEST: 'org.springframework.http.HttpStatus.BAD_REQUEST',
+  UNAUTHORIZED: 'org.springframework.http.HttpStatus.UNAUTHORIZED',
+  FORBIDDEN: 'org.springframework.http.HttpStatus.FORBIDDEN',
+  NOT_FOUND: 'org.springframework.http.HttpStatus.NOT_FOUND',
+  INTERNAL_SERVER_ERROR: 'org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR',
+  NOT_IMPLEMENTED: 'org.springframework.http.HttpStatus.NOT_IMPLEMENTED',
+  SERVICE_UNAVAILABLE: 'org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE',
+};
+
+const REQUEST_RESPONSE_MAP = {
+  HttpHeaders: 'org.springframework.http.HttpHeaders',
+  HttpEntity: 'org.springframework.http.HttpEntity',
+  ResponseEntity: 'org.springframework.http.ResponseEntity',
+};
+
+const SPRING_BOOT_COMMON_MAP = {
+  Application: 'org.springframework.boot.SpringApplication',
+  SpringBootApplication: 'org.springframework.boot.autoconfigure.SpringBootApplication',
+};
+
+const DEPENDENCY_INJECTION_MAP = {
+  Autowired: 'org.springframework.beans.factory.annotation.Autowired',
+  Component: 'org.springframework.stereotype.Component',
+  Service: 'org.springframework.stereotype.Service',
+  Repository: 'org.springframework.stereotype.Repository',
+  Configuration: 'org.springframework.context.annotation.Configuration',
+  Bean: 'org.springframework.context.annotation.Bean',
+  Value: 'org.springframework.beans.factory.annotation.Value',
+};
+
+const VALIDATION_MAP = {
+  NotNull: 'jakarta.validation.constraints.NotNull',
+  NotEmpty: 'jakarta.validation.constraints.NotEmpty',
+  NotBlank: 'jakarta.validation.constraints.NotBlank',
+  Email: 'jakarta.validation.constraints.Email',
+  Size: 'jakarta.validation.constraints.Size',
+  Pattern: 'jakarta.validation.constraints.Pattern',
+};
+
+const IMPORTS_MAP = {
+  mediaTypes: MEDIA_TYPE_MAP,
+  annotations: ANNOTATION_MAP,
+  httpStatuses: HTTP_STATUS_MAP,
+  requestResponse: REQUEST_RESPONSE_MAP,
+  springBoot: SPRING_BOOT_COMMON_MAP,
+  dependencyInjection: DEPENDENCY_INJECTION_MAP,
+  validation: VALIDATION_MAP,
+};
+
+export const JAVA_ATTRIBUTE_TYPES = [
+  // Basic Types
   'String',
   'UUID',
   'Integer',
   'int',
   'Long',
   'long',
-  'LocalTime',
-  'LocalDate',
-  'LocalDateTime',
-  'ZoneDateTime',
-  'OffsetDateTime',
-  'Instant',
   'Boolean',
   'boolean',
-  'BigInteger',
-  'BigDecimal',
   'Short',
   'short',
   'Byte',
+  'byte',
   'Float',
   'float',
   'Double',
   'double',
+  'Character',
+  'char',
+
+  // Date and Time
+  'LocalTime',
+  'LocalDate',
+  'LocalDateTime',
+  'ZonedDateTime',
+  'OffsetDateTime',
+  'Instant',
+  'Date',
+  'Calendar',
+  'TimeZone',
+  'Duration',
+  'Period',
+
+  // Number Types
+  'BigInteger',
+  'BigDecimal',
+
+  // Streams and I/O
+  'InputStream',
+  'OutputStream',
+  'BufferedInputStream',
+  'BufferedOutputStream',
+  'Reader',
+  'Writer',
+  'BufferedReader',
+  'BufferedWriter',
+  'File',
+  'Path',
+  'Files',
+  'FileReader',
+  'FileWriter',
+  'PrintWriter',
+  'PrintStream',
+
+  // Miscellaneous
+  'Optional',
+  'Object',
+  'Stream',
+  'IntStream',
+  'LongStream',
+  'DoubleStream',
+
+  // Arrays and Primitives
+  'int[]',
+  'long[]',
+  'double[]',
+  'float[]',
+  'byte[]',
+  'char[]',
+  'boolean[]',
+  'String[]',
+  'Object[]',
 ] as const;
+
+export const JAVA_8_TYPES = [
+  // Java 8 and Above Functional Types
+  'Function',
+  'Consumer',
+  'Collectors',
+  'Supplier',
+  'Predicate',
+  'BiFunction',
+  'BiConsumer',
+  'UnaryOperator',
+  'BinaryOperator',
+]
+
+export const JAVA_EXCEPTIONS = [
+  'Throwable',
+  'Exception',
+  'RuntimeException',
+  'IllegalArgumentException',
+  'NullPointerException',
+  'IllegalStateException',
+  'IOException',
+  'SQLException',
+]
+
+export const JAVA_COLLECTION_TYPES = [
+  // Collections and Data Structures
+  'List',
+  'ArrayList',
+  'LinkedList',
+  'Set',
+  'HashSet',
+  'TreeSet',
+  'Map',
+  'HashMap',
+  'TreeMap',
+  'Queue',
+  'Deque',
+  'PriorityQueue',
+  'Stack',
+  'Vector',
+  'Arrays',
+]
+
+export const JAVA_CONCURRENCY_TYPES = [
+  // Concurrency
+  'Thread',
+  'Runnable',
+  'Callable',
+  'Executor',
+  'ExecutorService',
+  'ScheduledExecutorService',
+  'Future',
+  'CompletableFuture',
+  'Semaphore',
+  'Lock',
+  'ReentrantLock',
+  'CountDownLatch',
+  'CyclicBarrier',
+]
+
+export const JAVA_NETWORK_TYPES = [
+  // Networking
+  'URL',
+  'URLConnection',
+  'HttpURLConnection',
+  'InetAddress',
+  'Socket',
+  'ServerSocket'
+]
 
 export const VALID_PRIMARY_KEY = ['int','Integer', 'long', 'Long', 'UUID', 'String']
 
@@ -443,101 +812,168 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'float',
   'double',
   'string',
+  'char',
+  'uuid',
   'decimal',
-  'big-integer',
+  'biginteger',
   'date',
   'datetime',
   'time',
   'object',
-  'list'
-]
+  'list',
+  'set',
+  'map',
+  'binary',
+  'byte',
+  'character',
+  'instant',
+  'zoneddatetime',
+  'offsetdatetime'
+];
 
-export const GENERIC_TYPES: Map<string, { java: TypeMetadata, dotnet: TypeMetadata, python: TypeMetadata, kotlin: TypeMetadata }> = new Map(Object.entries({
-  'boolean': {
-    java: { name: 'boolean', primitive: true },
-    dotnet: { name: 'bool', primitive: true },
-    python: { name: 'bool', primitive: true },
-    kotlin: { name: 'Boolean', primitive: true },
-  },
-  'integer': {
-    java: { name: 'Integer', primitive: true },
-    dotnet: { name: 'int', primitive: true },
-    python: { name: 'int', primitive: true },
-    kotlin: { name: 'Int', primitive: true },
-  },
-  'long': {
-    java: { name: 'long', primitive: true },
-    dotnet: { name: 'long', primitive: true },
-    python: { name: 'int', primitive: true }, // Python uses int for long
-    kotlin: { name: 'Long', primitive: true },
-  },
-  'short': {
-    java: { name: 'short', primitive: true },
-    dotnet: { name: 'short', primitive: true },
-    python: { name: 'int', primitive: true }, // Python does not differentiate
-    kotlin: { name: 'Short', primitive: true },
-  },
-  'float': {
-    java: { name: 'float', primitive: true },
-    dotnet: { name: 'float', primitive: true },
-    python: { name: 'float', primitive: true },
-    kotlin: { name: 'Float', primitive: true },
-  },
-  'double': {
-    java: { name: 'double', primitive: true },
-    dotnet: { name: 'double', primitive: true },
-    python: { name: 'float', primitive: true }, // Python uses float for double precision
-    kotlin: { name: 'Double', primitive: true },
-  },
-  'string': {
-    java: { name: 'String', primitive: false },
-    dotnet: { name: 'string', primitive: false },
-    python: { name: 'str', primitive: false },
-    kotlin: { name: 'String', primitive: false },
-  },
-  'decimal': {
-    java: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
-    dotnet: { name: 'decimal', primitive: false },
-    python: { name: 'Decimal', primitive: false, namespace: 'decimal' },
-    kotlin: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
-  },
-  'big-integer': {
-    java: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
-    dotnet: { name: 'BigInteger', primitive: false, namespace: 'System.Numerics' },
-    python: { name: 'int', primitive: false },
-    kotlin: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
-  },
-  'date': {
-    java: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
-    dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
-    python: { name: 'date', primitive: false, namespace: 'datetime' },
-    kotlin: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
-  },
-  'datetime': {
-    java: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-    dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
-    python: { name: 'datetime', primitive: false, namespace: 'datetime' },
-    kotlin: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  },
-  'time': {
-    java: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
-    dotnet: { name: 'TimeSpan', primitive: false, namespace: 'System' },
-    python: { name: 'time', primitive: false, namespace: 'datetime' },
-    kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
-  },
-  'object': {
-    java: { name: 'Object', primitive: false },
-    dotnet: { name: 'object', primitive: false },
-    python: { name: 'object', primitive: false },
-    kotlin: { name: 'Any', primitive: false },
-  },
-  'list': {
-    java: { name: 'List', primitive: false, namespace: 'java.util' },
-    dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
-    python: { name: 'list', primitive: false },
-    kotlin: { name: 'List', primitive: false },
-  }
-}));
+export const GENERIC_TYPES: Map<
+  string,
+  { java: TypeMetadata; dotnet: TypeMetadata; python: TypeMetadata; kotlin: TypeMetadata }
+> = new Map(
+  Object.entries({
+    // Primitive and Basic Types
+    boolean: {
+      java: { name: 'boolean', primitive: true },
+      dotnet: { name: 'bool', primitive: true },
+      python: { name: 'bool', primitive: true },
+      kotlin: { name: 'Boolean', primitive: true },
+    },
+    integer: {
+      java: { name: 'Integer', primitive: true },
+      dotnet: { name: 'int', primitive: true },
+      python: { name: 'int', primitive: true },
+      kotlin: { name: 'Int', primitive: true },
+    },
+    long: {
+      java: { name: 'long', primitive: true },
+      dotnet: { name: 'long', primitive: true },
+      python: { name: 'int', primitive: true },
+      kotlin: { name: 'Long', primitive: true },
+    },
+    short: {
+      java: { name: 'short', primitive: true },
+      dotnet: { name: 'short', primitive: true },
+      python: { name: 'int', primitive: true },
+      kotlin: { name: 'Short', primitive: true },
+    },
+    float: {
+      java: { name: 'float', primitive: true },
+      dotnet: { name: 'float', primitive: true },
+      python: { name: 'float', primitive: true },
+      kotlin: { name: 'Float', primitive: true },
+    },
+    double: {
+      java: { name: 'double', primitive: true },
+      dotnet: { name: 'double', primitive: true },
+      python: { name: 'float', primitive: true },
+      kotlin: { name: 'Double', primitive: true },
+    },
+    string: {
+      java: { name: 'String', primitive: false },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'String', primitive: false },
+    },
+    char: {
+      java: { name: 'char', primitive: true },
+      dotnet: { name: 'char', primitive: true },
+      python: { name: 'str', primitive: true }, // Python treats characters as strings of length 1
+      kotlin: { name: 'Char', primitive: true },
+    },
+    uuid: {
+      java: { name: 'UUID', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'Guid', primitive: false, namespace: 'System' },
+      python: { name: 'UUID', primitive: false, namespace: 'uuid' },
+      kotlin: { name: 'UUID', primitive: false, namespace: 'java.util' },
+    },
+    decimal: {
+      java: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
+      dotnet: { name: 'decimal', primitive: false },
+      python: { name: 'Decimal', primitive: false, namespace: 'decimal' },
+      kotlin: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
+    },
+    biginteger: {
+      java: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+      dotnet: { name: 'BigInteger', primitive: false, namespace: 'System.Numerics' },
+      python: { name: 'int', primitive: false },
+      kotlin: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+    },
+    // Date and Time Types
+    date: {
+      java: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
+      python: { name: 'date', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+    },
+    datetime: {
+      java: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'DateTime', primitive: false, namespace: 'System' },
+      python: { name: 'datetime', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+    },
+    time: {
+      java: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'TimeSpan', primitive: false, namespace: 'System' },
+      python: { name: 'time', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+    },
+    instant: {
+      java: { name: 'Instant', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'DateTimeOffset', primitive: false, namespace: 'System' },
+      python: { name: 'datetime', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'Instant', primitive: false, namespace: 'java.time' },
+    },
+    zoneddatetime: {
+      java: { name: 'ZonedDateTime', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'DateTimeOffset', primitive: false, namespace: 'System' },
+      python: { name: 'datetime', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'ZonedDateTime', primitive: false, namespace: 'java.time' },
+    },
+    offsetdatetime: {
+      java: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
+      dotnet: { name: 'DateTimeOffset', primitive: false, namespace: 'System' },
+      python: { name: 'datetime', primitive: false, namespace: 'datetime' },
+      kotlin: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
+    },
+    // Collections
+    list: {
+      java: { name: 'List', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'list', primitive: false },
+      kotlin: { name: 'List', primitive: false },
+    },
+    set: {
+      java: { name: 'Set', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'HashSet', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'set', primitive: false },
+      kotlin: { name: 'Set', primitive: false },
+    },
+    map: {
+      java: { name: 'Map', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'Dictionary', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'dict', primitive: false },
+      kotlin: { name: 'Map', primitive: false },
+    },
+    // Miscellaneous
+    enum: {
+      java: { name: 'Enum', primitive: false },
+      dotnet: { name: 'Enum', primitive: false, namespace: 'System' },
+      python: { name: 'Enum', primitive: false, namespace: 'enum' },
+      kotlin: { name: 'Enum', primitive: false },
+    },
+    object: {
+      java: { name: 'Object', primitive: false },
+      dotnet: { name: 'object', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Any', primitive: false },
+    },
+  })
+);
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]

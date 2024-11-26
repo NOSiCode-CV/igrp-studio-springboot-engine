@@ -2,14 +2,10 @@
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.DataObject;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+{{> lombok-java-imports}}
 {{{resolve-imports resourceConfig}}}
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+{{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}

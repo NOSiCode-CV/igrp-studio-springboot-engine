@@ -26,6 +26,7 @@ public class {{resourceConfig.name}}AggregateRootHandler extends {{resourceConfi
    }
 
    {{#each resourceConfig.actions}}
+   {{> method-documentation }}
      {{#ifNot (eq this.method "GET")}}
    @Override
    public void handle({{this.actionName}}Command cmd) {

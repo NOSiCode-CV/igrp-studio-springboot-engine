@@ -18,7 +18,6 @@ export const renderTemplate = async (templateName: string, context: any) => {
   if (!context) {
     throw ERROR_MESSAGE.EMPTY_CONTEXT;
   }
-
   const templatePath = path.join(TEMPLATE_DIR, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);

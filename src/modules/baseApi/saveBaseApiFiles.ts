@@ -9,13 +9,14 @@ import {
   OBSERVABILITY_BINARY_FILES,
   TEMPLATE_DIR,
   OBSERVABILITY_YAML_CONFIG_FILES,
-  PROJECT_STRUCTURE_STYLE, CONFIG_BINARY_FILES,
+  PROJECT_STRUCTURE_STYLE, CONFIG_BINARY_FILES, PARTIALS_DIR,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
 import fs from 'fs-extra';
+import Handlebars from 'handlebars';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -262,6 +263,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
   await Promise.all(
     baseApiFiles.map(async (file) => {
       const outputPath = path.join(file.output, file.name);
+      context.fullPath = file.output
       const template = await renderTemplate(file.template, context);
       await saveToFile(template, outputPath);
     }),

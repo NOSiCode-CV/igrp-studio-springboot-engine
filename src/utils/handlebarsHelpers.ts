@@ -15,6 +15,7 @@ import { extractTypeFromList, validateAnnotations } from './helpers';
 
 // Register partials
 fs.readdirSync(PARTIALS_DIR).forEach(file => {
+  console.log("FE")
   const partialName = file.replace('.hbs', '');
   const partialContent = fs.readFileSync(`${PARTIALS_DIR}/${file}`, 'utf8');
   Handlebars.registerPartial(partialName, partialContent);
@@ -123,14 +124,10 @@ Handlebars.registerHelper('keyType', function (config: DTOConfig) {
   if (!primaryKeyAttr) {
     return null;
   }
-  if (primaryKeyAttr.type === 'int') {
-    return 'Integer';
-  } else if (primaryKeyAttr.type === 'long') {
-    return 'Long';
-  } else {
-    const result: JavaType | string = primaryKeyAttr.type;
-    return result;
-  }
+
+  const result: JavaType | string = { name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? "", namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,  };
+  return result;
+
 });
 
 Handlebars.registerHelper(
@@ -279,10 +276,35 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   if (!fullPath || !basePath) {
     throw new Error('Both fullPath and basePath are required to resolve the package.');
   }
-  // Remove the basePath portion
-  const relativePath = fullPath.replace(new RegExp(`^${basePath}/?`), '');
-  // Convert to Java package format
-  return relativePath.replace(/\//g, '.');
+
+  console.log("Full path : " + fullPath);
+  console.log("Base path : " + basePath);
+
+  // Normalize paths to handle both Unix and Windows formats
+  const normalizedFullPath = fullPath.replace(/\\/g, '/');
+  const normalizedBasePath = basePath.replace(/\\/g, '/');
+
+  // Ensure the basePath ends with a trailing slash for accurate replacement
+  const formattedBasePath = normalizedBasePath.endsWith('/') ? normalizedBasePath : normalizedBasePath + '/';
+
+  // Remove the basePath portion from the full path
+  let relativePath: string;
+  if (normalizedFullPath.startsWith(formattedBasePath)) {
+    relativePath = normalizedFullPath.slice(formattedBasePath.length);
+  } else {
+    throw new Error('The fullPath does not start with the basePath.');
+  }
+
+  console.log("Relative path: " + relativePath);
+
+  // Extract only the meaningful parts of the path for the Java package
+  const packagePath = relativePath
+    .split('/')
+    .filter(segment => !['src', 'main', 'java'].includes(segment)) // Exclude common directory names
+    .join('.');
+
+  console.log("Resolved package : " + packagePath);
+  return packagePath;
 });
 
 Handlebars.registerHelper(
@@ -321,8 +343,10 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
 
   const imports = new Set();
   config.attributes.forEach((attr: JavaAttribute) => {
-    if (typeof attr.type === 'string') return;
-    const type: JavaType = attr.type;
+    const genType = GENERIC_TYPES.get(attr.type)
+    if(genType?.java.primitive) return;
+    const type: JavaType = { name: genType?.java.name ?? "", namespace: genType?.java.namespace };
+    if(type.name == "") return;
     if (type.namespace) {
       if (type.namespace.includes('models'))
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);

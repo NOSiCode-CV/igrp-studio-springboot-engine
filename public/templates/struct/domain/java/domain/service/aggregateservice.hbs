@@ -22,6 +22,7 @@ public class {{resourceConfig.name}}AggregateService {
    }
 
    {{#each resourceConfig.actions}}
+   {{> method-documentation }}
      {{#ifNot (eq this.method "GET")}}
    @Transactional
    public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {

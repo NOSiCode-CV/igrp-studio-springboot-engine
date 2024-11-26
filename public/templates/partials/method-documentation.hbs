@@ -1,0 +1,15 @@
+/**
+* {{description}}
+{{#if requestParams}}
+  * @param {{#each requestParams}}{{this.name}} ({{this.type}}){{#if @last}}{{else}}, {{/if}}{{/each}}
+{{/if}}
+{{#if pathVariables}}
+  * @param {{#each pathVariables}}{{this.name}} ({{this.type}}){{#if @last}}{{else}}, {{/if}}{{/each}}
+{{/if}}
+{{#if requestBody}}
+  * @param {{requestBody}} (Request Body)
+{{/if}}
+{{#if response}}
+  * @return {{response}}
+{{/if}}
+*/

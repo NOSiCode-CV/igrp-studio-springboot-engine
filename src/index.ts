@@ -12,7 +12,7 @@ import {
   RenderContext,
 } from './interfaces/types';
 import {
-  ATTRIBUTE_TYPES,
+  JAVA_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   DIRECTORIES,
@@ -873,7 +873,7 @@ export const engineTypes = async (module: string, basePath: string) => {
     { REQUEST_PARAMS: PARAMS_TYPES },
     { DATABASE_TYPES: DATABASE_TYPES },
     { RESPONSE_TYPES: responseTypes },
-    { ATTRIBUTE_TYPES: ATTRIBUTE_TYPES },
+    { ATTRIBUTE_TYPES: JAVA_ATTRIBUTE_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },
     { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },
     { GENERATION_TYPES: GENERATION_TYPES.filter((gt) => gt !== '') },

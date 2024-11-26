@@ -1,16 +1,13 @@
 {{> package-java }}
 
+import {{resolve-import}}
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+{{> lombok-java-imports}}
 
 {{{resolve-imports resourceConfig}}}
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+{{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}

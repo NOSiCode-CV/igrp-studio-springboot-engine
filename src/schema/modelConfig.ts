@@ -10,17 +10,17 @@ import {
   IModelPermission,
   EntityIndex,
 } from '../interfaces/types';
-import { ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES, HTTP_METHOD_TYPES } from "../utils/constants";
+import { JAVA_ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES, HTTP_METHOD_TYPES } from "../utils/constants";
 
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
   properties: {
-    type: { 
+    type: {
       type: "string",
-      enum: ATTRIBUTE_TYPES, 
-      errorMessage: `The attribute type must be one of ${ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: JAVA_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
+      errorMessage: `The attribute type must be one of ${JAVA_ATTRIBUTE_TYPES} and cannot be empty.`
     },
-    name: { 
+    name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
@@ -29,23 +29,23 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "number",
       nullable: true,
       errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
-    },  
-    unique: { 
-      type: "boolean", 
+    },
+    unique: {
+      type: "boolean",
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
     },
-    nullable: { 
-      type: "boolean", 
+    nullable: {
+      type: "boolean",
       nullable: true,
       errorMessage: 'The notNull attribute must be a boolean value if provided.'
     },
-    defaultValue: { 
+    defaultValue: {
       type: "string",
       nullable: true,
       errorMessage: 'The defaultValue, if provided, must be a valid string.'
     },
-    generationType: { 
+    generationType: {
       type: "string",
       nullable: true,
       enum: GENERATION_TYPES,
@@ -192,8 +192,8 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
   properties: {
     type: { 
       type: "string",
-      enum: ATTRIBUTE_TYPES, 
-      errorMessage: `The attribute type must be one of ${ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: JAVA_ATTRIBUTE_TYPES,
+      errorMessage: `The attribute type must be one of ${JAVA_ATTRIBUTE_TYPES} and cannot be empty.`
     },
     name: { 
       type: "string",

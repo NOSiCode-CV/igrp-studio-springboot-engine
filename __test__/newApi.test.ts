@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { newApi } from '../src/index';
 import { BaseApiConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 const TECHNICAL_OUTPUT_DIR = 'generatedEnvironment'
 
 const apiConfig: BaseApiConfig = {
@@ -28,7 +28,7 @@ const apiTechnicalConfig: BaseApiConfig = {
 };
 
 beforeEach(async () => {
-  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
