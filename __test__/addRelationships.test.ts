@@ -5,7 +5,7 @@ import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { addModel } from'../src/index';
 
-const OUTPUT_DIR = 'generatedTest'
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 
 const apiConfig: BaseApiConfig = {
   type: 'baseApi',

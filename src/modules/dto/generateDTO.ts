@@ -30,7 +30,7 @@ export const generateDTO = async (context: RenderContext<DTOConfig>) => {
 /**
  * Generates the DTO in the API using the provided configuration.
  * WARN: this is for internal use only 
- * @param ontext - The configuration of the DTO including the DTO name and attributes.
+ * @param context - The configuration of the DTO including the DTO name and attributes.
  * @returns - A string representing the DTO generated from the template.
  * @throws - Throws an error if the DTO configuration is invalid or has no attributes.
  */

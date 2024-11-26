@@ -6,7 +6,7 @@ import { readJsonFile } from '../src/utils/readJsonFiles';
 import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
 
-const OUTPUT_DIR = 'generatedTest'
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 
 describe('DTO deletion', () => {
     it('should delete a dto', async () => {

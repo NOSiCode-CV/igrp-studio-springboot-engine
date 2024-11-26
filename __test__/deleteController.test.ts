@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { deleteController } from '../src/index';
 import { ControllerConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'generatedTest'
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 const controllerConfig: ControllerConfig = {
   type: "controller",
   name: "Greeting",

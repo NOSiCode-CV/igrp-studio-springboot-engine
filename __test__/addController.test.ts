@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { addController } from '../src';
 import { ControllerConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'generatedTest';
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest';
 const controllerConfig: ControllerConfig = {
   type: 'controller',
   name: 'CarRental',

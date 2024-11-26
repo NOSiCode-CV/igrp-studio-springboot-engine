@@ -177,7 +177,6 @@ export interface ControllerConfig {
   name: string;
   basePath: string;
   actions: ControllerAction[];
-  //attributes?: Attribute[];
   module?: string;
 }
 

@@ -1,7 +1,7 @@
 import { ModelConfig, Crud,  } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 
-const OUTPUT_DIR = 'generatedTest'
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 
 const model: ModelConfig = {
   type: 'model',

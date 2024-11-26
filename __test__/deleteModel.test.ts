@@ -1,7 +1,7 @@
 import { deleteModel } from '../src/index';
 import { BaseApiConfig, ModelConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'generatedTest'
+const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 
 const model: ModelConfig = {
   type: 'model',
