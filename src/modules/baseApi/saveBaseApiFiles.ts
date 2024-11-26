@@ -263,8 +263,11 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
   await Promise.all(
     baseApiFiles.map(async (file) => {
       const outputPath = path.join(file.output, file.name);
-      context.fullPath = file.output
-      const template = await renderTemplate(file.template, context);
+
+      // Create a new context for each file to avoid overwriting `fullPath`.
+      const fileContext = { ...context, fullPath: file.output };
+
+      const template = await renderTemplate(file.template, fileContext);
       await saveToFile(template, outputPath);
     }),
   );

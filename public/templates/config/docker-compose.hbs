@@ -49,7 +49,5 @@ services:
     {{/if}}
 
 volumes:
-  {{#if baseConfig.enableObservability}}
-  {{> observability-docker-volumes }}
-  {{/if}}
+  {{#if baseConfig.enableObservability}}{{> observability-docker-volumes }}{{/if}}
   {{> database-docker-volumes }}

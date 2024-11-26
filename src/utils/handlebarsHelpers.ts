@@ -292,7 +292,7 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   if (normalizedFullPath.startsWith(formattedBasePath)) {
     relativePath = normalizedFullPath.slice(formattedBasePath.length);
   } else {
-    throw new Error('The fullPath does not start with the basePath.');
+    return "";
   }
 
   console.log("Relative path: " + relativePath);
