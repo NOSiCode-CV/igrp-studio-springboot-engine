@@ -212,6 +212,7 @@ export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;
   baseConfig: ApiConfig;
+  fullPath: string;
   mathAttributes?: string[];
   dateTimeAttributes?: string[];
   uniqueConstraints?: UniqueConstraint[];

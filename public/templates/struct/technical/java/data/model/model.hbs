@@ -1,4 +1,5 @@
-package {{baseConfig.group}}.{{baseConfig.packageName}}.models.{{ toLowerCase resourceConfig.name}};
+{{> package-java }}
+
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entity}}.{{this.entity}};

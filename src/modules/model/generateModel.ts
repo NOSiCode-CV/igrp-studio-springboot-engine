@@ -175,31 +175,47 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 }
 
 // Caminho onde o arquivo é salvo
-const getModelOutputPath = (context: RenderContext<ModelConfig>) => 
-  path.join(getModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+const getModelOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getModelOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+}
 
 // Caminho onde o arquivo é salvo
-const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`)
+const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getDDDModelOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+}
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const outputDir = getDDDModelOutputDir(context)
+    context.fullPath = outputDir
     return path.join(
-      getDDDModelOutputDir(context),
+      outputDir,
       `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
     );
-  else
+  }
+  else {
+    const outputDir = getModelOutputDir(context)
+    context.fullPath = outputDir
     return path.join(
-        getModelOutputDir(context),
-        `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
-      );
+      outputDir,
+      `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
+    );
+  }
 }
 
 const modelDirectory = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-    return path.join(getDDDModelOutputDir(context));
-  else
-    return path.join(getModelOutputDir(context));
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const outputDir = getDDDModelOutputDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir);
+  }
+  else {
+    const outputDir = getModelOutputDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir);
+  }
 }
-
-

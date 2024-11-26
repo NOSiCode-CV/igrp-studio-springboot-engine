@@ -51,10 +51,18 @@ const renderController = async (context: RenderContext<ControllerConfig>) => {
 };
 
 const getControllerPath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-    return path.join(getDDDControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
-  else
-    return path.join(getControllerDir(context), `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const outputDir = getDDDControllerDir(context)
+    context.fullPath = outputDir
+    return path.join(
+      outputDir,
+      `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`,
+    );
+  } else {
+    const outputDir = getControllerDir(context);
+    context.fullPath = outputDir;
+    return path.join(outputDir, `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
+  }
 };
 
 

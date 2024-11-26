@@ -38,15 +38,29 @@ export const renderHandler = async (context: RenderContext<DTOConfig>) => {
 };
 
 const getHandlerPath = (context: RenderContext<DTOConfig>) => {
-  switch(context.resourceConfig.type) {
-    case "command":
-      return path.join(getDDDCommandHandlerOutputDir(context), `${context.resourceConfig.name}${COMMAND_HANDLER_SUFFIX}`);
-    case "event":
-      return path.join(getDDDEventHandlerOutputDir(context), `${context.resourceConfig.name}${EVENT_HANDLER_SUFFIX}`);
-    case "query":
-      return path.join(getDDDQueryHandlerOutputDir(context), `${context.resourceConfig.name}${QUERY_HANDLER_SUFFIX}`);
+  switch (context.resourceConfig.type) {
+    case 'command': {
+      const outputDir = getDDDCommandHandlerOutputDir(context)
+      context.fullPath = outputDir
+      return path.join(
+        outputDir,
+        `${context.resourceConfig.name}${COMMAND_HANDLER_SUFFIX}`,
+      );
+    }
+    case 'event': {
+      const outputDir = getDDDEventHandlerOutputDir(context)
+      context.fullPath = outputDir
+      return path.join(
+        outputDir,
+        `${context.resourceConfig.name}${EVENT_HANDLER_SUFFIX}`,
+      );
+    }
+    case 'query': {
+      const outputDir = getDDDQueryHandlerOutputDir(context)
+      context.fullPath = outputDir
+      return path.join(outputDir, `${context.resourceConfig.name}${QUERY_HANDLER_SUFFIX}`);
+    }
     default:
-      throw Error("Invalid object type")
+      throw Error('Invalid object type');
   }
 }
-

@@ -40,15 +40,13 @@ export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>
 };
 
 export const generateAggregateRepository = async (context: RenderContext<ModelConfig>) => {
-  const template = await renderRepository(context);
-  const implTemplate = await renderImplRepository(context);
   const modelOutputPath = getDDDAggregateRepositoryOutputPath(context);
   const implModelOutputPath = getDDDAggregateRepositoryImplOutputPath(context);
+  const template = await renderRepository(context);
+  const implTemplate = await renderImplRepository(context);
   await saveToFile(template, modelOutputPath);
   await saveToFile(implTemplate, implModelOutputPath);
 };
-
-
 
 /**
  * Renders the repository content from the template.
@@ -78,17 +76,40 @@ export const renderDDDRepository = async (context: RenderContext<ModelConfig>) =
  * @param context - The rendering context including the model configuration and base path.
  * @returns The full path where the repository file will be saved.
  */
-const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getModelOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getModelOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+}
+const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getDDDRepositoryOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+}
 
-const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDRepositoryOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getDDDRepositoryImplOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(
+    outputDir,
+    `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`,
+  );
+}
 
-const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDRepositoryImplOutputDir(context), `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+const getDDDAggregateRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getDDDAggregateRepositoryOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(
+    outputDir,
+    `${context.resourceConfig.name}AggregateDomain${REPOSITORY_SUFFIX}`,
+  );
+}
 
-const getDDDAggregateRepositoryOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDAggregateRepositoryOutputDir(context), `${context.resourceConfig.name}AggregateDomain${REPOSITORY_SUFFIX}`);
-
-const getDDDAggregateRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) =>
-  path.join(getDDDAggregateRepositoryImplOutputDir(context), `${context.resourceConfig.name}AggregateDomain${REPOSITORY_IMPL_SUFFIX}`);
+const getDDDAggregateRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {
+  const outputDir = getDDDAggregateRepositoryImplOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(
+    outputDir,
+    `${context.resourceConfig.name}AggregateDomain${REPOSITORY_IMPL_SUFFIX}`,
+  );
+}

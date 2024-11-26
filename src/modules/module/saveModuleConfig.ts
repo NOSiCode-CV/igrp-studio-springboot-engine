@@ -1,18 +1,13 @@
 import path from "path";
-import { ApiConfig, ModuleConfig, RenderContext } from '../../interfaces/types';
-import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
+import { ModuleConfig, RenderContext } from '../../interfaces/types';
+import { saveToFile } from '../common/saveToFile';
 import {
-  COMMON_FILES, CONFIG_FILES,
-  DIRECTORIES, EXTENSIONS, OBSERVABILITY_BINARY_FILES,
-  OBSERVABILITY_CONFIG_FILES,
-  OBSERVABILITY_YAML_CONFIG_FILES, PROJECT_STRUCTURE_STYLE, TEMPLATE_DIR,
-  TEMPLATES,
+  COMMON_FILES, DIRECTORIES, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { getMainPath } from '../../utils/helpers';
 import { BASE_API_FILES } from '../baseApi/saveBaseApiFiles';
 import { renderTemplate } from '../common/renderTemplate';
-import fs from 'fs-extra';
 
 export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, basePath: string) => {
 

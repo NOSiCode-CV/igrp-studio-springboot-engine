@@ -6,49 +6,10 @@ networks:
     external: false
 
 services:
-{{#if (eq baseConfig.database "Postgresql")}}
-  postgres:
-      image: postgres:14-alpine
-      container_name: postgres
-      environment:
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_DATABASE}
-      ports:
-        - ${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}
-      volumes:
-        - postgres-data-14:/var/lib/postgresql/data
-      restart: unless-stopped
-
-{{else if (eq baseConfig.database "MySQL")}}
-  mysql:
-      image: mysql:8.0
-      container_name: mysql
-      environment:
-        MYSQL_USER: ${MYSQL_USER}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      ports:
-        - ${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}
-      volumes:
-        - mysql-data-8:/var/lib/mysql
-      restart: unless-stopped
-
-{{else if (eq baseConfig.database "Oracle")}}
-  oracle:
-      image: gvenzl/oracle-xe:21-slim
-      container_name: oracle
-      environment:
-        ORACLE_PASSWORD: ${ORACLE_PASSWORD}
-        ORACLE_DATABASE: ${ORACLE_DATABASE}
-        ORACLE_USER: ${ORACLE_USER}
-      ports:
-        - ${ORACLE_EXTERNAL_PORT}:${ORACLE_INTERNAL_PORT}
-      volumes:
-        - oracle-data-21:/opt/oracle/oradata
-      restart: unless-stopped
-{{/if}}
+  {{> (eq baseConfig.enableObservability) "observability-docker-services"}}
+  {{> (eq baseConfig.database "Postgresql") "postgres-docker-service"}}
+  {{> (eq baseConfig.database "MySQL") "mysql-docker-service"}}
+  {{> (eq baseConfig.database "Oracle") "oracle-docker-service"}}
 
   {{toLowerCase baseConfig.name}}-service:
     build:
@@ -63,29 +24,21 @@ services:
       - SERVER_PORT=${SERVICE_PORT}
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
       - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
-      {{#if (eq baseConfig.database "Postgresql")}}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}
-      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
-      {{else if (eq baseConfig.database "MySQL")}}
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:${MYSQL_INTERNAL_PORT}/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
-      {{else if (eq baseConfig.database "Oracle")}}
-      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle:${ORACLE_INTERNAL_PORT}:${ORACLE_DATABASE}
-      - SPRING_DATASOURCE_USERNAME=${ORACLE_USER}
-      - SPRING_DATASOURCE_PASSWORD=${ORACLE_PASSWORD}
-{{/if}}
+      {{> database-docker-env }}
+      {{> (eq baseConfig.enableObservability) "observability-docker-env"}}
       - ENABLE_SWAGGER=${ENABLE_SWAGGER}
+    ports:
+      - ${SERVICE_PORT}:${SERVICE_PORT}
+    #restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+  {{#if baseConfig.enableObservability}}
+    labels:
+      logging: "promtail"
+  {{/if}}
 
 volumes:
-{{#if (eq baseConfig.database "Postgresql")}}
-  postgres-data-14:
-    driver: local
-{{else if (eq baseConfig.database "MySQL")}}
-  mysql-data-8:
-    driver: local
-{{else if (eq baseConfig.database "Oracle")}}
-  oracle-data-21:
-    driver: local
-{{/if}}
+  {{> (eq baseConfig.enableObservability) "observability-docker-volumes"}}
+  {{> database-docker-volumes }}

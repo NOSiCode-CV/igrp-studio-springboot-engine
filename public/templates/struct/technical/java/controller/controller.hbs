@@ -1,8 +1,4 @@
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-package {{baseConfig.group}}.{{baseConfig.packageName}}.infrastructure.controller;
-{{else}}
-package {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}};
-{{/if}}
+{{> package-java }}
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

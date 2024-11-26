@@ -1,4 +1,5 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.model;
+{{> package-java }}
+
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.models.{{this.entity}}.{{this.entity}};

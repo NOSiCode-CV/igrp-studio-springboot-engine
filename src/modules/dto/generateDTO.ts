@@ -22,8 +22,7 @@ import { normalizeName } from './saveDTOConfig';
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const template = await _renderDTO(context);
   const modelOutputPath = getDTOOutputPath(context);
-
-
+  
   await saveToFile(template, modelOutputPath);
 };
 
@@ -151,23 +150,49 @@ export const transformDTOConfig = async function (
 const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
-      case "dto":
-        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+      case "dto": {
+        const outputDir = getDDDDtoOutputDir(context)
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
+        );
+      }
       /*case "dataobject":
         return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
-      case "command":
-        return path.join(getDDDCommandOutputDir(context), `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
-      case "query":
-        return path.join(getDDDQueryOutputDir(context), `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
-      case "event":
-        return path.join(getDDDEventOutputDir(context), `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
+      case "command": {
+        const outputDir = getDDDCommandOutputDir(context);
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`,
+        );
+      }
+      case "query": {
+        const outputDir = getDDDQueryOutputDir(context);
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`,
+        );
+      }
+      case "event": {
+        const outputDir = getDDDEventOutputDir(context);
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`,
+        );
+      }
       /*case "valueobject":
         return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
       case "domainentity":
         return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
     }
   } else {
-    return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+    const outputDir = getDtoOutputDir(context);
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }
 };
 

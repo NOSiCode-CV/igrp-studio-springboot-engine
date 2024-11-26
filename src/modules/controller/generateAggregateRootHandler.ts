@@ -22,5 +22,7 @@ export const renderAggregateRootHandler = async (context: RenderContext<Controll
 };
 
 const getAggregateRootHandlerPath = (context: RenderContext<ControllerConfig>) => {
-    return path.join(getDDDAggregateRootOutputDir(context), `${context.resourceConfig.name}${CLASS_SUFFIX}`);
+  const outputDir = getDDDAggregateRootOutputDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${CLASS_SUFFIX}`);
 };

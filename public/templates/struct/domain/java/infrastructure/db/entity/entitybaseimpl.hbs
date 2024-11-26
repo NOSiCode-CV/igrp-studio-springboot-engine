@@ -1,4 +1,5 @@
-package {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}};
+{{> package-java }}
+
 {{#if resourceConfig.relations}}
 {{#each resourceConfig.relations}}
 import {{../baseConfig.group}}.{{../baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}}.{{this.entity}};

@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { addDTO } from '../src';
 import { DTOConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest';
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedTest';
 const HUB_DIR = 'C:\\Users\\marcelo.monteiro\\IdeaProjects\\inss-sisgb-portal-integration-hub-service';
 
 beforeAll(async () => {

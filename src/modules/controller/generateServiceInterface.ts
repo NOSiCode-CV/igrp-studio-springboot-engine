@@ -26,8 +26,20 @@ export const renderServiceInterface = async (context: RenderContext<ControllerCo
 };
 
 const getServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-    return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
-  else
-    return path.join(getControllerDir(context), `${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`);
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const outputDir = getDDDServiceDir(context)
+    context.fullPath = outputDir
+    return path.join(
+      outputDir,
+      `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`,
+    );
+  }
+  else {
+    const outputDir = getControllerDir(context)
+    context.fullPath = outputDir
+    return path.join(
+      outputDir,
+      `${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`,
+    );
+  }
 };

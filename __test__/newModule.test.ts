@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { addModule, newApi } from '../src/index';
+import { addModule } from '../src/index';
 import { ModuleConfig } from '../src/interfaces/types';
 
 const OUTPUT_DIR = 'C:\spring-engine\generatedTest'

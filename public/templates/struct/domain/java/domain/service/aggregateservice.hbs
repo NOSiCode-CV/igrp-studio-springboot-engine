@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.packageName}}.domain.service.{{toLowerCase resourceConfig.name}};
+{{> package-java }}
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}

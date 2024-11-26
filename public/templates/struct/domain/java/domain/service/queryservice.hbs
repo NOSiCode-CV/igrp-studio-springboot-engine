@@ -1,4 +1,4 @@
-package {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.service;
+{{> package-java }}
 
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}

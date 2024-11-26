@@ -22,5 +22,7 @@ export const renderQueryServiceImpl = async (context: RenderContext<ControllerCo
 };
 
 const getQueryServiceImplPath = (context: RenderContext<ControllerConfig>) => {
-  return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
+  const outputDir = getDDDServiceDir(context)
+  context.fullPath = outputDir
+  return path.join(outputDir, `${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
 };

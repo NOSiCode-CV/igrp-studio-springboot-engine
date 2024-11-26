@@ -32,16 +32,22 @@ export const renderListener = async (context: RenderContext<DTOConfig>) => {
 
 const getListenerPath = (context: RenderContext<DTOConfig>) => {
   switch (context.resourceConfig.type) {
-    case 'command':
+    case 'command': {
+      const outputDir = getDDDCommandOutputDir(context)
+      context.fullPath = outputDir
       return path.join(
-        getDDDCommandOutputDir(context),
+        outputDir,
         `${context.resourceConfig.name}${COMMAND_LISTENER_SUFFIX}`,
       );
-    case 'event':
+    }
+    case 'event': {
+      const outputDir = getDDDEventOutputDir(context)
+      context.fullPath = outputDir
       return path.join(
-        getDDDEventOutputDir(context),
+        outputDir,
         `${context.resourceConfig.name}${EVENT_LISTENER_SUFFIX}`,
       );
+    }
     default:
       throw Error('Invalid object type');
   }

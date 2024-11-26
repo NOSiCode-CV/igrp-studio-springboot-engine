@@ -1,4 +1,5 @@
 import * as Handlebars from 'handlebars';
+import fs from 'fs';
 
 import {
   Attribute,
@@ -9,8 +10,15 @@ import {
   ModelConfig,
   Relation,
 } from '../interfaces/types';
-import { DIRECTORIES, GENERIC_TYPES, REQUEST_BODY_NOT_IMPORT } from './constants';
+import { DIRECTORIES, GENERIC_TYPES, PARTIALS_DIR, REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
+
+// Register partials
+fs.readdirSync(PARTIALS_DIR).forEach(file => {
+  const partialName = file.replace('.hbs', '');
+  const partialContent = fs.readFileSync(`${PARTIALS_DIR}/${file}`, 'utf8');
+  Handlebars.registerPartial(partialName, partialContent);
+});
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -265,6 +273,16 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
 
   // Return the generated annotations as a joined string
   return annotations.join('\n  ');
+});
+
+Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
+  if (!fullPath || !basePath) {
+    throw new Error('Both fullPath and basePath are required to resolve the package.');
+  }
+  // Remove the basePath portion
+  const relativePath = fullPath.replace(new RegExp(`^${basePath}/?`), '');
+  // Convert to Java package format
+  return relativePath.replace(/\//g, '.');
 });
 
 Handlebars.registerHelper(

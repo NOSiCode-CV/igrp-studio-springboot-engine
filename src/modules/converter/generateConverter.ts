@@ -48,16 +48,19 @@ export const renderDomainConverter = async (context: RenderContext<ModelConfig>)
 };
 
 const getConverterPath = (context: RenderContext<ModelConfig>) => {
-    return path.join(getDDDConverterOutputDir(context), `${context.resourceConfig.name}${CONVERTER_SUFFIX}`);
+    const outputDir = getDDDConverterOutputDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}${CONVERTER_SUFFIX}`);
 }
 
 const getAggregateConverterPath = (context: RenderContext<ModelConfig>) => {
-    return path.join(getDDDAggDomainConverterOutputDir(context), `${context.resourceConfig.name}${AGG_ASSEMBLER_SUFFIX}`);
+    const outputDir = getDDDAggDomainConverterOutputDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}${AGG_ASSEMBLER_SUFFIX}`);
 }
 
 const getDomainConverterPath = (context: RenderContext<ModelConfig>) => {
-    return path.join(getDDDDomainConverterOutputDir(context), `${context.resourceConfig.name}${ASSEMBLER_SUFFIX}`);
+    const outputDir = getDDDDomainConverterOutputDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}${ASSEMBLER_SUFFIX}`);
 }
-
-
-

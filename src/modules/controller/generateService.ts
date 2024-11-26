@@ -27,7 +27,12 @@ export const renderServiceImpl = async (context: RenderContext<ControllerConfig>
 
 const getServiceImplPath = (context: RenderContext<ControllerConfig>) => {
   if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    return path.join(getDDDServiceDir(context), `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
-  } else
-    return path.join(getServiceDir(context), `${context.resourceConfig.name}${SERVICE_SUFFIX}`);
+    const outputDir = getDDDServiceDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
+  } else {
+    const outputDir = getServiceDir(context)
+    context.fullPath = outputDir
+    return path.join(outputDir, `${context.resourceConfig.name}${SERVICE_SUFFIX}`);
+  }
 };

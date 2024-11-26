@@ -270,7 +270,7 @@ export const getDDDDomainConverterOutputDir = (context: RenderContext<ModelConfi
   );
 
 export const getControllerConfigPath = (module: string, controller: string, output: string) =>
-  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_CONTROLLER, { module }), `${controller}${EXTENSIONS.JSON}`);
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_CONTROLLER, { module }), `${controller}Controller${EXTENSIONS.JSON}`);
 
 export const getControllerDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(

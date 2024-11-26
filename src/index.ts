@@ -136,6 +136,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     resourceConfig: undefined, // On base API, there is no specific config.
     basePath,
     baseConfig: config,
+    fullPath: basePath
   };
   /**
    * Creates the folder structure needed for the API.
@@ -169,6 +170,7 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig: baseConfig,
+    fullPath: getMainPath(baseConfig.group, baseConfig.packageName)
   };
 
   if (
@@ -263,6 +265,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await generateModel(context);
@@ -431,6 +434,7 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await deleteModelConfig(context);
@@ -500,6 +504,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await generateDTO(context);
@@ -564,6 +569,7 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await deleteDTOConfig(context, false);
@@ -645,6 +651,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await generateController(context);
@@ -763,6 +770,7 @@ export const updateController = async (config: ControllerConfig, basePath: strin
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await generateController(context);
@@ -788,6 +796,7 @@ export const deleteController = async (config: ControllerConfig, basePath: strin
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await deleteControllerConfig(context);
@@ -829,6 +838,7 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath
   };
 
   await deletePerm(context);
