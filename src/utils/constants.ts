@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
- export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -325,7 +325,6 @@ export const CONFIG_BINARY_FILES = [
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' },
   { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -344,7 +343,8 @@ export const OBSERVABILITY_YAML_CONFIG_FILES = [
 ];
 
 export const OBSERVABILITY_BINARY_FILES = [
-  { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' }
+  { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' },
+  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
 ]
 
 export const COMMON_FILES = {
