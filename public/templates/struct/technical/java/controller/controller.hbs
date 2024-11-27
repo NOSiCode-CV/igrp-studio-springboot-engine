@@ -17,9 +17,9 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
   @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}},
-    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if this.accepts}},
-    consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
+    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if (and this.pathVariables path)}}, {{/if}}{{#if pathVariables}}
+  value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.accepts pathVariables)}}, {{/if}}{{#if this.accepts}}
+    consumes = "{{this.accepts}}" {{/if}}{{#if (and this.contentType this.accepts)}},{{/if}}{{#if (and this.contentType path)}},{{/if}}{{#if this.contentType}}
     produces = "{{this.contentType}}"{{/if}}
   )
   {{> controller-action-definition baseConfig=../baseConfig}}
@@ -39,7 +39,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{#if (eq method "GET")}}return ResponseEntity.ok(result);{{else}}return ResponseEntity.ok(response);{{/if}}
 
   {{else}}
-    final var result = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+    final var result = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
 
     return ResponseEntity.ok(result);
 

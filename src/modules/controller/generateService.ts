@@ -13,8 +13,8 @@ const CMD_SERVICE_SUFFIX = 'CmdServiceImpl.java';
  * @param context 
  */
 export const generateServiceInmpl = async (context: RenderContext<ControllerConfig>) => {
-  const serviceImpl = await renderServiceImpl(context);
   const serviceImplPath = getServiceImplPath(context);
+  const serviceImpl = await renderServiceImpl(context);
   await saveToFile(serviceImpl, serviceImplPath, false);
 };
 

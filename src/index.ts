@@ -838,7 +838,7 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await deletePerm(context);
@@ -857,7 +857,7 @@ export const engineTypes = async (module: string, basePath: string) => {
   const typesDTOs = await getDTOTypes(module, basePath);
 
   for (const dto of typesDTOs.values()) {
-    dtos.push(dto.name);
+    dtos.push(`${dto.name}DTO`);
   }
   const responseTypes = [...RESPONSE_TYPES, ...dtos, ...dtos.map((dto) => `List<${dto}>`)];
 

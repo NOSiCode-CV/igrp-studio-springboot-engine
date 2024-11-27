@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{resourceConfig.name}}.{{toLowerCase resourceConfig.name}}ServiceInterface;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
 
 @Service
 public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name}}ServiceInterface {
@@ -22,7 +22,7 @@ public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name
 
   {{#each resourceConfig.actions}}
   @Override
-  public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
+  public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
     // TODO: implement this method
     return null;
   }
