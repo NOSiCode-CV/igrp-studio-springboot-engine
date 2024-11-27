@@ -84,13 +84,14 @@ const model3: ModelConfig = {
 
 const model4: ModelConfig = {
   "type": "model",
-  "name": "TesteNew",
-  "tableName": "t_testenew",
+  "name": "sertyu",
+  "tableName": "t_sertyu",
   "audit": true,
   "attributes": [
     {
-      "name": "id",
+      "name": "swertyu",
       "type": "long",
+      "length": 255,
       "defaultValue": "",
       "nullable": false,
       "unique": false,
@@ -98,17 +99,9 @@ const model4: ModelConfig = {
       "generationType": "IDENTITY"
     },
     {
-      "name": "dawefrwfrw",
-      "type": "boolean",
-      "defaultValue": "",
-      "nullable": true,
-      "unique": false,
-      "primaryKey": false,
-      "generationType": ""
-    },
-    {
-      "name": "wfrfwrfrwf",
-      "type": "short",
+      "name": "wfegg",
+      "type": "double",
+      "length": 255,
       "defaultValue": "",
       "nullable": true,
       "unique": true,
@@ -116,19 +109,41 @@ const model4: ModelConfig = {
       "generationType": ""
     },
     {
-      "name": "wfrwfrwf",
-      "type": "double",
-      "defaultValue": "255.5",
+      "name": "gegewgw",
+      "type": "boolean",
+      "length": 255,
+      "defaultValue": "",
+      "nullable": false,
+      "unique": false,
+      "primaryKey": false,
+      "generationType": ""
+    },
+    {
+      "name": "egewgewg",
+      "type": "uuid",
+      "length": 255,
+      "defaultValue": "",
       "nullable": true,
       "unique": false,
       "primaryKey": false,
       "generationType": ""
     },
     {
-      "name": "afefrgrg",
-      "type": "float",
+      "name": "ewfweffwfe",
+      "type": "string",
+      "length": 300,
       "defaultValue": "",
-      "nullable": false,
+      "nullable": true,
+      "unique": false,
+      "primaryKey": false,
+      "generationType": ""
+    },
+    {
+      "name": "efwefewf",
+      "type": "string",
+      "length": 255,
+      "defaultValue": "rgregergerger",
+      "nullable": true,
       "unique": false,
       "primaryKey": false,
       "generationType": ""

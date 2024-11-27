@@ -117,7 +117,7 @@ Handlebars.registerHelper('keyType', function (config: DTOConfig) {
   }
 
   const result: JavaType | string = { name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? "", namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,  };
-  return result;
+  return result.name;
 
 });
 
@@ -360,6 +360,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
 });
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
+
   if (!t1.type) return t1.type;
 
   const attributeType = GENERIC_TYPES.get(t1.type)?.java.name

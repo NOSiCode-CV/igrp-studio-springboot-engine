@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
- export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -155,7 +155,7 @@ export const TEMPLATES = {
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
-  DOMAIN_REPOSITORY: 'struct/technical/java/repository/repository.hbs',
+  DOMAIN_REPOSITORY: 'struct/technical/java/data/repository/repository.hbs',
   DOMAIN_RESOURCES: 'struct/resource/application.properties.hbs',
   APPLICATION_RESOURCES_DEVELOPMENT: 'struct/resource/application-development.properties.hbs',
   APPLICATION_RESOURCES_STAGING: 'struct/resource/application-staging.properties.hbs',

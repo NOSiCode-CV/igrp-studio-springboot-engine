@@ -7,6 +7,8 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entit
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
 
 import jakarta.persistence.*;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,7 @@ import java.math.{{this}};
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "{{resourceConfig.tableName}}"{{#if (resourceConfig.uniqueConstraints)}},
+@Table(name = "{{resourceConfig.tableName}}"{{#if resourceConfig.uniqueConstraints}},
   uniqueConstraints = {
   {{#each resourceConfig.uniqueConstraints}}
     @UniqueConstraint(
@@ -52,7 +54,7 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   @Id
   @GeneratedValue(strategy = GenerationType.{{this.generationType}})
   @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
-  private {{this.type}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+  private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
 
   @NotBlank(message = "{{this.name}} is mandatory"){{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
@@ -61,7 +63,7 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
-  private {{this.type}} {{toFullCamelCaseFromSnakeCase this.name}};{{/if}}{{/if}}
+  private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{/if}}{{/if}}
   {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
   @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
