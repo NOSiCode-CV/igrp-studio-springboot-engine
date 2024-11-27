@@ -7,9 +7,11 @@ import jakarta.validation.constraints.*;
 {{{resolve-imports resourceConfig}}}
 
 {{> lombok-java-annotations}}
+
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
+
 public class {{resourceConfig.name}}DTO {
 
 {{#each resourceConfig.attributes}}

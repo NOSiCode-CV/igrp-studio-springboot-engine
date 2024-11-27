@@ -18,8 +18,8 @@ const QUERY_HANDLER_SUFFIX = 'QueryHandler.java';
  * @param context 
  */
 export const generateHandlers = async (context: RenderContext<DTOConfig>) => {
-  const handler = await renderHandler(context);
   const handlerPath = getHandlerPath(context);
+  const handler = await renderHandler(context);
   await saveToFile(handler, handlerPath, false);
 };
 

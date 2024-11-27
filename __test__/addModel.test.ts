@@ -4,7 +4,7 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { saveBaseApiFileConfig } from '../src/modules/baseApi/saveBaseApiConfig';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedTest'
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 
 const model: ModelConfig = {
   type: 'model',

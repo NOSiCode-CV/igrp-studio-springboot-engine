@@ -21,7 +21,6 @@ public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name
   private static final Logger logger = LoggerFactory.getLogger({{resourceConfig.name}}ServiceImpl.class);
 
   {{#each resourceConfig.actions}}
-  {{> method-documentation }}
   @Override
   public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
     // TODO: implement this method

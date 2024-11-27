@@ -697,7 +697,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                   ? act.requestParams
                       .map((e) => ({
                         name: e.name,
-                        type: e.type as 'Long' | 'String' | 'Integer' | 'Boolean' | 'Object',
+                        type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
                         ns: 'java',
                         required: true,
                       }))
@@ -705,14 +705,14 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                         act?.pathVariables
                           ? act.pathVariables.map((e) => ({
                               name: e.name,
-                              type: e.type as 'Long' | 'String' | 'Integer' | 'Boolean' | 'Object',
+                              type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
                               ns: 'java',
                               required: true,
                             }))
-                          : [{ name: 'none', type: 'Object', ns: 'java', required: false }],
+                          : [{ name: 'none', type: 'object', ns: 'java', required: false }],
                       )
                   : [
-                      { name: 'none', type: 'Object', ns: 'java', required: false },
+                      { name: 'none', type: 'object', ns: 'java', required: false },
                     ]) as JavaAttribute[]),
           response: act.response,
         } as HandlerConfig,

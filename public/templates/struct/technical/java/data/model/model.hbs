@@ -6,6 +6,8 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entit
 {{/each}}{{/if}}{{#if resourceConfig.audit}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
 
+{{{resolve-imports resourceConfig}}}
+
 import jakarta.persistence.*;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;

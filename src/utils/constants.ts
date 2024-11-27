@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- //export const TEMPLATE_DIR = path.join(__dirname, './templates');
- //export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -83,6 +83,10 @@ export const SUCCESS_MESSAGE = {
 };
 
 export const PARTIALS = [
+  "controller-action-definition.hbs",
+  "controller-constructor.hbs",
+  "controller-imports.hbs",
+  "controller-injection.hbs",
   "database-docker-env.hbs",
   "database-docker-volumes.hbs",
   "database-env.hbs",
@@ -90,7 +94,6 @@ export const PARTIALS = [
   "generic-maven-dependencies.hbs",
   "lombok-java-annotations.hbs",
   "lombok-java-imports.hbs",
-  "method-documentation.hbs",
   "mysql-docker-service.hbs",
   "oauth-maven-dependencies.hbs",
   "observability-docker-env.hbs",
@@ -874,7 +877,7 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'Int', primitive: true },
     },
     long: {
-      java: { name: 'long', primitive: true },
+      java: { name: 'Long', primitive: true },
       dotnet: { name: 'long', primitive: true },
       python: { name: 'int', primitive: true },
       kotlin: { name: 'Long', primitive: true },
@@ -886,13 +889,13 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'Short', primitive: true },
     },
     float: {
-      java: { name: 'float', primitive: true },
+      java: { name: 'Float', primitive: true },
       dotnet: { name: 'float', primitive: true },
       python: { name: 'float', primitive: true },
       kotlin: { name: 'Float', primitive: true },
     },
     double: {
-      java: { name: 'double', primitive: true },
+      java: { name: 'Double', primitive: true },
       dotnet: { name: 'double', primitive: true },
       python: { name: 'float', primitive: true },
       kotlin: { name: 'Double', primitive: true },
@@ -904,7 +907,7 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'String', primitive: false },
     },
     char: {
-      java: { name: 'char', primitive: true },
+      java: { name: 'Character', primitive: true },
       dotnet: { name: 'char', primitive: true },
       python: { name: 'str', primitive: true }, // Python treats characters as strings of length 1
       kotlin: { name: 'Char', primitive: true },
@@ -963,6 +966,12 @@ export const GENERIC_TYPES: Map<
       dotnet: { name: 'DateTimeOffset', primitive: false, namespace: 'System' },
       python: { name: 'datetime', primitive: false, namespace: 'datetime' },
       kotlin: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
+    },
+    byte: {
+      java: { name: 'byte', primitive: true },
+      dotnet: { name: 'byte', primitive: true },
+      python: { name: 'int', primitive: true },
+      kotlin: { name: 'Byte', primitive: true },
     },
     // Collections
     list: {
@@ -1084,6 +1093,6 @@ export const CRUD_DISABLED_OPTIONS = [
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['Long', 'String', 'Integer', 'Boolean', 'Object'] as const
+export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object'] as const
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const

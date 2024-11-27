@@ -21,21 +21,20 @@ const REPOSITORY_IMPL_SUFFIX = 'RepositoryImpl.java';
  * @throws - Throws an error if the model configuration is invalid.
  */
 export const generateRepository = async (context: RenderContext<ModelConfig>) => {
-  const template = await renderRepository(context);
-  const dddTemplate = await renderDDDRepository(context);
-
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const modelOutputPath = getDDDRepositoryOutputPath(context);
+    const dddTemplate = await renderDDDRepository(context);
     await saveToFile(dddTemplate, modelOutputPath, false);
   } else {
     const modelOutputPath = getRepositoryOutputPath(context);
+    const template = await renderRepository(context);
     await saveToFile(template, modelOutputPath);
   }
 };
 
 export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>) => {
-  const template = await renderImplRepository(context);
   const modelOutputPath = getDDDRepositoryImplOutputPath(context);
+  const template = await renderImplRepository(context);
   await saveToFile(template, modelOutputPath, false);
 };
 

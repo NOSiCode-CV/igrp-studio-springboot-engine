@@ -1,0 +1,6 @@
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+public ResponseEntity<{{cleanStr response}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{#ifNot (eq method "GET")}}{{capitalize actionName}}Command {{toCamelCase actionName}}Command{{else}}{{this.requestBody}} {{toCamelCase this.requestBody}}{{/ifNot}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
+{{else}}
+public ResponseEntity<{{{cleanStr this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{resolve-type this}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
+{{/if}}

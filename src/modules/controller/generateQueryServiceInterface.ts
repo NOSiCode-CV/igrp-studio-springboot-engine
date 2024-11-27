@@ -12,8 +12,8 @@ const QUERY_SERVICE_SUFFIX = 'QueryService.java';
  * @param context 
  */
 export const generateQueryServiceInterface = async (context: RenderContext<ControllerConfig>) => {
-  const queryServiceInterface = await renderQueryServiceInterface(context);
   const queryServiceInterfacePath = getQueryServiceInterfacePath(context);
+  const queryServiceInterface = await renderQueryServiceInterface(context);
   await saveToFile(queryServiceInterface, queryServiceInterfacePath);
 };
 

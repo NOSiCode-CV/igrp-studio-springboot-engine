@@ -2,36 +2,35 @@ import fs from 'fs-extra';
 import { addController } from '../src';
 import { ControllerConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest';
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 const controllerConfig: ControllerConfig = {
   type: 'controller',
   name: 'CarRental',
   basePath: 'rental',
-  module: 'CarRental',
   actions: [
     {
       path: 'createRental',
       method: 'POST',
       actionName: 'CreateRental',
       accepts: 'application/json',
-      requestBody: 'RentalDTO',
-      response: 'RentalDTO',
+      requestBody: 'TesteDTO',
+      response: 'TesteDTO',
     },
     {
       path: 'updateRental',
       method: 'PUT',
       accepts: 'application/json',
       actionName: 'UpdateRental',
-      requestBody: 'RentalDTO',
-      response: 'RentalDTO',
+      requestBody: 'TesteDTO',
+      response: 'TesteDTO',
     },
     {
       path: 'getRental',
       method: 'GET',
       actionName: 'GetRental',
       pathVariables: [],//[{ type: 'Long', name: 'rentalId' }],
-      requestParams: [],//[{ type: 'String', name: 'carPlate' }],
-      response: 'RentalDTO',
+      requestParams: [],//[{ type: 'string', name: 'carPlate' }],
+      response: 'TesteDTO',
     },
     {
       path: 'getAllRentals',
@@ -39,12 +38,12 @@ const controllerConfig: ControllerConfig = {
       actionName: 'GetAllRentals',
       pathVariables: [],
       requestParams: [
-        { type: 'String', name: 'carBrand' },
-        { type: 'String', name: 'carModel' },
-        { type: 'String', name: 'carPlate' },
-        { type: 'String', name: 'registrationDate' },
+        { type: 'string', name: 'carBrand' },
+        { type: 'string', name: 'carModel' },
+        { type: 'string', name: 'carPlate' },
+        { type: 'string', name: 'registrationDate' },
       ],
-      response: 'List<RentalDTO>',
+      response: 'List<TesteDTO>',
     },
   ],
 };

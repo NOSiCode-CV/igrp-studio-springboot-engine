@@ -25,7 +25,6 @@ public class {{capitalize resourceConfig.name}}CmdServiceImpl implements {{capit
     }
 
 {{#each resourceConfig.actions}}
-    {{> method-documentation }}
   {{#ifNot (eq this.method "GET")}}
     @Override
     public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command cmd) {

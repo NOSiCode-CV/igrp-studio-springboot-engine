@@ -327,14 +327,14 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
   if (!config) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
-  if (!Array.isArray(config.attributes)) return;
+  if (!Array.isArray(config.attributes)) return null;
 
   const imports = new Set();
   config.attributes.forEach((attr: JavaAttribute) => {
     const genType = GENERIC_TYPES.get(attr.type)
-    if(genType?.java.primitive) return;
+    if(genType?.java.primitive) return null;
     const type: JavaType = { name: genType?.java.name ?? "", namespace: genType?.java.namespace };
-    if(type.name == "") return;
+    if(type.name == "") return null;
     if (type.namespace) {
       if (type.namespace.includes('models'))
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
@@ -364,7 +364,8 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   if (!t1.type) return t1.type;
 
   const attributeType = GENERIC_TYPES.get(t1.type)?.java.name
-  let rtype = attributeType;
+
+  let rtype: string | undefined;
   switch (t1.collectionType) {
     case 'list':
       rtype = `List<${attributeType}>`;

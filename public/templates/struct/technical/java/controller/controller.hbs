@@ -4,37 +4,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.application.dto.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.service.{{resourceConfig.name}}CmdService;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.service.{{resourceConfig.name}}QueryService;
-{{else}}
-{{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact resourceConfig.module false}}
-{{/if}}
+{{>controller-imports}}
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-  private final {{capitalize resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService;
-  private final {{capitalize resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
-{{else}}
-  private final {{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service;
-{{/if}}
+  {{>controller-injection}}
 
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-  public {{resourceConfig.name}}Controller({{resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){
-    this.{{toCamelCase resourceConfig.name}}CmdService = {{toCamelCase resourceConfig.name}}CmdService;
-    this.{{toCamelCase resourceConfig.name}}QueryService = {{toCamelCase resourceConfig.name}}QueryService;
-  }
-{{else}}
-  public {{resourceConfig.name}}Controller({{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service){
-    this.{{toCamelCase resourceConfig.name}}Service = {{toCamelCase resourceConfig.name}}Service;
-  }
-{{/if}}
+  {{>controller-constructor}}
 
   {{#each resourceConfig.actions}}
   @ResponseStatus(HttpStatus.OK)
@@ -44,15 +22,19 @@ public class {{capitalize resourceConfig.name}}Controller {
     consumes = "{{this.accepts}}" {{/if}}{{#if this.contentType}}, 
     produces = "{{this.contentType}}"{{/if}}
   )
-  public ResponseEntity<{{{cleanStr this.response}}}> {{toCamelCase actionName}}({{#if requestBody}}@RequestBody {{this.requestBody}} {{toCamelCase requestBody}}{{/if}}{{#if requestBody}}{{#if requestParams}}, {{/if}}{{/if}}{{#each requestParams}}@RequestParam {{this.type}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}@PathVariable {{this.type}} {{this.name}}{{#if @last}}{{else}},{{/if}}{{/each}}) {
-
+  {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
-    {{#if requestParams}}final var query = new {{actionName}}Query({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
-    {{else}}
-    {{#if requestBody}}{{else if requestParams}}final var command = new {{actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{/if}}
+    {{#if requestParams}}final var query = new {{actionName}}Query({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
+    final var query = new {{actionName}}Query();
     {{/if}}
-    {{#if (eq method "GET")}}final var result = {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{/if}});{{else}}final var response = {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{else if requestParams}}command{{/if}});{{/if}}
+    {{else}}
+    {{#if requestBody}}{{else if requestParams}}final var command = new {{actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
+      final var command = new {{actionName}}Command();
+    {{/if}}
+    {{/if}}
+
+    {{#if (eq method "GET")}}final var result = {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}final var response = {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
 
     {{#if (eq method "GET")}}return ResponseEntity.ok(result);{{else}}return ResponseEntity.ok(response);{{/if}}
 

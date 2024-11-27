@@ -91,7 +91,7 @@ export const getDDDModelOutputDir = (context: RenderContext<ModelConfig>) =>
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.MODEL,
+    DIRECTORIES.MODELS,
   );
 
 export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig>) =>
