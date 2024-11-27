@@ -20,9 +20,9 @@ import { getDTOTypes } from './helpers';
 import { normalizeName } from './saveDTOConfig';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
-  const template = await _renderDTO(context);
   const modelOutputPath = getDTOOutputPath(context);
-  
+  const template = await _renderDTO(context);
+
   await saveToFile(template, modelOutputPath);
 };
 

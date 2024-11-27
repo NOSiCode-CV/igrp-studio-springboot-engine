@@ -4,7 +4,7 @@ import { ApiConfig, ModelConfig } from '../src/interfaces/types';
 import { addModel } from '../src/index';
 import { saveBaseApiFileConfig } from '../src/modules/baseApi/saveBaseApiConfig';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedTest'
 
 const model: ModelConfig = {
   type: 'model',
@@ -82,6 +82,63 @@ const model3: ModelConfig = {
   }
 };
 
+const model4: ModelConfig = {
+  "type": "model",
+  "name": "TesteNew",
+  "tableName": "t_testenew",
+  "audit": true,
+  "attributes": [
+    {
+      "name": "id",
+      "type": "long",
+      "defaultValue": "",
+      "nullable": false,
+      "unique": false,
+      "primaryKey": true,
+      "generationType": "IDENTITY"
+    },
+    {
+      "name": "dawefrwfrw",
+      "type": "boolean",
+      "defaultValue": "",
+      "nullable": true,
+      "unique": false,
+      "primaryKey": false,
+      "generationType": ""
+    },
+    {
+      "name": "wfrfwrfrwf",
+      "type": "short",
+      "defaultValue": "",
+      "nullable": true,
+      "unique": true,
+      "primaryKey": false,
+      "generationType": ""
+    },
+    {
+      "name": "wfrwfrwf",
+      "type": "double",
+      "defaultValue": "255.5",
+      "nullable": true,
+      "unique": false,
+      "primaryKey": false,
+      "generationType": ""
+    },
+    {
+      "name": "afefrgrg",
+      "type": "float",
+      "defaultValue": "",
+      "nullable": false,
+      "unique": false,
+      "primaryKey": false,
+      "generationType": ""
+    }
+  ],
+  "relations": [],
+  "uniqueConstraints": [],
+  "primaryKey": []
+}
+
 
 beforeAll(async () =>{
   await fs.mkdir(OUTPUT_DIR, {recursive: true});
@@ -103,7 +160,7 @@ describe('Model generator', () => {
 
   it('should create a model in th api', async () => {
     //await addModel(model, OUTPUT_DIR);
-    await addModel(model3, OUTPUT_DIR);
+    await addModel(model4, OUTPUT_DIR);
 
   });
 });

@@ -431,24 +431,53 @@ describe('DTO generator', () => {
       {
         "type": "dto",
         "module": "shared",
-        "name": "trtrt",
+        "name": "Teste",
         "template": "classic",
         "attributes": [
           {
-            "name": "retert",
+            "name": "id",
             "ns": "java",
-            "type": "string",
-            "required": true,
+            "type": "boolean",
+            "required": false,
             "before": false,
             "after": false,
             "positive": false,
-            "minLength": 0,
-            "maxLength": 10,
-            "regex": "",
-            "collectionType": "set",
             "isEmail": false,
             "isUrl": false,
-            "primaryKey": false
+            "primaryKey": true
+          },
+          {
+            "name": "teatew21",
+            "ns": "java",
+            "type": "long",
+            "required": true
+          },
+          {
+            "name": "qwewre",
+            "ns": "java",
+            "type": "biginteger",
+            "required": false
+          },
+          {
+            "name": "eweiop",
+            "ns": "java",
+            "type": "datetime",
+            "required": true,
+            "collectionType": "list"
+          },
+          {
+            "name": "wqerwteyui",
+            "ns": "java",
+            "type": "date",
+            "required": true,
+            "collectionType": "set"
+          },
+          {
+            "name": "wrteyruio",
+            "ns": "java",
+            "type": "byte",
+            "isEmail": true,
+            "required": true
           }
         ]
       }

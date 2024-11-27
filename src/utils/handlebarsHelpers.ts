@@ -159,13 +159,13 @@ Handlebars.registerHelper(
             imports.push(
               `import ${group}.${packageName}.${mod}.application.dto.${action.requestBody};`,
             );
-          else imports.push(`import ${group}.${packageName}.${mod}.dto.${action.requestBody};`);
+          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody};`);
       if (action.response)
         if (extractTypeFromList(action.response)) {
           const type = extractTypeFromList(action.response);
           if (domainDriven === true)
             imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
-          else imports.push(`import ${group}.${packageName}.${mod}.dto.${type};`);
+          else imports.push(`import ${group}.${packageName}.dto.${type};`);
         }
       if (action.response.startsWith('List')) imports.push(`import java.util.List;`);
     }

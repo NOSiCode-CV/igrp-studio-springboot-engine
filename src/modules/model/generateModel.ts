@@ -11,13 +11,14 @@ import { saveModelConfig } from './saveModelConfig';
 import { saveAllPermissions } from '../permission/savePermissions';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
-  const template = await renderModel(context);
   let modelOutputPath: string;
 
   if(context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(context);
   else
     modelOutputPath = getModelOutputPath(context);
+
+  const template = await renderModel(context);
 
   const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
@@ -33,8 +34,8 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const {primaryKey} = context.resourceConfig
 
   if (primaryKey) {
-    const primaryKeyTemplate = await renderPrimaryKey(context);
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
+    const primaryKeyTemplate = await renderPrimaryKey(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   } 
 
@@ -69,12 +70,12 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
-    // Validação e renderização de cada atributo com seu valor padrão
-    context.resourceConfig.attributes.forEach(attribute => {
-      if (attribute.defaultValue) {
-        const columnAnnotation = renderColumnWithDefault(attribute);
-      }
-    });
+  // Validação e renderização de cada atributo com seu valor padrão
+  context.resourceConfig.attributes.forEach(attribute => {
+    if (attribute.defaultValue) {
+      const columnAnnotation = renderColumnWithDefault(attribute);
+    }
+  });
 
     // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];

@@ -10,15 +10,22 @@ import {
   IModelPermission,
   EntityIndex,
 } from '../interfaces/types';
-import { JAVA_ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, PATTERNS, RELATIONSHIP_TYPES, GENERATION_TYPES, HTTP_METHOD_TYPES } from "../utils/constants";
+import {
+  CRUD_DISABLED_OPTIONS,
+  PATTERNS,
+  RELATIONSHIP_TYPES,
+  GENERATION_TYPES,
+  HTTP_METHOD_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+} from '../utils/constants';
 
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
   properties: {
     type: {
       type: "string",
-      enum: JAVA_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
-      errorMessage: `The attribute type must be one of ${JAVA_ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: GENERIC_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
+      errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
     },
     name: {
       type: "string",
@@ -192,8 +199,8 @@ const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
   properties: {
     type: { 
       type: "string",
-      enum: JAVA_ATTRIBUTE_TYPES,
-      errorMessage: `The attribute type must be one of ${JAVA_ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: GENERIC_ATTRIBUTE_TYPES,
+      errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
     },
     name: { 
       type: "string",
