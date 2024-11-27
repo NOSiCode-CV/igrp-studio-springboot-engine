@@ -82,6 +82,29 @@ export const SUCCESS_MESSAGE = {
   FILE_SAVED: 'The file has been saved successfully.',
 };
 
+export const PARTIALS = [
+  "database-docker-env.hbs",
+  "database-docker-volumes.hbs",
+  "database-env.hbs",
+  "database-maven-dependencies.hbs",
+  "generic-maven-dependencies.hbs",
+  "lombok-java-annotations.hbs",
+  "lombok-java-imports.hbs",
+  "method-documentation.hbs",
+  "mysql-docker-service.hbs",
+  "oauth-maven-dependencies.hbs",
+  "observability-docker-env.hbs",
+  "observability-docker-services.hbs",
+  "observability-docker-volumes.hbs",
+  "observability-env.hbs",
+  "observability-maven-dependencies.hbs",
+  "oracle-docker-service.hbs",
+  "package-java.hbs",
+  "postgres-docker-service.hbs",
+  "security-maven-dependencies.hbs",
+  "spring-maven-dependencies.hbs"
+]
+
 export const ERROR_MESSAGE = {
   BASE_API_NOT_FOUND: 'The base api json file configuration was not found.',
   CONTROLLER_FILE_CONFIG_NOT_FOUND: 'Controller file configuration not found',
@@ -820,15 +843,16 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'datetime',
   'time',
   'object',
-  'list',
-  'set',
-  'map',
   'binary',
   'byte',
   'character',
   'instant',
-  'zoneddatetime',
-  'offsetdatetime'
+];
+
+export const GENERIC_COLLECTION_TYPES = [
+  'list',
+  'map',
+  'set'
 ];
 
 export const GENERIC_TYPES: Map<

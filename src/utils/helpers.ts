@@ -1,6 +1,7 @@
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, REQUEST_BODY_NOT_IMPORT } from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS, PARTIALS_DIR, REQUEST_BODY_NOT_IMPORT } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
+import * as Handlebars from 'handlebars';
 import {
   ApiConfig,
   ControllerConfig,
@@ -13,6 +14,29 @@ import {
 } from '../interfaces/types';
 import { normalizeDTOType } from '../modules/dto/saveDTOConfig';
 
+/**
+ * Dynamically loads and registers Handlebars partials in a React.js application.
+ */
+export const loadPartials = async (): Promise<void> => {
+  try {
+    // Fetch a list of partial files (You may need to hardcode or retrieve this list from a backend API)
+    // Fetch each partial and register it
+    await Promise.all(
+      PARTIALS.map(async (file) => {
+        const partialName = file.replace('.hbs', ''); // Extract partial name
+        const partialContent: string = await fs.readFile(`${PARTIALS_DIR}/${file}`, 'utf-8');
+        if (!partialContent) {
+          throw new Error(`Failed to load partial: ${file}`);
+        }
+        Handlebars.registerPartial(partialName, partialContent); // Register the partial
+      })
+    );
+
+    console.log('Partials registered successfully');
+  } catch (error) {
+    console.error('Error loading partials:', error);
+  }
+};
 
 export const getPackage = async (outputDir: string) => {
   const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);

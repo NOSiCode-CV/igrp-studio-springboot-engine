@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { Handlebars } from '../../utils/handlebarsHelpers';
 import { ERROR_MESSAGE, TEMPLATE_DIR } from '../../utils/constants';
+import { loadPartials } from '../../utils/helpers';
 
 /**
  * Generates content from a template and a context.
@@ -18,6 +19,9 @@ export const renderTemplate = async (templateName: string, context: any) => {
   if (!context) {
     throw ERROR_MESSAGE.EMPTY_CONTEXT;
   }
+
+  await loadPartials();
+
   const templatePath = path.join(TEMPLATE_DIR, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);

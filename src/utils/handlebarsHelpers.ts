@@ -1,5 +1,4 @@
 import * as Handlebars from 'handlebars';
-import fs from 'fs';
 
 import {
   Attribute,
@@ -10,15 +9,8 @@ import {
   ModelConfig,
   Relation,
 } from '../interfaces/types';
-import { DIRECTORIES, GENERIC_TYPES, PARTIALS_DIR, REQUEST_BODY_NOT_IMPORT } from './constants';
+import { DIRECTORIES, GENERIC_TYPES, REQUEST_BODY_NOT_IMPORT } from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
-
-// Register partials
-fs.readdirSync(PARTIALS_DIR).forEach(file => {
-  const partialName = file.replace('.hbs', '');
-  const partialContent = fs.readFileSync(`${PARTIALS_DIR}/${file}`, 'utf8');
-  Handlebars.registerPartial(partialName, partialContent);
-});
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -348,7 +340,20 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
       else imports.add(`import ${type.namespace}.${type.name};`);
     }
-    if (attr.isList) imports.add(`import java.util.List;`);
+    switch (attr.collectionType) {
+      case 'list':
+        imports.add('import java.util.List;');
+        break;
+      case 'map':
+        imports.add('import java.util.Map;');
+        break;
+      case 'set':
+        imports.add('import java.util.Set;');
+        break;
+      default:
+        // Optionally handle unknown collection types
+        console.warn(`Unknown collection type: ${attr.collectionType}`);
+    }
   });
 
   return Array.from(imports).sort().join('\n');
@@ -359,8 +364,18 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
   const attributeType = GENERIC_TYPES.get(t1.type)?.java.name
   let rtype = attributeType;
-  if (t1.isList) {
-    rtype = `List<${attributeType}>`;
+  switch (t1.collectionType) {
+    case 'list':
+      rtype = `List<${attributeType}>`;
+      break;
+    case 'set':
+      rtype = `Set<${attributeType}>`;
+      break;
+    case 'map':
+      rtype = `Map<Object, ${attributeType}>`; // TODO: handle the key type
+      break;
+    default:
+      rtype = attributeType; // Default type if no collection type matches
   }
   return rtype;
 });

@@ -24,13 +24,13 @@ const CONTROLLER_SUFFIX = 'Controller.java';
   */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
 
-  const controller = await renderController(context);
+   const controllerOutputPath = getControllerPath(context);
+
+   const controller = await renderController(context);
   const allTypes = await getDtos(context)
 
   await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
   await checkPermission(context.resourceConfig, context.basePath)
-  
-  const controllerOutputPath = getControllerPath(context);
 
   await saveControllerConfig(context.resourceConfig, context.basePath);
 

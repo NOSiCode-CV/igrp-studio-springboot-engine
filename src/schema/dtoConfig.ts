@@ -72,10 +72,10 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       nullable: true,
       errorMessage: 'The isUrl attribute must be a boolean value.'
     },
-    isList: { 
-      type: "boolean", 
+    collectionType: {
+      type: "string",
       nullable: true,
-      errorMessage: 'The isList attribute must be a boolean value.'
+      errorMessage: 'The collectionType attribute must be a string value.'
     },
     primaryKey: {
       type: "boolean",

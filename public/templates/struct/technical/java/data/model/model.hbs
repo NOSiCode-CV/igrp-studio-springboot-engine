@@ -25,8 +25,7 @@ import java.math.{{this}};
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "{{resourceConfig.tableName}}"{{#if (or resourceConfig.uniqueConstraints resourceConfig.indexes)}},{{/if}}
-{{#if resourceConfig.uniqueConstraints}}
+@Table(name = "{{resourceConfig.tableName}}"{{#if (resourceConfig.uniqueConstraints)}},
   uniqueConstraints = {
   {{#each resourceConfig.uniqueConstraints}}
     @UniqueConstraint(

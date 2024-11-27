@@ -7,7 +7,7 @@ import {
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES,
+  STRUCT_TYPES, GENERIC_COLLECTION_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -90,7 +90,7 @@ export interface JavaAttribute {
   minLength?: number,
   maxLength?: number,
   regex?: string,
-  isList?: boolean;
+  collectionType?: CollectionType;
   isEmail?: boolean;
   isUrl?: boolean;
   primaryKey?: boolean;
@@ -220,6 +220,7 @@ export type RenderContext<T = undefined> = {
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
+export type CollectionType = (typeof GENERIC_COLLECTION_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];
 export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];

@@ -23,7 +23,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  RESPONSE_TYPES,
+  RESPONSE_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -873,7 +873,8 @@ export const engineTypes = async (module: string, basePath: string) => {
     { REQUEST_PARAMS: PARAMS_TYPES },
     { DATABASE_TYPES: DATABASE_TYPES },
     { RESPONSE_TYPES: responseTypes },
-    { ATTRIBUTE_TYPES: JAVA_ATTRIBUTE_TYPES },
+    { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
+    { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },
     { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },
     { GENERATION_TYPES: GENERATION_TYPES.filter((gt) => gt !== '') },

@@ -320,7 +320,7 @@ describe('DTO generator', () => {
           { type: 'String', ns: 'java', name: 'origemPedido', required: false },
           { type: 'String', ns: 'java', name: 'dataPrescricao', required: false },
           { type: 'String', ns: 'java', name: 'observacoes', required: false },
-          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, isList: true },
+          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, collectionType: 'list' },
 
 
 
@@ -364,7 +364,7 @@ describe('DTO generator', () => {
           { type: 'String', ns: 'java', name: 'observacoes', required: false },
           { type: 'IdentificacaoFalecidoDTO', ns: 'dto', name: 'identificacao_falecido', required: true },
           { type: 'IdentificacaoRequerenteDTO', ns: 'dto', name: 'identificacao_requerente', required: true },
-          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, isList: true, minLength: 1 },
+          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, collectionType: 'map', minLength: 1 },
         ],
       },
 
@@ -445,7 +445,7 @@ describe('DTO generator', () => {
             "minLength": 0,
             "maxLength": 10,
             "regex": "",
-            "isList": false,
+            "collectionType": "set",
             "isEmail": false,
             "isUrl": false,
             "primaryKey": false
