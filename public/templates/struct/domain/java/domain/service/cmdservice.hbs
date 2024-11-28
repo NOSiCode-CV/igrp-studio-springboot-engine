@@ -2,7 +2,7 @@
 
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{this.actionName}}Command;
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{capitalize this.actionName}}Command;
   {{/ifNot}}
 {{/each}}
 

@@ -803,7 +803,7 @@ export const JAVA_NETWORK_TYPES = [
   'ServerSocket'
 ]
 
-export const VALID_PRIMARY_KEY = ['int','Integer', 'long', 'Long', 'UUID', 'String']
+export const VALID_PRIMARY_KEY = ['int','integer', 'long', 'uuid', 'string']
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },

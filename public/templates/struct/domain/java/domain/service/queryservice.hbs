@@ -2,7 +2,7 @@
 
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
-import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{this.actionName}}Query;
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{capitalize this.actionName}}Query;
   {{/if}}
 {{/each}}
 import java.util.List;
