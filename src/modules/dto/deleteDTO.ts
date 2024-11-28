@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import {
   getDDDCommandOutputDir,
   getDDDDataTransferObjectOutputDir,
-  getDDDDomainEntityOutputDir,
+  getDDDDomainEntityOutputDir, getDDDDtoOutputDir,
   getDDDEventOutputDir,
   getDDDQueryOutputDir,
   getDDDValueObjectOutputDir,
@@ -42,7 +42,7 @@ const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
   switch (context.resourceConfig.type) {
     case "dto":
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        return path.join(getDDDDataTransferObjectOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
     /*case "dataobject":

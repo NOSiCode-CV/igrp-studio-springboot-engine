@@ -252,13 +252,6 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
     annotations.push(`@URL(message = "Invalid URL format for field <${attribute.name}>.")`);
   }
 
-  // Custom pattern validation
-  if (attribute.regex && !['String', 'Number', 'Date'].includes(attribute.type)) {
-    annotations.push(
-      `@Pattern(message = "Invalid format for field <${attribute.name}>.", regexp = "${attribute.regex}")`,
-    );
-  }
-
   // Return the generated annotations as a joined string
   return annotations.join('\n  ');
 });
@@ -363,7 +356,7 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
   if (!t1.type) return t1.type;
 
-  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name
+  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type
 
   let rtype: string | undefined;
   switch (t1.collectionType) {

@@ -425,7 +425,7 @@ export const validateAnnotations = (attribute: any) => {
   }
 
   // Check if positive is applied only to numeric types
-  if (attribute.positive && !['int', 'long', 'double', 'float', 'big-decimal', 'big-integer'].includes(attribute.type)) {
+  if (attribute.positive && !['int', 'integer', 'long', 'double', 'float', 'bigdecimal', 'biginteger'].includes(attribute.type)) {
     errors.push(new Error(`The "positive" attribute can only be applied to numeric types. Found: ${attribute.type}`));
   }
 
