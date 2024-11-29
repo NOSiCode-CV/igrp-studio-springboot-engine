@@ -31,6 +31,7 @@ export interface BaseApiConfig {
   projectStructureStyle: ProjectStructureStyle;
   name?: string;
   enableObservability: boolean;
+  igrpCoreVersion: string;
 }
 
 

@@ -14,6 +14,16 @@
 	<name>{{baseConfig.apiName}}</name>
 	<description>{{baseConfig.description}}</description>
 	<url/>
+  <repositories>
+    <!--<repository>
+            <id>igrp</id>
+            <url>http://nexus.example.com/repository/maven-releases/</url>
+        </repository>-->
+    <repository>
+      <id>igrp-framework</id>
+      <url>https://sonatype.nosi.cv/repository/igrp-framework/</url>
+    </repository>
+  </repositories>
 	<licenses>
 		<license/>
 	</licenses>
@@ -36,6 +46,7 @@
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
 		{{> observability-maven-dependencies}}
+		{{> igrp-maven-dependencies}}
 	</dependencies>
 	<build>
 		<plugins>

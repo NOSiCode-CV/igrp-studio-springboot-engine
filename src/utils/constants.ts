@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
- export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -92,6 +92,7 @@ export const PARTIALS = [
   "database-env.hbs",
   "database-maven-dependencies.hbs",
   "generic-maven-dependencies.hbs",
+  "igrp-maven-dependencies.hbs",
   "lombok-java-annotations.hbs",
   "lombok-java-imports.hbs",
   "mysql-docker-service.hbs",
@@ -847,7 +848,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'time',
   'object',
   'binary',
-  'byte',
+  'file',
   'character',
   'instant',
 ];
@@ -967,11 +968,11 @@ export const GENERIC_TYPES: Map<
       python: { name: 'datetime', primitive: false, namespace: 'datetime' },
       kotlin: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
     },
-    byte: {
-      java: { name: 'byte', primitive: true },
+    file: {
+      java: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart.MultipartFile' },
       dotnet: { name: 'byte', primitive: true },
       python: { name: 'int', primitive: true },
-      kotlin: { name: 'Byte', primitive: true },
+      kotlin: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart.MultipartFile' },
     },
     // Collections
     list: {

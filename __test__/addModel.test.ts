@@ -110,8 +110,7 @@ const model4: ModelConfig = {
     },
     {
       "name": "gegewgw",
-      "type": "boolean",
-      "length": 255,
+      "type": "file",
       "defaultValue": "",
       "nullable": false,
       "unique": false,

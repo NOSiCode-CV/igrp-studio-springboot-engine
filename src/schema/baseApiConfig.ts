@@ -63,9 +63,13 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
     enableObservability: {
       type: "boolean",
       nullable: false
+    },
+    igrpCoreVersion: {
+      type: "string",
+      nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
   additionalProperties: false,
   errorMessage: {
     required: {

@@ -26,7 +26,7 @@ public class ApplicationAuditorAware implements AuditorAware<String> {
   * @throws IllegalStateException if the JWT token is not found in the security context
   */
   public String getPreferredUsername() {
-    if ("dev".equals(activeProfile) || "docker".equals(activeProfile)) {
+    if ("development".equals(activeProfile) || "staging".equals(activeProfile)) {
       return "";
     }
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
