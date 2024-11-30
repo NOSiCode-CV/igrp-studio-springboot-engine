@@ -38,6 +38,7 @@ const controllerConfig: ControllerConfig = {
       method: 'GET',
       actionName: 'GetAllRentals',
       pathVariables: [],
+      modelAttribute: 'TesteDTO',
       requestParams: [
         { type: 'string', name: 'carBrand' },
         { type: 'string', name: 'carModel' },

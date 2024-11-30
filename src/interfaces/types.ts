@@ -1,9 +1,7 @@
 import {
-  JAVA_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
-  GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_TYPES,
-  HTTP_METHOD_TYPES,
+  GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, HTTP_METHOD_TYPES,
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
@@ -189,6 +187,7 @@ export interface ControllerAction {
   accepts?: MimeTypes;
   contentType?: MimeTypes;
   requestBody?: string;
+  modelAttribute?: string;
   requestParams?: RequestParams[];
   response: string;
   pathVariables?: PathVariables[];

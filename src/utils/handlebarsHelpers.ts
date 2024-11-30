@@ -317,6 +317,9 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
 });
 
 Handlebars.registerHelper('resolve-imports', function (config: any) {
+
+  // TODO: attempt to import models and dtos too [30-11-2024 - 16:08]
+
   if (!config) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;

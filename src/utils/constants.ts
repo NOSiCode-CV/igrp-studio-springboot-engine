@@ -1,10 +1,10 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
- export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+ export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+ export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+ //export const TEMPLATE_DIR = path.join(__dirname, './templates');
+ //export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -173,6 +173,8 @@ export const TEMPLATES = {
     'record': 'struct/technical/java/dto/record.hbs',
   },
 
+  DOMAIN_FILTER: 'struct/technical/java/dto/filter.hbs',
+
   DDD_DATA_TRANSFER_OBJECT_DTO: {
     'classic': 'struct/domain/java/application/query/dto/dtolombok.hbs',
     'record': 'struct/domain/java/application/query/dto/dtorecord.hbs',
@@ -286,6 +288,8 @@ export const TEMPLATES = {
     'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
     'record': 'struct/domain-lite/java/application/dto/dto-record-ddd.hbs',
   },
+
+  DDD_LITE_FILTER: 'struct/domain-lite/java/application/dto/filter-ddd.hbs',
 
   DDD_LITE_QUERY: {
     'classic': 'struct/domain-lite/java/application/queries/queries/query-ddd.hbs',
@@ -1016,7 +1020,7 @@ export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'
 
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const STRUCT_TYPES = [PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN, PROJECT_STRUCTURE_STYLE.TECHNICAL] as const
-export const OBJECT_TYPES = ['dto', 'command', 'query', 'event'] as const
+export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

@@ -1,19 +1,15 @@
 import fs from 'fs-extra';
 import {
   getDDDCommandOutputDir,
-  getDDDDataTransferObjectOutputDir,
-  getDDDDomainEntityOutputDir, getDDDDtoOutputDir,
+  getDDDDtoOutputDir,
   getDDDEventOutputDir,
   getDDDQueryOutputDir,
-  getDDDValueObjectOutputDir,
   getDTOConfigPath,
   getDtoOutputDir,
 } from '../../utils/helpers';
-import { DTOBaseConfig, DTOConfig, JavaType, RenderContext } from '../../interfaces/types';
+import { DTOBaseConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
-import { getDTOTypes } from './helpers';
 import { checkDependencyInDTO } from './checkDependencyInDTO';
-import { checkDependencyInModel } from './checkDependencyInModel';
 import { checkDependencyInController } from './checkDependencyInController';
 import path from 'path';
 import { normalizeName } from './saveDTOConfig';
@@ -40,7 +36,12 @@ export const deleteDTOConfig = async (context: RenderContext<DTOBaseConfig>, for
 
 const getDtoFilePath = (context: RenderContext<DTOBaseConfig>) => {
   switch (context.resourceConfig.type) {
-    case "dto":
+    case "dto" :
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+      else
+        return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+    case "filter" :
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else

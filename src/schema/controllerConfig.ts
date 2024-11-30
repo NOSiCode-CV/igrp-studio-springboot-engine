@@ -126,6 +126,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       nullable: true,
       errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
     },
+    modelAttribute: {
+      type: 'string',
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      nullable: true,
+      errorMessage: `the model attribute can only contain characters whithout spaces or special characters`
+    },
     requestParams: { 
       type: 'array', 
       items: pathParamsSchema, 

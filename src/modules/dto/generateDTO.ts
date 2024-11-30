@@ -18,6 +18,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
 import { normalizeName } from './saveDTOConfig';
+import { capitalize } from '../../utils/capitalizeStrings';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
@@ -46,6 +47,12 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      break;
+    case "filter":
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        tn = TEMPLATES.DDD_LITE_FILTER;
+      else
+        tn = TEMPLATES.DOMAIN_FILTER;
       break;
     /*case "dataobject":
       tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
@@ -106,7 +113,11 @@ export const transformDTOConfig = async function (
       }
       const mt = mtypes.get(type.name);
       if (mt) {
-        type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
+        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+          type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
+        }
       } else {
         typeNotFound = true;
       }
@@ -121,9 +132,18 @@ export const transformDTOConfig = async function (
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
         const dtype = dtypes.get(type.name);
         if(!dtype) {
-          typeNotFound = true;
+            typeNotFound = true;
         }
       }
+
+      if(!typeNotFound) {
+        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+          type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
+        }
+      }
+
     } else {
       typeNotFound = true;
     }
@@ -151,6 +171,14 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
       case "dto": {
+        const outputDir = getDDDDtoOutputDir(context)
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
+        );
+      }
+      case "filter": {
         const outputDir = getDDDDtoOutputDir(context)
         context.fullPath = outputDir
         return path.join(
@@ -195,5 +223,3 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
     return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }
 };
-
-

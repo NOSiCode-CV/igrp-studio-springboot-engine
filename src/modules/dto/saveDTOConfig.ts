@@ -23,6 +23,8 @@ export const normalizeDTOType = (type: ObjectTypes): string => {
   switch (type) {
     case "dto":
       return "DTO";
+    case "filter":
+      return "DTO";
     case "command":
       return "Command";
     case "query":

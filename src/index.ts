@@ -661,7 +661,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      const config: DTOConfig | null = act?.requestBody
+      const config: DTOConfig | null = (act?.requestBody)
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
@@ -676,7 +676,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           module: module,
           attributes: act?.requestBody
             ? config!.attributes
-            : ((act?.pathVariables
+            : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, ns: 'dto', required: false }] : []).concat(act?.pathVariables
                 ? act.pathVariables
                     .map((e) => ({
                       name: e.name,
