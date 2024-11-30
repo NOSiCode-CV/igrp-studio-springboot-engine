@@ -125,7 +125,7 @@ const validateColumnDefault = (attribute: Attribute) => {
   const { type, defaultValue } = attribute;
 
   if (defaultValue) { // Só valida se defaultValue estiver presente
-    if (['Integer', 'BigInteger', 'BigDecimal', 'Long', 'Double', 'Float', 'Short', 'Byte'].includes(type)) {
+    if (['integer', 'biginteger', 'bigdecimal', 'long', 'double', 'float', 'short', 'byte'].includes(type)) {
       // Verifica se o valor padrão é um número válido
       if (isNaN(Number(defaultValue))) {
         throw new Error(`The default value "${defaultValue}" is not valid for the numeric type ${type}.`);

@@ -14,7 +14,7 @@ import {
 import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
-import { saveControllerConfig } from './saveControllerConfig';
+import { normalizeControllerName, saveControllerConfig } from './saveControllerConfig';
 import { saveAllPermissions } from '../permission/savePermissions';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
@@ -23,6 +23,9 @@ const CONTROLLER_SUFFIX = 'Controller.java';
   * @param context 
   */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
+
+   // normalize the name of the DTO
+   context.resourceConfig.name = normalizeControllerName(context.resourceConfig.name)
 
    const controllerOutputPath = getControllerPath(context);
 

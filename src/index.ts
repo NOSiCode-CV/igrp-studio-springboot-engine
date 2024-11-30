@@ -120,6 +120,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     projectStructureStyle: baseConfig.projectStructureStyle,
     name: baseConfig.name,
     enableObservability: baseConfig.enableObservability,
+    igrpCoreVersion: baseConfig.igrpCoreVersion
   };
 
   if (!basePath) {

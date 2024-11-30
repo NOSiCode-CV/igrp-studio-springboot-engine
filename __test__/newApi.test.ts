@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { newApi } from '../src/index';
 import { BaseApiConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
+const OUTPUT_DIR = 'C:\\spring-engine\\generPom'
 const TECHNICAL_OUTPUT_DIR = 'generatedEnvironment'
 
 const apiConfig: BaseApiConfig = {
@@ -13,7 +13,8 @@ const apiConfig: BaseApiConfig = {
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'domain',
-  enableObservability: true
+  enableObservability: true,
+  igrpCoreVersion: "0.0.1-20241129.022358-2"
 };
 
 const apiTechnicalConfig: BaseApiConfig = {
@@ -24,7 +25,8 @@ const apiTechnicalConfig: BaseApiConfig = {
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'technical',
-  enableObservability: true
+  enableObservability: true,
+  igrpCoreVersion: "0.0.1-20241129.022358-2"
 };
 
 beforeEach(async () => {

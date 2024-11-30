@@ -11,6 +11,8 @@ import { ControllerConfig } from '../../interfaces/types';
  * @throws Throws an error if the model configuration or output directory is invalid.
  */
 export const saveControllerConfig = async (config: ControllerConfig, basePath: string) => {
-  const output = getControllerConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
+  const output = getControllerConfigPath(config.module ?? DIRECTORIES.SHARED, normalizeControllerName(config.name), basePath);
   await saveToFile(JSON.stringify(config), output);
 };
+
+export const normalizeControllerName = (name: string) => name.replace(/controller$/i, "");

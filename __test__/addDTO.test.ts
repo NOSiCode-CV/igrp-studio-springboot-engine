@@ -430,56 +430,130 @@ describe('DTO generator', () => {
     const testCases: DTOConfig[] = [
       {
         "type": "dto",
-        "module": "shared",
-        "name": "Teste",
-        "template": "classic",
+        "module": "reembolso",
+        "name": "Refund",
+        "template": "record",
         "attributes": [
           {
-            "name": "id",
+            "type": "string",
             "ns": "java",
-            "type": "boolean",
+            "name": "seccao_portal",
+            "required": true
+          },
+          {
+            "type": "string",
+            "ns": "java",
+            "name": "num_utente",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "ns": "java",
+            "name": "tipo_utente_id",
+            "required": true,
+            "positive": false
+          },
+          {
+            "type": "string",
+            "ns": "java",
+            "name": "origem_pedido",
+            "required": true
+          },
+          {
+            "type": "string",
+            "ns": "java",
+            "name": "data_prescricao",
             "required": false,
+            "regex": "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\\d{4})$"
+          },
+          {
+            "type": "string",
+            "ns": "java",
+            "name": "observacoes",
+            "required": false
+          },
+          {
+            "type": "FileDTO",
+            "ns": "dto",
+            "name": "documentos",
+            "required": true,
+            "collectionType": "list"
+          },
+          {
+            "name": "submetido_por",
+            "ns": "java",
+            "type": "string",
+            "required": true,
             "before": false,
             "after": false,
             "positive": false,
             "isEmail": false,
             "isUrl": false,
-            "primaryKey": true
+            "primaryKey": false
           },
           {
-            "name": "teatew21",
+            "name": "tipo_reembolso",
             "ns": "java",
-            "type": "long",
-            "required": true
-          },
-          {
-            "name": "qwewre",
-            "ns": "java",
-            "type": "biginteger",
-            "required": false
-          },
-          {
-            "name": "eweiop",
-            "ns": "java",
-            "type": "datetime",
+            "type": "string",
             "required": true,
-            "collectionType": "list"
+            "before": false,
+            "after": false,
+            "positive": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
           },
           {
-            "name": "wqerwteyui",
+            "name": "codigo_processo",
             "ns": "java",
-            "type": "date",
+            "type": "string",
             "required": true,
-            "collectionType": "set"
+            "before": false,
+            "after": false,
+            "positive": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
           },
           {
-            "name": "wrteyruio",
+            "name": "valor",
             "ns": "java",
-            "type": "byte",
-            "required": true
+            "type": "integer",
+            "required": true,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
+          },
+          {
+            "name": "medico_id",
+            "ns": "java",
+            "type": "integer",
+            "required": true,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
+          },
+          {
+            "name": "farmacia_id",
+            "ns": "java",
+            "type": "integer",
+            "required": true,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false
           }
         ]
       }
+
     ];
 
     for (const testCase of testCases) {

@@ -206,7 +206,7 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
     }
     if (attribute.regex) {
       annotations.push(
-        `@Pattern(message = "Invalid value format for field <${attribute.name}>.", regexp = "${attribute.regex}")`,
+        `@Pattern(message = "Invalid value format for field <${attribute.name}>.", regexp = "${attribute.regex.replace(/\\/g, '\\\\')}")`,
       );
     }
   }
@@ -358,7 +358,7 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
   const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type
 
-  let rtype: string | undefined;
+  let rtype: string;
   switch (t1.collectionType) {
     case 'list':
       rtype = `List<${attributeType}>`;
