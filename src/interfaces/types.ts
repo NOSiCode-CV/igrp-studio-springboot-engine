@@ -196,11 +196,13 @@ export interface ControllerAction {
 export interface RequestParams {
   type: ParamsTypes;
   name: string;
+  isRequired: boolean
 }
 
 export interface PathVariables {
   type: string;
   name: string;
+  isRequired: boolean;
 }
 
 export interface ISelectPermissions {

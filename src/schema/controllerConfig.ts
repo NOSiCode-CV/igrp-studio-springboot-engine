@@ -23,13 +23,18 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
       type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
       errorMessage: 'The param name attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
     },
+    isRequired: {
+      type: 'boolean',
+      errorMessage: 'The param isRequired must be present and holds values true|false only'
+    },
   },
-  required: ['type', 'name'],
+  required: ['type', 'name', 'isRequired'],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The param type is required and must not be empty.',
-      name: 'The param name is required and must not be empty.'
+      name: 'The param name is required and must not be empty.',
+      isRequired: 'The obligation of the param must be present.'
     }
   }
 };

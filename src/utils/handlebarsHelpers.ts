@@ -74,6 +74,10 @@ Handlebars.registerHelper('ifNot', function (this: any, conditional: any, option
   }
 });
 
+Handlebars.registerHelper('not', function (conditional: any) {
+  return !conditional;
+});
+
 Handlebars.registerHelper('keyType', function (config: ModelConfig) {
   if (config.primaryKey) {
     return `${config.name}PrimaryKey`;
