@@ -3,11 +3,13 @@
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 {{>controller-imports}}
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
+@Tag(name = "{{capitalize resourceConfig.name}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-injection}}
