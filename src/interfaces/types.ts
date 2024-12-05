@@ -161,7 +161,7 @@ export interface Crud {
 
 export interface IModelPermission {
   method: HttpMethod;
-  permission: string
+  permissions: string[]
 }
 export interface Table {
   name: string;

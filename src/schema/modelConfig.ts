@@ -75,11 +75,12 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
       type: 'string',
       enum: HTTP_METHOD_TYPES
     },
-    permission: {
-      type: 'string'
+    permissions: {
+      type: 'array',
+      items: {type: 'string'}
     }
   },
-  required: ['method', 'permission'],
+  required: ['method', 'permissions'],
   additionalProperties: false,
 }
 

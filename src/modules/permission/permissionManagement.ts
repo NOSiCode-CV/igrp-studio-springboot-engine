@@ -1,6 +1,4 @@
-import { ControllerConfig, IEndpoint, ModelConfig, PermissionConfig } from "../../interfaces/types";
-import { ERROR_MESSAGE } from "../../utils/constants";
-import { loadPermissionConfigs } from "../../utils/helpers";
+import { loadControllerConfigs, loadPermissionConfigs } from "../../utils/helpers";
 import { savePermission } from "./savePermissionConfig";
 import { saveAllPermissions } from "./savePermissions";
 
@@ -12,119 +10,52 @@ import { saveAllPermissions } from "./savePermissions";
  * @param element - The element configuration (either a model or a controller) containing details 
  *                  about actions or CRUD permissions.
  * @param basePath - The base path where the permission configurations are stored and will be saved.
- */
-export const assignPermission = async (element: ModelConfig | ControllerConfig, basePath: string) => {
+ */export const updatePermissions = async (basePath: string) => {
   const permissions = await loadPermissionConfigs(basePath);
+  const controllers = await loadControllerConfigs(basePath);
 
-  if (permissions.length > 0) {
-    if (element.type === 'controller') {
-      for (const p of permissions) {
-        let flag = false;
+  console.log(controllers)
 
-        for (const action of element.actions) {
-          if (action.permissions && action.permissions.length > 0) {
-            for (const ap of action.permissions) {
-              if (ap === p.name) {
-                const resource = `${element.name}.${action.actionName}`;
+  // rebuilding the permissions from controller actions
+  const updatedPermissions: Record<string, { name: string; endpoints: any[] }> = {};
 
-                // Check if the endpoint already exists
-                const exists = p.endpoints.some(ep => ep.resource === resource);
+  // Recorremos todos los controladores y sus acciones para reconstruir permisos
+  for (const controller of controllers) {
+    for (const action of controller.actions) {
+      if (action.permissions && action.permissions.length > 0) {
+        for (const permissionName of action.permissions) {
 
-                if (!exists) {
-                  flag = true;
-                  p.endpoints.push({
-                    type: 'controller',
-                    resource,
-                    method: action.method,
-                    path: `${element.basePath}/${action.path ? action.path : action.actionName}`,
-                  });
-                }
-              }
-            }
+          if (!updatedPermissions[permissionName]) {
+            updatedPermissions[permissionName] = {
+              name: permissionName,
+              endpoints: [],
+            };
           }
-        }
-        if (flag) {
-          await savePermission(p, basePath);
-        }
-      }
-    }else {
-      if (element.type === 'model') {
-        if(element.crud && element.crud.permissions && element.crud.permissions.length > 0)
-        for (const p of permissions) {
-          let flag = false;
-          for (const cp of element.crud.permissions) {
-            if(cp.permission === p.name) {
-              const resource = element.name;
-              
-            }
-          }          
+
+          updatedPermissions[permissionName].endpoints.push({
+            type: 'controller',
+            resource: `${controller.name}.${action.actionName}`,
+            method: action.method,
+            path: `${controller.basePath}/${action.path ? action.path : action.actionName}`,
+          });
         }
       }
     }
   }
-};
 
+  // cleaning and saving the updated permissions
+  for (const permission of permissions) {
+    const updatedPermission = updatedPermissions[permission.name];
+    
+    if (updatedPermission) {
+      permission.endpoints = updatedPermission.endpoints;
+    } else {
+      permission.endpoints = []; 
+    }
 
-// Check if an endpoint already exists and add it if it is not duplicated
-const addEndpointIfNotExists = (permission: PermissionConfig, endpoint: IEndpoint) => {
-  const exists = permission.endpoints.some(e =>
-    e.resource === endpoint.resource &&
-    e.method === endpoint.method &&
-    e.path === endpoint.path
-  );
-
-  if (!exists) {
-    permission.endpoints = permission.endpoints || [];
-    permission.endpoints.push(endpoint);
-    return true;
+    await savePermission(permission, basePath);
   }
 
-  // return false if the permission already exist
-  return false; 
-};
 
-
-/**
- * Removes controller-related endpoints from the permission if the specified controller action 
- * lacks a matching permission. This function is typically called when creating or deleting a 
- * controller entity to ensure permissions are up-to-date.
- * 
- * @param permission - The permission configuration object to update.
- * @param element - The controller configuration, which includes actions and associated permissions.
- * @param basePath - The base path where the updated permission configuration will be saved.
- */
-// const removeControllerEndpointIfNoPermission = async (permission: PermissionConfig, element: ControllerConfig, basePath: string) => {
-//   let endpointsUpdated = false; 
-  
-//   permission.endpoints = permission.endpoints.filter(en => {
-//     const action = element.actions.find(a => `${element.name}.${a.actionName}` === en.resource);
-    
-//       if (action && (!action.permissions || action.permission !== permission.name)) {
-//         endpointsUpdated = true;
-//         return false; 
-//       }
-//       return true;
-//   });
-
-//   if (endpointsUpdated) {
-//     await savePermission(permission, basePath);
-//   }
-// };
-
-/**
- * Removes model-related endpoints from the permission if they do not have a matching permission. 
- * This function is generally called when creating or deleting a model entity to keep the permissions 
- * configuration consistent.
- * 
- * @param permission - The permission configuration object to update.
- * @param element - The model configuration, which includes CRUD permissions for various actions.
- * @param basePath - The base path where the updated permission configuration will be saved.
- */
-const removeModelEndpointIfNoPermission = async (permission: PermissionConfig, element: ModelConfig, basePath: string) => {
-  permission.endpoints = permission.endpoints.filter(e =>
-    (e.resource === element.name &&
-     element.crud?.permissions?.some(cp => cp.permission === permission.name && e.method === cp.method)) ||
-    (e.type === 'controller')
-  );
-  await savePermission(permission, basePath);
+  await saveAllPermissions(basePath);
 };

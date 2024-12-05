@@ -6,7 +6,7 @@ import { getDTOTypes } from '../dto/helpers';
 import { RenderContext, ControllerConfig, ControllerAction } from '../../interfaces/types';
 import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
 import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
-import { assignPermission } from '../permission/permissionManagement';
+import { updatePermissions } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
 import { saveControllerConfig } from './saveControllerConfig';
 import { saveAllPermissions } from '../permission/savePermissions';
@@ -33,7 +33,7 @@ export const generateController = async (context: RenderContext<ControllerConfig
   // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created controller has the correct access rights configured 
   // for each endpoint based on its defined permissions.
-  await assignPermission(context.resourceConfig, context.basePath);
+  await updatePermissions(context.basePath);
 
   // Save all permissions to a single file
   await saveAllPermissions(context.basePath);

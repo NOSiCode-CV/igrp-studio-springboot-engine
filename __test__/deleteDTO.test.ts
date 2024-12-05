@@ -6,7 +6,7 @@ import { readJsonFile } from '../src/utils/readJsonFiles';
 import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
 
-const basePath = 'C:/Users/Eduardo\ Fernando/Downloads/apiTest'
+const basePath = './'
 
 describe('DTO generator', () => {
     it('should delete a dto', async () => {
