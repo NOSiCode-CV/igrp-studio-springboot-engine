@@ -28,7 +28,7 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
   } else {
     const modelOutputPath = getRepositoryOutputPath(context);
     const template = await renderRepository(context);
-    await saveToFile(template, modelOutputPath);
+    await saveToFile(template, modelOutputPath, false);
   }
 };
 
