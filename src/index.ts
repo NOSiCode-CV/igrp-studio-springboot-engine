@@ -161,6 +161,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     config.crud = dirty.crud
   }
   dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
+  dirty.indexes? config.indexes = dirty.indexes: ''
   
   // this function check is the request params in actions have duplicateds names
   checkDuplicated(config.attributes, [], []);
@@ -175,7 +176,6 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
    * check if the correct primary key was selected
    */
   checkPrimaryKeys(config)
-
 
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name)

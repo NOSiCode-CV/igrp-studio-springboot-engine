@@ -201,5 +201,9 @@ Handlebars.registerHelper('breakEach', function (context, options) {
   return result;
 });
 
+Handlebars.registerHelper('or', function (a, b) {
+  return a || b;
+})
+
 
 export { Handlebars };

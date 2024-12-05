@@ -39,6 +39,7 @@ export interface ModelConfig {
   tableName: string;
   attributes: Attribute[];
   uniqueConstraints?: UniqueConstraint[]; // Novo campo para Compound Unique
+  indexes?: EntityIndex[]; // Novo campo para index
   primaryKey?: PrimaryKey[];
   crud?: Crud;
   relations?: Relation[];
@@ -88,6 +89,11 @@ export interface DTOConfig extends DTOBaseConfig {
 }
 
 export interface UniqueConstraint {
+  name: string;
+  columns: string[];
+}
+
+export interface EntityIndex {
   name: string;
   columns: string[];
 }
