@@ -516,10 +516,15 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
+ 
   const config = cleaner(dirty)
+  
+  config.actions = dirty.actions
   
   // this function check is the request params in actions have duplicateds names
   checkDuplicated([], config.actions, [])
+
+  
 
   config.actions = upperCaseResponse(config.actions)
 

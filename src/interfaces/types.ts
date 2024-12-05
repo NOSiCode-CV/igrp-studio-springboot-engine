@@ -172,7 +172,7 @@ export interface ControllerConfig {
 
 export interface ControllerAction {
   path?: string;
-  permission?: string;
+  permissions?: string[];
   actionName: string;
   method: HttpMethod;
   accepts?: MimeTypes;

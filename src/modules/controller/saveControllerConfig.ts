@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import { ERROR_MESSAGE } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getControllerConfigPath } from '../../utils/helpers';
 import { ControllerConfig } from '../../interfaces/types';

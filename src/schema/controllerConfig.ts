@@ -64,8 +64,9 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       nullable: true,
       errorMessage: 'Path params can only contain a characters without spaces or special characters.'
     },
-    permission: {
-      type: 'string',
+    permissions: {
+      type: 'array',
+      items: { type: 'string' },
       nullable: true
     },
     response: { 
