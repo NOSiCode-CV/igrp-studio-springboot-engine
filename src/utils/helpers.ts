@@ -6,7 +6,7 @@ import {
   ApiConfig,
   ControllerConfig,
   DTOBaseConfig,
-  DTOConfig,
+  DTOConfig, EnumConfig,
   ModelConfig,
   ObjectTypes,
   PermissionConfig,
@@ -32,7 +32,6 @@ export const loadPartials = async (): Promise<void> => {
       })
     );
 
-    console.log('Partials registered successfully');
   } catch (error) {
     console.error('Error loading partials:', error);
   }
@@ -76,6 +75,9 @@ export const getPermissionConfigPath = (permission: string, output: string) =>
 
 export const getDTOConfigPath = (type: string, module: string, dto: string, output: string) =>
   path.join(output, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }), `${dto}${type}${EXTENSIONS.JSON}`);
+
+export const getEnumConfigPath = (module: string, enumerated: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module }), `${enumerated}${EXTENSIONS.JSON}`);
 
 export const getModelOutputDir = (context: RenderContext<ModelConfig>) =>
   path.join(
@@ -145,6 +147,22 @@ export const getDDDDtoOutputDir = (context: RenderContext<DTOBaseConfig>) =>
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
     DIRECTORIES.DTO
+  );
+
+export const getEnumOutputDir = (context: RenderContext<EnumConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    DIRECTORIES.CONSTANTS
+  );
+
+export const getDDDEnumOutputDir = (context: RenderContext<EnumConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.CONSTANTS
   );
 
 export const getDDDDataObjectOutputDir = (context: RenderContext<DTOBaseConfig>) =>

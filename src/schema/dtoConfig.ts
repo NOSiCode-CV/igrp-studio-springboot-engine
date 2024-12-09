@@ -93,6 +93,18 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true
     },
+    jsonAttributeName: {
+      type: "string",
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
+    xmlAttributeName: {
+      type: "string",
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
   },
   required: ["type", "name", "ns", "required"],
   additionalProperties: false,

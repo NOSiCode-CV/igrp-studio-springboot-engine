@@ -3,7 +3,7 @@ import {
   BaseApiConfig,
   ControllerConfig,
   DTOBaseConfig,
-  DTOConfig,
+  DTOConfig, EnumConfig,
   HandlerConfig,
   JavaAttribute,
   ModelConfig,
@@ -66,6 +66,9 @@ import { createModuleDirectory } from './modules/module/createModuleDirectory';
 import { moduleValidation } from './schema/moduleConfig';
 import { createTestDirectories } from './modules/baseApi/createTestDirectories';
 import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFiles';
+import { enumValidation } from './schema/enumConfig';
+import { saveEnumConfig } from './modules/enum/saveEnumConfig';
+import { generateEnum } from './modules/enum/generateEnum';
 
 /**
  * Main Function that creates the base api
@@ -519,6 +522,71 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
       await generateHandlers(context);
     }
   }
+};
+
+/**
+ * Generates and saves an enumerated class to the API.
+ * This function creates an enum based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {EnumConfig} config - Enum configuration object, which includes the values and other details of the enum.
+ * @param {string} basePath - Application base path where the enum will be saved and generated to the API.
+ *
+ * @throws {Error} Will throw an error if the enum configuration is invalid or the enum name is missing.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * import { addEnum } from "spring-engine";
+ * import { EnumConfig } from "spring-engine/dist/interfaces/types";
+ * const levelConfig: EnumConfig = {
+ *   name: "Level",
+ *   values: [
+ *     { name: "HIGH", attributes: ["H", "High"] },
+ *     { name: "LOW", attributes: ["L", "Low"] }
+ *   ],
+ *   attributes: ["code", "description"]
+ * };
+ * const basePath = 'C://your_project_path';
+ *
+ * const createEnum = async () => {
+ *   try {
+ *     await addEnum(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ */
+export const addEnum = async (dirty: EnumConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: EnumConfig = cleaner(dirty);
+
+  // this function check is the values or attributes have duplicated names
+  checkDuplicated(config.attributes, [], [], config.values);
+
+  const valid = enumValidation(config);
+
+  if (!valid && enumValidation.errors) {
+    throw enumValidation.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  config.name = capitalize(config.name);
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  await saveEnumConfig(config, basePath);
+
+  const context: RenderContext<EnumConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath
+  };
+
+  await generateEnum(context);
+
 };
 
 /**

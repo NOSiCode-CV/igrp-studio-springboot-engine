@@ -13,6 +13,7 @@ export const DIRECTORIES = {
   CONFIG_MODEL: '.igrpstudio/{{module}}/models',
   CONFIG_PERMISSION: '.igrpstudio/permissions',
   CONFIG_DTO: '.igrpstudio/{{module}}/dto',
+  CONFIG_ENUM: '.igrpstudio/{{module}}/enum',
   CONTROLLERS: 'controllers',
   CONTROLLER: 'controller',
   IGRPSTUDIO: '.igrpstudio',
@@ -56,6 +57,8 @@ export const DIRECTORIES = {
   MESSAGING: 'messaging',
   PERSISTENCE: 'persistence',
   MODULE: 'module',
+  CONSTANTS: 'constants',
+
 };
 
 export const PACKAGES = {
@@ -159,6 +162,7 @@ export const TEMPLATES = {
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
+  DOMAIN_ENUM: 'struct/technical/java/constants/enum.hbs',
   DOMAIN_REPOSITORY: 'struct/technical/java/data/repository/repository.hbs',
   DOMAIN_RESOURCES: 'struct/resource/application.properties.hbs',
   APPLICATION_RESOURCES_DEVELOPMENT: 'struct/resource/application-development.properties.hbs',

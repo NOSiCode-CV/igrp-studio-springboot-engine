@@ -1,6 +1,13 @@
-import { ControllerAction, RequestParams, PathVariables, Attribute, JavaAttribute } from "../../interfaces/types";
+import {
+  ControllerAction,
+  RequestParams,
+  PathVariables,
+  Attribute,
+  JavaAttribute,
+  EnumValue,
+} from '../../interfaces/types';
 
-export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[]): void => {
+export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[]): void => {
   if (actions) {
     actions.forEach((action) => {
       const { requestParams, pathVariables } = action;
@@ -33,6 +40,16 @@ export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[
       );
     }
   }
+
+  if(values) {
+    const duplicates = findDuplicates(values)
+    if (duplicates.length > 0) {
+      throw new Error(
+        `The enum has the following duplicated values: ${[...new Set(duplicates)].join(', ')}.`
+      );
+    }
+  }
+
   if(dto) {
     const duplicates = findDuplicates(dto)
     if (duplicates.length > 0) {
@@ -44,7 +61,7 @@ export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[
 
 };
 
-const findDuplicates = (arr: RequestParams[] | PathVariables[] | Attribute[] | JavaAttribute[]): string[] => {
+const findDuplicates = (arr: RequestParams[] | PathVariables[] | Attribute[] | JavaAttribute[] | EnumValue[]): string[] => {
   const nameCount: Record<string, number> = {};
   const duplicates: string[] = [];
 

@@ -93,6 +93,8 @@ export interface JavaAttribute {
   isEmail?: boolean;
   isUrl?: boolean;
   primaryKey?: boolean;
+  jsonAttributeName?: string;
+  xmlAttributeName?: string;
 }
 
 export interface DTOBaseConfig {
@@ -208,6 +210,18 @@ export interface PathVariables {
 export interface ISelectPermissions {
   label: string;
   value: string;
+}
+
+export interface EnumConfig {
+  name: string;
+  module?: string;
+  values: EnumValue[];
+  attributes?: Attribute[];
+}
+
+export interface EnumValue {
+  name: string;
+  attributes?: any[];
 }
 
 export type RenderContext<T = undefined> = {

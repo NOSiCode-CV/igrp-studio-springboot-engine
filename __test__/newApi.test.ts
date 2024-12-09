@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { newApi } from '../src/index';
 import { BaseApiConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generPom'
+const OUTPUT_DIR = 'C:\\spring-engine\\generTeste'
 const TECHNICAL_OUTPUT_DIR = 'generatedEnvironment'
 
 const apiConfig: BaseApiConfig = {

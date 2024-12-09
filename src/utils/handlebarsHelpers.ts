@@ -152,7 +152,6 @@ Handlebars.registerHelper(
   ) {
     let imports: string[] = [];
 
-    console.log('Module: ', module);
 
     const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
@@ -182,6 +181,15 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
   const annotations = [];
 
   validateAnnotations(attribute);
+
+  // JSON / XML annotations
+  if(attribute.jsonAttributeName) {
+    annotations.push(`@JsonProperty("${attribute.jsonAttributeName}")`);
+  }
+
+  if(attribute.xmlAttributeName) {
+    annotations.push(`@JacksonXmlProperty(localName = "${attribute.jsonAttributeName}")`);
+  }
 
   // Required validation
   if (attribute.required) {
@@ -280,15 +288,12 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
     return "";
   }
 
-  console.log("Relative path: " + relativePath);
-
   // Extract only the meaningful parts of the path for the Java package
   const packagePath = relativePath
     .split('/')
     .filter(segment => !['src', 'main', 'java'].includes(segment)) // Exclude common directory names
     .join('.');
 
-  console.log("Resolved package : " + packagePath);
   return packagePath;
 });
 
@@ -355,6 +360,14 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         console.warn(`Unknown collection type: ${attr.collectionType}`);
     }
   });
+
+  if(!config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).isEmpty()) {
+    imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');
+  }
+
+  if(!config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).isEmpty()) {
+    imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
+  }
 
   return Array.from(imports).sort().join('\n');
 });
@@ -488,6 +501,28 @@ Handlebars.registerHelper('filterQueryActions', function (array: ControllerActio
 Handlebars.registerHelper('and', function (...args) {
   args.pop(); // Remove the last element, which is the Handlebars options object
   return args.every(Boolean); // Check if all arguments are truthy
+});
+
+Handlebars.registerHelper("formatAttribute", function(value) {
+
+  // TODO : 09-12-2024 - 16:55 - handle non-string values
+
+  if (typeof value === "string") {
+    return `"${value}"`;  // If it's a string, wrap it in quotes
+  } else if (typeof value === "number") {
+    return value.toString();  // If it's a number, return it without quotes
+  } else if (Array.isArray(value)) {
+    // If it's an array, join all its elements into a string
+    return `"${value.join('')}"`;  // Join array elements into a string and wrap in quotes
+  } else if (value && typeof value === "object") {
+    // If it's an object, check if it's a "character map" (e.g., { "0": "H", "1": "i", "2": "g" })
+    if (Object.values(value).every(val => typeof val === "string")) {
+      return `"${Object.values(value).join('')}"`;  // Join characters and return as a single string
+    }
+    return JSON.stringify(value);  // Otherwise, return the object as a string
+  } else {
+    return value.toString();  // Return the value as-is if it doesn't match the above types
+  }
 });
 
 export { Handlebars };

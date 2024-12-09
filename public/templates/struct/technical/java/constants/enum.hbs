@@ -1,5 +1,27 @@
-public enum {{enumName}} {
-  {{#each values}}
-  {{this}}{{#unless @last}},{{/unless}}
+public enum {{resourceConfig.name}} {
+  {{#each resourceConfig.values}}
+  {{this.name}}{{#if this.attributes}}(
+    {{#each this.attributes}}
+    {{{formatAttribute this}}}{{#unless @last}}, {{/unless}}
+    {{/each}}
+  ){{/if}}{{#unless @last}},{{/unless}}
   {{/each}};
+
+  {{#if resourceConfig.attributes}}
+  {{#each resourceConfig.attributes}}
+  private final {{resolve-type this}} {{this.name}};
+  {{/each}}
+
+  {{resourceConfig.name}}({{#each resourceConfig.attributes}}{{resolve-type this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    {{#each resourceConfig.attributes}}
+    this.{{this.name}} = {{this.name}};
+    {{/each}}
+  }
+
+  {{#each resourceConfig.attributes}}
+  public {{resolve-type this}} {{this.name}}() {
+    return this.{{this.name}};
+  }
+  {{/each}}
+  {{/if}}
 }

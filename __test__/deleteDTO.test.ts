@@ -15,7 +15,7 @@ describe('DTO deletion', () => {
             name: 'DTO2Delete',
             template: 'record',
             attributes: [
-              { type: 'String', ns: 'java', name: 't0'},
+              { type: 'String', ns: 'java', name: 't0', required: false},
             ]
         };
 
@@ -39,13 +39,18 @@ describe('DTO deletion', () => {
 
     it('should not delete a dto', async () => {
         const model: DTOConfig = {
-            type: 'dto',
-            name: 'DTO2DeleteV1',
-            template: 'record',
-            attributes: [
-              { type: 'String', ns: 'java', name: 't0'},
-              { type: 'DTO2DeleteV11', ns: 'dto', name: 't1'},
-            ]
+          type: 'dto',
+          name: 'DTO2DeleteV1',
+          template: 'record',
+          attributes: [
+            { type: 'String', ns: 'java', name: 't0', required: false },
+            {
+              type: 'DTO2DeleteV11',
+              ns: 'dto',
+              name: 't1',
+              required: false,
+            },
+          ],
         };
 
         const dto11: DTOConfig = {
@@ -53,7 +58,7 @@ describe('DTO deletion', () => {
             name: 'DTO2DeleteV11',
             template: 'record',
             attributes: [
-              { type: 'String', ns: 'java', name: 't0'},
+              { type: 'String', ns: 'java', name: 't0', required: false},
             ]
         };
 
@@ -78,7 +83,6 @@ describe('DTO deletion', () => {
         } catch(e) {
             errors = e;
         }
-        console.log(errors);
         const pathExists2 = await fs.pathExists(modelPath);
         expect(pathExists&&pathExists2).toBeTruthy();
     });
