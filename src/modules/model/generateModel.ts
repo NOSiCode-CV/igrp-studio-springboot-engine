@@ -6,9 +6,7 @@ import { getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
 import { updatePermissions } from '../permission/permissionManagement';
-import { checkPermission } from '../permission/checkExistsPermission';
 import { saveModelConfig } from './saveModelConfig';
-import { saveAllPermissions } from '../permission/savePermissions';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const template = await renderModel(context);
@@ -32,8 +30,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   } 
-
-  await checkPermission(context.resourceConfig, context.basePath)
 
   await saveModelConfig(context.resourceConfig, context.basePath);
 

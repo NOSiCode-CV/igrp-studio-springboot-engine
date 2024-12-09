@@ -7,9 +7,7 @@ import { RenderContext, ControllerConfig, ControllerAction } from '../../interfa
 import { ERROR_MESSAGE, TEMPLATES, RESPONSE_TYPES } from '../../utils/constants';
 import { getControllerDir, extractTypeFromList } from '../../utils/helpers';
 import { updatePermissions } from '../permission/permissionManagement';
-import { checkPermission } from '../permission/checkExistsPermission';
 import { saveControllerConfig } from './saveControllerConfig';
-import { saveAllPermissions } from '../permission/savePermissions';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**
@@ -22,7 +20,6 @@ export const generateController = async (context: RenderContext<ControllerConfig
 
   checkAcceptsAndRequestBody(context.resourceConfig.actions)
   await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
-  await checkPermission(context.resourceConfig, context.basePath)
   
   const controllerOutputPath = getControllerPath(context);
 

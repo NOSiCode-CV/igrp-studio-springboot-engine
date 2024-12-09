@@ -135,7 +135,7 @@ export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> 
 export interface Attribute {
   type: AttributeType;
   name: string;
-  length?: number;
+  length?: number | null;
   nullable?: boolean;
   unique?: boolean;
   primaryKey?: boolean;

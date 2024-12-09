@@ -22,7 +22,7 @@ public interface {{resourceConfig.name}}Repository extends CrudRepository<{{reso
   {{else if (eq this 'deleteById')}}
   @Override
   @RestResource(exported = false)
-  void deleteById({{keyType resourceConfig}} id);
+  void deleteById({{keyType ../resourceConfig}} id);
   {{else if (eq this 'delete')}}
   @Override
   @RestResource(exported = false)
@@ -42,11 +42,11 @@ public interface {{resourceConfig.name}}Repository extends CrudRepository<{{reso
   {{else if (eq this 'findById')}}
   @Override
   @RestResource(exported = false)
-  Optional<{{../resourceConfig.name}}> findById({{keyType resourceConfig}} id);
+  Optional<{{../resourceConfig.name}}> findById({{keyType ../resourceConfig}} id);
   {{else if (eq this 'findAllById')}}
   @Override
   @RestResource(exported = false)
-  Iterable<{{../resourceConfig.name}}> findAllById(Iterable<{{keyType resourceConfig}}> ids);
+  Iterable<{{../resourceConfig.name}}> findAllById(Iterable<{{keyType ../resourceConfig}}> ids);
   {{/if}}
 
   {{/each}}
