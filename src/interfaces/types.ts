@@ -56,7 +56,7 @@ export interface PermissionConfig {
 export interface IEndpoint {
   type: string;
   resource: string; // indicates the model name or controller name
-  method: HttpMethod;
+  method: HttpMethod | DisabledMethods;
   path: string
 }
 
