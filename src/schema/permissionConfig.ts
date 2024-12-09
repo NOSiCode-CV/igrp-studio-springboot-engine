@@ -1,6 +1,6 @@
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { IEndpoint, PermissionConfig } from "../interfaces/types";
-import { HTTP_METHOD_TYPES, PATTERNS } from "../utils/constants";
+import { CRUD_DISABLED_OPTIONS, HTTP_METHOD_TYPES, PATTERNS } from "../utils/constants";
 import { ajvInstance } from "../utils/ajv-instance";
 
 const permissionEndpointSchema: JSONSchemaType<IEndpoint> ={
@@ -14,9 +14,8 @@ const permissionEndpointSchema: JSONSchemaType<IEndpoint> ={
       type:"string",
     },
     method: { 
-      type: 'string', 
-      enum: HTTP_METHOD_TYPES,
-      errorMessage: `method type can only be one of ${HTTP_METHOD_TYPES}`
+      type: 'string',
+      errorMessage: `method type can only be one of ${HTTP_METHOD_TYPES} or ${CRUD_DISABLED_OPTIONS}`
     },
     path: {
       type: 'string'
