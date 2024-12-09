@@ -75,13 +75,10 @@ describe('DTO deletion', () => {
         );
         
         const pathExists = await fs.pathExists(modelPath);
-        
-        let errors;
-        
         try {
             await deleteDTO(dto11, OUTPUT_DIR)
         } catch(e) {
-            errors = e;
+            console.error(e)
         }
         const pathExists2 = await fs.pathExists(modelPath);
         expect(pathExists&&pathExists2).toBeTruthy();
