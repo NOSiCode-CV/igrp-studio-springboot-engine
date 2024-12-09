@@ -42,10 +42,8 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
   // for each endpoint based on its defined permissions.
-  await updatePermissions(context.basePath);
+  await updatePermissions(context.basePath, context.resourceConfig.type);
 
-  // Save all permissions to a single file
-  await saveAllPermissions(context.basePath);
 };
 
 /**

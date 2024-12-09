@@ -525,7 +525,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   checkDuplicated([], config.actions, [])
 
   
-
   config.actions = upperCaseResponse(config.actions)
 
   const isConfigValid = validateController(config);

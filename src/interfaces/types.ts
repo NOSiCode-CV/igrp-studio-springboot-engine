@@ -160,7 +160,7 @@ export interface Crud {
 }
 
 export interface IModelPermission {
-  method: HttpMethod;
+  method: DisabledMethods;
   permissions: string[]
 }
 export interface Table {

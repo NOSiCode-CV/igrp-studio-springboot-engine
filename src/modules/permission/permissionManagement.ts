@@ -1,4 +1,5 @@
-import { loadControllerConfigs, loadPermissionConfigs } from "../../utils/helpers";
+
+import { loadControllerConfigs, loadPermissionConfigs, loadModelConfigs } from "../../utils/helpers";
 import { savePermission } from "./savePermissionConfig";
 import { saveAllPermissions } from "./savePermissions";
 
@@ -10,52 +11,93 @@ import { saveAllPermissions } from "./savePermissions";
  * @param element - The element configuration (either a model or a controller) containing details 
  *                  about actions or CRUD permissions.
  * @param basePath - The base path where the permission configurations are stored and will be saved.
- */export const updatePermissions = async (basePath: string) => {
+ */export const updatePermissions = async (basePath: string, type: 'model' | 'controller') => {
   const permissions = await loadPermissionConfigs(basePath);
   const controllers = await loadControllerConfigs(basePath);
-
-  console.log(controllers)
+  const models = await loadModelConfigs(basePath);
 
   // rebuilding the permissions from controller actions
   const updatedPermissions: Record<string, { name: string; endpoints: any[] }> = {};
 
   // Recorremos todos los controladores y sus acciones para reconstruir permisos
-  for (const controller of controllers) {
-    for (const action of controller.actions) {
-      if (action.permissions && action.permissions.length > 0) {
-        for (const permissionName of action.permissions) {
-
-          if (!updatedPermissions[permissionName]) {
-            updatedPermissions[permissionName] = {
-              name: permissionName,
-              endpoints: [],
-            };
+  if (type === 'controller') {
+    for (const controller of controllers) {
+      for (const action of controller.actions) {
+        if (action.permissions && action.permissions.length > 0) {
+          for (const permissionName of action.permissions) {
+  
+            if (!updatedPermissions[permissionName]) {
+              updatedPermissions[permissionName] = {
+                name: permissionName,
+                endpoints: [],
+              };
+            }
+            updatedPermissions[permissionName].endpoints.push({
+              type: 'controller',
+              resource: `${controller.name}.${action.actionName}`,
+              method: action.method,
+              path: `${controller.basePath}/${action.path ? action.path : action.actionName}`,
+            });
           }
-
-          updatedPermissions[permissionName].endpoints.push({
-            type: 'controller',
-            resource: `${controller.name}.${action.actionName}`,
-            method: action.method,
-            path: `${controller.basePath}/${action.path ? action.path : action.actionName}`,
-          });
         }
       }
     }
-  }
-
-  // cleaning and saving the updated permissions
-  for (const permission of permissions) {
-    const updatedPermission = updatedPermissions[permission.name];
-    
-    if (updatedPermission) {
-      permission.endpoints = updatedPermission.endpoints;
-    } else {
-      permission.endpoints = []; 
+  
+    // cleaning and saving the updated permissions
+    for (const permission of permissions) {
+      const updatedPermission = updatedPermissions[permission.name];
+      const modelPermissions = permission.endpoints.filter(m => m.type === 'model')
+      
+      if (updatedPermission) {
+        permission.endpoints = updatedPermission.endpoints.concat(modelPermissions);
+  
+      } else {
+        permission.endpoints = modelPermissions; 
+      }
+  
+      await savePermission(permission, basePath);
     }
+  } else {
+    if (type === 'model') {
 
-    await savePermission(permission, basePath);
+      for (const model of models) {
+        if (model.crud && model.crud.permissions && model.crud.permissions.length > 0)
+        for (const p of model.crud.permissions) {
+          for (const permissionName of p.permissions) {
+            
+              if (!updatedPermissions[permissionName]) {
+                updatedPermissions[permissionName] = {
+                  name: permissionName,
+                  endpoints: [],
+                };
+              }
+              updatedPermissions[permissionName].endpoints.push({
+                type: 'model',
+                resource: model.name,
+                method: p.method,
+                path: model.crud.path,
+              });
+              
+          }
+        }
+      }
+
+      // cleaning and saving the updated permissions
+      for (const permission of permissions) {
+        const updatedPermission = updatedPermissions[permission.name];
+        const controllerPermissions = permission.endpoints.filter(m => m.type === 'controller')
+        
+        if (updatedPermission) {
+          permission.endpoints = updatedPermission.endpoints.concat(controllerPermissions);
+
+        } else {
+          permission.endpoints = controllerPermissions; 
+        }
+        
+        await savePermission(permission, basePath);
+      }
+    }
   }
-
 
   await saveAllPermissions(basePath);
 };

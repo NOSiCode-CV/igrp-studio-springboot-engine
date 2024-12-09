@@ -15,5 +15,5 @@ export const deleteControllerConfig = async (context: RenderContext<ControllerCo
   
   if (await fs.pathExists(controllerConfigPath)) await fs.rm(controllerConfigPath, { recursive: true });
   else throw ERROR_MESSAGE.CONTROLLER_FILE_CONFIG_NOT_FOUND
-  await updatePermissions(context.basePath)
+  await updatePermissions(context.basePath, context.resourceConfig.type)
 };
