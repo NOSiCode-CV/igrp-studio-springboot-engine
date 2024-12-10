@@ -7,6 +7,7 @@ import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
 
 const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
+const basePath = './'
 
 describe('DTO deletion', () => {
     it('should delete a dto', async () => {

@@ -25,14 +25,25 @@ import java.math.{{this}};
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="{{resourceConfig.tableName}}"{{#if resourceConfig.uniqueConstraints}},
+@Table(name = "{{resourceConfig.tableName}}"{{#if (or resourceConfig.uniqueConstraints resourceConfig.indexes)}},{{/if}}
+{{#if resourceConfig.uniqueConstraints}}
     uniqueConstraints = {
         {{#each resourceConfig.uniqueConstraints}}
         @UniqueConstraint(
             name = "{{toLowerCase this.name}}",
             columnNames = {
-                {{#each this.columns}}"{{toLowerCase this}}"{{#if @last}}{{else}},{{/if}}{{/each}}
+                {{#each this.columns}}"{{toLowerCase this}}"{{#unless @last}},{{/unless}}{{/each}}
             }
+        ){{#unless @last}},{{/unless}}
+        {{/each}}
+    }{{#if resourceConfig.indexes}},{{/if}}
+{{/if}}
+{{#if resourceConfig.indexes}}
+    indexes = {
+        {{#each resourceConfig.indexes}}
+        @Index(
+            name = "{{toLowerCase this.name}}",
+            columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"
         ){{#unless @last}},{{/unless}}
         {{/each}}
     }

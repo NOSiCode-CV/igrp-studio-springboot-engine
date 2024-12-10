@@ -459,6 +459,10 @@ Handlebars.registerHelper('breakEach', function (context, options) {
   return result;
 });
 
+Handlebars.registerHelper('or', function (a, b) {
+  return a || b;
+})
+
 Handlebars.registerHelper('filterCommandActions', function (array: ControllerAction[], options) {
   if (!array || !Array.isArray(array)) {
     throw new Error('Expected an array for filtering');

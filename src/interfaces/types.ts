@@ -69,8 +69,14 @@ export interface PermissionConfig {
 export interface IEndpoint {
   type: string;
   resource: string; // indicates the model name or controller name
-  method: HttpMethod;
-  path: string;
+  method: HttpMethod | DisabledMethods;
+  path: string
+}
+
+export interface GenericType {
+  name: string;
+  namespace?: string;
+  ns: 'dto'|'model'|'java'|'local';
 }
 
 export interface JavaType {
@@ -117,6 +123,11 @@ export interface UniqueConstraint {
   columns: string[];
 }
 
+export interface EntityIndex {
+  name: string;
+  columns: string[];
+}
+
 export interface JavaType {
   name: string;
   namespace?: string;
@@ -138,12 +149,17 @@ export interface DTOConfig extends DTOBaseConfig {
   attributes: JavaAttribute[];
 }
 
+export interface Icontroller {
+  type: 'icontroller';
+  name: string;
+}
+
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
   type: AttributeType;
   name: string;
-  length?: number;
+  length?: number | null;
   nullable?: boolean;
   unique?: boolean;
   primaryKey?: boolean;
@@ -169,8 +185,13 @@ export interface Crud {
 }
 
 export interface IModelPermission {
-  method: HttpMethod;
-  permission: string;
+  method: DisabledMethods;
+  permissions: string[]
+}
+export interface Table {
+  name: string;
+  joinColumns: string;
+  inverseJoinColumns: string;
 }
 
 export interface ControllerConfig {
@@ -183,7 +204,7 @@ export interface ControllerConfig {
 
 export interface ControllerAction {
   path?: string;
-  permission?: string;
+  permissions?: string[];
   actionName: string;
   method: HttpMethod;
   accepts?: MimeTypes;

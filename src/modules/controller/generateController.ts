@@ -11,11 +11,12 @@ import {
   DIRECTORIES,
   PROJECT_STRUCTURE_STYLE,
 } from '../../utils/constants';
-import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
 import { assignPermission } from '../permission/permissionManagement';
 import { checkPermission } from '../permission/checkExistsPermission';
 import { normalizeControllerName, saveControllerConfig } from './saveControllerConfig';
 import { saveAllPermissions } from '../permission/savePermissions';
+import { getControllerDir, extractTypeFromList, getDDDControllerDir } from '../../utils/helpers';
+import { updatePermissions } from '../permission/permissionManagement';
 
 const CONTROLLER_SUFFIX = 'Controller.java';
  /**
@@ -30,22 +31,20 @@ export const generateController = async (context: RenderContext<ControllerConfig
    const controllerOutputPath = getControllerPath(context);
 
    const controller = await renderController(context);
-  const allTypes = await getDtos(context)
+   const allTypes = await getDtos(context)
 
-  await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
-  await checkPermission(context.resourceConfig, context.basePath)
+   checkAcceptsAndRequestBody(context.resourceConfig.actions)
+   await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes)
 
-  await saveControllerConfig(context.resourceConfig, context.basePath);
+   await saveControllerConfig(context.resourceConfig, context.basePath);
 
-  await saveToFile(controller, controllerOutputPath);
+   await saveToFile(controller, controllerOutputPath);
 
-  // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
-  // This ensures that the newly created controller has the correct access rights configured 
-  // for each endpoint based on its defined permissions.
-  await assignPermission(context.resourceConfig, context.basePath);
+   // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
+   // This ensures that the newly created controller has the correct access rights configured
+   // for each endpoint based on its defined permissions.
+   await updatePermissions(context.basePath, context.resourceConfig.type);
 
-  // Save all permissions to a single file
-  await saveAllPermissions(context.basePath);
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
@@ -94,3 +93,15 @@ const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], ty
       }
   }*/
 }
+
+const checkAcceptsAndRequestBody = (actions: ControllerAction[]) => {
+  const method = ['POST', 'PUT', 'PATCH']
+  actions.map(action => {
+    if (method.includes(action.method) && !action.requestBody)
+      throw ERROR_MESSAGE.REQUEST_BODY_REQUIRED
+    
+    if (method.includes(action.method) && !action.accepts)
+      throw ERROR_MESSAGE.ACCEPTS_REQUIRED
+  })
+}
+

@@ -91,13 +91,14 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
   properties: {
     method: {
       type: 'string',
-      enum: HTTP_METHOD_TYPES
+      enum: CRUD_DISABLED_OPTIONS
     },
-    permission: {
-      type: 'string'
+    permissions: {
+      type: 'array',
+      items: {type: 'string'}
     }
   },
-  required: ['method', 'permission'],
+  required: ['method', 'permissions'],
   additionalProperties: false,
 }
 
@@ -275,7 +276,6 @@ const entityIndexSchema: JSONSchemaType<EntityIndex> = {
   additionalProperties: false
 };
 
-
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
@@ -325,7 +325,7 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       items: entityIndexSchema,
       errorMessage: 'The indexes must be an array of valid unique constraint definitions.'
     },
-    relations: { 
+    relations: {
       type: "array", 
       nullable: true, 
       items: relationSchema,

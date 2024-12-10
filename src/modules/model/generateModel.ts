@@ -5,10 +5,8 @@ import { saveToFile } from '../common/saveToFile';
 import { getDDDModelOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
-import { assignPermission } from '../permission/permissionManagement';
-import { checkPermission } from '../permission/checkExistsPermission';
+import { updatePermissions } from '../permission/permissionManagement';
 import { saveModelConfig } from './saveModelConfig';
-import { saveAllPermissions } from '../permission/savePermissions';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
@@ -39,8 +37,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   } 
 
-  await checkPermission(context.resourceConfig, context.basePath)
-
   await saveModelConfig(context.resourceConfig, context.basePath);
 
   await saveToFile(template, modelOutputPath);
@@ -48,10 +44,8 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
   // for each endpoint based on its defined permissions.
-  await assignPermission(context.resourceConfig, context.basePath);
+  await updatePermissions(context.basePath, context.resourceConfig.type);
 
-  // Save all permissions to a single file
-  await saveAllPermissions(context.basePath);
 };
 
 /**

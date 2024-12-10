@@ -7,6 +7,7 @@ import {
 } from '../../utils/helpers';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
+import { updatePermissions } from '../permission/permissionManagement';
 
 export const deleteControllerConfig = async (context: RenderContext<ControllerConfig>) => {
 
@@ -20,12 +21,15 @@ export const deleteControllerConfig = async (context: RenderContext<ControllerCo
   } else {
     controllerPath = getControllerDir(context);
   }
-  
+
   const controllerConfigPath = getControllerConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath)
 
-  if (await fs.pathExists(controllerPath)) await fs.rm(controllerPath, { recursive: true });
+  if (await fs.pathExists(controllerPath)) {
+    await fs.rm(controllerPath, { recursive: true })
+  }
   else throw ERROR_MESSAGE.CONTROLLER_FILE_NOT_FOUND;
 
   if (await fs.pathExists(controllerConfigPath)) await fs.rm(controllerConfigPath, { recursive: true });
   else throw ERROR_MESSAGE.CONTROLLER_FILE_CONFIG_NOT_FOUND
+  await updatePermissions(context.basePath, context.resourceConfig.type)
 };
