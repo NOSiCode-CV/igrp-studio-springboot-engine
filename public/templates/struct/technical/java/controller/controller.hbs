@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-@Tag(name = "{{capitalize resourceConfig.name}}")
+@Tag(name = "{{capitalize resourceConfig.name}}", description = "Controller for handling {{resourceConfig.name}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-injection}}
@@ -17,7 +17,6 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{>controller-constructor}}
 
   {{#each resourceConfig.actions}}
-  @ResponseStatus(HttpStatus.OK)
   @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if (and this.pathVariables path)}}, {{/if}}{{#if (and this.contentType path)}},{{/if}}{{#if (and this.accepts path)}},{{/if}}{{#if pathVariables}}
   value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.accepts pathVariables)}}, {{/if}}{{#if (and this.contentType pathVariables)}}, {{/if}}{{#if this.accepts}}

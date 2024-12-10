@@ -3,5 +3,5 @@
 private final {{capitalize resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService;
 private final {{capitalize resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
 {{else}}
-private final {{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service;
+private final I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
 {{/if}}

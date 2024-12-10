@@ -2,7 +2,7 @@
 
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
 
-public interface {{resourceConfig.name}}ServiceInterface {
+public interface I{{resourceConfig.name}}Service {
   {{#each resourceConfig.actions}}
   {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
   {{/each}}
