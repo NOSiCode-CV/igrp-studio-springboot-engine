@@ -15,7 +15,6 @@ import {
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  HTTP_METHOD_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
 } from '../utils/constants';
 
@@ -86,6 +85,7 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
+
 const permissionSchema: JSONSchemaType<IModelPermission> = {
   type: "object",
   properties: {
@@ -101,6 +101,8 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
   required: ['method', 'permissions'],
   additionalProperties: false,
 }
+
+
 
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",

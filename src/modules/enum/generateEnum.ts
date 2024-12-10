@@ -1,9 +1,9 @@
 import { EnumConfig, RenderContext } from '../../interfaces/types';
 import { ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { getDDDEnumOutputDir, getEnumOutputDir } from '../../utils/helpers';
-import path from 'path';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
+import path from 'path';
 
 export const generateEnum = async (context: RenderContext<EnumConfig>) => {
 

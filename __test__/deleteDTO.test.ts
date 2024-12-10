@@ -1,10 +1,10 @@
-import path from 'path';
-import fs from 'fs-extra';
 import { addDTO, deleteDTO } from "../src";
 import { ApiConfig, DTOConfig } from "../src/interfaces/types";
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
 import { getMainPath } from '../src/utils/helpers';
+import path from 'path';
+import fs from 'fs-extra';
 
 const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 const basePath = './'
