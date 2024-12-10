@@ -22,5 +22,5 @@ export const deleteModelConfig = async (context: RenderContext<ModelConfig>) => 
   if (await fs.pathExists(modelConfigPath)) await fs.rm(modelConfigPath, { recursive: true });
   else throw ERROR_MESSAGE.MODEL_FILE_CONFIG_NOT_FOUNT;
 
-  await updatePermissions(context.basePath, context.resourceConfig.type);
+  await updatePermissions(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath, context.resourceConfig.type);
 };

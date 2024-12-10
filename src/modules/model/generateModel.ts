@@ -1,6 +1,6 @@
 import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import { getDDDModelOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
@@ -44,7 +44,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
   // for each endpoint based on its defined permissions.
-  await updatePermissions(context.basePath, context.resourceConfig.type);
+  await updatePermissions(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath, context.resourceConfig.type);
 
 };
 

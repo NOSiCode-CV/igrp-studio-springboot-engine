@@ -11,10 +11,10 @@ import { saveAllPermissions } from "./savePermissions";
  * @param element - The element configuration (either a model or a controller) containing details 
  *                  about actions or CRUD permissions.
  * @param basePath - The base path where the permission configurations are stored and will be saved.
- */export const updatePermissions = async (basePath: string, type: 'model' | 'controller') => {
+ */export const updatePermissions = async (module: string, basePath: string, type: 'model' | 'controller') => {
   const permissions = await loadPermissionConfigs(basePath);
-  const controllers = await loadControllerConfigs(basePath);
-  const models = await loadModelConfigs(basePath);
+  const controllers = await loadControllerConfigs(module, basePath);
+  const models = await loadModelConfigs(module, basePath);
 
   // rebuilding the permissions from controller actions
   const updatedPermissions: Record<string, { name: string; endpoints: any[] }> = {};
