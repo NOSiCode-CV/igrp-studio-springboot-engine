@@ -5,7 +5,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '../../utils/helpers';
 
-const ICONTROLLER_SUFFIX = 'ServiceInterface.java';
+const ICONTROLLER_SUFFIX = 'Interface.java';
 const CMD_SERVICE_SUFFIX = 'CmdService.java';
 
 /**
