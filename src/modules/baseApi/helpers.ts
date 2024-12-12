@@ -8,7 +8,7 @@ import { DIRECTORIES, EXTENSIONS, HELPER_FILES } from '../../utils/constants';
  */
 function normalizeJarPath(jarPath: string): string {
   const jarName = path.basename(jarPath, '.jar');
-  return jarName.replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+  return jarName.replace(/\s+/g, '-');
 }
 
 /**
