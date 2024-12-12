@@ -371,7 +371,7 @@ export const COMMON_FILES = {
   POM_XML: 'pom.xml',
   REPOSITORY: 'Repository.java',
   CONTROLLER: 'Controller.java',
-  SERVICE: 'ServiceInterface.java',
+  SERVICE: 'Service.java',
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',

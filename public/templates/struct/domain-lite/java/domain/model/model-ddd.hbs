@@ -8,6 +8,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 
 {{{resolve-imports resourceConfig}}}
 
+import cv.igrp.stereotype.IgrpEntity;
 import jakarta.persistence.*;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
@@ -26,6 +27,7 @@ import java.math.{{this}};
 
 @Getter
 @Setter
+@IgrpEntity
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

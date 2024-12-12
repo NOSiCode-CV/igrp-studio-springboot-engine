@@ -1,12 +1,14 @@
 {{> package-java }}
 
+import cv.igrp.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 {{resolve-imports resourceConfig}}
 
 {{#each resourceConfig.annotations}}
-  @{{this.annotation}}
+@{{this.annotation}}
 {{/each}}
+@IgrpDTO
 public record {{capitalize resourceConfig.name}}DTO (
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}

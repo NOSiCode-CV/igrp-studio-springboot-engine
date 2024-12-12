@@ -5,7 +5,8 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '../../utils/helpers';
 
-const ICONTROLLER_SUFFIX = 'ServiceInterface.java';
+const ICONTROLLER_PREFIX = 'I';
+const ICONTROLLER_SUFFIX = 'Service.java';
 const CMD_SERVICE_SUFFIX = 'CmdService.java';
 
 /**
@@ -39,7 +40,7 @@ const getServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
     context.fullPath = outputDir
     return path.join(
       outputDir,
-      `${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`,
+      `${ICONTROLLER_PREFIX}${context.resourceConfig.name}${ICONTROLLER_SUFFIX}`,
     );
   }
 };

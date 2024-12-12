@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}ServiceInterface;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
 
 @Service
-public class {{resourceConfig.name}}ServiceImpl implements {{resourceConfig.name}}ServiceInterface {
+public class {{resourceConfig.name}}ServiceImpl implements I{{resourceConfig.name}}Service {
 
   private static final Logger logger = LoggerFactory.getLogger({{resourceConfig.name}}ServiceImpl.class);
 

@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import cv.igrp.stereotype.IgrpController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 {{>controller-imports}}
 
+@IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 @Tag(name = "{{capitalize resourceConfig.name}}")

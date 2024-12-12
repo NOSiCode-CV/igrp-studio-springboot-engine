@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import cv.igrp.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 {{> lombok-java-imports}}
@@ -9,9 +10,9 @@ import jakarta.validation.constraints.*;
 {{> lombok-java-annotations}}
 
 {{#each resourceConfig.annotations}}
-  @{{this.annotation}}
+@{{this.annotation}}
 {{/each}}
-
+@IgrpDTO
 public class {{resourceConfig.name}}DTO {
 
 {{#each resourceConfig.attributes}}
