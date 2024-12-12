@@ -14,6 +14,8 @@ export const DIRECTORIES = {
   CONFIG_PERMISSION: '.igrpstudio/permissions',
   CONFIG_DTO: '.igrpstudio/{{module}}/dto',
   CONFIG_ENUM: '.igrpstudio/{{module}}/enum',
+  CONFIG_LIBRARIES: 'libraries',
+  CONFIG_LIBRARY: 'library',
   CONTROLLERS: 'controllers',
   CONTROLLER: 'controller',
   IGRPSTUDIO: '.igrpstudio',
@@ -399,7 +401,12 @@ export const COMMON_FILES = {
   ENTITY_BASE: 'EntityBase.java',
   BASE_REPOSITORY: 'BaseRepository.java',
   SPRING_COMMAND_BUS: 'SpringCommandBus.java',
-  SPRING_EVENT_BUS: 'SpringEventBus.java',
+  SPRING_EVENT_BUS: 'SpringEventBus.java'
+
+};
+
+export const HELPER_FILES = {
+  JAR_INSPECTOR: 'jar-inspector-1.0-SNAPSHOT.jar',
 };
 
 export const EXTENSIONS = {

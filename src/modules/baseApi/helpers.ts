@@ -1,66 +1,52 @@
+import { exec } from 'child_process';
 import path from 'path';
-import os from 'os';
-import AdmZip from 'adm-zip';
+import fs from 'fs';
+import { DIRECTORIES, EXTENSIONS, HELPER_FILES } from '../../utils/constants';
 
 /**
- * Constructs the path to a dependency in the local Maven repository.
- * @param groupId - The group ID of the dependency (e.g., "org.springframework.boot").
- * @param artifactId - The artifact ID of the dependency (e.g., "spring-boot-starter-web").
- * @param version - The version of the dependency (e.g., "2.6.0").
- * @returns The full path to the `.jar` file for the specified dependency.
+ * Normalizes a given string to make it a valid folder name.
  */
-export function getMavenJarPath(groupId: string, artifactId: string, version: string): string {
-  const userHome = os.homedir(); // Get the user's home directory
-  const mavenRepo = path.join(userHome, '.m2', 'repository'); // Path to the .m2 repository
+function normalizeJarPath(jarPath: string): string {
+  const jarName = path.basename(jarPath, '.jar');
+  return jarName.replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+}
 
-  // Convert groupId to path format (e.g., "org.springframework.boot" -> "org/springframework/boot")
-  const groupPath = groupId.replace(/\./g, path.sep);
-
-  // Construct the full path to the .jar file
-  const jarPath = path.join(
-    mavenRepo,
-    groupPath,
-    artifactId,
-    version,
-    `${artifactId}-${version}.jar`,
+/**
+ * Executes the Jar Inspector Java JAR file with the given arguments.
+ */
+export const runJarInspector = (basePath: string, jarPath: string) => {
+  const normalizedJarName = normalizeJarPath(jarPath);
+  const outputJsonPath = path.join(
+    basePath,
+    DIRECTORIES.IGRPSTUDIO,
+    DIRECTORIES.CONFIG_LIBRARIES,
+    normalizedJarName,
+    `${DIRECTORIES.CONFIG_LIBRARY}${EXTENSIONS.JSON}`
   );
 
-  return jarPath;
-}
-
-type ApiResponse = {
-  classes: string[] | null;
-  error?: string;
-};
-
-/**
- * Reads and filters class names from a `.jar` file based on package names.
- * @param jarPath - Path to the `.jar` file.
- * @param packagePrefixes - Array of package prefixes to filter (e.g., ["com.example.dto"]).
- * @returns An array of fully qualified class names matching the packages.
- */
-export const readJarClassNames = (jarPath: string, packagePrefixes: string[]): string[] => {
-  const zip = new AdmZip(jarPath);
-  return zip
-    .getEntries()
-    .filter((entry) => entry.entryName.endsWith('.class'))
-    .map((entry) => entry.entryName.replace(/\//g, '.').replace('.class', ''))
-    .filter((className) => packagePrefixes.some((prefix) => className.startsWith(prefix)));
-};
-
-export function loadModuleClasses(groupId: string, artifactId: string, version: string) {
-  const jarPath = getMavenJarPath(groupId, artifactId, version);
-  const packagePrefixes = [
-    `${groupId}.${artifactId}.dto`,
-    `${groupId}.${artifactId}.model`,
-    `${groupId}.${artifactId}.controller`,
-  ]; // Define your target packages
-
-  try {
-    const classNames = readJarClassNames(jarPath, packagePrefixes);
-    res.status(200).json({ classes: classNames });
-  } catch (error) {
-    console.error('Error reading .jar file:', error);
-    res.status(500).json({ classes: null, error: 'Failed to read .jar file' });
+  const outputDir = path.dirname(outputJsonPath);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
   }
-}
+
+  // Prepare the Java command
+  const javaCommand = `java -jar ${HELPER_FILES.JAR_INSPECTOR} ${jarPath} ${outputJsonPath}`;
+  console.log(`Executing command: ${javaCommand}`); // Log the full command
+
+  exec(javaCommand, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Execution error: ${error.message}`);
+      return;
+    }
+
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+    }
+
+    if (stdout) {
+      console.log(`stdout: ${stdout}`);
+    }
+
+    console.log(`Jar Inspector completed successfully. Output written to: ${outputJsonPath}`);
+  });
+};
