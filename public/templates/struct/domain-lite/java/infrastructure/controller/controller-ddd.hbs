@@ -3,6 +3,7 @@
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
@@ -13,6 +14,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
+@Tag(name = "{{capitalize resourceConfig.name}}", description = "Controller for handling {{resourceConfig.name}}")
 public class {{resourceConfig.name}}Controller {
 
 {{#each resourceConfig.actions}}
@@ -42,7 +44,6 @@ public class {{resourceConfig.name}}Controller {
   }
 
   {{#each resourceConfig.actions}}
-  @ResponseStatus(HttpStatus.OK)
   @RequestMapping(
     method = RequestMethod.{{method}}{{#if path}},
     value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{else}}{{#if pathVariables}},
