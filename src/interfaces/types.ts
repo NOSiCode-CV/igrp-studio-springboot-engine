@@ -214,17 +214,27 @@ export interface ControllerAction {
   requestParams?: RequestParams[];
   response: string;
   pathVariables?: PathVariables[];
+  multipartFiles?: MultipartFile[];
+}
+
+export interface MultipartFile {
+  type: ParamsTypes;
+  name: string;
+  value?: string;
+  isRequired: boolean
 }
 
 export interface RequestParams {
   type: ParamsTypes;
   name: string;
+  value?: string;
   isRequired: boolean
 }
 
 export interface PathVariables {
   type: string;
   name: string;
+  value?: string;
   isRequired: boolean;
 }
 

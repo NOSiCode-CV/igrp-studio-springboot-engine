@@ -40,9 +40,9 @@ const controllerConfig: ControllerConfig = {
       pathVariables: [],
       modelAttribute: 'TesteDTO',
       requestParams: [
-        { type: 'string', name: 'carBrand', isRequired: false },
-        { type: 'string', name: 'carModel', isRequired: true },
-        { type: 'string', name: 'carPlate', isRequired: false },
+        { type: 'string', name: 'carBrand', value: 'brand', isRequired: false },
+        { type: 'string', name: 'carModel', value: 'model', isRequired: true },
+        { type: 'string', name: 'carPlate', value: 'plate', isRequired: false },
         { type: 'string', name: 'registrationDate', isRequired: true },
       ],
       response: 'List<TesteDTO>',

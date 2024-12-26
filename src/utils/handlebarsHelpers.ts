@@ -357,15 +357,14 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         break;
       default:
         // Optionally handle unknown collection types
-        console.warn(`Unknown collection type: ${attr.collectionType}`);
     }
   });
 
-  if(!config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).isEmpty()) {
+  if (config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).length > 0) {
     imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');
   }
 
-  if(!config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).isEmpty()) {
+  if(config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
     imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
   }
 

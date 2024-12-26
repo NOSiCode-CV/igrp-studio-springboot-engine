@@ -23,6 +23,11 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
       type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
       errorMessage: 'The param name attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
     },
+    value: {
+      type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
+      nullable: true,
+      errorMessage: 'The param value attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
+    },
     isRequired: {
       type: 'boolean',
       errorMessage: 'The param isRequired must be present and holds values true|false only'
@@ -148,6 +153,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       items: pathParamsSchema, 
       nullable: true,
       errorMessage: 'Path params can only contain a characters without spaces or special characters.'
+    },
+    multipartFiles: {
+      type: 'array',
+      items: pathParamsSchema,
+      nullable: true,
+      errorMessage: 'Multipart params can only contain a characters without spaces or special characters.'
     },
     permissions: {
       type: 'array',
