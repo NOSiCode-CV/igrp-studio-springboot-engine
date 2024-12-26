@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 
 {{>controller-imports}}
 
@@ -25,6 +26,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     consumes = "{{this.accepts}}" {{/if}}{{#if (and this.contentType this.accepts)}},{{/if}}{{#if this.contentType}}
     produces = "{{this.contentType}}"{{/if}}
   )
+  @Operation(summary = "Performs the specified operation", description = "Executes the requested operation for the endpoint, handling the appropriate input and returning the expected result")
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
