@@ -21,10 +21,16 @@ public class {{capitalize resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if (and this.pathVariables path)}}, {{/if}}{{#if (and this.contentType path)}},{{/if}}{{#if (and this.accepts path)}},{{/if}}{{#if pathVariables}}
-  value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.accepts pathVariables)}}, {{/if}}{{#if (and this.contentType pathVariables)}}, {{/if}}{{#if this.accepts}}
-    consumes = "{{this.accepts}}" {{/if}}{{#if (and this.contentType this.accepts)}},{{/if}}{{#if this.contentType}}
-    produces = "{{this.contentType}}"{{/if}}
+    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}}
+    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}},{{/if}}
+    {{#if headers}}
+    {{#each headers}}
+    {{#if (or (eq this.header "Accept") (eq this.header "Content-Type"))}}
+    {{!-- This is for consumes and produces --}}
+    {{mapHeaderToOption this}} = "{{this.value}}"{{#if @last}}{{else}}, {{/if}}
+    {{/if}}
+    {{/each}}
+    {{/if}}
   )
   @Operation(summary = "Performs the specified operation", description = "Executes the requested operation for the endpoint, handling the appropriate input and returning the expected result")
   {{> controller-action-definition baseConfig=../baseConfig}}

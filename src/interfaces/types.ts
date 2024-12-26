@@ -5,7 +5,7 @@ import {
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES, GENERIC_COLLECTION_TYPES,
+  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -207,8 +207,7 @@ export interface ControllerAction {
   permissions?: string[];
   actionName: string;
   method: HttpMethod;
-  accepts?: MimeTypes;
-  contentType?: MimeTypes;
+  headers?: HttpHeader[];
   requestBody?: string;
   modelAttribute?: string;
   requestParams?: RequestParams[];
@@ -255,6 +254,12 @@ export interface EnumValue {
   attributes?: any[];
 }
 
+export interface HttpHeader {
+  header: HttpHeaderTypes;
+  value: string;
+  isRequired: boolean;
+}
+
 export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;
@@ -274,4 +279,5 @@ export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
+export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];

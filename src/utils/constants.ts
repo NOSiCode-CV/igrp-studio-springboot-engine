@@ -1096,6 +1096,36 @@ export const MIME_TYPES = [
   "video/mp2t"
 ];
 
+export const REQUEST_MAPPING_OPTIONS = {
+  "Content-Type": "consumes", // Content-Type header maps to consumes
+  "Accept": "produces",       // Accept header maps to produces
+  "Cache-Control": "headers", // Cache-Control header maps to headers
+  "Content-Length": "headers", // Content-Length header maps to headers
+  "Accept-Charset": "headers", // Accept-Charset header maps to headers
+  "Accept-Encoding": "headers", // Accept-Encoding header maps to headers
+  "Accept-Language": "headers", // Accept-Language header maps to headers
+  "Expires": "headers", // Expires header maps to headers
+  "Access-Control-Allow-Origin": "headers", // Access-Control-Allow-Origin header maps to headers
+  "Access-Control-Request-Headers": "headers", // Access-Control-Request-Headers header maps to headers
+  "Access-Control-Request-Method": "headers", // Access-Control-Request-Method header maps to headers
+  "Custom-Header": "headers" // Custom-Header maps to headers
+} as const;
+
+export const HTTP_HEADER_TYPES = [
+  'Accept',
+  'Cache-Control',
+  'Content-Type',
+  'Content-Length',
+  'Accept-Charset',
+  'Accept-Encoding',
+  'Accept-Language',
+  'Expires',
+  'Access-Control-Allow-Origin',
+  'Access-Control-Request-Headers',
+  'Access-Control-Request-Method',
+  'Custom-Header'
+] as const;
+
 export const CRUD_DISABLED_OPTIONS = [
   'save', 
   'saveAll',

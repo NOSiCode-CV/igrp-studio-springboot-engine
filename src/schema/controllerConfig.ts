@@ -4,11 +4,11 @@ import {
   MIME_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  RESPONSE_TYPES,
+  RESPONSE_TYPES, HTTP_HEADER_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
-import { Attribute, ControllerAction, ControllerConfig, RequestParams } from '../interfaces/types';
+import { Attribute, ControllerAction, ControllerConfig, HttpHeader, RequestParams } from '../interfaces/types';
 
 const pathParamsSchema: JSONSchemaType<RequestParams> = {
   type: 'object',
@@ -39,6 +39,34 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
     required: {
       type: 'The param type is required and must not be empty.',
       name: 'The param name is required and must not be empty.',
+      isRequired: 'The obligation of the param must be present.'
+    }
+  }
+};
+
+const headersSchema: JSONSchemaType<HttpHeader> = {
+  type: 'object',
+  properties: {
+    header: {
+      type: "string",
+      enum: HTTP_HEADER_TYPES,
+      errorMessage: `The header, if provided, must be one of ${HTTP_HEADER_TYPES}`
+    },
+    value: {
+      type: 'string', pattern: PATTERNS.NOT_EMPTY,
+      errorMessage: 'The value attribute must not be empty.'
+    },
+    isRequired: {
+      type: 'boolean',
+      errorMessage: 'The param isRequired must be present and holds values true|false only'
+    },
+  },
+  required: ['header', 'value', 'isRequired'],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      header: 'The param header is required and must not be empty.',
+      value: 'The param value is required and must not be empty.',
       isRequired: 'The obligation of the param must be present.'
     }
   }
@@ -154,6 +182,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       nullable: true,
       errorMessage: 'Path params can only contain a characters without spaces or special characters.'
     },
+    headers: {
+      type: 'array',
+      items: headersSchema,
+      nullable: true,
+      errorMessage: 'Headers can only contain a characters without spaces or special characters.'
+    },
     multipartFiles: {
       type: 'array',
       items: pathParamsSchema,
@@ -168,18 +202,6 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     response: { 
       type: 'string',
       errorMessage: `Response type can only be one of [${RESPONSE_TYPES}]`
-    },
-    accepts: {
-      type: "string",
-      enum: MIME_TYPES,
-      nullable: true,
-      errorMessage: `Accepts type can only be one of ${MIME_TYPES}`
-    },
-    contentType: {
-      type: "string",
-      enum: MIME_TYPES,
-      nullable: true,
-      errorMessage: `ContentType type can only be one of ${MIME_TYPES}`
     }
   },
   required: ['actionName', 'method', 'response'],

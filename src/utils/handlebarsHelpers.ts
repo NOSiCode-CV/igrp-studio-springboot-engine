@@ -3,13 +3,12 @@ import * as Handlebars from 'handlebars';
 import {
   Attribute,
   ControllerAction,
-  DTOConfig,
-  JavaAttribute,
+  DTOConfig, HttpHeader, JavaAttribute,
   JavaType,
   ModelConfig,
   Relation,
 } from '../interfaces/types';
-import { DIRECTORIES, GENERIC_TYPES, REQUEST_BODY_NOT_IMPORT } from './constants';
+import { DIRECTORIES, GENERIC_TYPES, REQUEST_BODY_NOT_IMPORT, REQUEST_MAPPING_OPTIONS } from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
@@ -526,6 +525,17 @@ Handlebars.registerHelper("formatAttribute", function(value) {
   } else {
     return value.toString();  // Return the value as-is if it doesn't match the above types
   }
+});
+
+Handlebars.registerHelper('mapHeaderToOption', function(config: HttpHeader): string {
+  // Check if the header exists in the map and return the corresponding option
+  return REQUEST_MAPPING_OPTIONS[config.header] || null;
+});
+
+Handlebars.registerHelper('sanitizeHeaderName', function(headerName: string) {
+  return headerName
+    .toLowerCase() // Step 1: Convert all to lowercase
+    .replace(/-./g, match => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
 });
 
 export { Handlebars };
