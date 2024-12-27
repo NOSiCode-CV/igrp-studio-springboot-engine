@@ -3,12 +3,19 @@ import * as Handlebars from 'handlebars';
 import {
   Attribute,
   ControllerAction,
-  DTOConfig, HttpHeader, JavaAttribute,
+  DTOConfig,
+  HttpHeader,
+  JavaAttribute,
   JavaType,
   ModelConfig,
   Relation,
 } from '../interfaces/types';
-import { DIRECTORIES, GENERIC_TYPES, REQUEST_BODY_NOT_IMPORT, REQUEST_MAPPING_OPTIONS } from './constants';
+import {
+  DIRECTORIES,
+  GENERIC_TYPES,
+  REQUEST_BODY_NOT_IMPORT,
+  REQUEST_MAPPING_OPTIONS,
+} from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
@@ -119,9 +126,11 @@ Handlebars.registerHelper('keyType', function (config: DTOConfig) {
     return null;
   }
 
-  const result: JavaType | string = { name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? "", namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,  };
+  const result: JavaType | string = {
+    name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? '',
+    namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,
+  };
   return result.name;
-
 });
 
 Handlebars.registerHelper(
@@ -150,7 +159,6 @@ Handlebars.registerHelper(
     domainDriven?: boolean,
   ) {
     let imports: string[] = [];
-
 
     const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
@@ -182,11 +190,11 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
   validateAnnotations(attribute);
 
   // JSON / XML annotations
-  if(attribute.jsonAttributeName) {
+  if (attribute.jsonAttributeName) {
     annotations.push(`@JsonProperty("${attribute.jsonAttributeName}")`);
   }
 
-  if(attribute.xmlAttributeName) {
+  if (attribute.xmlAttributeName) {
     annotations.push(`@JacksonXmlProperty(localName = "${attribute.jsonAttributeName}")`);
   }
 
@@ -277,20 +285,22 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   const normalizedBasePath = basePath.replace(/\\/g, '/');
 
   // Ensure the basePath ends with a trailing slash for accurate replacement
-  const formattedBasePath = normalizedBasePath.endsWith('/') ? normalizedBasePath : normalizedBasePath + '/';
+  const formattedBasePath = normalizedBasePath.endsWith('/')
+    ? normalizedBasePath
+    : normalizedBasePath + '/';
 
   // Remove the basePath portion from the full path
   let relativePath: string;
   if (normalizedFullPath.startsWith(formattedBasePath)) {
     relativePath = normalizedFullPath.slice(formattedBasePath.length);
   } else {
-    return "";
+    return '';
   }
 
   // Extract only the meaningful parts of the path for the Java package
   const packagePath = relativePath
     .split('/')
-    .filter(segment => !['src', 'main', 'java'].includes(segment)) // Exclude common directory names
+    .filter((segment) => !['src', 'main', 'java'].includes(segment)) // Exclude common directory names
     .join('.');
 
   return packagePath;
@@ -325,7 +335,6 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
 });
 
 Handlebars.registerHelper('resolve-imports', function (config: any) {
-
   // TODO: attempt to import models and dtos too [30-11-2024 - 16:08]
 
   if (!config) return null;
@@ -335,10 +344,10 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
 
   const imports = new Set();
   config.attributes.forEach((attr: JavaAttribute) => {
-    const genType = GENERIC_TYPES.get(attr.type)
-    if(genType?.java.primitive) return null;
-    const type: JavaType = { name: genType?.java.name ?? "", namespace: genType?.java.namespace };
-    if(type.name == "") return null;
+    const genType = GENERIC_TYPES.get(attr.type);
+    if (genType?.java.primitive) return null;
+    const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
+    if (type.name == '') return null;
     if (type.namespace) {
       if (type.namespace.includes('models'))
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
@@ -355,7 +364,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         imports.add('import java.util.Set;');
         break;
       default:
-        // Optionally handle unknown collection types
+      // Optionally handle unknown collection types
     }
   });
 
@@ -363,7 +372,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
     imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');
   }
 
-  if(config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
+  if (config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
     imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
   }
 
@@ -371,10 +380,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
 });
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
-
   if (!t1.type) return t1.type;
 
-  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type
+  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type;
 
   let rtype: string;
   switch (t1.collectionType) {
@@ -459,7 +467,7 @@ Handlebars.registerHelper('breakEach', function (context, options) {
 
 Handlebars.registerHelper('or', function (a, b) {
   return a || b;
-})
+});
 
 Handlebars.registerHelper('filterCommandActions', function (array: ControllerAction[], options) {
   if (!array || !Array.isArray(array)) {
@@ -505,37 +513,46 @@ Handlebars.registerHelper('and', function (...args) {
   return args.every(Boolean); // Check if all arguments are truthy
 });
 
-Handlebars.registerHelper("formatAttribute", function(value) {
-
+Handlebars.registerHelper('formatAttribute', function (value) {
   // TODO : 09-12-2024 - 16:55 - handle non-string values
 
-  if (typeof value === "string") {
-    return `"${value}"`;  // If it's a string, wrap it in quotes
-  } else if (typeof value === "number") {
-    return value.toString();  // If it's a number, return it without quotes
+  if (typeof value === 'string') {
+    return `"${value}"`; // If it's a string, wrap it in quotes
+  } else if (typeof value === 'number') {
+    return value.toString(); // If it's a number, return it without quotes
   } else if (Array.isArray(value)) {
     // If it's an array, join all its elements into a string
-    return `"${value.join('')}"`;  // Join array elements into a string and wrap in quotes
-  } else if (value && typeof value === "object") {
+    return `"${value.join('')}"`; // Join array elements into a string and wrap in quotes
+  } else if (value && typeof value === 'object') {
     // If it's an object, check if it's a "character map" (e.g., { "0": "H", "1": "i", "2": "g" })
-    if (Object.values(value).every(val => typeof val === "string")) {
-      return `"${Object.values(value).join('')}"`;  // Join characters and return as a single string
+    if (Object.values(value).every((val) => typeof val === 'string')) {
+      return `"${Object.values(value).join('')}"`; // Join characters and return as a single string
     }
-    return JSON.stringify(value);  // Otherwise, return the object as a string
+    return JSON.stringify(value); // Otherwise, return the object as a string
   } else {
-    return value.toString();  // Return the value as-is if it doesn't match the above types
+    return value.toString(); // Return the value as-is if it doesn't match the above types
   }
 });
 
-Handlebars.registerHelper('mapHeaderToOption', function(config: HttpHeader): string {
+Handlebars.registerHelper('mapHeaderToOption', function (config: HttpHeader): string {
   // Check if the header exists in the map and return the corresponding option
   return REQUEST_MAPPING_OPTIONS[config.header] || null;
 });
 
-Handlebars.registerHelper('sanitizeHeaderName', function(headerName: string) {
+Handlebars.registerHelper('sanitizeHeaderName', function (headerName: string) {
   return headerName
     .toLowerCase() // Step 1: Convert all to lowercase
-    .replace(/-./g, match => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
+    .replace(/-./g, (match) => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
+});
+
+Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[], options) {
+  // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
+  return headers.some((header) => header.header !== 'Accept' && header.header !== 'Content-Type');
+});
+
+Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader[], options) {
+  // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
+  return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
 
 export { Handlebars };

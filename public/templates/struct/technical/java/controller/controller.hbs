@@ -22,7 +22,7 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#each resourceConfig.actions}}
   @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}}
-    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}},{{/if}}
+    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}
     {{#each headers}}
     {{#if (or (eq this.header "Accept") (eq this.header "Content-Type"))}}
@@ -36,7 +36,7 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
-    {{#if requestParams}}final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if pathVariables}}, {{else}}{{#if requestParams}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
+    {{#if requestParams}}final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if (and modelAttribute pathVariables)}}, {{else}}{{#if (and modelAttribute requestParams)}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
     final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}});
     {{/if}}
     {{else}}
