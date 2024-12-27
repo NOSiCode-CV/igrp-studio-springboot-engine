@@ -14,6 +14,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.TokenExchangeOAuth2AuthorizedClientProvider;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Security configuration class for setting up OAuth2 and JWT authentication with Keycloak.
@@ -26,6 +29,9 @@ public class SecurityConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
+    @Value("${auth.jwt.issuer}")
+    private String jwtIssuer;
+
     /**
      * Configures the security filter chain, enabling OAuth2 resource server with JWT and specifying
      * which requests require authentication.
@@ -36,11 +42,30 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disable CSRF protection
-        http.csrf(AbstractHttpConfigurer::disable);
+
+        /*
+          Creates and configures a CORS filter.
+          The filter allows requests from the specified origin, allows all headers and methods,
+          and supports credentials in cross-origin requests.
+        */
+        http.cors(cors -> cors.configurationSource(request -> {
+          CorsConfiguration configuration = new CorsConfiguration();
+          configuration.addAllowedOriginPattern("*");
+          configuration.addAllowedMethod("GET");
+          configuration.addAllowedMethod("POST");
+          configuration.addAllowedMethod("PUT");
+          configuration.addAllowedMethod("PATCH");
+          configuration.addAllowedMethod("DELETE");
+          configuration.addAllowedMethod("HEAD");
+          configuration.addAllowedMethod("OPTIONS");
+          configuration.addAllowedHeader("*");
+          configuration.setAllowCredentials(true);
+          return configuration;
+        }));
 
         if ("development".equals(activeProfile) || "staging".equals(activeProfile)) {
             // Disable security in development mode
+            http.csrf(AbstractHttpConfigurer::disable); // Disable CSRF protection
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
             return http.build();
         }
@@ -88,6 +113,21 @@ public class SecurityConfig {
     @Bean
     @Profile("!development & !staging")
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withIssuerLocation("http://localhost:8090/realms/quickstart").build();
+        return NimbusJwtDecoder.withIssuerLocation(jwtIssuer).build();
     }
+
+    /**
+     * Creates a bean for an OAuth2AuthorizedClientProvider that supports token exchange.
+     *
+     * <p>Token exchange allows one token to be exchanged for another,
+     * typically used in scenarios where a client needs to act on behalf
+     * of a user or service in a federated identity environment.</p>
+     *
+     * @return An instance of TokenExchangeOAuth2AuthorizedClientProvider.
+    */
+    @Bean
+    public OAuth2AuthorizedClientProvider tokenExchange() {
+        return new TokenExchangeOAuth2AuthorizedClientProvider();
+    }
+
 }
