@@ -12,7 +12,6 @@ import {
   RenderContext,
 } from './interfaces/types';
 import {
-  JAVA_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   DIRECTORIES,
@@ -23,7 +22,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  RESPONSE_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES,
+  RESPONSE_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -943,6 +942,7 @@ export const engineTypes = async (module: string, basePath: string) => {
     { DATABASE_TYPES: DATABASE_TYPES },
     { RESPONSE_TYPES: responseTypes },
     { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
+    { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
     { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },
     { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },

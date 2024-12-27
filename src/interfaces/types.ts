@@ -255,6 +255,7 @@ export interface EnumValue {
 }
 
 export interface HttpHeader {
+  type: ParamsTypes;
   header: HttpHeaderTypes;
   value: string;
   isRequired: boolean;

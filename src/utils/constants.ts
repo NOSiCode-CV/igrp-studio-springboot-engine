@@ -1,6 +1,7 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
+
  //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
  //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
  export const TEMPLATE_DIR = path.join(__dirname, './templates');

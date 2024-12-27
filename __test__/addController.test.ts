@@ -13,7 +13,7 @@ const controllerConfig: ControllerConfig = {
       method: 'POST',
       actionName: 'CreateRental',
       headers: [
-        {header: 'Accept', value: 'application/json', isRequired: true}
+        {type: 'string', header: 'Accept', value: 'application/json', isRequired: true}
       ],
       requestBody: 'TesteDTO',
       response: 'TesteDTO',
@@ -22,7 +22,7 @@ const controllerConfig: ControllerConfig = {
       path: 'updateRental',
       method: 'PUT',
       headers: [
-        {header: 'Accept', value: 'application/json', isRequired: true}
+        {type: 'string', header: 'Accept', value: 'application/json', isRequired: true}
       ],
       actionName: 'UpdateRental',
       pathVariables: [{ type: 'string', name: 'value', isRequired: true }],//[{ type: 'Long', name: 'rentalId' }],
@@ -34,7 +34,7 @@ const controllerConfig: ControllerConfig = {
       method: 'GET',
       actionName: 'GetRental',
       headers: [
-        {header: 'Content-Type', value: 'application/json', isRequired: false}
+        {type: 'string', header: 'Content-Type', value: 'application/json', isRequired: false}
       ],
       pathVariables: [{ type: 'string', name: 'value', isRequired: false }],//[{ type: 'Long', name: 'rentalId' }],
       requestParams: [{ type: 'string', name: 'param', isRequired: true }],//[{ type: 'string', name: 'carPlate' }],
@@ -46,7 +46,7 @@ const controllerConfig: ControllerConfig = {
       actionName: 'GetAllRentals',
       pathVariables: [],
       headers: [
-        {header: 'Custom-Header', value: 'X-MY-HEADER', isRequired: true}
+        {type: 'string', header: 'Custom-Header', value: 'X-MY-HEADER', isRequired: true}
       ],
       modelAttribute: 'TesteDTO',
       requestParams: [

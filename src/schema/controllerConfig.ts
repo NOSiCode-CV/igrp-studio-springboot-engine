@@ -1,7 +1,6 @@
 import {
   GENERIC_ATTRIBUTE_TYPES, GENERATION_TYPES,
   HTTP_METHOD_TYPES,
-  MIME_TYPES,
   PARAMS_TYPES,
   PATTERNS,
   RESPONSE_TYPES, HTTP_HEADER_TYPES,
@@ -47,6 +46,11 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
 const headersSchema: JSONSchemaType<HttpHeader> = {
   type: 'object',
   properties: {
+    type: {
+      type: "string",
+      enum: PARAMS_TYPES,
+      errorMessage: `The type, if provided, must be one of ${PARAMS_TYPES}`
+    },
     header: {
       type: "string",
       enum: HTTP_HEADER_TYPES,
