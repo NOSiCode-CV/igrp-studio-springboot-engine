@@ -95,6 +95,7 @@ export const PARTIALS = [
   "database-docker-env.hbs",
   "database-docker-volumes.hbs",
   "database-env.hbs",
+  "auth-env.hbs",
   "database-maven-dependencies.hbs",
   "generic-maven-dependencies.hbs",
   "igrp-maven-dependencies.hbs",
