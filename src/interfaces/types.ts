@@ -123,11 +123,6 @@ export interface UniqueConstraint {
   columns: string[];
 }
 
-export interface EntityIndex {
-  name: string;
-  columns: string[];
-}
-
 export interface JavaType {
   name: string;
   namespace?: string;
