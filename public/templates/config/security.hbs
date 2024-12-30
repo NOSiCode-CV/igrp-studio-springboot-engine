@@ -49,16 +49,16 @@ public class SecurityConfig {
           and supports credentials in cross-origin requests.
         */
         http.cors(cors -> cors.configurationSource(request -> {
-          CorsConfiguration configuration = new CorsConfiguration();
-          configuration.addAllowedOriginPattern("*");
-          configuration.addAllowedMethod("GET");
-          configuration.addAllowedMethod("POST");
-          configuration.addAllowedMethod("PUT");
-          configuration.addAllowedMethod("PATCH");
-          configuration.addAllowedMethod("DELETE");
-          configuration.addAllowedMethod("HEAD");
-          configuration.addAllowedMethod("OPTIONS");
-          configuration.addAllowedHeader("*");
+          var configuration = new CorsConfiguration();
+          configuration.addAllowedOriginPattern(CorsConfiguration.ALL);
+          configuration.addAllowedMethod(HttpMethod.GET);
+          configuration.addAllowedMethod(HttpMethod.POST);
+          configuration.addAllowedMethod(HttpMethod.PUT);
+          configuration.addAllowedMethod(HttpMethod.PATCH);
+          configuration.addAllowedMethod(HttpMethod.DELETE);
+          configuration.addAllowedMethod(HttpMethod.HEAD);
+          configuration.addAllowedMethod(HttpMethod.OPTIONS);
+          configuration.addAllowedHeader(CorsConfiguration.ALL);
           configuration.setAllowCredentials(true);
           return configuration;
         }));
@@ -99,8 +99,8 @@ public class SecurityConfig {
      */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        var converter = new JwtAuthenticationConverter();
+        var grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return converter;
     }
