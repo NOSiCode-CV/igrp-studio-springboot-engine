@@ -148,7 +148,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   properties: {
     path: { 
       type: 'string', 
-      pattern: PATTERNS.RELATIONS_PATTERN,
+      pattern: PATTERNS.PATH_PATTERN,
       nullable: true,
       errorMessage:'The path attribute must only contain characters whithout spaces or special characters.'
     },

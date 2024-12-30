@@ -421,6 +421,7 @@ export const PATTERNS = {
   NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z_]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
+  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',  
