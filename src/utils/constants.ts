@@ -1028,7 +1028,9 @@ export const GENERIC_TYPES: Map<
 );
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
-export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
+//export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
+
+export const BODY_TYPES = ['Reference other schemas', 'string', 'integer', 'boolean', 'array', 'object', 'number', 'null', 'any', 'Schema Composition', 'Customize'] as const
 
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 

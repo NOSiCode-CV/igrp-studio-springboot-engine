@@ -22,7 +22,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  RESPONSE_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
+  BODY_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -927,20 +927,23 @@ export const engineTypes = async (module: string, basePath: string) => {
   for (const dto of typesDTOs.values()) {
     dtos.push(`${dto.name}DTO`);
   }
-  const responseTypes = [...RESPONSE_TYPES, ...dtos, ...dtos.map((dto) => `List<${dto}>`)];
+  const bodyTypes = [...BODY_TYPES]
 
-  let bodyTypes = ['Object', ...dtos];
+  const bodyDtos = [...dtos, ...dtos.map((dto) => `List<${dto}>`)];
+
+  let bodyRequests = ['Object', ...dtos];
 
   let paramsTypes = [...PARAMS_TYPES, ...dtos];
 
   const allTypes = [
     { MYME_TYPES: MIME_TYPES },
-    { BODY_REQUEST: bodyTypes },
+    { BODY_REQUEST: bodyRequests },
     { PARAMS_TYPES: paramsTypes },
     { METHODS: HTTP_METHOD_TYPES },
     { REQUEST_PARAMS: PARAMS_TYPES },
     { DATABASE_TYPES: DATABASE_TYPES },
-    { RESPONSE_TYPES: responseTypes },
+    { BODY_TYPES: bodyTypes },
+    { DTO_SCHEMAS: bodyDtos },
     { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
     { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
     { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
