@@ -3,7 +3,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  BODY_TYPES, HTTP_HEADER_TYPES,
+  SCHEMA_TYPES, HTTP_HEADER_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
@@ -205,7 +205,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     },
     response: { 
       type: 'string',
-      errorMessage: `Response type can only be one of [${BODY_TYPES}]`
+      errorMessage: `Response type can only be one of [${SCHEMA_TYPES}]`
     }
   },
   required: ['actionName', 'method', 'response'],

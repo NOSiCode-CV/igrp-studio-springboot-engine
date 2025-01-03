@@ -22,7 +22,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  BODY_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
+  SCHEMA_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -927,7 +927,7 @@ export const engineTypes = async (module: string, basePath: string) => {
   for (const dto of typesDTOs.values()) {
     dtos.push(`${dto.name}DTO`);
   }
-  const bodyTypes = [...BODY_TYPES]
+  const schemaTypes = [...SCHEMA_TYPES]
 
   const bodyDtos = [...dtos, ...dtos.map((dto) => `List<${dto}>`)];
 
@@ -942,7 +942,7 @@ export const engineTypes = async (module: string, basePath: string) => {
     { METHODS: HTTP_METHOD_TYPES },
     { REQUEST_PARAMS: PARAMS_TYPES },
     { DATABASE_TYPES: DATABASE_TYPES },
-    { BODY_TYPES: bodyTypes },
+    { SCHEMA_TYPES: schemaTypes },
     { DTO_SCHEMAS: bodyDtos },
     { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
     { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },

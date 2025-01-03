@@ -6,7 +6,7 @@ import {
   DIRECTORIES,
   ERROR_MESSAGE,
   PROJECT_STRUCTURE_STYLE,
-  BODY_TYPES,
+  SCHEMA_TYPES,
   TEMPLATES,
 } from '../../utils/constants';
 import { normalizeControllerName, saveControllerConfig } from './saveControllerConfig';
@@ -67,7 +67,7 @@ const getDtos = async (context: RenderContext<ControllerConfig>) => {
   for (const dto of typesDTOs.values()) {
     dtos.push(dto.name);
   }
-  return [...BODY_TYPES, ...dtos, ...dtos.map((dto) => `List<${dto}>`)];
+  return [...SCHEMA_TYPES, ...dtos, ...dtos.map((dto) => `List<${dto}>`)];
 };
 
 const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], types: string[]) => {

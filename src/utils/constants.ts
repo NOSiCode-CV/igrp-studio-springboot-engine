@@ -1030,10 +1030,8 @@ export const GENERIC_TYPES: Map<
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 //export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
 
-export const BODY_TYPES = ['Reference other schemas', 'string', 'integer', 'boolean', 'array', 'object', 'number', 'null', 'any', 'Schema Composition', 'Customize'] as const
-
+export const SCHEMA_TYPES = ['Reference other schemas', 'string', 'integer', 'boolean', 'array', 'object', 'number', 'null', 'any', 'Schema Composition', 'Customize'] as const
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
-
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const STRUCT_TYPES = [PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN, PROJECT_STRUCTURE_STYLE.TECHNICAL] as const
 export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter'] as const
