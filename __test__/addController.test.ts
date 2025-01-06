@@ -16,7 +16,7 @@ const controllerConfig: ControllerConfig = {
         {type: 'string', header: 'Accept', value: 'application/json', isRequired: true}
       ],
       requestBody: 'TesteDTO',
-      response: 'TesteDTO',
+      responses: 'TesteDTO',
     },
     {
       path: 'updateRental',
@@ -27,7 +27,7 @@ const controllerConfig: ControllerConfig = {
       actionName: 'UpdateRental',
       pathVariables: [{ type: 'string', name: 'value', isRequired: true }],//[{ type: 'Long', name: 'rentalId' }],
       requestParams: [{ type: 'string', name: 'param', isRequired: false }],//[{ type: 'string', name: 'carPlate' }],
-      response: 'TesteDTO',
+      responses: 'TesteDTO',
     },
     {
       path: 'getRental',
@@ -38,7 +38,7 @@ const controllerConfig: ControllerConfig = {
       ],
       pathVariables: [{ type: 'string', name: 'value', isRequired: false }],//[{ type: 'Long', name: 'rentalId' }],
       requestParams: [{ type: 'string', name: 'param', isRequired: true }],//[{ type: 'string', name: 'carPlate' }],
-      response: 'TesteDTO',
+      responses: 'TesteDTO',
     },
     {
       path: 'getAllRentals',
@@ -55,7 +55,7 @@ const controllerConfig: ControllerConfig = {
         { type: 'string', name: 'carPlate', value: 'plate', isRequired: false },
         { type: 'string', name: 'registrationDate', isRequired: true },
       ],
-      response: 'List<TesteDTO>',
+      responses: 'List<TesteDTO>',
     },
   ],
 };

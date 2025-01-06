@@ -14,7 +14,7 @@ const controllerConfig: ControllerConfig = {
       actionName: 'goodBye',
       pathVariables:[{ type: 'Long', name: 'id', isRequired: true }],
       requestParams: [{ type: 'string', name: 'greetingName', isRequired: false }],
-      response: 'List<String>'
+      responses: 'List<String>'
     }
   ]
 };

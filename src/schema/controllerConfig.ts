@@ -349,21 +349,21 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     },
     requestBody: {
       ...bodySchema,
-      nullable: false,
+      nullable: true,
       errorMessage: "The 'requestBody' field must be a valid Body.",
     },
-    response: {
+    responses: {
       type: 'object',
+      nullable: true,
       patternProperties: {
         '^\\d{3}$': bodySchema, // Status codes (e.g., "200", "404", "500") as keys
       },
       required: ["200", "400", "500"],
       additionalProperties: false,
-      nullable: false,
       errorMessage: "The 'response' field must map string status codes to valid Body objects.",
     },
   },
-  required: ['actionName', 'method', 'response', 'requestBody'],
+  required: ['actionName', 'method'],
   additionalProperties: false,
   errorMessage: {
     required: {

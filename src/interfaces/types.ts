@@ -205,8 +205,8 @@ export interface ControllerAction {
   headers?: HttpHeader[];
   modelAttribute?: string;
   requestParams?: RequestParams[];
-  requestBody: Body;
-  response: {
+  requestBody?: Body;
+  responses?: {
     [statusCode: string]: Body;
   };
   pathVariables?: PathVariables[];
