@@ -112,6 +112,22 @@ const schemaField: JSONSchemaType<SchemaField> = {
 };
 
 /**
+ * JSON schema for validating the ResponseSchemaContent interface.
+ */
+const responseSchemaContent: JSONSchemaType<SchemaContent> = {
+  type: "object",
+  properties: {
+    schema: {
+      anyOf: [
+        schemaField
+      ]
+    },
+  },
+  required: ["schema"],
+  additionalProperties: false,
+};
+
+/**
  * JSON schema for validating the Body interface.
  */
 const bodySchema: JSONSchemaType<Body> = {
@@ -134,7 +150,6 @@ const bodySchema: JSONSchemaType<Body> = {
         nullable: true,
         anyOf: [
           { type: "object" }, // For dynamic content types
-          { $ref: "#/definitions/SchemaContent" }, // Refers to SchemaContent structure
         ],
       },
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
@@ -142,22 +157,6 @@ const bodySchema: JSONSchemaType<Body> = {
   },
   required: ["required", "content"],
   additionalProperties: false
-};
-
-
-/**
- * JSON schema for validating the ResponseSchemaContent interface.
- */
-const responseSchemaContent: JSONSchemaType<SchemaContent> = {
-  type: "object",
-  properties: {
-    schema: {
-      $ref: "#/definitions/schemaField",
-      errorMessage: "The 'schema' field must be a valid SchemaField.",
-    },
-  },
-  required: ["schema"],
-  additionalProperties: false,
 };
 
 const pathParamsSchema: JSONSchemaType<RequestParams> = {
@@ -297,78 +296,84 @@ const attributeSchema: JSONSchemaType<Attribute> = {
 const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   type: 'object',
   properties: {
-    path: { 
-      type: 'string', 
+    path: {
+      type: 'string',
       pattern: PATTERNS.PATH_PATTERN,
       nullable: true,
-      errorMessage:'The path attribute must only contain characters whithout spaces or special characters.'
+      errorMessage: 'The path attribute must only contain characters without spaces or special characters.',
     },
-    actionName: { 
-      type: 'string', 
+    actionName: {
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'the ActionName attribute can only contain characters whithout spaces or special characters.'
+      errorMessage: 'The actionName attribute can only contain characters without spaces or special characters.',
     },
-    method: { 
-      type: 'string', 
+    method: {
+      type: 'string',
       enum: HTTP_METHOD_TYPES,
-      errorMessage: `method type can only be one of ${HTTP_METHOD_TYPES}`
+      errorMessage: `Method type can only be one of ${HTTP_METHOD_TYPES}.`,
     },
     modelAttribute: {
       type: 'string',
       pattern: PATTERNS.RELATIONS_PATTERN,
       nullable: true,
-      errorMessage: `the model attribute can only contain characters whithout spaces or special characters`
+      errorMessage: 'The modelAttribute can only contain characters without spaces or special characters.',
     },
-    requestParams: { 
-      type: 'array', 
-      items: pathParamsSchema, 
+    requestParams: {
+      type: 'array',
+      items: pathParamsSchema,
       nullable: true,
-      errorMessage: 'Request params can only contain a characters without spaces or special characters.'
+      errorMessage: 'Request params can only contain characters without spaces or special characters.',
     },
-    pathVariables: { 
-      type: 'array', 
-      items: pathParamsSchema, 
+    pathVariables: {
+      type: 'array',
+      items: pathParamsSchema,
       nullable: true,
-      errorMessage: 'Path params can only contain a characters without spaces or special characters.'
+      errorMessage: 'Path variables can only contain characters without spaces or special characters.',
     },
     headers: {
       type: 'array',
       items: headersSchema,
       nullable: true,
-      errorMessage: 'Headers can only contain a characters without spaces or special characters.'
+      errorMessage: 'Headers can only contain characters without spaces or special characters.',
     },
     multipartFiles: {
       type: 'array',
       items: pathParamsSchema,
       nullable: true,
-      errorMessage: 'Multipart params can only contain a characters without spaces or special characters.'
+      errorMessage: 'Multipart files can only contain characters without spaces or special characters.',
     },
     permissions: {
       type: 'array',
       items: { type: 'string' },
-      nullable: true
+      nullable: true,
     },
     requestBody: {
-      $ref: "#/definitions/bodySchema",
-      errorMessage: "The 'request' field must be a valid Body.",
+      ...bodySchema,
+      nullable: false,
+      errorMessage: "The 'requestBody' field must be a valid Body.",
     },
     response: {
-      type: "object",
-      $ref: "#/definitions/bodySchema",
+      type: 'object',
+      patternProperties: {
+        '^\\d{3}$': bodySchema, // Status codes (e.g., "200", "404", "500") as keys
+      },
+      required: ["200", "400", "500"],
+      additionalProperties: false,
       nullable: false,
-      errorMessage: "The 'response' field must be an object with valid Body values.",
-    }
+      errorMessage: "The 'response' field must map string status codes to valid Body objects.",
+    },
   },
   required: ['actionName', 'method', 'response', 'requestBody'],
   additionalProperties: false,
   errorMessage: {
     required: {
-      path:'Path is required',
-      name:'name is required',
-      method:'method is required',
-      response:'response type is required',
-    }
-  }
+      path: 'Path is required.',
+      actionName: 'ActionName is required.',
+      method: 'Method is required.',
+      response: 'Response is required.',
+      requestBody: 'RequestBody is required.',
+    },
+  },
 };
 
 const controllerSchema: JSONSchemaType<ControllerConfig> = {

@@ -207,7 +207,7 @@ export interface ControllerAction {
   requestParams?: RequestParams[];
   requestBody: Body;
   response: {
-    [statusCode: number]: Body;
+    [statusCode: string]: Body;
   };
   pathVariables?: PathVariables[];
   multipartFiles?: MultipartFile[];
