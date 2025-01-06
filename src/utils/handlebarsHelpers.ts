@@ -163,13 +163,13 @@ Handlebars.registerHelper(
     const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
     for (const action of actions) {
-      if (action.requestBody)
+      /*if (action.requestBody.requestBody)
         if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody))
           if (domainDriven === true)
             imports.push(
               `import ${group}.${packageName}.${mod}.application.dto.${action.requestBody};`,
             );
-          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody};`); // TODO: [27/11/2024 - handle the DTO name]
+          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody};`); // TODO: [27/11/2024 - handle the DTO name, 06/01/2025 - check how to handle importing for dynamic schemas]
       if (action.response)
         if (extractTypeFromList(action.response)) {
           const type = extractTypeFromList(action.response);
@@ -177,7 +177,7 @@ Handlebars.registerHelper(
             imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
           else imports.push(`import ${group}.${packageName}.dto.${type};`);
         }
-      if (action.response.startsWith('List')) imports.push(`import java.util.List;`);
+      if (action.response.startsWith('List')) imports.push(`import java.util.List;`);*/
     }
 
     return [...new Set(imports)].join('\n');

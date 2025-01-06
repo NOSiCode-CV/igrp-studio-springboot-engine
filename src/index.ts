@@ -700,7 +700,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   // this function check is the request params in actions have duplicateds names
   checkDuplicated([], config.actions, []);
 
-  config.actions = upperCaseResponse(config.actions);
+  // TODO: handle this after dynamic schema updates 06-01-2025
+  //config.actions = upperCaseResponse(config.actions);
 
   const isConfigValid = validateController(config);
 
@@ -732,7 +733,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
-            act.requestBody.replace('DTO', ''),
+            "act.requestBody.replace('DTO', '')",//TODO: handle this 06-01-2025
           )
         : null;
       await addDTO(
@@ -782,7 +783,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                   : [
                       { name: 'none', type: 'object', ns: 'java', required: false },
                     ]) as JavaAttribute[]),
-          response: act.response,
+          response: "act.response", // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,
       );

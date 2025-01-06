@@ -3,11 +3,162 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  SCHEMA_TYPES, HTTP_HEADER_TYPES,
+  HTTP_HEADER_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
-import { Attribute, ControllerAction, ControllerConfig, HttpHeader, RequestParams } from '../interfaces/types';
+import {
+  Attribute,
+  Body,
+  ControllerAction,
+  ControllerConfig,
+  HttpHeader,
+  RequestParams,
+  SchemaContent,
+  SchemaField,
+} from '../interfaces/types';
+
+/**
+ * JSON schema for validating the SchemaField interface.
+ */
+const schemaField: JSONSchemaType<SchemaField> = {
+  type: "object",
+  properties: {
+    type: {
+      type: "string",
+      nullable: false,
+      errorMessage: "The 'type' field is required and must be a string.",
+    },
+    required: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: "The 'required' field, if provided, must be a boolean.",
+    },
+    description: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'description' field, if provided, must be a string.",
+    },
+    example: {
+      type: "object",
+      nullable: true,
+      additionalProperties: true,
+      errorMessage: "The 'example' field can be any type.",
+    },
+    deprecated: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: "The 'deprecated' field, if provided, must be a boolean.",
+    },
+    minimum: {
+      type: "number",
+      nullable: true,
+      errorMessage: "The 'minimum' field, if provided, must be a number.",
+    },
+    maximum: {
+      type: "number",
+      nullable: true,
+      errorMessage: "The 'maximum' field, if provided, must be a number.",
+    },
+    pattern: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'pattern' field, if provided, must be a string.",
+    },
+    format: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'format' field, if provided, must be a string.",
+    },
+    enum: {
+      type: "array",
+      items: { type: "string" },
+      nullable: true,
+      errorMessage: "The 'enum' field, if provided, must be an array of strings.",
+    },
+    default: {
+      type: "object",
+      nullable: true,
+      additionalProperties: true,
+      errorMessage: "The 'default' field can be any type.",
+    },
+    items: {
+      type: "object",
+      required: ["type"],
+      nullable: true,
+      anyOf: [
+        { $ref: "#" }, // reference to the definition
+        { type: "null" },
+      ],
+    },
+    properties: {
+      type: "object",
+      required: ["type"],
+      nullable: true,
+      additionalProperties: {
+        type: "object",
+        required: ["type"],
+        nullable: true,
+        anyOf: [
+          { $ref: "#" }, // reference to the definition
+          { type: "null" },
+        ],
+      },
+      errorMessage: "The 'properties' field must be an object with SchemaField values.",
+    },
+  },
+  required: ["type"],
+  additionalProperties: false,
+};
+
+/**
+ * JSON schema for validating the Body interface.
+ */
+const bodySchema: JSONSchemaType<Body> = {
+  type: "object",
+  properties: {
+    description: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'description' field, if provided, must be a string.",
+    },
+    required: {
+      type: "boolean",
+      errorMessage: "The 'required' field must be a boolean.",
+    },
+    content: {
+      type: "object",
+      nullable: false,
+      additionalProperties: {
+        type: "object",
+        nullable: true,
+        anyOf: [
+          { type: "object" }, // For dynamic content types
+          { $ref: "#/definitions/SchemaContent" }, // Refers to SchemaContent structure
+        ],
+      },
+      errorMessage: "The 'content' field must be an object mapping content types to schemas.",
+    },
+  },
+  required: ["required", "content"],
+  additionalProperties: false
+};
+
+
+/**
+ * JSON schema for validating the ResponseSchemaContent interface.
+ */
+const responseSchemaContent: JSONSchemaType<SchemaContent> = {
+  type: "object",
+  properties: {
+    schema: {
+      $ref: "#/definitions/schemaField",
+      errorMessage: "The 'schema' field must be a valid SchemaField.",
+    },
+  },
+  required: ["schema"],
+  additionalProperties: false,
+};
 
 const pathParamsSchema: JSONSchemaType<RequestParams> = {
   type: 'object',
@@ -162,12 +313,6 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       enum: HTTP_METHOD_TYPES,
       errorMessage: `method type can only be one of ${HTTP_METHOD_TYPES}`
     },
-    requestBody: { 
-      type: 'string', 
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      nullable: true,
-      errorMessage: `the requestBody attribute can only contain characters whithout spaces or special characters`
-    },
     modelAttribute: {
       type: 'string',
       pattern: PATTERNS.RELATIONS_PATTERN,
@@ -203,12 +348,18 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       items: { type: 'string' },
       nullable: true
     },
-    response: { 
-      type: 'string',
-      errorMessage: `Response type can only be one of [${SCHEMA_TYPES}]`
+    requestBody: {
+      $ref: "#/definitions/bodySchema",
+      errorMessage: "The 'request' field must be a valid Body.",
+    },
+    response: {
+      type: "object",
+      $ref: "#/definitions/bodySchema",
+      nullable: false,
+      errorMessage: "The 'response' field must be an object with valid Body values.",
     }
   },
-  required: ['actionName', 'method', 'response'],
+  required: ['actionName', 'method', 'response', 'requestBody'],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -269,6 +420,10 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
   }
 };
 
+// Compile and export the validators
+export const validateJsonSchema: ValidateFunction<SchemaField> = ajvInstance.compile(schemaField);
+export const validateRequestSchema: ValidateFunction<Body> = ajvInstance.compile(bodySchema);
+export const validateResponseSchemaContent: ValidateFunction<SchemaContent> = ajvInstance.compile(responseSchemaContent);
 
 export const validateController: ValidateFunction<ControllerConfig> =
   ajvInstance.compile<ControllerConfig>(controllerSchema);

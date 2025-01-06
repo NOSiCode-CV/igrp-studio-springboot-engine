@@ -203,10 +203,12 @@ export interface ControllerAction {
   actionName: string;
   method: HttpMethod;
   headers?: HttpHeader[];
-  requestBody?: string;
   modelAttribute?: string;
   requestParams?: RequestParams[];
-  response: string;
+  requestBody: Body;
+  response: {
+    [statusCode: number]: Body;
+  };
   pathVariables?: PathVariables[];
   multipartFiles?: MultipartFile[];
 }
@@ -265,6 +267,34 @@ export type RenderContext<T = undefined> = {
   dateTimeAttributes?: string[];
   uniqueConstraints?: UniqueConstraint[];
 };
+
+export interface SchemaField {
+  type: string;
+  required?: boolean;
+  description?: string;
+  example?: any;
+  deprecated?: boolean;
+  minimum?: number;
+  maximum?: number;
+  pattern?: string;
+  format?: string;
+  enum?: string[];
+  default?: any;
+  items?: SchemaField; // For array types
+  properties?: { [key: string]: SchemaField }; // For object types
+}
+
+export interface Body {
+  description?: string;
+  required: boolean;
+  content: {
+    [contentType: string]: any | SchemaContent; // e.g., "application/json"
+  };
+}
+
+export interface SchemaContent {
+  schema: SchemaField;
+}
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

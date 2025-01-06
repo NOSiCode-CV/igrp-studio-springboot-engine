@@ -12,7 +12,8 @@ export const checkDependencyInController = async function (context: RenderContex
   const controllerTypes = await getControllerTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const errors: Array<{ message: string }> = [];
 
-  for (const controller of controllerTypes.values()) {
+  // TODO: [06-01-2025 - Handle this situation for dynamic schemas]
+  /*for (const controller of controllerTypes.values()) {
     for (const action of controller.actions) {
       if (action.response === dtoName) {
         errors.push({
@@ -25,7 +26,7 @@ export const checkDependencyInController = async function (context: RenderContex
         });
       }
     }
-  }
+  }*/
   if (errors.length > 0) {
     throw errors;
   }
