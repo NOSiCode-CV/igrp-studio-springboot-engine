@@ -4,61 +4,34 @@ import { ControllerConfig } from '../src/interfaces/types';
 
 const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 const controllerConfig: ControllerConfig = {
-  type: 'controller',
-  name: 'CarRental',
-  basePath: 'rental',
-  actions: [
+  "type": "controller",
+  "name": "Peoples",
+  "basePath": "peoples",
+  "actions": [
     {
-      path: 'createRental',
-      method: 'POST',
-      actionName: 'CreateRental',
-      headers: [
-        {type: 'string', header: 'Accept', value: 'application/json', isRequired: true}
-      ],
-      requestBody: 'TesteDTO',
-      responses: 'TesteDTO',
-    },
-    {
-      path: 'updateRental',
-      method: 'PUT',
-      headers: [
-        {type: 'string', header: 'Accept', value: 'application/json', isRequired: true}
-      ],
-      actionName: 'UpdateRental',
-      pathVariables: [{ type: 'string', name: 'value', isRequired: true }],//[{ type: 'Long', name: 'rentalId' }],
-      requestParams: [{ type: 'string', name: 'param', isRequired: false }],//[{ type: 'string', name: 'carPlate' }],
-      responses: 'TesteDTO',
-    },
-    {
-      path: 'getRental',
-      method: 'GET',
-      actionName: 'GetRental',
-      headers: [
-        {type: 'string', header: 'Content-Type', value: 'application/json', isRequired: false}
-      ],
-      pathVariables: [{ type: 'string', name: 'value', isRequired: false }],//[{ type: 'Long', name: 'rentalId' }],
-      requestParams: [{ type: 'string', name: 'param', isRequired: true }],//[{ type: 'string', name: 'carPlate' }],
-      responses: 'TesteDTO',
-    },
-    {
-      path: 'getAllRentals',
-      method: 'GET',
-      actionName: 'GetAllRentals',
-      pathVariables: [],
-      headers: [
-        {type: 'string', header: 'Custom-Header', value: 'X-MY-HEADER', isRequired: true}
-      ],
-      modelAttribute: 'TesteDTO',
-      requestParams: [
-        { type: 'string', name: 'carBrand', value: 'brand', isRequired: false },
-        { type: 'string', name: 'carModel', value: 'model', isRequired: true },
-        { type: 'string', name: 'carPlate', value: 'plate', isRequired: false },
-        { type: 'string', name: 'registrationDate', isRequired: true },
-      ],
-      responses: 'List<TesteDTO>',
-    },
+      "actionName": "getPeople",
+      "path": "get-people",
+      "method": "GET",
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "requestParams": [],
+      "pathVariables": [],
+      "headers": []
+    }
   ],
-};
+  "module": "ModuloTetse"
+}
 
 beforeAll(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });

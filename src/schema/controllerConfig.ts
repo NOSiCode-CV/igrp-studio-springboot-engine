@@ -138,10 +138,6 @@ const bodySchema: JSONSchemaType<Body> = {
       nullable: true,
       errorMessage: "The 'description' field, if provided, must be a string.",
     },
-    required: {
-      type: "boolean",
-      errorMessage: "The 'required' field must be a boolean.",
-    },
     content: {
       type: "object",
       nullable: false,
@@ -155,7 +151,7 @@ const bodySchema: JSONSchemaType<Body> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["required", "content"],
+  required: ["content"],
   additionalProperties: false
 };
 
@@ -358,7 +354,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       patternProperties: {
         '^\\d{3}$': bodySchema, // Status codes (e.g., "200", "404", "500") as keys
       },
-      required: ["200", "400", "500"],
+      required: [],
       additionalProperties: false,
       errorMessage: "The 'response' field must map string status codes to valid Body objects.",
     },

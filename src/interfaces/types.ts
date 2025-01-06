@@ -286,7 +286,6 @@ export interface SchemaField {
 
 export interface Body {
   description?: string;
-  required: boolean;
   content: {
     [contentType: string]: any | SchemaContent; // e.g., "application/json"
   };

@@ -15,7 +15,7 @@ export const deleteControllerConfig = async (context: RenderContext<ControllerCo
   let controllerPath;
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    controllerPath = path.join(getDDDControllerDir(context), context.resourceConfig.name + EXTENSIONS.JAVA);
+    controllerPath = path.join(getDDDControllerDir(context), context.resourceConfig.name + "Controller" + EXTENSIONS.JAVA);
     //const aggregatePath = getDDDAggregateRootOutputDir(context);
     //if (await fs.pathExists(aggregatePath)) await fs.rm(aggregatePath, { recursive: true });
     //else throw ERROR_MESSAGE.AGGREGATE_NOT_FOUND;
