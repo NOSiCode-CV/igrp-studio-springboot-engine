@@ -41,7 +41,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/if}}
     {{else}}
     {{#if requestBody}}{{else if requestParams}}final var command = new {{capitalize actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
-      final var command = new {{actionName}}Command();
+      final var command = new {{capitalize actionName}}Command();
     {{/if}}
     {{/if}}
 

@@ -12,21 +12,23 @@ export const checkDependencyInController = async function (context: RenderContex
   const controllerTypes = await getControllerTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const errors: Array<{ message: string }> = [];
 
-  // TODO: [06-01-2025 - Handle this situation for dynamic schemas]
-  /*for (const controller of controllerTypes.values()) {
+  for (const controller of controllerTypes.values()) {
     for (const action of controller.actions) {
-      if (action.response === dtoName) {
+      if(action.responses)
+        for (const response of Object.values(action.responses)) {
+          if (response.name === dtoName) {
+            errors.push({
+              message: `DTO '${dtoName}' is being used as a response in controller '${controller.name}' in action '${action.actionName}'.`,
+            });
+          }
+        }
+      if (action.requestBody?.name === dtoName) {
         errors.push({
-          message: `DTO '${dtoName}' is being used as a response in controller '${controller.name}' in action '${action.actionName}'.`
-        });
-      }
-      if (action.requestBody === dtoName) {
-        errors.push({
-          message: `DTO '${dtoName}' is being used as a requestBody in controller '${controller.name}' in action '${action.actionName}'.`
+          message: `DTO '${dtoName}' is being used as a requestBody in controller '${controller.name}' in action '${action.actionName}'.`,
         });
       }
     }
-  }*/
+  }
   if (errors.length > 0) {
     throw errors;
   }

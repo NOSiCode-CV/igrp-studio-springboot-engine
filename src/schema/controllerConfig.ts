@@ -29,10 +29,21 @@ const schemaField: JSONSchemaType<SchemaField> = {
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
     },
+    $ref: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The attribute $ref must contain only alphabetic characters and cannot contain spaces or special characters.",
+    },
     required: {
       type: "boolean",
       nullable: true,
       errorMessage: "The 'required' field, if provided, must be a boolean.",
+    },
+    identifier: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: "The 'identifier' field, if provided, must be a boolean.",
     },
     description: {
       type: "string",
@@ -93,15 +104,14 @@ const schemaField: JSONSchemaType<SchemaField> = {
     },
     properties: {
       type: "object",
-      required: ["type"],
+      required: [],
       nullable: true,
       additionalProperties: {
         type: "object",
-        required: ["type"],
+        required: [],
         nullable: true,
         anyOf: [
-          { $ref: "#" }, // reference to the definition
-          { type: "null" },
+          { type: "object" }, // For dynamic content types
         ],
       },
       errorMessage: "The 'properties' field must be an object with SchemaField values.",
@@ -138,11 +148,25 @@ const bodySchema: JSONSchemaType<Body> = {
       nullable: true,
       errorMessage: "The 'description' field, if provided, must be a string.",
     },
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: false,
+      errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
+    },
+    module: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.",
+    },
     content: {
       type: "object",
+      required: [],
       nullable: false,
       additionalProperties: {
         type: "object",
+        required: [],
         nullable: true,
         anyOf: [
           { type: "object" }, // For dynamic content types
@@ -151,7 +175,7 @@ const bodySchema: JSONSchemaType<Body> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["content"],
+  required: ["content", "name"],
   additionalProperties: false
 };
 
@@ -342,9 +366,13 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       type: 'array',
       items: { type: 'string' },
       nullable: true,
+      errorMessage: "The 'permissions' field must be a string array if provided.",
     },
     requestBody: {
-      ...bodySchema,
+      type: "object",
+      anyOf: [
+        bodySchema
+      ],
       nullable: true,
       errorMessage: "The 'requestBody' field must be a valid Body.",
     },
@@ -355,19 +383,15 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
         '^\\d{3}$': bodySchema, // Status codes (e.g., "200", "404", "500") as keys
       },
       required: [],
-      additionalProperties: false,
-      errorMessage: "The 'response' field must map string status codes to valid Body objects.",
+      errorMessage: "The 'responses' field must map string status codes to valid Body objects.",
     },
   },
   required: ['actionName', 'method'],
   additionalProperties: false,
   errorMessage: {
     required: {
-      path: 'Path is required.',
       actionName: 'ActionName is required.',
       method: 'Method is required.',
-      response: 'Response is required.',
-      requestBody: 'RequestBody is required.',
     },
   },
 };
@@ -389,7 +413,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage: 'The name attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
+      errorMessage: 'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
     basePath: { 
       type: 'string',
@@ -397,7 +421,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       errorMessage: 'The basePath attribute can only contain alphanumeric characters without spaces or special characters.'
     },
     actions: { 
-      type: 'array', 
+      type: 'array',
       items: controllerActionSchema,
       errorMessage: 'The actions array must contain valid controller actions.'
     },
@@ -421,10 +445,18 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
   }
 };
 
-// Compile and export the validators
-export const validateJsonSchema: ValidateFunction<SchemaField> = ajvInstance.compile(schemaField);
-export const validateRequestSchema: ValidateFunction<Body> = ajvInstance.compile(bodySchema);
-export const validateResponseSchemaContent: ValidateFunction<SchemaContent> = ajvInstance.compile(responseSchemaContent);
+export const debugSchema = (data: ControllerConfig) => {
+  const valid = validateController(data);
+  if (!valid) {
+    validateController.errors!.forEach(error => {
+      console.log(`Error at ${error.instancePath}: ${error.message}`);
+      console.log(`Schema path: ${error.schemaPath}`);
+    });
+  } else {
+    console.log("Valid schema");
+  }
+
+}
 
 export const validateController: ValidateFunction<ControllerConfig> =
   ajvInstance.compile<ControllerConfig>(controllerSchema);

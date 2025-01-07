@@ -1,7 +1,7 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute,
+  Attribute, Body,
   ControllerAction,
   DTOConfig,
   HttpHeader,
@@ -17,6 +17,7 @@ import {
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
+import { capitalize, capitalizeResponse } from './capitalizeStrings';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -149,6 +150,10 @@ Handlebars.registerHelper(
     return resourceConfig.keyType || 'DefaultType';
 });*/
 
+Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
+    return capitalizeResponse(responses);
+});
+
 Handlebars.registerHelper(
   'importsTypes',
   function (
@@ -163,21 +168,24 @@ Handlebars.registerHelper(
     const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
     for (const action of actions) {
-      /*if (action.requestBody.requestBody)
-        if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody))
+      if (action.requestBody)
+        if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody.name))
           if (domainDriven === true)
             imports.push(
-              `import ${group}.${packageName}.${mod}.application.dto.${action.requestBody};`,
+              `import ${group}.${packageName}.${mod}.application.dto.${action.requestBody.name};`,
             );
-          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody};`); // TODO: [27/11/2024 - handle the DTO name, 06/01/2025 - check how to handle importing for dynamic schemas]
-      if (action.response)
-        if (extractTypeFromList(action.response)) {
-          const type = extractTypeFromList(action.response);
-          if (domainDriven === true)
-            imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
-          else imports.push(`import ${group}.${packageName}.dto.${type};`);
+          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody.name};`);
+      if (action.responses)
+        for (const response of Object.values(action.responses)) {
+          const className = capitalize(response.name)
+          if (extractTypeFromList(className)) {
+            const type = extractTypeFromList(className);
+            if (domainDriven === true)
+              imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
+            else imports.push(`import ${group}.${packageName}.dto.${type};`);
+          }
         }
-      if (action.response.startsWith('List')) imports.push(`import java.util.List;`);*/
+      imports.push(`import java.util.List;`);
     }
 
     return [...new Set(imports)].join('\n');
@@ -554,5 +562,22 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
   // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
+
+function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
+  if(statusCode === "200")
+    return actionName + "Response"
+  if(statusCode === "201")
+    return actionName + "CreatedResponse"
+  if(statusCode === "400")
+    return actionName + "BadResponse"
+  if(statusCode === "500")
+    return actionName + "ErrorResponse"
+  if(statusCode === "401")
+    return actionName + "UnauthorizedResponse"
+  if(statusCode === "403")
+    return actionName + "ForbiddenResponse"
+  else
+    return actionName + statusCode + "Response"
+}
 
 export { Handlebars };

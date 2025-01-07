@@ -49,7 +49,7 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalize } from './utils/capitalizeStrings';
+import { capitalize, capitalizeResponse } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
@@ -68,6 +68,8 @@ import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFile
 import { enumValidation } from './schema/enumConfig';
 import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateEnum } from './modules/enum/generateEnum';
+import { generateRequest } from './modules/controller/generateRequest';
+import { generateResponse } from './modules/controller/generateResponse';
 
 /**
  * Main Function that creates the base api
@@ -700,7 +702,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   // this function check is the request params in actions have duplicateds names
   checkDuplicated([], config.actions, []);
 
-  // TODO: handle this after dynamic schema updates 06-01-2025
   //config.actions = upperCaseResponse(config.actions);
 
   const isConfigValid = validateController(config);
@@ -725,6 +726,10 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
   await generateController(context);
 
+  await generateRequest(context);
+
+  await generateResponse(context);
+
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
 
@@ -733,7 +738,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
-            "act.requestBody.replace('DTO', '')",//TODO: handle this 06-01-2025
+            (act.requestBody.name).replace('DTO', ''),
           )
         : null;
       await addDTO(
@@ -783,7 +788,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                   : [
                       { name: 'none', type: 'object', ns: 'java', required: false },
                     ]) as JavaAttribute[]),
-          response: "act.response", // TODO: handle this 06-01-2025
+          response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,
       );

@@ -270,7 +270,9 @@ export type RenderContext<T = undefined> = {
 
 export interface SchemaField {
   type: string;
+  $ref?: string,
   required?: boolean;
+  identifier?: boolean;
   description?: string;
   example?: any;
   deprecated?: boolean;
@@ -286,8 +288,10 @@ export interface SchemaField {
 
 export interface Body {
   description?: string;
+  name: string;
+  module?: string;
   content: {
-    [contentType: string]: any | SchemaContent; // e.g., "application/json"
+    [contentType: string]: SchemaContent; // e.g., "application/json"
   };
 }
 
