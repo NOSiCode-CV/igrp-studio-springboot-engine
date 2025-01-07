@@ -1,0 +1,9 @@
+{{> package-java }}
+
+public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException<{{capitalize resourceConfig.body}}> {
+
+   public {{capitalize resourceConfig.name}}Exception(HttpStatus status, {{capitalize resourceConfig.body}} body) {
+      super(status, object);
+   }
+
+}

@@ -118,6 +118,12 @@ export interface HandlerConfig extends DTOConfig {
   response: string;
 }
 
+export interface ExceptionConfig {
+  name: string;
+  body: string;
+  module?: string;
+}
+
 export interface UniqueConstraint {
   name: string;
   columns: string[];

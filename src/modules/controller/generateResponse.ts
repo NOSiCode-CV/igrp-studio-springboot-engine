@@ -1,7 +1,7 @@
 import {
   ApiConfig, Body,
   ControllerConfig,
-  DTOConfig,
+  DTOConfig, ExceptionConfig,
   JavaType,
   ModelConfig,
   RenderContext,
@@ -27,6 +27,7 @@ import { getModelTypes } from '../model/helpers';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
+import { generateException } from './generateException';
 
 export const generateResponse = async (context: RenderContext<ControllerConfig>) => {
 
@@ -34,7 +35,7 @@ export const generateResponse = async (context: RenderContext<ControllerConfig>)
 
     if(!action.responses || !Object.keys(action.responses)) continue
 
-    for (const response of Object.values(action.responses)) {
+    for (const [status, response] of Object.entries(action.responses)) {
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: context.baseConfig,
         basePath: context.basePath,
@@ -50,6 +51,25 @@ export const generateResponse = async (context: RenderContext<ControllerConfig>)
       const template = await _renderDTO(dtoContext);
 
       await saveToFile(template, modelOutputPath);
+
+      const statusCode = parseInt(status, 10);
+
+      if(statusCode >= 400 && statusCode <= 599) {
+
+        const exceptionContext: RenderContext<ExceptionConfig> = {
+          baseConfig: context.baseConfig,
+          basePath: context.basePath,
+          resourceConfig: {
+            name: action.actionName,
+            body: dtoContext.resourceConfig.name + "DTO"
+          },
+          fullPath: context.basePath,
+        };
+
+        await generateException(exceptionContext);
+
+      }
+
     }
   }
 };

@@ -1,0 +1,19 @@
+import org.springframework.http.HttpStatus;
+
+public class IgrpResponseStatusException<T> extends RuntimeException {
+    private final HttpStatus status;
+    private final T object;
+
+    public IgrpResponseStatusException(HttpStatus status, T object) {
+        this.status = status;
+        this.object = object;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public T getObject() {
+        return object;
+    }
+}

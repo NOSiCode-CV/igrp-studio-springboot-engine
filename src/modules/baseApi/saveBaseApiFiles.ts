@@ -51,6 +51,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);
     const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
     const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
+    const exceptionsPath = path.join(domainPath, DIRECTORIES.EXCEPTIONS);
     const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
 
     return [
@@ -94,10 +95,21 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
       },
+      {
+        output: exceptionsPath,
+        template: TEMPLATES.GLOBAL_EXCEPTION_HANDLER,
+        name: COMMON_FILES.GLOBAL_EXCEPTION_HANDLER,
+      },
+      {
+        output: exceptionsPath,
+        template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
+        name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
+      },
     ];
   } else {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
+    const exceptionPath = path.join(mainPath, 'exceptions');
 
     return [
       { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
@@ -135,6 +147,16 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: securityPath,
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+      {
+        output: exceptionPath,
+        template: TEMPLATES.GLOBAL_EXCEPTION_HANDLER,
+        name: COMMON_FILES.GLOBAL_EXCEPTION_HANDLER,
+      },
+      {
+        output: exceptionPath,
+        template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
+        name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
       },
     ];
 

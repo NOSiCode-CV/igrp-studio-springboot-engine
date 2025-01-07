@@ -4,8 +4,7 @@ import {
   DTOConfig,
   JavaType,
   ModelConfig,
-  RenderContext,
-  TypeMetadata,
+  RenderContext
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -24,7 +23,6 @@ import {
 } from '../../utils/helpers';
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
-import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
 

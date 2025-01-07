@@ -6,7 +6,7 @@ import {
   ApiConfig,
   ControllerConfig,
   DTOBaseConfig,
-  DTOConfig, EnumConfig,
+  DTOConfig, EnumConfig, ExceptionConfig,
   ModelConfig,
   ObjectTypes,
   PermissionConfig,
@@ -329,6 +329,23 @@ export const getDDDControllerDir = (context: RenderContext<ControllerConfig | Mo
     DIRECTORIES.INFRASTRUCTURE,
     DIRECTORIES.CONTROLLER
   );
+
+export const getExceptionDir = (context: RenderContext<ExceptionConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    DIRECTORIES.EXCEPTIONS
+  );
+
+export const getDDDExceptionDir = (context: RenderContext<ExceptionConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.EXCEPTIONS
+  );
+
 export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,

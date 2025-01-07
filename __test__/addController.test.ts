@@ -37,7 +37,7 @@ const controllerConfig: ControllerConfig = {
       "path": "deletePeoplo",
       "method": "POST",
       "responses": {
-        "200": {
+        "400": {
           "name": "TestResponseTwo",
           "description": "OK",
           "content": {
