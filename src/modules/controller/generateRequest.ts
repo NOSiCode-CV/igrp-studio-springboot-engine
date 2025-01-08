@@ -24,7 +24,7 @@ import {
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
-import { normalizeName } from '../dto/saveDTOConfig';
+import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
 
@@ -38,6 +38,8 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
       resourceConfig: await transformSchemaDTOConfig(action.requestBody, context.baseConfig, context.basePath),
       fullPath: context.basePath,
     };
+
+    await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
 
     const modelOutputPath = getDTOOutputPath(dtoContext);
     const template = await _renderDTO(dtoContext);

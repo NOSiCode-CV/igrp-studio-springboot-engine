@@ -26,7 +26,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
-import { normalizeName } from '../dto/saveDTOConfig';
+import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
 
 export const generateResponse = async (context: RenderContext<ControllerConfig>) => {
@@ -46,6 +46,8 @@ export const generateResponse = async (context: RenderContext<ControllerConfig>)
         ),
         fullPath: context.basePath,
       };
+
+      await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
 
       const modelOutputPath = getDTOOutputPath(dtoContext);
       const template = await _renderDTO(dtoContext);
