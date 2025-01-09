@@ -1,7 +1,12 @@
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-private final I{{capitalize resourceConfig.name}}CommandService {{toCamelCase resourceConfig.name}}CmdService;
-private final I{{capitalize resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
+{{#each resourceConfig.actions}}
+    {{#if (eq method "GET")}}
+private final {{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
+    {{else}}
+private final {{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
+    {{/if}}
+{{/each}}
 {{else}}
 private final I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
 {{/if}}

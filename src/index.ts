@@ -794,11 +794,15 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
       );
     }
 
+    // 09-01-2025 - No need for service layer use handler directly in controller
+    /*
     await generateQueryServiceInterface(context);
     await generateQueryServiceInmpl(context);
 
     await generateServiceInterface(context);
     await generateServiceInmpl(context);
+
+     */
 
     // DDD FULL
     /*await generateQueryServiceInterface(context);

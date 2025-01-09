@@ -32,7 +32,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/each}}
     {{/if}}
   )
-  @Operation(summary = "Performs the specified operation", description = "Executes the requested operation for the endpoint, handling the appropriate input and returning the expected result")
+  {{> controller-action-documentation baseConfig=../baseConfig}}
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
@@ -45,7 +45,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/if}}
     {{/if}}
 
-    {{#if (eq method "GET")}}return {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}return {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
+    {{#if (eq method "GET")}}return {{toCamelCase actionName}}QueryHandler.handle({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}return {{toCamelCase actionName}}CommandHandler.handle({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
 
   {{else}}
     return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});

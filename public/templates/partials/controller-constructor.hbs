@@ -1,9 +1,14 @@
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-public {{resourceConfig.name}}Controller({{resourceConfig.name}}CommandService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){
-  this.{{toCamelCase resourceConfig.name}}CmdService = {{toCamelCase resourceConfig.name}}CmdService;
-  this.{{toCamelCase resourceConfig.name}}QueryService = {{toCamelCase resourceConfig.name}}QueryService;
-}
+  public {{capitalize resourceConfig.name}}Controller(
+  {{#each resourceConfig.actions}}
+    {{#if (eq method "GET")}}{{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{else}}{{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{/if}}{{#if @last}}{{else}}, {{/if}}
+  {{/each}}
+  ) {
+  {{#each resourceConfig.actions}}
+    {{#if (eq method "GET")}}this.{{toCamelCase actionName}}QueryHandler = {{toCamelCase actionName}}QueryHandler{{else}}this.{{toCamelCase actionName}}CommandHandler = {{toCamelCase actionName}}CommandHandler{{/if}};
+  {{/each}}
+  }
 {{else}}
 public {{resourceConfig.name}}Controller({{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service){
   this.{{toCamelCase resourceConfig.name}}Service = {{toCamelCase resourceConfig.name}}Service;
