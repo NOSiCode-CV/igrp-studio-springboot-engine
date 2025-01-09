@@ -5,7 +5,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDDDServiceDir, getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
 
-const QUERY_SERVICE_SUFFIX = 'QueryServiceImpl.java';
+const QUERY_SERVICE_SUFFIX = 'QueryService.java';
 
 /**
  * 

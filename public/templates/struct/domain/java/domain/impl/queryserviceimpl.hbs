@@ -3,6 +3,7 @@
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class {{capitalize resourceConfig.name}}QueryServiceImpl implements {{res
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query) {
+    public ResponseEntity<{{resolveResponse this.responses}}> {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query) {
         return {{toCamelCase this.actionName}}QueryHandler.handle(query);
     }
 

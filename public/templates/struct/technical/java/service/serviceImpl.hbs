@@ -11,6 +11,7 @@
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
@@ -22,7 +23,7 @@ public class {{resourceConfig.name}}ServiceImpl implements I{{resourceConfig.nam
 
   {{#each resourceConfig.actions}}
   @Override
-  public {{{response}}} {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
+  public ResponseEntity<{{resolveResponse this.responses}}> {{actionName}}({{#if requestBody}}{{{requestBody}}} {{toLowerCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
     // TODO: implement this method
     return null;
   }

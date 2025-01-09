@@ -24,10 +24,12 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     throw new Error(`Erros de uniqueConstraints encontrados:\n${errosUniqueConstraints.join('\n')}`);
   }
 
-  // Before creating the model with the new configuration, the engine checks if a model directory already exists.
-  // If it does, the old model directory will be deleted to ensure a clean setup for the new model.
-  const modelDirector = modelDirectory(context);
-  if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
+  if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    // Before creating the model with the new configuration, the engine checks if a model directory already exists.
+    // If it does, the old model directory will be deleted to ensure a clean setup for the new model.
+    const modelDirector = modelDirectory(context);
+    if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
+  }
 
   const {primaryKey} = context.resourceConfig
 

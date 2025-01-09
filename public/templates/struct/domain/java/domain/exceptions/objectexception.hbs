@@ -1,8 +1,16 @@
 {{> package-java }}
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.{{normalizeDto resourceConfig.body}};
+{{#ifNot (eq resourceConfig.module "Shared")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpResponseStatusException;
+{{/ifNot}}
+{{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{normalizeDto resourceConfig.body}};
+{{/if}}
 
-public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException<{{capitalize resourceConfig.body}}> {
+public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException<{{normalizeDto resourceConfig.body}}> {
 
-   public {{capitalize resourceConfig.name}}Exception(HttpStatus status, {{capitalize resourceConfig.body}} body) {
+   public {{capitalize resourceConfig.name}}Exception(HttpStatus status, {{normalizeDto resourceConfig.body}} body) {
       super(status, object);
    }
 

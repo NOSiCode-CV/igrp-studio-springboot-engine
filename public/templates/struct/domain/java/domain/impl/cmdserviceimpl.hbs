@@ -3,6 +3,7 @@
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +28,7 @@ public class {{capitalize resourceConfig.name}}CmdServiceImpl implements {{capit
 {{#each resourceConfig.actions}}
   {{#ifNot (eq this.method "GET")}}
     @Override
-    public {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command cmd) {
+    public ResponseEntity<{{resolveResponse this.responses}}> {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command cmd) {
         return {{toCamelCase this.actionName}}CommandHandler.handle(cmd);
     }
 

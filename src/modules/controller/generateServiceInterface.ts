@@ -7,7 +7,7 @@ import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '.
 
 const ICONTROLLER_PREFIX = 'I';
 const ICONTROLLER_SUFFIX = 'Service.java';
-const CMD_SERVICE_SUFFIX = 'CmdService.java';
+const CMD_SERVICE_SUFFIX = 'CommandService.java';
 
 /**
  * 
@@ -32,7 +32,7 @@ const getServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
     context.fullPath = outputDir
     return path.join(
       outputDir,
-      `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`,
+      `${ICONTROLLER_PREFIX}${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`,
     );
   }
   else {

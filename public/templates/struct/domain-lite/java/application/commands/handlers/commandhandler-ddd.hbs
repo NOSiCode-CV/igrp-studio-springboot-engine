@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
@@ -15,7 +16,7 @@ public class {{capitalize resourceConfig.name}}CommandHandler {
 
    }
 
-   public {{resourceConfig.response}} handle({{capitalize resourceConfig.name}}Command command) {
+   public ResponseEntity<{{normalizeDto resourceConfig.response}}> handle({{capitalize resourceConfig.name}}Command command) {
       // TODO: Implement the command handling logic here
       return null;
    }

@@ -11,8 +11,9 @@ import {
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
 
+const REPOSITORY_PREFIX = 'I';
 const REPOSITORY_SUFFIX = 'Repository.java';
-const REPOSITORY_IMPL_SUFFIX = 'RepositoryImpl.java';
+const REPOSITORY_IMPL_SUFFIX = 'Repository.java';
 
 /**
  * Generates a repository for the given model and saves it to the appropriate location.
@@ -83,7 +84,7 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getDDDRepositoryOutputDir(context)
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+  return path.join(outputDir, `${REPOSITORY_PREFIX}${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
 }
 
 const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {

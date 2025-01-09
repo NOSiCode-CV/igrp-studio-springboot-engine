@@ -5,8 +5,8 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getDDDServiceDir, getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
 
-const SERVICE_SUFFIX = 'ServiceImpl.java';
-const CMD_SERVICE_SUFFIX = 'CmdServiceImpl.java';
+const SERVICE_SUFFIX = 'Service.java';
+const CMD_SERVICE_SUFFIX = 'CommandService.java';
 
 /**
  * 

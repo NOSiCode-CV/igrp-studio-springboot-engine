@@ -6,16 +6,17 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceCo
   {{/if}}
 {{/each}}
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 
 @Service
-public interface {{capitalize resourceConfig.name}}QueryService {
+public interface I{{capitalize resourceConfig.name}}QueryService {
 
 {{#each resourceConfig.actions}}
   {{#if (eq this.method "GET")}}
 
-     {{cleanStr this.response}} {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query);
+     ResponseEntity<{{resolveResponse this.responses}}> {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query);
 
   {{/if}}
 {{/each}}

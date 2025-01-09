@@ -45,14 +45,10 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/if}}
     {{/if}}
 
-    {{#if (eq method "GET")}}final var result = {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}final var response = {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
-
-    {{#if (eq method "GET")}}return ResponseEntity.ok(result);{{else}}return ResponseEntity.ok(response);{{/if}}
+    {{#if (eq method "GET")}}return {{toCamelCase ../resourceConfig.name}}QueryService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}return {{toCamelCase ../resourceConfig.name}}CmdService.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
 
   {{else}}
-    final var result = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-
-    return ResponseEntity.ok(result);
+    return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase requestBody}}{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
 
   {{/if}}
   }

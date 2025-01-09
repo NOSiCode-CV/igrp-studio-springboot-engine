@@ -1,6 +1,6 @@
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-public {{resourceConfig.name}}Controller({{resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){
+public {{resourceConfig.name}}Controller({{resourceConfig.name}}CommandService {{toCamelCase resourceConfig.name}}CmdService, {{resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService){
   this.{{toCamelCase resourceConfig.name}}CmdService = {{toCamelCase resourceConfig.name}}CmdService;
   this.{{toCamelCase resourceConfig.name}}QueryService = {{toCamelCase resourceConfig.name}}QueryService;
 }

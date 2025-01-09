@@ -5,6 +5,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '../../utils/helpers';
 
+const QUERY_SERVICE_PREFIX = 'I';
 const QUERY_SERVICE_SUFFIX = 'QueryService.java';
 
 /**
@@ -24,5 +25,5 @@ export const renderQueryServiceInterface = async (context: RenderContext<Control
 const getQueryServiceInterfacePath = (context: RenderContext<ControllerConfig>) => {
   const outputDir = getDDDServiceDir(context)
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
+  return path.join(outputDir, `${QUERY_SERVICE_PREFIX}${context.resourceConfig.name}${QUERY_SERVICE_SUFFIX}`);
 };

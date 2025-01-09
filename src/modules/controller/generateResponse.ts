@@ -62,6 +62,7 @@ export const generateResponse = async (context: RenderContext<ControllerConfig>)
           baseConfig: context.baseConfig,
           basePath: context.basePath,
           resourceConfig: {
+            module: dtoContext.resourceConfig.module,
             name: action.actionName,
             body: dtoContext.resourceConfig.name + "DTO"
           },

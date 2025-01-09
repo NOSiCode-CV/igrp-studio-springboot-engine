@@ -1,7 +1,7 @@
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-private final {{capitalize resourceConfig.name}}CmdService {{toCamelCase resourceConfig.name}}CmdService;
-private final {{capitalize resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
+private final I{{capitalize resourceConfig.name}}CommandService {{toCamelCase resourceConfig.name}}CmdService;
+private final I{{capitalize resourceConfig.name}}QueryService {{toCamelCase resourceConfig.name}}QueryService;
 {{else}}
 private final I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
 {{/if}}
