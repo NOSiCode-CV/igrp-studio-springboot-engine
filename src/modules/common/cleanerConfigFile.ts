@@ -4,10 +4,10 @@ import {
   ControllerConfig,
   DTOConfig,
   ModuleConfig,
-  BaseApiConfig, EnumConfig,
+  BaseApiConfig, EnumConfig, RequestConfig, ResponseConfig,
 } from '../../interfaces/types';
 
-export const cleaner = (config: BaseApiConfig | ModelConfig | ControllerConfig | DTOConfig | ModuleConfig | EnumConfig) => {
+export const cleaner = (config: BaseApiConfig | ModelConfig | ControllerConfig | DTOConfig | ModuleConfig | EnumConfig | RequestConfig | ResponseConfig) => {
   
   const cleanObject = (dirty: any): any => {
     return Object.entries(dirty).reduce((acc, [key, value]) => {

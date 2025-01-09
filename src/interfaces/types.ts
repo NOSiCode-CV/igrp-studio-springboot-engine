@@ -301,6 +301,13 @@ export interface Body {
   };
 }
 
+export interface RequestConfig extends Body {}
+
+export interface ResponseConfig extends Body {
+  statusCode: string,
+  template: 'classic' | 'record'
+}
+
 export interface SchemaContent {
   schema: SchemaField;
 }

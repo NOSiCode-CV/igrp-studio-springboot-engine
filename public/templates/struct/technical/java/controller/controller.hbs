@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 
 {{>controller-imports}}
 
@@ -32,7 +36,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/each}}
     {{/if}}
   )
-  {{> controller-action-documentation baseConfig=../baseConfig}}
+  {{> controller-action-documentation action=this}}
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}

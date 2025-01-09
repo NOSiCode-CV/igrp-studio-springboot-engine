@@ -14,6 +14,7 @@ export const DIRECTORIES = {
   CONFIG_MODEL: '.igrpstudio/{{module}}/models',
   CONFIG_PERMISSION: '.igrpstudio/permissions',
   CONFIG_DTO: '.igrpstudio/{{module}}/dto',
+  CONFIG_RESPONSE: '.igrpstudio/{{module}}/response',
   CONFIG_ENUM: '.igrpstudio/{{module}}/enum',
   CONFIG_LIBRARIES: 'libraries',
   CONFIG_LIBRARY: 'library',
@@ -90,6 +91,7 @@ export const SUCCESS_MESSAGE = {
 
 export const PARTIALS = [
   "controller-action-definition.hbs",
+  "controller-action-documentation.hbs",
   "controller-constructor.hbs",
   "controller-imports.hbs",
   "controller-injection.hbs",
@@ -179,6 +181,11 @@ export const TEMPLATES = {
   DOMAIN_DTO: {
     'classic': 'struct/technical/java/dto/lombok.hbs',
     'record': 'struct/technical/java/dto/record.hbs',
+  },
+
+  DOMAIN_RESPONSE: {
+    'classic': 'struct/technical/java/response/lombok.hbs',
+    'record': 'struct/technical/java/response/record.hbs',
   },
 
   DOMAIN_FILTER: 'struct/technical/java/dto/filter.hbs',
@@ -298,6 +305,11 @@ export const TEMPLATES = {
   DDD_LITE_DTO: {
     'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
     'record': 'struct/domain-lite/java/application/dto/dto-record-ddd.hbs',
+  },
+
+  DDD_RESPONSE_DTO: {
+    'classic': 'struct/domain-lite/java/application/response/response-ddd.hbs',
+    'record': 'struct/domain-lite/java/application/response/response-record-ddd.hbs',
   },
 
   DDD_LITE_FILTER: 'struct/domain-lite/java/application/dto/filter-ddd.hbs',
@@ -430,6 +442,7 @@ export const PATTERNS = {
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',  
+  STATUS_CODE: '^\\d{3}$',
 };
 
 const IMPORT_MAP = {

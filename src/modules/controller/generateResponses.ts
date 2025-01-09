@@ -29,7 +29,7 @@ import { getDTOTypes } from '../dto/helpers';
 import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
 
-export const generateResponse = async (context: RenderContext<ControllerConfig>) => {
+export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
   for(const action of context.resourceConfig.actions) {
 

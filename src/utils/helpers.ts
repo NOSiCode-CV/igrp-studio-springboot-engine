@@ -76,6 +76,9 @@ export const getPermissionConfigPath = (permission: string, output: string) =>
 export const getDTOConfigPath = (type: string, module: string, dto: string, output: string) =>
   path.join(output, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }), `${dto}${type}${EXTENSIONS.JSON}`);
 
+export const getResponseConfigPath = (module: string, response: string, output: string) =>
+  path.join(output, replaceTemplate(DIRECTORIES.CONFIG_RESPONSE, { module }), `${response}${EXTENSIONS.JSON}`);
+
 export const getEnumConfigPath = (module: string, enumerated: string, output: string) =>
   path.join(output, replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module }), `${enumerated}${EXTENSIONS.JSON}`);
 

@@ -1,0 +1,25 @@
+{{> package-java }}
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import cv.igrp.stereotype.IgrpDTO;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+{{resolve-imports resourceConfig}}
+
+@Schema(description = "{{resourceConfig.description}}")
+@IgrpDTO
+public record {{capitalize resourceConfig.name}}Dto(
+{{#each resourceConfig.content}}
+  {{#if (eq @key "application/json")}}
+    {{#each this.schema.properties}}
+      @Schema(
+        description = "{{this.description}}",
+        example = "{{this.example}}"{{#if this.deprecated}},
+        deprecated = true{{/if}}{{#if this.required}},
+        required = true{{/if}}
+      )
+      {{{resolve-type this}}} {{@key}}{{#if @last}}{{else}}, {{/if}}
+    {{/each}}
+  {{/if}}
+{{/each}}
+) {}

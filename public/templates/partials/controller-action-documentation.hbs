@@ -1,0 +1,70 @@
+@Operation(
+    summary = "{{method}} method to handle operations for {{actionName}}",
+    description = "{{method}} method to handle operations for {{actionName}}"{{#if responses}},
+    responses = {
+{{#each responses}}
+      @ApiResponse(
+          responseCode = "{{@key}}",
+          description = "{{this.description}}",
+          content = @Content(
+              {{#each this.content}}
+              mediaType = "{{@key}}",
+              schema = @Schema(
+                  {{#if this.schema.$ref}}
+                  implementation = {{this.schema.$ref}}.class,
+                  {{/if}}
+                  {{#if this.schema.type}}
+                  type = "{{this.schema.type}}",
+                  {{/if}}
+                  {{#if this.schema.description}}
+                  description = "{{this.schema.description}}",
+                  {{/if}}
+                  {{#if this.schema.example}}
+                  example = "{{this.schema.example}}",
+                  {{/if}}
+                  {{#if this.schema.deprecated}}
+                  deprecated = true,
+                  {{/if}}
+                  {{#if this.schema.minimum}}
+                  minimum = {{this.schema.minimum}},
+                  {{/if}}
+                  {{#if this.schema.maximum}}
+                  maximum = {{this.schema.maximum}},
+                  {{/if}}
+                  {{#if this.schema.pattern}}
+                  pattern = "{{this.schema.pattern}}",
+                  {{/if}}
+                  {{#if this.schema.format}}
+                  format = "{{this.schema.format}}",
+                  {{/if}}
+                  {{#if this.schema.default}}
+                  defaultValue = "{{this.schema.default}}",
+                  {{/if}}
+                  {{#if this.schema.enum}}
+                  allowableValues = "{{join this.schema.enum ', '}}",
+                  {{/if}}
+                  {{#if this.schema.required}}
+                  required = true,
+                  {{/if}}
+                  {{#if this.schema.properties}}
+                  properties = {
+                      {{#each this.schema.properties}}
+                      "{{@key}}" = @Schema(
+                          type = "{{this.type}}",
+                          {{#if this.$ref}}implementation = {{this.$ref}},{{/if}}
+                          {{#if this.description}}description = "{{this.description}}",{{/if}}
+                          {{#if this.example}}example = "{{this.example}}",{{/if}}
+                          {{#if this.pattern}}pattern = "{{this.pattern}}",{{/if}}
+                          {{#if this.format}}format = "{{this.format}}",{{/if}}
+                      ),
+                      {{/each}}
+                  },
+                  {{/if}}
+              )
+              {{/each}}
+          )
+      ){{#if @last}}{{else}}, {{/if}}
+{{/each}}
+    }
+{{/if}}
+)

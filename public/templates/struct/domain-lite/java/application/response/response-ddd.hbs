@@ -1,0 +1,34 @@
+{{> package-java }}
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import cv.igrp.stereotype.IgrpDTO;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+{{> lombok-java-imports}}
+
+{{{resolve-imports resourceConfig}}}
+
+{{> lombok-java-annotations}}
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+@Schema(description = "{{resourceConfig.description}}")
+@IgrpDTO
+public class {{resourceConfig.name}}Dto {
+
+    {{#each resourceConfig.content}}
+    {{#if (eq @key "application/json")}}
+      {{#each this.schema.properties}}
+      @Schema(
+          description = "{{this.description}}",
+          example = "{{this.example}}"{{#if this.default}},
+          defaultValue = "{{this.default}}"{{/if}}{{#if this.deprecated}},
+          deprecated = true{{/if}}{{#if this.required}},
+          required = true{{/if}}
+      )
+      private {{{resolve-type this}}} {{@key}};
+      {{/each}}
+    {{/if}}
+    {{/each}}
+
+}

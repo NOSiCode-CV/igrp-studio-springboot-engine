@@ -9,7 +9,7 @@ import {
   ModelConfig,
   ModuleConfig,
   PermissionConfig,
-  RenderContext,
+  RenderContext, RequestConfig, ResponseConfig,
 } from './interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
@@ -69,7 +69,10 @@ import { enumValidation } from './schema/enumConfig';
 import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateEnum } from './modules/enum/generateEnum';
 import { generateRequest } from './modules/controller/generateRequest';
-import { generateResponse } from './modules/controller/generateResponse';
+import { generateResponses } from './modules/controller/generateResponses';
+import { validateResponse } from './schema/requestConfig';
+import { saveResponseConfig } from './modules/response/saveResponseConfig';
+import { generateSingleResponse } from './modules/response/generateSingleResponse';
 
 /**
  * Main Function that creates the base api
@@ -525,6 +528,39 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   }
 };
 
+export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: ResponseConfig = cleaner(dirty);
+
+  // this function check is the request params in actions have duplicateds names
+  checkDuplicated([], [], [], [], config.content["application/json"]);
+
+  const valid = validateResponse(config);
+
+  if (!valid && validateResponse.errors) {
+    throw validateResponse.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  config.name = capitalize(config.name);
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  await saveResponseConfig(config, basePath);
+
+  const context: RenderContext<ResponseConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath
+  };
+
+  await generateSingleResponse(context);
+
+};
+
 /**
  * Generates and saves an enumerated class to the API.
  * This function creates an enum based on the provided configuration and saves it to the specified API base path.
@@ -728,7 +764,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
   await generateRequest(context);
 
-  await generateResponse(context);
+  await generateResponses(context);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
