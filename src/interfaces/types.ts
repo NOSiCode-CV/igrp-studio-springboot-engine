@@ -5,7 +5,7 @@ import {
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES,
+  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES, CONFIG_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -312,11 +312,19 @@ export interface SchemaContent {
   schema: SchemaField;
 }
 
+export interface DeleteConfig {
+  name: string,
+  module?: string,
+  type: ConfigTypes,
+  basePath: string
+}
+
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
 export type CollectionType = (typeof GENERIC_COLLECTION_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];
+export type ConfigTypes = (typeof CONFIG_TYPES)[number];
 export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];

@@ -1053,6 +1053,7 @@ export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
 export const STRUCT_TYPES = [PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN, PROJECT_STRUCTURE_STYLE.TECHNICAL] as const
 export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter', 'response'] as const
+export const CONFIG_TYPES = ['dto', 'controller', 'model', 'module', 'enum', 'filter', 'response'] as const
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

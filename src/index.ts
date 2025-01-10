@@ -1,7 +1,7 @@
 import {
   ApiConfig,
   BaseApiConfig,
-  ControllerConfig,
+  ControllerConfig, DeleteConfig,
   DTOBaseConfig,
   DTOConfig, EnumConfig,
   HandlerConfig,
@@ -74,6 +74,8 @@ import { validateResponse } from './schema/requestConfig';
 import { saveResponseConfig } from './modules/response/saveResponseConfig';
 import { generateSingleResponse } from './modules/response/generateSingleResponse';
 import { deleteResponseConfig } from './modules/response/deleteResponse';
+import { deleteValidation } from './schema/deleteConfig';
+import { deleteElementConfig } from './modules/delete/deleteElementConfig';
 
 /**
  * Main Function that creates the base api
@@ -702,6 +704,28 @@ export const deleteResponse = async (config: ResponseConfig, basePath: string) =
   };
 
   await deleteResponseConfig(context, false);
+};
+
+export const deleteElement = async (config: DeleteConfig, basePath: string) => {
+  const valid = deleteValidation(config);
+
+  if (!valid && deleteValidation.errors) {
+    throw deleteValidation.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name);
+
+  const context: RenderContext<DeleteConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath
+  };
+
+  await deleteElementConfig(context, false);
 };
 
 /**

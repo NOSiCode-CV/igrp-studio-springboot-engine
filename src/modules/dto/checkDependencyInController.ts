@@ -1,9 +1,9 @@
-import { DTOBaseConfig, RenderContext } from "../../interfaces/types";
+import { DeleteConfig, DTOBaseConfig, RenderContext } from '../../interfaces/types';
 import { getControllerTypes } from "../controller/getControllerTypes";
 import { getDTOTypes } from "./helpers";
 import { DIRECTORIES } from '../../utils/constants';
 
-export const checkDependencyInController = async function (context: RenderContext<DTOBaseConfig>) {
+export const checkDependencyInController = async function (context: RenderContext<DTOBaseConfig>  | RenderContext<DeleteConfig>) {
 
   const dtoName = context.resourceConfig.name
   /**

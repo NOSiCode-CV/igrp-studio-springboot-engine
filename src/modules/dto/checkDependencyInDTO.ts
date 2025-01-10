@@ -1,8 +1,8 @@
-import { DTOBaseConfig, JavaType, RenderContext } from "../../interfaces/types";
+import { DeleteConfig, DTOBaseConfig, JavaType, RenderContext } from '../../interfaces/types';
 import { getDTOTypes } from "./helpers";
 import { DIRECTORIES } from '../../utils/constants';
 
-export const checkDependencyInDTO = async function(context: RenderContext<DTOBaseConfig>) {
+export const checkDependencyInDTO = async function(context: RenderContext<DTOBaseConfig> | RenderContext<DeleteConfig>) {
   const types = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const cfg = context.resourceConfig;
   types.delete(cfg.name);
