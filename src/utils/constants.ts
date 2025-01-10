@@ -14,7 +14,7 @@ export const DIRECTORIES = {
   CONFIG_MODEL: '.igrpstudio/{{module}}/models',
   CONFIG_PERMISSION: '.igrpstudio/permissions',
   CONFIG_DTO: '.igrpstudio/{{module}}/dto',
-  CONFIG_RESPONSE: '.igrpstudio/{{module}}/response',
+  CONFIG_RESPONSE: '.igrpstudio/{{module}}/responses',
   CONFIG_ENUM: '.igrpstudio/{{module}}/enum',
   CONFIG_LIBRARIES: 'libraries',
   CONFIG_LIBRARY: 'library',
