@@ -565,7 +565,7 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 
 Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
-  return capitalize(str).replace(/dto$/i, "") + "Dto";
+  return capitalize(str).replace(/dto$/i, "") + "DTO";
 });
 
 function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {

@@ -53,16 +53,17 @@
                   {{#if this.schema.properties}}
                   properties = {
                       {{#each this.schema.properties}}
-                      "{{@key}}" = @Schema(
-                          type = "{{this.type}}",
-                          {{#if this.$ref}}implementation = {{this.$ref}},{{/if}}
-                          {{#if this.description}}description = "{{this.description}}",{{/if}}
-                          {{#if this.example}}example = "{{this.example}}",{{/if}}
-                          {{#if this.pattern}}pattern = "{{this.pattern}}",{{/if}}
-                          {{#if this.format}}format = "{{this.format}}",{{/if}}
-                      ),
+                      io.swagger.v3.oas.annotations.StringToClassMapItem.@Schema(
+                          name = "{{@key}}",
+                          type = "{{this.type}}"{{#if this.$ref}},
+                          implementation = {{this.$ref}}{{/if}}{{#if this.description}},
+                          description = "{{this.description}}"{{/if}}{{#if this.example}},
+                          example = "{{this.example}}"{{/if}}{{#if this.pattern}},
+                          pattern = "{{this.pattern}}"{{/if}}{{#if this.format}},
+                          format = "{{this.format}}"{{/if}}
+                      ){{#if @last}}{{else}}, {{/if}}
                       {{/each}}
-                  },
+                  }
                   {{/if}}
               )
               {{/each}}

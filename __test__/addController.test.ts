@@ -15,6 +15,7 @@ const controllerConfig: ControllerConfig = {
       "method": "GET",
       "responses": {
         "200": {
+          "module": "ModuloTetse",
           "name": "TestResponseOneDTO",
           "description": "OK",
           "content": {
@@ -38,6 +39,7 @@ const controllerConfig: ControllerConfig = {
       "method": "POST",
       "responses": {
         "400": {
+          "module": "ModuloTetse",
           "name": "TestResponseTwo",
           "description": "OK",
           "content": {
