@@ -5,7 +5,6 @@ import {
   JavaType,
   ModelConfig,
   RenderContext,
-  TypeMetadata,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -28,6 +27,7 @@ import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
+import { saveResponseConfig } from '../response/saveResponseConfig';
 
 export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
@@ -51,6 +51,8 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       const template = await _renderDTO(dtoContext);
 
       await saveToFile(template, modelOutputPath);
+      
+      await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
 
       const statusCode = parseInt(status, 10);
 

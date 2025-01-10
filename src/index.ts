@@ -73,6 +73,7 @@ import { generateResponses } from './modules/controller/generateResponses';
 import { validateResponse } from './schema/requestConfig';
 import { saveResponseConfig } from './modules/response/saveResponseConfig';
 import { generateSingleResponse } from './modules/response/generateSingleResponse';
+import { deleteResponseConfig } from './modules/response/deleteResponse';
 
 /**
  * Main Function that creates the base api
@@ -679,6 +680,28 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
   };
 
   await deleteDTOConfig(context, false);
+};
+
+export const deleteResponse = async (config: ResponseConfig, basePath: string) => {
+  const valid = validateResponse(config);
+
+  if (!valid && validateResponse.errors) {
+    throw validateResponse.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name);
+
+  const context: RenderContext<ResponseConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath
+  };
+
+  await deleteResponseConfig(context, false);
 };
 
 /**
