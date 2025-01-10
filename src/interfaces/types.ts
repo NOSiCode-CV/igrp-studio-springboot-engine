@@ -315,8 +315,7 @@ export interface SchemaContent {
 export interface DeleteConfig {
   name: string,
   module?: string,
-  type: ConfigTypes,
-  basePath: string
+  type: ConfigTypes
 }
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

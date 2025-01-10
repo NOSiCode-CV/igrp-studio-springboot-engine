@@ -31,14 +31,9 @@ const deleteSchema: JSONSchemaType<DeleteConfig> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true
-    },
-    basePath: {
-      type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The basePath attribute can only contain alphanumeric characters without spaces or special characters.'
     }
   },
-  required: ["type", "name", "basePath"],
+  required: ["type", "name"],
   additionalProperties: false,
   errorMessage: {
     required: {
