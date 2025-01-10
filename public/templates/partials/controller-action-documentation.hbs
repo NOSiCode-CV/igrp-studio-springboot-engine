@@ -12,6 +12,10 @@
               schema = @Schema(
                   {{#if this.schema.$ref}}
                   implementation = {{this.schema.$ref}}.class,
+                  {{else}}
+                  {{#if ../this.name}}
+                  implementation = {{normalizeDto ../this.name}}.class,
+                  {{/if}}
                   {{/if}}
                   {{#if this.schema.type}}
                   type = "{{this.schema.type}}",

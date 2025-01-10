@@ -563,6 +563,11 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
 
+Handlebars.registerHelper('normalizeDto', (str: string) => {
+  if (!str) return '';
+  return capitalize(str).replace(/dto$/i, "") + "Dto";
+});
+
 function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
   if(statusCode === "200")
     return actionName + "Response"
