@@ -23,6 +23,8 @@ export const normalizeDTOType = (type: ObjectTypes): string => {
   switch (type) {
     case "dto":
       return "DTO";
+    case "response":
+      return "DTO";
     case "filter":
       return "DTO";
     case "command":
@@ -37,6 +39,8 @@ export const normalizeDTOType = (type: ObjectTypes): string => {
 export const normalizeName = (name: string, type: ObjectTypes): string => {
   switch (type.toLowerCase()) {
     case "dto":
+      return name.replace(/dto$/i, "");
+    case "response":
       return name.replace(/dto$/i, "");
     case "command":
       return name.replace(/command$/i, "");

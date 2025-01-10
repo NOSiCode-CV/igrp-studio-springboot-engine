@@ -14,7 +14,7 @@ import jakarta.validation.constraints.*;
 {{/each}}
 @Schema(description = "{{resourceConfig.description}}")
 @IgrpDTO
-public class {{resourceConfig.name}}Dto {
+public class {{resourceConfig.name}}DTO {
 
     {{#each resourceConfig.content}}
     {{#if (eq @key "application/json")}}

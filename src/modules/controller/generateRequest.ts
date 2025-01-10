@@ -69,6 +69,12 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
+    case "response":
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
+      else
+        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      break;
     case "filter":
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_FILTER;
@@ -210,6 +216,14 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
       case "dto": {
+        const outputDir = getDDDDtoOutputDir(context)
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
+        );
+      }
+      case "response": {
         const outputDir = getDDDDtoOutputDir(context)
         context.fullPath = outputDir
         return path.join(

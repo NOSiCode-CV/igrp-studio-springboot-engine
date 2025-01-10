@@ -47,8 +47,6 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
         fullPath: context.basePath,
       };
 
-      await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
-
       const modelOutputPath = getDTOOutputPath(dtoContext);
       const template = await _renderDTO(dtoContext);
 
@@ -138,7 +136,7 @@ export const transformSchemaDTOConfig = async function(
 
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
-    type: 'dto',
+    type: 'response',
     name: bodyCfg.name,
     template: 'classic',
     module: bodyCfg.module,
@@ -239,6 +237,14 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
       case "dto": {
+        const outputDir = getDDDDtoOutputDir(context)
+        context.fullPath = outputDir
+        return path.join(
+          outputDir,
+          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
+        );
+      }
+      case "response": {
         const outputDir = getDDDDtoOutputDir(context)
         context.fullPath = outputDir
         return path.join(

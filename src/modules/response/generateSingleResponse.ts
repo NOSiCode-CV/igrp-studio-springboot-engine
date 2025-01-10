@@ -38,8 +38,6 @@ export const generateSingleResponse = async (context: RenderContext<ResponseConf
         fullPath: context.basePath,
       };
 
-      await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
-
       const modelOutputPath = getDTOOutputPath(dtoContext, context);
       const template = await _renderDTO(context);
 
@@ -80,7 +78,7 @@ export const transformSchemaDTOConfig = async function(
 
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
-    type: 'dto',
+    type: 'response',
     name: bodyCfg.name,
     template: 'classic',
     module: bodyCfg.module,
