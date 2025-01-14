@@ -37,11 +37,11 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
-    joinColumn: {
+    referencedColumnName: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+      errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
     },
     cardinality: {
       type: 'string',

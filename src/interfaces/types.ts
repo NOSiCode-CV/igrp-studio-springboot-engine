@@ -174,7 +174,7 @@ export interface Relation {
   cardinality: 'twoWay' | 'oneWay'
   entity: string;
   mappedBy?: string;
-  joinColumn?: string;
+  referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
 }

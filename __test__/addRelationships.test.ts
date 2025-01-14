@@ -37,7 +37,7 @@ const model: ModelConfig = {
     { type: 'relation', name: 'books', unique: false, nullable: true, relation: {
         type: 'ManyToMany',
         entity: 'SIPS_T_UTENTE',
-        joinColumn: 'book_id',
+        referencedColumnName: 'book_id',
         joinTable: 'book_library',
         inverseJoinColumn: 'library_id',
         cardinality: 'oneWay'

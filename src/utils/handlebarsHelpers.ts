@@ -69,6 +69,26 @@ Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
   return lowerStr + 's';
 });
 
+Handlebars.registerHelper('fullCamelCaseAndPluralize', (str: string) => {
+  if(!str) return '';
+
+  const lowerStr = str
+    .toLowerCase()
+    .split('_')
+    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join('');
+
+  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
+    return lowerStr.replace(/y$/, 'ies');
+  }
+
+  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
+    return lowerStr + 'es';
+  }
+
+  return lowerStr + 's';
+});
+
 Handlebars.registerHelper('replace', (str: string) => {
   return str.replace('.', '/');
 });

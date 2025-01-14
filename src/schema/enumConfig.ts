@@ -33,11 +33,11 @@ const relationSchema: JSONSchemaType<Relation> = {
       enum: ['oneWay', 'twoWay'],
       errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
     },
-    joinColumn: {
+    referencedColumnName: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+      errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
     },
     joinTable: {
       type: "string",
