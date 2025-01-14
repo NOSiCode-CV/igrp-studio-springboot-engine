@@ -27,16 +27,10 @@ const model: ModelConfig = {
   }]
 };
 
-const crud: Crud = {
-  enabled: true,
-  path: 'users',
-  disabledMethods: ['delete', 'save'],
-};
-
 describe('Model generator', () => {
 
   it('should update adding the crud in the model configuration and the model in the api', async () => {
-    const crudModel: ModelConfig = { ...model, crud: crud };
+    const crudModel: ModelConfig = { ...model, crud: true };
     await addModel(crudModel, OUTPUT_DIR);
   });
 });

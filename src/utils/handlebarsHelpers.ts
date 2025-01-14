@@ -23,6 +23,10 @@ Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
 
+Handlebars.registerHelper('capitalizeEntity', (str: string) => {
+  return capitalize(str);
+});
+
 Handlebars.registerHelper('toCamelCase', (str: string) => {
   if (!str) return '';
   return str.charAt(0).toLowerCase() + str.slice(1);
@@ -412,12 +416,10 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
   const imports = new Set();
 
-  if (config.relations) {
-    config.relations.forEach((relation: Relation) => {
-      if (relation.relationType !== 'ManyToOne' && relation.relationType !== 'OneToOne')
-        imports.add('import java.util.List;');
-    });
-  }
+  config.attributes.filter(that => that.relation).map(it => it.relation!).forEach((relation: Relation) => {
+    if (relation.relationType !== 'ManyToOne' && relation.relationType !== 'OneToOne')
+      imports.add('import java.util.List;');
+  });
 
   config.attributes.forEach((attr: Attribute) => {
     if (attr.type === 'String' && attr.nullable === false)

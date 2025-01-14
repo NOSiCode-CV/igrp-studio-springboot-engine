@@ -134,7 +134,8 @@ export const ERROR_MESSAGE = {
     'An error occurred while saving the file. Please check the log for more details.',
   ERROR_CREATING_DIRECTORY:
     'An error occurred while creating directories. Please check the log for more details.',
-  EMPTY_ATTRIBUTE: 'Model attributs must not be empty.',
+  EMPTY_ATTRIBUTE: 'Model attributes must not be empty.',
+  EMPTY_ACTION_ATTRIBUTES: 'Request or Response attributes must not be empty.',
   FILE_CHECKING: 'Error checking if the path is a file. Please verify your path and try again.',
   INVALID_API_CONFIG:
     'The provided API configuration is invalid. Please verify the API details and try again.',
@@ -868,6 +869,7 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
 }));
 
 export const GENERIC_ATTRIBUTE_TYPES = [
+  'relation',
   'boolean',
   'integer',
   'long',

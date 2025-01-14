@@ -1,7 +1,60 @@
-import { Attribute, EnumConfig, EnumValue } from '../interfaces/types';
+import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, PATTERNS } from '../utils/constants';
+import { GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, PATTERNS, RELATIONSHIP_TYPES } from '../utils/constants';
+
+const relationSchema: JSONSchemaType<Relation> = {
+  type: "object",
+  properties: {
+    relationType: {
+      type: "string",
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+
+    entity: {
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    mappedBy: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinTable: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
+    },
+
+    inverseJoinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
+    }
+  },
+  required: ["relationType", "entity"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      relationType: 'The relationType is required and cannot be empty.',
+      entity: 'The entity is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
+};
 
 const valueSchema: JSONSchemaType<EnumValue> = {
   type: "object",
@@ -85,6 +138,14 @@ const enumAttributeSchema: JSONSchemaType<Attribute> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true
+    },
+    relation: {
+      type: "object",
+      nullable: true,
+      oneOf: [
+        relationSchema
+      ],
+      errorMessage: 'The relation, if provided, must be a valid relationship definition.'
     },
   },
   required: ["type", "name"],

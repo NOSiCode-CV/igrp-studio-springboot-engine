@@ -49,11 +49,7 @@ const model2: ModelConfig = {
     primaryKey: false
   }
 ],
-  crud: {
-    enabled: true,
-    path: 'shared',
-    disabledMethods: []
-  },
+  crud: true,
   uniqueConstraints: []
 };
 
@@ -75,11 +71,7 @@ const model3: ModelConfig = {
     { type: 'Short', name: 'position', unique: false, nullable: true, defaultValue: '10', ns: 'java' }, // Short
     { type: 'String', name: 'photoUrl', unique: false, nullable: true, defaultValue: '', ns: 'java' }, // Byte
   ],
-  crud: {
-    enabled: true,
-    path: 'carrental',
-    disabledMethods: []
-  }
+  crud: true
 };
 
 const model4: ModelConfig = {

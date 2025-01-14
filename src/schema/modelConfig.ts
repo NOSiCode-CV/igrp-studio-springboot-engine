@@ -18,6 +18,59 @@ import {
   GENERIC_ATTRIBUTE_TYPES,
 } from '../utils/constants';
 
+const relationSchema: JSONSchemaType<Relation> = {
+  type: "object",
+  properties: {
+    relationType: {
+      type: "string",
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+
+    entity: {
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    mappedBy: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinTable: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
+    },
+
+    inverseJoinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
+    }
+  },
+  required: ["relationType", "entity"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      relationType: 'The relationType is required and cannot be empty.',
+      entity: 'The entity is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
+};
+
 const attributeSchema: JSONSchemaType<Attribute> = {
   type: "object",
   properties: {
@@ -66,6 +119,14 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "string",
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
+    },
+    relation: {
+      type: "object",
+      nullable: true,
+      oneOf: [
+        relationSchema
+      ],
+      errorMessage: 'The relation, if provided, must be a valid relationship definition.'
     },
     module: {
       type: "string",
@@ -141,59 +202,6 @@ const crudSchema: JSONSchemaType<Crud> = {
       disabledMethods: 'The disabledMethods field is required and cannot be empty.'
     },
     additionalProperties: 'No additional properties are allowed in the CRUD schema.'
-  }
-};
-
-const relationSchema: JSONSchemaType<Relation> = {
-  type: "object",
-  properties: {
-    relationType: { 
-      type: "string", 
-      enum: RELATIONSHIP_TYPES,
-      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
-    },
-    
-    entity: { 
-      type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
-      errorMessage: 'The entity name is required and cannot be empty.' 
-    },
-    mappedBy: { 
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
-    },
-    
-    joinColumn: { 
-      type: "string", 
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.' 
-    }, 
- 
-    joinTable: { 
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
-    },  
-
-    inverseJoinColumn: { 
-      type: "string", 
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.' 
-    }  
-  },
-  required: ["relationType", "entity"],
-  additionalProperties: false,
-  errorMessage: {
-    required: {
-      relationType: 'The relationType is required and cannot be empty.',
-      entity: 'The entity is required and cannot be empty.'
-    },
-    additionalProperties: 'No additional properties are allowed in the relation schema.'
   }
 };
 
@@ -302,18 +310,15 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       items: primaryKeySchema,
       errorMessage: 'The primary key attribute must be provided.'
     },
-
     attributes: { 
       type: "array", 
       items: attributeSchema,
       errorMessage: 'The attributes must be an array of valid attribute definitions.'
     },
     crud: { 
-      type: "object", 
-      nullable: true, 
-      properties: crudSchema.properties, 
-      required: crudSchema.required,
-      errorMessage: 'If provided, the CRUD configuration must be valid.'
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'If provided, the CRUD configuration must be a boolean.'
     },
     uniqueConstraints: {
       type: "array",
@@ -326,12 +331,6 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       nullable: true,
       items: entityIndexSchema,
       errorMessage: 'The indexes must be an array of valid unique constraint definitions.'
-    },
-    relations: {
-      type: "array", 
-      nullable: true, 
-      items: relationSchema,
-      errorMessage: 'The relations, if provided, must be an array of valid relationship definitions.'
     },
     audit: {  // Definition of the new audit field
       type: "boolean",

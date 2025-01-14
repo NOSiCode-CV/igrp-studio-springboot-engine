@@ -41,8 +41,7 @@ export interface ModelConfig {
   uniqueConstraints?: UniqueConstraint[];
   indexes?: EntityIndex[];
   primaryKey?: PrimaryKey[];
-  crud?: Crud;
-  relations?: Relation[];
+  crud?: boolean;
   audit?: boolean;
   module?: string;
 }
@@ -166,6 +165,7 @@ export interface Attribute {
   primaryKey?: boolean;
   generationType?: GenerationType;
   defaultValue?: string;
+  relation?: Relation;
   ns?: 'dto' | 'model' | 'java';
 }
 
@@ -298,14 +298,10 @@ export interface BaseBody {
   };
 }
 
-
-export interface Body {
+export interface Body extends BaseBody{
   description?: string;
   name: string;
   module?: string;
-  content: {
-    [contentType: string]: SchemaContent; // e.g., "application/json"
-  };
 }
 
 export interface RequestConfig extends Body {}

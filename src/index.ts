@@ -821,7 +821,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
-            (capitalize(act.actionName) + "Request").replace('DTO', ''),
+            (capitalize(act.actionName) + "Request").replace(/dto$/i, ''),
           )
         : null;
       await addDTO(

@@ -1,9 +1,14 @@
 {{> package-java }}
 
-{{#if resourceConfig.relations}}
-{{#each resourceConfig.relations}}
+{{#each resourceConfig.attributes}}
+  {{#if this.relation}}
+    {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{this.relation.entity}};
+    {{else}}
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entity}}.{{this.entity}};
-{{/each}}{{/if}}{{#if resourceConfig.audit}}
+    {{/if}}
+  {{/if}}
+{{/each}}{{#if resourceConfig.audit}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
 
 {{{resolve-imports resourceConfig}}}
@@ -70,30 +75,31 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   @Lob
   @org.hibernate.annotations.Type(type = "org.hibernate.type.BinaryType")
   {{/if}}
+  {{#ifNot (eq this.type "relation")}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
-  private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/if}}{{/if}}
-  {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
-  @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
+  private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
+  {{#if relation}}
+  {{#if (eq this.relation.relationType 'OneToOne') }}
+  @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.relation.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
+  private {{this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.relationType 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
-  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
-  {{else if (eq this.relationType 'ManyToOne') }}
-  @ManyToOne{{#if this.joinColumn}}
-  @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}
-  private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
-  @ManyToMany{{#if this.joinTable}}
+  private List<{{this.relation.entity}}> {{toCamelCase this.name}};
+  {{else if (eq this.relation.relationType 'ManyToOne') }}
+  @ManyToOne{{#if this.relation.joinColumn}}
+  @JoinColumn(name = "{{toLowerCase this.relation.joinColumn}}"){{/if}}
+  private {{this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.relationType 'ManyToMany') }}{{#ifNot this.relation.mappedBy}}
+  @ManyToMany{{#if this.relation.joinTable}}
   @JoinTable(
-    name = "{{this.joinTable}}"{{#if this.joinColumn}},
-    joinColumns = @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}{{#if this.inverseJoinColumn}},
-    inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.inverseJoinColumn}}"){{/if}}
+    name = "{{this.relation.joinTable}}"{{#if this.relation.joinColumn}},
+    joinColumns = @JoinColumn(name = "{{toLowerCase this.relation.joinColumn}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
+    inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
   ){{/if}}
-  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};{{else}}
-  @ManyToMany(mappedBy = "{{toLowerCase this.mappedBy}}")
-  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  private List<{{this.relation.entity}}> {{toCamelCase this.name}};{{else}}
+  @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}")
+  private List<{{this.relation.entity}}> {{toCamelCase this.name}};
   {{/ifNot}}
   {{/if}}
-  {{/each}}
   {{/if}}
-
+  {{/each}}
 }

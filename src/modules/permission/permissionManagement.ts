@@ -57,7 +57,7 @@ import { saveAllPermissions } from "./savePermissions";
   
       await savePermission(permission, basePath);
     }
-  } else {
+  } /*else {
     if (type === 'model') {
 
       for (const model of models) {
@@ -97,7 +97,7 @@ import { saveAllPermissions } from "./savePermissions";
         await savePermission(permission, basePath);
       }
     }
-  }
+  }*/
 
   await saveAllPermissions(basePath);
 };

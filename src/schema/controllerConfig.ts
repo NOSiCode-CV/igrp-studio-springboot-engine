@@ -3,7 +3,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  HTTP_HEADER_TYPES,
+  HTTP_HEADER_TYPES, SCHEMA_TYPES, RELATIONSHIP_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
@@ -12,11 +12,64 @@ import {
   Body,
   ControllerAction,
   ControllerConfig,
-  HttpHeader,
+  HttpHeader, Relation,
   RequestParams,
   SchemaContent,
   SchemaField,
 } from '../interfaces/types';
+
+const relationSchema: JSONSchemaType<Relation> = {
+  type: "object",
+  properties: {
+    relationType: {
+      type: "string",
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+
+    entity: {
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    mappedBy: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+    },
+
+    joinTable: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
+    },
+
+    inverseJoinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
+    }
+  },
+  required: ["relationType", "entity"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      relationType: 'The relationType is required and cannot be empty.',
+      entity: 'The entity is required and cannot be empty.'
+    },
+    additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
+};
 
 /**
  * JSON schema for validating the SchemaField interface.
@@ -273,8 +326,8 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   properties: {
     type: {
       type: "string",
-      enum: GENERIC_ATTRIBUTE_TYPES,
-      errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: SCHEMA_TYPES,
+      errorMessage: `The attribute type must be one of ${SCHEMA_TYPES} and cannot be empty.`
     },
     name: {
       type: "string",
@@ -316,6 +369,14 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "string",
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
+    },
+    relation: {
+      type: "object",
+      nullable: true,
+      oneOf: [
+        relationSchema
+      ],
+      errorMessage: 'The relation, if provided, must be a valid relationship definition.'
     },
     module: {
       type: "string",

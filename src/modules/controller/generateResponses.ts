@@ -91,12 +91,18 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
 
   if (context.resourceConfig.attributes.length === 0) {
-    throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
+    throw ERROR_MESSAGE.EMPTY_ACTION_ATTRIBUTES;
   }
   let tn;
   
   switch (context.resourceConfig.type) {
     case "dto":
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
+      else
+        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      break;
+    case "response":
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else

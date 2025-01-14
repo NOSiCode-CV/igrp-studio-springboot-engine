@@ -5,7 +5,7 @@ import { DIRECTORIES, EXTENSIONS } from '../src/utils/constants';
 import { readJsonFile } from '../src/utils/readJsonFiles';
 import { addModel } from'../src/index';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 
 const apiConfig: BaseApiConfig = {
   type: 'springboot',
@@ -15,7 +15,8 @@ const apiConfig: BaseApiConfig = {
   description: 'API-TEST',
   database: 'Postgresql',
   projectStructureStyle: 'technical',
-  enableObservability: false
+  enableObservability: false,
+  igrpCoreVersion: ""
 };
 
 const model: ModelConfig = {
@@ -23,31 +24,25 @@ const model: ModelConfig = {
   name: 'SIPS_T_PESSOA',
   tableName: 'sips',
   attributes: [
-    { type: 'Integer', name: 'idEstadoCivil', unique: false, nullable: true, },
-    { type: 'String', name: 'nome', unique: false, nullable: true, },
-    { type: 'String', name: 'sexo', unique: false, nullable: true, },
-    { type: 'LocalDate', name: 'dtNascimento', unique: false, nullable: true, },
-    { type: 'String', name: 'nomePai', unique: false, nullable: true, },
-    { type: 'String', name: 'nomeMae', unique: false, nullable: true, },
-    { type: 'LocalDateTime', name: 'dia', unique: false, nullable: true, },
-    { type: 'LocalTime', name: 'hora', unique: false, nullable: true, },
-    { type: 'BigInteger', name: 'millones', unique: false, nullable: true, },
-    { type: 'BigDecimal', name: 'escudos', unique: false, nullable: true, },
+    { type: 'integer', name: 'idEstadoCivil', unique: false, nullable: true, primaryKey: true, generationType: 'IDENTITY'},
+    { type: 'string', name: 'nome', unique: false, nullable: true, },
+    { type: 'string', name: 'sexo', unique: false, nullable: true, },
+    { type: 'date', name: 'dtNascimento', unique: false, nullable: true, },
+    { type: 'string', name: 'nomePai', unique: false, nullable: true, },
+    { type: 'string', name: 'nomeMae', unique: false, nullable: true, },
+    { type: 'datetime', name: 'dia', unique: false, nullable: true, },
+    { type: 'time', name: 'hora', unique: false, nullable: true, },
+    { type: 'biginteger', name: 'millones', unique: false, nullable: true, },
+    { type: 'decimal', name: 'escudos', unique: false, nullable: true, },
+    { type: 'relation', name: 'books', unique: false, nullable: true, relation: {
+        relationType: 'ManyToMany',
+        entity: 'SIPS_T_UTENTE',
+        joinColumn: 'book_id',
+        joinTable: 'book_library',
+        inverseJoinColumn: 'library_id',
+      },},
   ],
-  crud: {
-    enabled: true,
-    path: 'sips_pessoa',
-    disabledMethods: ['delete'],
-  },
-  relations: [
-    {
-      relationType: 'ManyToMany',
-      entity: 'SIPS_T_UTENTE',
-      joinColumn: 'book_id',
-      joinTable: 'book_library',
-      inverseJoinColumn: 'library_id',
-    },
-  ],
+  crud: true,
   primaryKey: []
 };
 
@@ -56,17 +51,14 @@ const model2: ModelConfig = {
   name: 'SIPS_T_UTENTE',
   tableName: 'sips_utent',
   attributes: [
-    { type: 'Integer', name: 'idPessoa', unique: false, nullable: true, },
-    { type: 'String', name: 'numero', unique: false, nullable: true, },
-    { type: 'String', name: 'nib', unique: false, nullable: true, },
-    { type: 'String', name: 'nrConvencao', unique: false, nullable: true, },
-  ],
-  relations: [
-    {
-      relationType: 'ManyToMany',
-      entity: 'SIPS_T_PESSOA',
-      mappedBy: 'library',
-    }
+    { type: 'integer', name: 'idPessoa', unique: false, nullable: true, primaryKey: true, generationType: 'IDENTITY'},
+    { type: 'string', name: 'numero', unique: false, nullable: true, },
+    { type: 'string', name: 'nib', unique: false, nullable: true, },
+    { type: 'relation', name: 'nrConvencao', unique: false, nullable: true, relation: {
+        relationType: 'ManyToMany',
+        entity: 'SIPS_T_PESSOA',
+        mappedBy: 'library',
+      }},
   ],
   primaryKey: []
 };
@@ -81,20 +73,12 @@ afterAll(async () => {
   // await fs.rm(OUTPUT_DIR, {recursive: true});
 });
 
-describe('Model generator', () => {
+describe('Model Relationships generator', () => {
 
   it('should update adding the relations in the model configuration and the model in the api', async () => {
 
     await addModel(model, OUTPUT_DIR);
     await addModel(model2, OUTPUT_DIR);
-
-    const bookConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model.name}${EXTENSIONS.JSON}`);
-    const bookModelConfig: ModelConfig = await readJsonFile(bookConfigPath);
-    expect(bookModelConfig.relations).toBeTruthy();
-
-    const libraryConfigPath = path.join(OUTPUT_DIR, DIRECTORIES.CONFIG_MODEL, `${model2.name}${EXTENSIONS.JSON}`);
-    const libraryModelConfig: ModelConfig = await readJsonFile(libraryConfigPath);
-    expect(libraryModelConfig.relations).toBeTruthy();
 
   });
 });

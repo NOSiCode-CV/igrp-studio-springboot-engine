@@ -59,7 +59,7 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
 export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
 
   if (context.resourceConfig.attributes.length === 0) {
-    throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
+    throw ERROR_MESSAGE.EMPTY_ACTION_ATTRIBUTES;
   }
   let tn;
   
