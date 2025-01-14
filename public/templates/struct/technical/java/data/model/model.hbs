@@ -40,10 +40,10 @@ import java.math.{{this}};
   uniqueConstraints = {
   {{#each resourceConfig.uniqueConstraints}}
     @UniqueConstraint(
-    name = "{{toLowerCase this.name}}",
-    columnNames = {
-    {{#each this.columns}}"{{toLowerCase this}}"{{#unless @last}},{{/unless}}{{/each}}
-    }
+      name = "{{toLowerCase this.name}}",
+      columnNames = {
+        {{#each this.columns}}"{{toLowerCase this}}"{{#unless @last}},{{/unless}}{{/each}}
+      }
     ){{#unless @last}},{{/unless}}
   {{/each}}
   }{{#if resourceConfig.indexes}},{{/if}}
@@ -78,15 +78,15 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   {{#ifNot (eq this.type "relation")}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
-  {{#if relation}}{{#if (eq this.relation.relationType 'OneToOne') }}
+  {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
   @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.relation.joinColumn}}
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
-  private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.relationType 'OneToMany') }}
+  private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.type 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
-  private List<{{capitalizeEntity this.relation.entity}}> {{toCamelCase this.name}};{{else if (eq this.relation.relationType 'ManyToOne') }}
+  private List<{{capitalizeEntity this.relation.entity}}> {{toCamelCase this.name}};{{else if (eq this.relation.type 'ManyToOne') }}
   @ManyToOne{{#if this.relation.joinColumn}}
   @JoinColumn(name = "{{toLowerCase this.relation.joinColumn}}"){{/if}}
-  private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.relationType 'ManyToMany') }}{{#ifNot this.relation.mappedBy}}
+  private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.name}};{{else if (eq this.relation.type 'ManyToMany') }}{{#ifNot this.relation.mappedBy}}
   @ManyToMany{{#if this.relation.joinTable}}
   @JoinTable(
     name = "{{this.relation.joinTable}}"{{#if this.relation.joinColumn}},

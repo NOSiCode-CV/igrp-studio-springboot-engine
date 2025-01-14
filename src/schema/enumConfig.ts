@@ -1,17 +1,22 @@
 import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, PATTERNS, RELATIONSHIP_TYPES } from '../utils/constants';
+import {
+  CRUD_DISABLED_OPTIONS,
+  GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+  PATTERNS,
+  RELATIONSHIP_TYPES,
+} from '../utils/constants';
 
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
-    relationType: {
+    type: {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
     },
-
     entity: {
       type: "string",
       pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
@@ -23,21 +28,23 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
-
+    cardinality: {
+      type: 'string',
+      enum: ['oneWay', 'twoWay'],
+      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
+    },
     joinColumn: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
     },
-
     joinTable: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
     },
-
     inverseJoinColumn: {
       type: "string",
       nullable: true,
@@ -45,7 +52,7 @@ const relationSchema: JSONSchemaType<Relation> = {
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
     }
   },
-  required: ["relationType", "entity"],
+  required: ["type", "entity"],
   additionalProperties: false,
   errorMessage: {
     required: {

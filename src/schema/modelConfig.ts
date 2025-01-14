@@ -21,7 +21,7 @@ import {
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
-    relationType: {
+    type: {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
@@ -38,7 +38,11 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
-
+    cardinality: {
+      type: 'string',
+      enum: ['oneWay', 'twoWay'],
+      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
+    },
     joinColumn: {
       type: "string",
       nullable: true,
@@ -60,7 +64,7 @@ const relationSchema: JSONSchemaType<Relation> = {
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
     }
   },
-  required: ["relationType", "entity"],
+  required: ["type", "entity"],
   additionalProperties: false,
   errorMessage: {
     required: {

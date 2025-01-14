@@ -417,7 +417,7 @@ Handlebars.registerHelper('model-imports', function (this: any, config: ModelCon
   const imports = new Set();
 
   config.attributes.filter(that => that.relation).map(it => it.relation!).forEach((relation: Relation) => {
-    if (relation.relationType !== 'ManyToOne' && relation.relationType !== 'OneToOne')
+    if (relation.type !== 'ManyToOne' && relation.type !== 'OneToOne')
       imports.add('import java.util.List;');
   });
 

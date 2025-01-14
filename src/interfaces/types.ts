@@ -170,7 +170,8 @@ export interface Attribute {
 }
 
 export interface Relation {
-  relationType: string;
+  type: string;
+  cardinality: 'twoWay' | 'oneWay'
   entity: string;
   mappedBy?: string;
   joinColumn?: string;

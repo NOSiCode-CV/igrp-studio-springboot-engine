@@ -35,11 +35,12 @@ const model: ModelConfig = {
     { type: 'biginteger', name: 'millones', unique: false, nullable: true, },
     { type: 'decimal', name: 'escudos', unique: false, nullable: true, },
     { type: 'relation', name: 'books', unique: false, nullable: true, relation: {
-        relationType: 'ManyToMany',
+        type: 'ManyToMany',
         entity: 'SIPS_T_UTENTE',
         joinColumn: 'book_id',
         joinTable: 'book_library',
         inverseJoinColumn: 'library_id',
+        cardinality: 'oneWay'
       },},
   ],
   crud: true,
@@ -55,9 +56,10 @@ const model2: ModelConfig = {
     { type: 'string', name: 'numero', unique: false, nullable: true, },
     { type: 'string', name: 'nib', unique: false, nullable: true, },
     { type: 'relation', name: 'nrConvencao', unique: false, nullable: true, relation: {
-        relationType: 'ManyToMany',
+        type: 'ManyToMany',
         entity: 'SIPS_T_PESSOA',
         mappedBy: 'library',
+        cardinality: 'oneWay'
       }},
   ],
   primaryKey: []
