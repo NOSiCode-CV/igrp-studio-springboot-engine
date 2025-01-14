@@ -80,12 +80,12 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
   @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}
-  @JoinColumn(name = "{{toLowerCase this.name}}", referencedColumnName = {{this.referencedColumnName}}){{/if}}
+  @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = {{this.relation.referencedColumnName}}{{/if}}){{/if}}
   private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.relation.entity}};{{else if (eq this.relation.type 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
   private List<{{capitalizeEntity this.relation.entity}}> {{fullCamelCaseAndPluralize this.relation.entity}};{{else if (eq this.relation.type 'ManyToOne') }}
   @ManyToOne{{#if this.name}}
-  @JoinColumn(name = "{{toLowerCase this.name}}", referencedColumnName = {{this.referencedColumnName}}){{/if}}
+  @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = {{this.relation.referencedColumnName}}{{/if}}){{/if}}
   private {{capitalizeEntity this.relation.entity}} {{toFullCamelCaseFromSnakeCase this.relation.entity}};{{else if (eq this.relation.type 'ManyToMany') }}{{#ifNot this.relation.mappedBy}}
   @ManyToMany{{#if this.relation.joinTable}}
   @JoinTable(
