@@ -25,7 +25,7 @@ const model: ModelConfig = {
 };
 
 const apiConfig: BaseApiConfig = {
-  type: 'baseApi',
+  type: 'springboot',
   apiName: 'api_rest',
   group: 'nosi',
   artifact: 'igrp',

@@ -36,6 +36,10 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
     if(!action.responses || !Object.keys(action.responses)) continue
 
     for (const [status, response] of Object.entries(action.responses)) {
+
+      // If there's no name attribute that means it's a reference, so do not need to generate the DTO
+      if(!response.name) continue;
+
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: context.baseConfig,
         basePath: context.basePath,

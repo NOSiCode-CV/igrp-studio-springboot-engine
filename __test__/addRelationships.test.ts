@@ -8,7 +8,7 @@ import { addModel } from'../src/index';
 const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
 
 const apiConfig: BaseApiConfig = {
-  type: 'baseApi',
+  type: 'springboot',
   apiName: 'api-rest',
   group: 'nosi',
   artifact: 'igrp',

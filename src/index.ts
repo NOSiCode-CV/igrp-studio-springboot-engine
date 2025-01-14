@@ -92,7 +92,7 @@ import { deleteElementConfig } from './modules/delete/deleteElementConfig';
  * import { ApiConfig } from "spring-engine/dist/interfaces/types";
  *
  * const config: Apiconfig = {
- *    type: 'baseApi'
+ *    type: 'springboot'
  *    apiName: 'my_api' //Names with hyphens or spaces are not accepted.
  *    group: 'example'
  *    packageName: 'demo'
@@ -821,7 +821,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
-            (act.requestBody.name).replace('DTO', ''),
+            (capitalize(act.actionName) + "Request").replace('DTO', ''),
           )
         : null;
       await addDTO(

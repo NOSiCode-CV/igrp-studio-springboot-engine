@@ -9,8 +9,8 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
   properties: {
     type: { 
       type: "string",
-      const: "baseApi",
-      errorMessage: "The 'type' attribute must have the value 'baseApi'."  
+      const: "springboot",
+      errorMessage: "The 'type' attribute must have the value 'springboot'."  
     },
     apiName: { 
       type: "string",

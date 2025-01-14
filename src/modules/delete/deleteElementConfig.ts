@@ -29,11 +29,13 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
       await checkDependencyInController(context);
     }
 
+    context.resourceConfig.name = normalizeName(context.resourceConfig.name, context.resourceConfig.type)
+
     const dtoPath = getDtoFilePath(context);
     const dtoConfigPath = getDTOConfigPath(
       context.resourceConfig.type,
       context.resourceConfig.module ?? DIRECTORIES.SHARED,
-      normalizeName(context.resourceConfig.name, context.resourceConfig.type),
+      context.resourceConfig.name,
       context.basePath,
     );
 

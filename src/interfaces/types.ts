@@ -19,7 +19,7 @@ export interface ApiConfig extends BaseApiConfig {
 }
 
 export interface BaseApiConfig {
-  type: 'baseApi';
+  type: 'springboot';
   apiName: string;
   group: string;
   artifact: string;
@@ -211,7 +211,7 @@ export interface ControllerAction {
   headers?: HttpHeader[];
   modelAttribute?: string;
   requestParams?: RequestParams[];
-  requestBody?: Body;
+  requestBody?: BaseBody;
   responses?: {
     [statusCode: string]: Body;
   };
@@ -291,6 +291,13 @@ export interface SchemaField {
   items?: SchemaField; // For array types
   properties?: { [key: string]: SchemaField }; // For object types
 }
+
+export interface BaseBody {
+  content: {
+    [contentType: string]: SchemaContent; // e.g., "application/json"
+  };
+}
+
 
 export interface Body {
   description?: string;

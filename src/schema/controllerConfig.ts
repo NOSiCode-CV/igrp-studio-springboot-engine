@@ -8,7 +8,7 @@ import {
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
 import {
-  Attribute,
+  Attribute, BaseBody,
   Body,
   ControllerAction,
   ControllerConfig,
@@ -176,6 +176,28 @@ const bodySchema: JSONSchemaType<Body> = {
     },
   },
   required: ["content", "name"],
+  additionalProperties: false
+};
+
+const baseBodySchema: JSONSchemaType<BaseBody> = {
+  type: "object",
+  properties: {
+    content: {
+      type: "object",
+      required: [],
+      nullable: false,
+      additionalProperties: {
+        type: "object",
+        required: [],
+        nullable: true,
+        anyOf: [
+          { type: "object" }, // For dynamic content types
+        ],
+      },
+      errorMessage: "The 'content' field must be an object mapping content types to schemas.",
+    },
+  },
+  required: ["content"],
   additionalProperties: false
 };
 
@@ -371,7 +393,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
     requestBody: {
       type: "object",
       anyOf: [
-        bodySchema
+        baseBodySchema
       ],
       nullable: true,
       errorMessage: "The 'requestBody' field must be a valid Body.",

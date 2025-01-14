@@ -1,6 +1,7 @@
 import { RenderContext, ResponseConfig } from '../../interfaces/types';
 import { getControllerTypes } from "../controller/getControllerTypes";
 import { DIRECTORIES } from '../../utils/constants';
+import { capitalize } from '../../utils/capitalizeStrings';
 
 export const checkDependencyInController = async function (context: RenderContext<ResponseConfig>) {
 
@@ -21,7 +22,7 @@ export const checkDependencyInController = async function (context: RenderContex
             });
           }
         }
-      if (action.requestBody?.name === dtoName) {
+      if (capitalize(action.actionName) + "Request" === dtoName) {
         errors.push({
           message: `DTO '${dtoName}' is being used as a requestBody in controller '${controller.name}' in action '${action.actionName}'.`,
         });

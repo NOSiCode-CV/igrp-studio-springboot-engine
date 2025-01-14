@@ -6,7 +6,7 @@ const OUTPUT_DIR = 'C:\\spring-engine\\generTeste'
 const TECHNICAL_OUTPUT_DIR = 'generatedEnvironment'
 
 const apiConfig: BaseApiConfig = {
-  type: 'baseApi',
+  type: 'springboot',
   apiName: 'carRental',
   group: 'cv.nosi',
   artifact: 'rental',
@@ -18,7 +18,7 @@ const apiConfig: BaseApiConfig = {
 };
 
 const apiTechnicalConfig: BaseApiConfig = {
-  type: 'baseApi',
+  type: 'springboot',
   apiName: 'books',
   group: 'cv.nosi',
   artifact: 'book-library',

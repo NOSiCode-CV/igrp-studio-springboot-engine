@@ -54,7 +54,7 @@ import { newApi } from "@igrp/spring-engine"
 import { ApiConfig } from "@igrp/spring-engine/dist/interfaces/types";
 
 const baseConfig: ApiConfig = {
-	type: 'baseApi',
+	type: 'springboot',
     apiName: 'demo', //Names with hyphens or spaces are not accepted.
     group: 'com.example',
     artifact: 'demo',
@@ -421,7 +421,7 @@ export interface TypeMetadata {
 }
 
 export interface ApiConfig {
-  type: 'baseApi';
+  type: 'springboot';
   apiName: string;
   group: string;
   artifact: string;

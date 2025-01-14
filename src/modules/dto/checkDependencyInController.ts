@@ -2,6 +2,7 @@ import { DeleteConfig, DTOBaseConfig, RenderContext } from '../../interfaces/typ
 import { getControllerTypes } from "../controller/getControllerTypes";
 import { getDTOTypes } from "./helpers";
 import { DIRECTORIES } from '../../utils/constants';
+import { capitalize } from '../../utils/capitalizeStrings';
 
 export const checkDependencyInController = async function (context: RenderContext<DTOBaseConfig>  | RenderContext<DeleteConfig>) {
 
@@ -22,7 +23,7 @@ export const checkDependencyInController = async function (context: RenderContex
             });
           }
         }
-      if (action.requestBody?.name === dtoName) {
+      if (capitalize(action.actionName) + "Request" === dtoName) {
         errors.push({
           message: `DTO '${dtoName}' is being used as a requestBody in controller '${controller.name}' in action '${action.actionName}'.`,
         });

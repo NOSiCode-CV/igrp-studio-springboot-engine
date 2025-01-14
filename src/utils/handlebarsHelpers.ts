@@ -169,12 +169,12 @@ Handlebars.registerHelper(
 
     for (const action of actions) {
       if (action.requestBody)
-        if (!REQUEST_BODY_NOT_IMPORT.includes(action.requestBody.name))
+        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request"))
           if (domainDriven === true)
             imports.push(
-              `import ${group}.${packageName}.${mod}.application.dto.${action.requestBody.name};`,
+              `import ${group}.${packageName}.${mod}.application.dto.${capitalize(action.actionName) + "Request"};`,
             );
-          else imports.push(`import ${group}.${packageName}.dto.${action.requestBody.name};`);
+          else imports.push(`import ${group}.${packageName}.dto.${capitalize(action.actionName) + "Request"};`);
       if (action.responses)
         for (const response of Object.values(action.responses)) {
           const className = capitalize(response.name)

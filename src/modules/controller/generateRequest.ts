@@ -1,10 +1,10 @@
 import {
-  ApiConfig, Body,
+  ApiConfig, ControllerAction,
   ControllerConfig,
   DTOConfig,
   JavaType,
   ModelConfig,
-  RenderContext
+  RenderContext,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -25,6 +25,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
+import { capitalize } from '../../utils/capitalizeStrings';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
 
@@ -35,7 +36,7 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     const dtoContext: RenderContext<DTOConfig> = {
       baseConfig: context.baseConfig,
       basePath: context.basePath,
-      resourceConfig: await transformSchemaDTOConfig(action.requestBody, context.baseConfig, context.basePath),
+      resourceConfig: await transformSchemaDTOConfig(action, context.baseConfig, context.basePath),
       fullPath: context.basePath,
     };
 
@@ -108,17 +109,19 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
 };
 
 export const transformSchemaDTOConfig = async function(
-  config: Body,
+  action: ControllerAction,
   api: ApiConfig,
   basePath: string,
 ): Promise<DTOConfig> {
 
+  const config = action.requestBody!;
+
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'dto',
-    name: bodyCfg.name,
+    name: capitalize(action.actionName) + "Request",
     template: 'classic',
-    module: bodyCfg.module,
+    module: DIRECTORIES.SHARED,
     attributes: []
   };
   const schemacfg = bodyCfg.content["application/json"].schema
@@ -134,12 +137,12 @@ export const transformSchemaDTOConfig = async function(
     let typeNotFound = false;
     if (attr.type === PACKAGE_NS.model) {
       if (mtypes === undefined) {
-        mtypes = await getModelTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
+        mtypes = await getModelTypes(DIRECTORIES.SHARED, basePath);
       }
       const mt = mtypes.get(attr.$ref!);
       if (mt) {
         if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
-          type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
+          type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
         }
@@ -148,7 +151,7 @@ export const transformSchemaDTOConfig = async function(
       }
     } else if (attr.type === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
-        dtypes = await getDTOTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
+        dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
       }
 
       const dt = dtypes.get(attr.$ref!);
@@ -163,7 +166,7 @@ export const transformSchemaDTOConfig = async function(
 
       if(!typeNotFound) {
         if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
-          type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
+          type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
         }
@@ -203,7 +206,7 @@ export const transformSchemaDTOConfig = async function(
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.name = normalizeName(capitalize(action.actionName) + "Request", 'dto')
 
   if (errors.length > 0) {
     throw errors;

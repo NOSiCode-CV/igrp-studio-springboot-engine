@@ -3,7 +3,7 @@ import { ApiConfig, ModelConfig, ControllerConfig } from '../interfaces/types';
 
 export const isApiConfig = (
   config: ApiConfig | ModelConfig | ControllerConfig,
-): config is ApiConfig => config?.type === 'baseApi';
+): config is ApiConfig => config?.type === 'springboot';
 
 export const isModelConfig = (
   config: ApiConfig | ModelConfig | ControllerConfig,
