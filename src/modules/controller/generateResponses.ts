@@ -55,8 +55,8 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       const template = await _renderDTO(dtoContext);
 
       await saveToFile(template, modelOutputPath);
-      
-      await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
+
+      // await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
 
       const statusCode = parseInt(status, 10);
 
