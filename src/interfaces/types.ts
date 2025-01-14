@@ -5,7 +5,7 @@ import {
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES, CONFIG_TYPES,
+  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES, CONFIG_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -157,7 +157,7 @@ export interface Icontroller {
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
-  type: AttributeType;
+  type: ModelAttributeType;
   name: string;
   length?: number | null;
   nullable?: boolean;
@@ -324,6 +324,7 @@ export interface DeleteConfig {
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
+export type ModelAttributeType = (typeof GENERIC_MODEL_ATTRIBUTE_TYPES)[number];
 export type CollectionType = (typeof GENERIC_COLLECTION_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
 export type ObjectTypes = (typeof OBJECT_TYPES)[number];

@@ -15,7 +15,7 @@ import {
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_ATTRIBUTE_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
 } from '../utils/constants';
 
 const relationSchema: JSONSchemaType<Relation> = {
@@ -79,8 +79,8 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   properties: {
     type: {
       type: "string",
-      enum: GENERIC_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
-      errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
+      enum: GENERIC_MODEL_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
+      errorMessage: `The attribute type must be one of ${GENERIC_MODEL_ATTRIBUTE_TYPES} and cannot be empty.`
     },
     name: {
       type: "string",

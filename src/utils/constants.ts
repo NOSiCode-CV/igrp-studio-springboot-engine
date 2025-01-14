@@ -869,7 +869,6 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
 }));
 
 export const GENERIC_ATTRIBUTE_TYPES = [
-  'relation',
   'boolean',
   'integer',
   'long',
@@ -890,6 +889,14 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'character',
   'instant',
 ];
+
+export const GENERIC_MODEL_ATTRIBUTE_TYPES = [
+  ...GENERIC_ATTRIBUTE_TYPES, 'relation'
+]
+
+export const GENERIC_DTO_ATTRIBUTE_TYPES = [
+  ...GENERIC_ATTRIBUTE_TYPES
+]
 
 export const GENERIC_COLLECTION_TYPES = [
   'list',
