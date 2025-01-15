@@ -69,26 +69,29 @@ const valueSchema: JSONSchemaType<EnumValue> = {
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage:
-        "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters."
+      errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     attributes: {
       type: "array",
       nullable: true,
       items: {
-        type: "object",
-        additionalProperties: true
-      }
-    }
+        type: "string",
+        errorMessage: {
+          type: "Each item in 'attributes' must be a string.",
+          pattern: "Each item in 'attributes' must contain only alphabetic characters and cannot contain spaces or special characters.",
+        },
+      },
+      errorMessage: "The 'attributes' field must be a valid array of strings or be omitted.",
+    },
   },
   required: ["name"],
   additionalProperties: false,
   errorMessage: {
     required: {
-      name: "The attribute name is required."
+      name: "The attribute name is required.",
     },
-    additionalProperties: "No additional properties are allowed in the attribute schema."
-  }
+    additionalProperties: "No additional properties are allowed in the attribute schema.",
+  },
 };
 
 const enumAttributeSchema: JSONSchemaType<Attribute> = {

@@ -256,7 +256,7 @@ export interface EnumConfig {
 
 export interface EnumValue {
   name: string;
-  attributes?: any[];
+  attributes?: string[];
 }
 
 export interface HttpHeader {

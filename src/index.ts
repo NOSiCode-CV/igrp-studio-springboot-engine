@@ -599,11 +599,11 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
  *   }
  * };
  */
-export const addEnum = async (dirty: EnumConfig, basePath: string) => {
+export const addEnum = async (config: EnumConfig, basePath: string) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
-  const config: EnumConfig = cleaner(dirty);
+  //const config: EnumConfig = cleaner(dirty);
 
   // this function check is the values or attributes have duplicated names
   checkDuplicated(config.attributes, [], [], config.values);

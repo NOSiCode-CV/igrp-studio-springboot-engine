@@ -8,10 +8,10 @@ const fullEnumConfig: EnumConfig = {
   type: 'enum',
   name: "SuperLevel",
   values: [
-    { name: "HIGH", attributes: [1, "High"] },
-    { name: "LOW", attributes: [0, "Low"] }
+    { name: "HIGH", attributes: ["1", "High"] },
+    { name: "LOW", attributes: ["0", "Low"] }
   ],
-  attributes: [{ name: 'code', type: 'integer' }, { name: 'description', type: 'string' }]
+  attributes: [{ name: 'code', type: 'string' }, { name: 'description', type: 'string' }]
 };
 
 const simpleEnumConfig: EnumConfig = {
@@ -22,6 +22,32 @@ const simpleEnumConfig: EnumConfig = {
     { name: "LOW" }
   ]
 };
+
+const testEnum: EnumConfig = {
+  "type": "enum",
+  "module": "shared",
+  "name": "ewewe",
+  "values": [
+    {
+      "name": "ew",
+      "attributes": [
+        'ew',
+        'edsgh'
+      ]
+    },
+    {
+      "name": "eweewew",
+      "attributes": [
+        'we',
+        'ee'
+      ]
+    }
+  ],
+  "attributes": [
+    { name: 'code', type: 'string' },
+    { name: 'description', type: 'string' },
+  ]
+}
 
 beforeEach(async () => {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
@@ -34,6 +60,6 @@ afterEach(async () => {
 describe('New Enum', () => {
 
   it('should create the enum class.', async () => {
-    await addEnum(fullEnumConfig, OUTPUT_DIR);
+    await addEnum(testEnum, OUTPUT_DIR);
   });
 });
