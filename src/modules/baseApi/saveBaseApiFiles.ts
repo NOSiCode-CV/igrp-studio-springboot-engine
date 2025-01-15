@@ -105,6 +105,19 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
       },
+
+      {
+        output: path.join(infraPath, DIRECTORIES.SPRING),
+        template: TEMPLATES.DDD_SPRING_COMMAND_BUS,
+        name: COMMON_FILES.SPRING_COMMAND_BUS
+      },
+
+      {
+        output: path.join(infraPath, DIRECTORIES.SPRING),
+        template: TEMPLATES.DDD_SPRING_QUERY_BUS,
+        name: COMMON_FILES.SPRING_QUERY_BUS
+      }
+
     ];
   } else {
     const configPath = path.join(mainPath, 'config');

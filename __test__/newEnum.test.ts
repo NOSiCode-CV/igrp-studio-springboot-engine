@@ -2,9 +2,10 @@ import fs from 'fs-extra';
 import { addEnum, addModule } from '../src/index';
 import { EnumConfig, ModuleConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedTest'
+const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 
 const fullEnumConfig: EnumConfig = {
+  type: 'enum',
   name: "SuperLevel",
   values: [
     { name: "HIGH", attributes: [1, "High"] },
@@ -14,6 +15,7 @@ const fullEnumConfig: EnumConfig = {
 };
 
 const simpleEnumConfig: EnumConfig = {
+  type: 'enum',
   name: "Level",
   values: [
     { name: "HIGH" },

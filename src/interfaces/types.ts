@@ -247,6 +247,7 @@ export interface ISelectPermissions {
 }
 
 export interface EnumConfig {
+  type: 'enum';
   name: string;
   module?: string;
   values: EnumValue[];

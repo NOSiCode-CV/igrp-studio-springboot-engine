@@ -1,5 +1,7 @@
 {{> package-java }}
 
+import cv.igrp.stereotype.IgrpCommandHandler;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class {{capitalize resourceConfig.name}}CommandHandler {
 
    }
 
+   @IgrpCommandHandler
+   @EventListener
    public ResponseEntity<{{normalizeDto resourceConfig.response}}> handle({{capitalize resourceConfig.name}}Command command) {
       // TODO: Implement the command handling logic here
       return null;

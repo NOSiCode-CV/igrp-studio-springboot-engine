@@ -293,6 +293,7 @@ export const TEMPLATES = {
   DDD_AGGREGATE_REPOSITORY: 'struct/domain/java/domain/repository/domainrepository.hbs',
   DDD_AGGREGATE_REPOSITORY_IMPL: 'struct/domain/java/infrastructure/db/impl/domainrepositoryimpl.hbs',
   DDD_SPRING_COMMAND_BUS: 'struct/domain/java/infrastructure/spring/springcommandbus.hbs',
+  DDD_SPRING_QUERY_BUS: 'struct/domain/java/infrastructure/spring/springquerybus.hbs',
   DDD_SPRING_EVENT_BUS: 'struct/domain/java/infrastructure/spring/springeventbus.hbs',
 
   // DOMAIN DRIVEN DESIGN LITE
@@ -421,6 +422,7 @@ export const COMMON_FILES = {
   ENTITY_BASE: 'EntityBase.java',
   BASE_REPOSITORY: 'BaseRepository.java',
   SPRING_COMMAND_BUS: 'SpringCommandBus.java',
+  SPRING_QUERY_BUS: 'SpringQueryBus.java',
   SPRING_EVENT_BUS: 'SpringEventBus.java'
 
 };

@@ -584,7 +584,10 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
  *     { name: "HIGH", attributes: ["H", "High"] },
  *     { name: "LOW", attributes: ["L", "Low"] }
  *   ],
- *   attributes: ["code", "description"]
+ *   attributes: [
+ *     { name: 'code', type: 'string' },
+ *     { name: 'description', type: 'string' },
+ *   ]
  * };
  * const basePath = 'C://your_project_path';
  *

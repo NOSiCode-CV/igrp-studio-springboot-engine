@@ -169,6 +169,11 @@ const enumAttributeSchema: JSONSchemaType<Attribute> = {
 const enumSchema: JSONSchemaType<EnumConfig> = {
   type: 'object',
   properties: {
+    type: {
+      type: 'string',
+      const: 'enum',
+      errorMessage: `The type must be 'enum'.`
+    },
     module: {
       type: "string",
       nullable: true,

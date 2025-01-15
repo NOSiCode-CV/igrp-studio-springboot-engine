@@ -1,13 +1,10 @@
 
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
   public {{capitalize resourceConfig.name}}Controller(
-  {{#each resourceConfig.actions}}
-    {{#if (eq method "GET")}}{{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{else}}{{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler{{/if}}{{#if @last}}{{else}}, {{/if}}
-  {{/each}}
+    CommandBus commandBus, QueryBus queryBus
   ) {
-  {{#each resourceConfig.actions}}
-    {{#if (eq method "GET")}}this.{{toCamelCase actionName}}QueryHandler = {{toCamelCase actionName}}QueryHandler{{else}}this.{{toCamelCase actionName}}CommandHandler = {{toCamelCase actionName}}CommandHandler{{/if}};
-  {{/each}}
+    this.commandBus = commandBus;
+    this.queryBus = queryBus;
   }
 {{else}}
 public {{resourceConfig.name}}Controller({{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service){

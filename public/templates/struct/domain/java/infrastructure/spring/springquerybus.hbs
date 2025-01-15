@@ -1,0 +1,22 @@
+{{> package-java }}
+
+import cv.igrp.core.domain.Query;
+import cv.igrp.core.domain.QueryBus;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpringQueryBus implements QueryBus {
+
+   private final ApplicationEventPublisher publisher;
+
+   public SpringQueryBus(ApplicationEventPublisher publisher) {
+      this.publisher = publisher;
+   }
+
+   @Override
+   public void handle(Query Query) {
+      publisher.publishEvent(Query);
+   }
+
+}
