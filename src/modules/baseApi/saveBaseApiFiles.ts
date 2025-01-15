@@ -36,13 +36,17 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
   const configPath = path.join(mainPath, 'config');
   const securityPath = path.join(mainPath, 'security');
+  const kubernetesPath = path.join(context.basePath, 'k8s');
 
   return [
     { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
     { output: configPath, template: TEMPLATES.DOMAIN_MODEL_AUDIT, name: COMMON_FILES.AUDIT_ENTITY},
     { output: resourcePath, template: TEMPLATES.DOMAIN_RESOURCES, name: COMMON_FILES.APPLICATION_PROPERTIES },
     { output: configPath, template: TEMPLATES.APPLICATION_AUDIT_AWARE, name: COMMON_FILES.APPLICATION_AUDIT_AWARE},
-    { output: securityPath, template: TEMPLATES.CONFIG_SECURITY, name: COMMON_FILES.APPLICATION_SECURITY}
+    { output: securityPath, template: TEMPLATES.CONFIG_SECURITY, name: COMMON_FILES.APPLICATION_SECURITY},
+    { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
+    { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
+    { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S}
   ]
 };
 

@@ -1,8 +1,8 @@
 import path from 'path';
 import { TypeMetadata } from '../interfaces/types';
 
-// export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+//export const TEMPLATE_DIR = path.join(__dirname, './templates');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -19,7 +19,8 @@ export const DIRECTORIES = {
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
   AUDIT_CONFIG: 'config',
-  SECURITY: 'security'
+  SECURITY: 'security',
+  KUBERNETES: 'k8s'
 };
 
 export const PACKAGES = {
@@ -110,6 +111,9 @@ export const TEMPLATES = {
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+  CONFIG_DEPLOYMENT: 'config/k8s/deploymentyaml.hbs',
+  CONFIG_INGRESS: 'config/k8s/ingressyaml.hbs',
+  CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -118,7 +122,7 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
@@ -128,7 +132,7 @@ export const COMMON_FILES = {
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
   GITIGNORE: '.gitignore',
-  GITLAB_CI_YAML: 'gitlab-ci.yaml',
+  GITLAB_CI_YAML: '.gitlab-ci.yml',
   MVNW: 'mvnw',
   MVNW_CMD: 'mvnw.cmd',
   POM_XML: 'pom.xml',
@@ -138,7 +142,10 @@ export const COMMON_FILES = {
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
-  APPLICATION_SECURITY: 'SecurityConfig.java'
+  APPLICATION_SECURITY: 'SecurityConfig.java',
+  DEPLOYMENT: 'deployment.yaml',
+  INGRESS: 'ingress.yaml',
+  SERVICE_K8S: 'service.yaml'
 };
 
 export const EXTENSIONS = {

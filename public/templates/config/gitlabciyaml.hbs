@@ -9,12 +9,15 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375
   KUBECONFIG: "/kube/config"
-  KUBE_NAMESPACE: "p2" # Valor por defecto para el namespace, pero configurable en el pipeline
-  API_URL: "https://user-manager-dev.inss.gw/identity/resources" # Valor por defecto de la API, pero configurable en el pipeline
-  APPLICATION_NAME: "application-1"  # Valor por defecto, pero configurable en el pipeline
-  HOME_URL: "wayvant-test.com/" # Valor por defecto, pero configurable en el pipeline
-  RESOURCE_NAME: "p2" # Valor por defecto, pero configurable en el pipeline
-  RESOURCE_DESCRIPTION: "staff 1" # Valor por defecto, pero configurable en el pipeline
+  KUBE_NAMESPACE: "p2" 
+  API_URL: "https://user-manager-dev.inss.gw/identity/resources" 
+  APPLICATION_NAME: "application-1"  
+  HOME_URL: "wayvant-test.com/" 
+  RESOURCE_NAME: "p2" 
+  RESOURCE_DESCRIPTION: "staff 1" 
+  REGISTRY_USERNAME: "bittor.vpn"
+  REGISTRY_PASSWORD: "Bh1030_1812#"
+  REGISTRY_URL: "registry.nosi.cv"
 stages:
   - setup
   - build
@@ -38,7 +41,7 @@ setup:
       export RESOURCE_DESCRIPTION_FINAL="${CUSTOM_RESOURCE_DESCRIPTION:-$RESOURCE_DESCRIPTION}"
 
       # Leemos el contenido del archivo paths.json
-      export PATHS_JSON=$(cat paths.json)
+      export PATHS_JSON=$(cat .igrpstudio/baseApi.json)
 
       echo "KUBE_NAMESPACE_FINAL: $KUBE_NAMESPACE_FINAL"
       echo "API_URL_FINAL: $API_URL_FINAL"
@@ -46,9 +49,8 @@ setup:
       echo "HOME_URL_FINAL: $HOME_URL_FINAL"
       echo "RESOURCE_NAME_FINAL: $RESOURCE_NAME_FINAL"
       echo "RESOURCE_DESCRIPTION_FINAL: $RESOURCE_DESCRIPTION_FINAL"
-      echo "PATHS_JSON: $PATHS_JSON" # Verificamos que el contenido se cargó correctamente
+      echo "PATHS_JSON: $PATHS_JSON" 
 
-      # Estas variables finales se usarán en los stages siguientes.
       TMP_FILE=$(mktemp)
       printf 'KUBE_NAMESPACE_FINAL="%s"\n' "$KUBE_NAMESPACE_FINAL" >> "$TMP_FILE"
       printf 'API_URL_FINAL="%s"\n' "$API_URL_FINAL" >> "$TMP_FILE"
@@ -56,7 +58,7 @@ setup:
       printf 'HOME_URL_FINAL="%s"\n' "$HOME_URL_FINAL" >> "$TMP_FILE"
       printf 'RESOURCE_NAME_FINAL="%s"\n' "$RESOURCE_NAME_FINAL" >> "$TMP_FILE"
       printf 'RESOURCE_DESCRIPTION_FINAL="%s"\n' "$RESOURCE_DESCRIPTION_FINAL" >> "$TMP_FILE"
-      printf 'PATHS_JSON="%s"\n' "$PATHS_JSON" >> "$TMP_FILE"  # Guardamos la variable en el archivo variables.env
+      printf 'PATHS_JSON="%s"\n' "$PATHS_JSON" >> "$TMP_FILE"  
       
       cat "$TMP_FILE" > variables.env # Sustituye el contenido
       rm "$TMP_FILE"
@@ -66,29 +68,37 @@ setup:
 
 build:
   stage: build
-  only:
-    - dev
   script:
     - source variables.env
-    - docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD"
-    - docker build -t $REGISTRY_URL/$REGISTRY_PROJECT/igrp-studio:$CI_PIPELINE_ID .
-    - docker tag $REGISTRY_URL/$REGISTRY_PROJECT/igrp-studio:$CI_PIPELINE_ID $REGISTRY_URL/$REGISTRY_PROJECT/igrp-studio:$RESOURCE_NAME_FINAL
-    - docker push $REGISTRY_URL/$REGISTRY_PROJECT/igrp-studio:$CI_PIPELINE_ID
-    - docker push $REGISTRY_URL/$REGISTRY_PROJECT/igrp-studio:$RESOURCE_NAME_FINAL
-
+    - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+    - docker build -t $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID .
+    - docker tag $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID $REGISTRY_URL/bittortest/api-bittor-test:demo
+    - docker push $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID
+    - docker push $REGISTRY_URL/bittortest/api-bittor-test:demo
+  only:
+    - dev
 deploy:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: ubuntu:22.04
   needs: [setup]
+  before_script:
+    - apt-get update && apt-get install -y openssh-client
+    - apt-get -y install sshpass
+    - apt-get install -y apt-transport-https ca-certificates curl gnupg
+    - curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    - chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
+    - echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+    - chmod 644 /etc/apt/sources.list.d/kubernetes.list   
+    - apt-get update
+    - apt-get install -y kubectl
+    - apt-get install -y gettext
+    - mkdir -p /kube
   script:
     - source variables.env
-    - apk add --no-cache gettext # Instala gettext
     - echo "$KUBECONFIG_CONTENT" > $KUBECONFIG
-    - envsubst < ./k8s/deployment.yaml > ./k8s/deployment-substituted.yaml # Sustituye todas las variables
+    - envsubst < ./k8s/deployment.yaml > ./k8s/deployment-substituted.yaml 
     - kubectl apply -f ./k8s/deployment-substituted.yaml -n $KUBE_NAMESPACE_FINAL
     - kubectl rollout status deployment/igrp-studio -n $KUBE_NAMESPACE_FINAL
-  only:
-    - dev
 
 build_json:
   stage: buildjson
@@ -121,13 +131,11 @@ build_json:
   artifacts:
     paths:
       - payload.json
-  only:
-    - dev
 
 deploy_resource:
   stage: deployjson
   image: alpine/curl
-  needs: [build_json, setup] # dependecia del stage setup
+  needs: [build_json, setup] 
   script:
     - source variables.env
     - |
@@ -135,6 +143,5 @@ deploy_resource:
         -H "Content-Type: application/json" \
         -d @payload.json \
         "$API_URL_FINAL"
-  only:
-    - dev
+  
 
