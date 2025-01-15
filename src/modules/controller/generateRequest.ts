@@ -186,7 +186,7 @@ export const transformSchemaDTOConfig = async function(
 
     if (typeNotFound) {
       errors.push({
-        message: `on attribute ${key}, Type ${(type.name != 'dto' && type.name != 'model')? type.name : attr.objectType} not on the allowed '${(type.name == 'dto' || type.name == 'model')? type.name : 'java'}' list`,
+        message: `on attribute ${key}, Type ${type.name} not on the allowed '${attr.objectType}' list`,
       });
     }
 

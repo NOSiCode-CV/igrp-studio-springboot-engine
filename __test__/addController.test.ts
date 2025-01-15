@@ -15,6 +15,7 @@ const controllerConfig: ControllerConfig = {
       "method": "GET",
       "responses": {
         "200": {
+          "module": "gest",
           "name": "OK",
           "content": {
             "application/json": {
@@ -22,7 +23,7 @@ const controllerConfig: ControllerConfig = {
                 "type": "object",
                 "properties": {
                   "cod": {
-                    "type": "CatDTO",
+                    "type": "OKDTO",
                     "objectType": "dto",
                     "properties": {
                     },
