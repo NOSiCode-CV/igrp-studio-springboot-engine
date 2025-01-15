@@ -4,9 +4,12 @@ import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import {
   ApiConfig,
-  ControllerConfig, DeleteConfig,
+  ControllerConfig,
+  DeleteConfig,
   DTOBaseConfig,
-  DTOConfig, EnumConfig, ExceptionConfig,
+  DTOConfig,
+  EnumConfig,
+  ExceptionConfig,
   ModelConfig,
   ObjectTypes,
   PermissionConfig,
@@ -407,8 +410,34 @@ export const loadDTOConfig = async function <DTOConfig>(type: ObjectTypes, baseP
   return jsonContent as DTOConfig;
 };
 
+export const loadEnumConfig = async function <EnumConfig>(basePath: string, name: string): Promise<EnumConfig> {
+  if (!name || name.trim() === '') {
+    throw new Error("Invalid Enum config name");
+  }
+
+  if (!(await fs.pathExists(basePath))) {
+    throw new Error("Invalid Enum config path");
+  }
+
+  const files = await fs.readdir(basePath);
+  const matchingFile = files.find(f => f === `${name}.json`);
+
+  if (!matchingFile) {
+    throw new Error(`Enum config file "${name}.json" not found in the directory.`);
+  }
+
+  const filePath = path.join(basePath, matchingFile);
+
+  return await fs.readJSON(filePath);
+
+};
+
 export const loadDTOConfigs = async function (module: string, basePath: string): Promise<DTOConfig[]> {
   return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })));
+}
+
+export const loadEnumConfigs = async function (module: string, basePath: string): Promise<EnumConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module })));
 }
 
 export const loadModelConfigs = async function (module: string, basePath: string): Promise<ModelConfig[]> {

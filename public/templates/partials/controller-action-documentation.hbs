@@ -10,57 +10,37 @@
               {{#each this.content}}
               mediaType = "{{@key}}",
               schema = @Schema(
-                  {{#if this.schema.$ref}}
-                  implementation = {{this.schema.$ref}}.class,
+                  {{#if this.schema.objectType}}
+                  implementation = {{this.schema.type}}.class,
                   {{else}}
                   {{#if ../this.name}}
                   implementation = {{normalizeDto ../this.name}}.class,
                   {{/if}}
                   {{/if}}
                   {{#if this.schema.type}}
-                  type = "{{this.schema.type}}",
-                  {{/if}}
-                  {{#if this.schema.description}}
-                  description = "{{this.schema.description}}",
-                  {{/if}}
-                  {{#if this.schema.example}}
-                  example = "{{this.schema.example}}",
-                  {{/if}}
-                  {{#if this.schema.deprecated}}
-                  deprecated = true,
-                  {{/if}}
-                  {{#if this.schema.minimum}}
-                  minimum = {{this.schema.minimum}},
-                  {{/if}}
-                  {{#if this.schema.maximum}}
-                  maximum = {{this.schema.maximum}},
-                  {{/if}}
-                  {{#if this.schema.pattern}}
-                  pattern = "{{this.schema.pattern}}",
-                  {{/if}}
-                  {{#if this.schema.format}}
-                  format = "{{this.schema.format}}",
-                  {{/if}}
-                  {{#if this.schema.default}}
-                  defaultValue = "{{this.schema.default}}",
-                  {{/if}}
-                  {{#if this.schema.enum}}
-                  allowableValues = "{{join this.schema.enum ', '}}",
-                  {{/if}}
-                  {{#if this.schema.required}}
-                  required = true,
-                  {{/if}}
-                  {{#if this.schema.properties}}
+                  type = "{{this.schema.type}}"{{/if}}{{#if this.schema.description}},
+                  description = "{{this.schema.description}}"{{/if}}{{#if this.schema.example}},
+                  example = "{{this.schema.example}}"{{/if}}{{#if this.schema.required}},
+                  required = true{{/if}}{{#if this.deprecated}},
+                  deprecated = true{{/if}}{{#if this.schema.properties}},
                   properties = {
                       {{#each this.schema.properties}}
                       io.swagger.v3.oas.annotations.StringToClassMapItem.@Schema(
                           name = "{{@key}}",
-                          type = "{{this.type}}"{{#if this.$ref}},
-                          implementation = {{this.$ref}}{{/if}}{{#if this.description}},
+                          type = "{{this.type}}"{{#if this.objectType}},
+                          implementation = {{this.type}}.class{{/if}}{{#if this.description}},
                           description = "{{this.description}}"{{/if}}{{#if this.example}},
                           example = "{{this.example}}"{{/if}}{{#if this.pattern}},
                           pattern = "{{this.pattern}}"{{/if}}{{#if this.format}},
-                          format = "{{this.format}}"{{/if}}
+                          format = "{{this.format}}"{{/if}}{{#if this.enum}},
+                          allowableValues = "{{join this.enum.values ', '}}"{{/if}}{{#if this.deprecated}},
+                          deprecated = true{{/if}}{{#if this.minimum}},
+                          minimum = {{this.minimum}}{{/if}}{{#if this.maximum}},
+                          maximum = {{this.maximum}}{{/if}}{{#if this.pattern}},
+                          pattern = "{{this.pattern}}"{{/if}}{{#if this.format}},
+                          format = "{{this.format}}"{{/if}}{{#if this.default}},
+                          defaultValue = "{{this.default}}"
+                          {{/if}}
                       ){{#if @last}}{{else}}, {{/if}}
                       {{/each}}
                   }

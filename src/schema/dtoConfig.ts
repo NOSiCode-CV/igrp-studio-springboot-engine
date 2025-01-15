@@ -22,7 +22,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
-    ns: { 
+    objectType: {
       type: "string", 
       enum: ['model', 'dto', 'java'],
       errorMessage: 'The abbreaviated namespace must model, dto, java.'
@@ -106,7 +106,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       nullable: true
     },
   },
-  required: ["type", "name", "ns", "required"],
+  required: ["type", "name", "objectType", "required"],
   additionalProperties: false,
   errorMessage: {
     required: {

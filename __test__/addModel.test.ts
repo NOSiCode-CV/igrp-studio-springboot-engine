@@ -12,12 +12,12 @@ const model: ModelConfig = {
   tableName: 'tbl_team',
   module: 'club',
   attributes: [
-    { type: 'Long', name: 'teamId', ns: 'java', primaryKey: true },
-    { type: 'String', name: 'number', unique: false, nullable: false, ns: 'java' },
-    { type: 'String', name: 'name', length: 30, ns: 'java' },
-    { type: 'Float', name: 'balance', length: 50, defaultValue: '12.233', ns: 'java' },
-    { type: 'Boolean', name: 'active', length: 30, ns: 'java' },
-    { type: 'String', name: 'description', length: 2000, ns: 'java' },
+    { type: 'Long', name: 'teamId', objectType: 'java', primaryKey: true },
+    { type: 'String', name: 'number', unique: false, nullable: false, objectType: 'java' },
+    { type: 'String', name: 'name', length: 30, objectType: 'java' },
+    { type: 'Float', name: 'balance', length: 50, defaultValue: '12.233', objectType: 'java' },
+    { type: 'Boolean', name: 'active', length: 30, objectType: 'java' },
+    { type: 'String', name: 'description', length: 2000, objectType: 'java' },
   ],
   primaryKey: [
     {
@@ -59,17 +59,17 @@ const model3: ModelConfig = {
   tableName: 'tbl_client',
   module: 'CarRental',
   attributes: [
-    { type: 'Integer', name: 'clientId', unique: false, nullable: true, defaultValue: '20', ns: 'java', primaryKey: true, generationType: 'IDENTITY' },
-    { type: 'String', name: 'number', unique: false, nullable: true, defaultValue: 'X0PSKK012', ns: 'java' },
-    { type: 'String', name: 'nationalId', unique: false, nullable: true, ns: 'java' },
-    { type: 'String', name: 'licenceNo', unique: false, nullable: true, ns: 'java' },
-    { type: 'Long', name: 'cars', unique: false, nullable: true, defaultValue: '123456789012345', ns: 'java' }, // Longo
-    { type: 'BigDecimal', name: 'totalRental', unique: false, nullable: true, defaultValue: '1000.50', ns: 'java' }, // Decimal
-    { type: 'Double', name: 'usePercentage', unique: false, nullable: true, defaultValue: '12.5', ns: 'java' }, // Flutuante
-    { type: 'Boolean', name: 'active', unique: false, nullable: true, defaultValue: 'false', ns: 'java' }, // Booleano
-    { type: 'String', name: 'birthdate', unique: false, nullable: true, ns: 'java'}, // Data
-    { type: 'Short', name: 'position', unique: false, nullable: true, defaultValue: '10', ns: 'java' }, // Short
-    { type: 'String', name: 'photoUrl', unique: false, nullable: true, defaultValue: '', ns: 'java' }, // Byte
+    { type: 'Integer', name: 'clientId', unique: false, nullable: true, defaultValue: '20', objectType: 'java', primaryKey: true, generationType: 'IDENTITY' },
+    { type: 'String', name: 'number', unique: false, nullable: true, defaultValue: 'X0PSKK012', objectType: 'java' },
+    { type: 'String', name: 'nationalId', unique: false, nullable: true, objectType: 'java' },
+    { type: 'String', name: 'licenceNo', unique: false, nullable: true, objectType: 'java' },
+    { type: 'Long', name: 'cars', unique: false, nullable: true, defaultValue: '123456789012345', objectType: 'java' }, // Longo
+    { type: 'BigDecimal', name: 'totalRental', unique: false, nullable: true, defaultValue: '1000.50', objectType: 'java' }, // Decimal
+    { type: 'Double', name: 'usePercentage', unique: false, nullable: true, defaultValue: '12.5', objectType: 'java' }, // Flutuante
+    { type: 'Boolean', name: 'active', unique: false, nullable: true, defaultValue: 'false', objectType: 'java' }, // Booleano
+    { type: 'String', name: 'birthdate', unique: false, nullable: true, objectType: 'java'}, // Data
+    { type: 'Short', name: 'position', unique: false, nullable: true, defaultValue: '10', objectType: 'java' }, // Short
+    { type: 'String', name: 'photoUrl', unique: false, nullable: true, defaultValue: '', objectType: 'java' }, // Byte
   ],
   crud: true
 };

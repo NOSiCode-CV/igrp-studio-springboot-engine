@@ -118,7 +118,7 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
     },
-    ns: {
+    objectType: {
       type: "string",
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'

@@ -81,9 +81,9 @@ describe('DTO generator', () => {
       name: 'RentalCreated',
       template: 'classic',
       attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true, required: false },
-        { type: 'String', ns: 'java', name: 'customerName', required: false },
-        { type: 'LocalDate', ns: 'java', name: 'rentalDate', required: false },
+        { type: 'Long', objectType: 'java', name: 'id', primaryKey: true, required: false },
+        { type: 'String', objectType: 'java', name: 'customerName', required: false },
+        { type: 'LocalDate', objectType: 'java', name: 'rentalDate', required: false },
       ],
     };
 
@@ -215,13 +215,13 @@ describe('DTO generator', () => {
       name: 'Rental', // DTO name
       template: 'classic',
       attributes: [
-        { type: 'Long', ns: 'java', name: 'rentalId', primaryKey: true, required: false },    // Primary key for the rental
-        { type: 'Long', ns: 'java', name: 'carId', required: false },                          // Field for car ID
-        { type: 'String', ns: 'java', name: 'customerName', required: false },                 // Field for the customer name
-        { type: 'String', ns: 'java', name: 'rentalStartDate', required: false },                // Field for rental start date
-        { type: 'String', ns: 'java', name: 'rentalEndDate', required: false },                  // Field for rental end date
-        { type: 'String', ns: 'java', name: 'rentalStatus', required: false },                 // Field for rental status
-        { type: 'BigDecimal', ns: 'java', name: 'rentalPrice', required: false },              // Field for rental price
+        { type: 'Long', objectType: 'java', name: 'rentalId', primaryKey: true, required: false },    // Primary key for the rental
+        { type: 'Long', objectType: 'java', name: 'carId', required: false },                          // Field for car ID
+        { type: 'String', objectType: 'java', name: 'customerName', required: false },                 // Field for the customer name
+        { type: 'String', objectType: 'java', name: 'rentalStartDate', required: false },                // Field for rental start date
+        { type: 'String', objectType: 'java', name: 'rentalEndDate', required: false },                  // Field for rental end date
+        { type: 'String', objectType: 'java', name: 'rentalStatus', required: false },                 // Field for rental status
+        { type: 'BigDecimal', objectType: 'java', name: 'rentalPrice', required: false },              // Field for rental price
       ],
     };
 
@@ -236,10 +236,10 @@ describe('DTO generator', () => {
         name: 'Rental',
         template: 'classic',
         attributes: [
-          { type: 'Long', ns: 'java', name: 'rentalId', primaryKey: true, required: true },
-          { type: 'String', ns: 'java', name: 'customerName', required: true, minLength: 3, maxLength: 50 },
-          { type: 'BigDecimal', ns: 'java', name: 'rentalPrice', positive: true, required: true },
-          { type: 'String', ns: 'java', name: 'rentalStatus', regex: '^(ACTIVE|CANCELLED|COMPLETED)$', required: false },
+          { type: 'Long', objectType: 'java', name: 'rentalId', primaryKey: true, required: true },
+          { type: 'String', objectType: 'java', name: 'customerName', required: true, minLength: 3, maxLength: 50 },
+          { type: 'BigDecimal', objectType: 'java', name: 'rentalPrice', positive: true, required: true },
+          { type: 'String', objectType: 'java', name: 'rentalStatus', regex: '^(ACTIVE|CANCELLED|COMPLETED)$', required: false },
         ],
       },
       {
@@ -248,9 +248,9 @@ describe('DTO generator', () => {
         name: 'User',
         template: 'classic',
         attributes: [
-          { type: 'String', ns: 'java', name: 'username', required: true, minLength: 5, maxLength: 20 },
-          { type: 'String', ns: 'java', name: 'email', isEmail: true, required: true },
-          { type: 'LocalDate', ns: 'java', name: 'dateOfBirth', before: true, required: false },
+          { type: 'String', objectType: 'java', name: 'username', required: true, minLength: 5, maxLength: 20 },
+          { type: 'String', objectType: 'java', name: 'email', isEmail: true, required: true },
+          { type: 'LocalDate', objectType: 'java', name: 'dateOfBirth', before: true, required: false },
         ],
       },
       {
@@ -259,8 +259,8 @@ describe('DTO generator', () => {
         name: 'Endpoint',
         template: 'classic',
         attributes: [
-          { type: 'String', ns: 'java', name: 'url', isUrl: true, required: true },
-          { type: 'String', ns: 'java', name: 'regexPattern', regex: '^https?://.*', required: false },
+          { type: 'String', objectType: 'java', name: 'url', isUrl: true, required: true },
+          { type: 'String', objectType: 'java', name: 'regexPattern', regex: '^https?://.*', required: false },
         ],
       },
       {
@@ -269,9 +269,9 @@ describe('DTO generator', () => {
         name: 'Transaction',
         template: 'classic',
         attributes: [
-          { type: 'Long', ns: 'java', name: 'transactionId', primaryKey: true, required: false },
-          { type: 'BigDecimal', ns: 'java', name: 'amount', positive: true, required: true, minLength: 1 },
-          { type: 'LocalDate', ns: 'java', name: 'transactionDate', after: true, required: false },
+          { type: 'Long', objectType: 'java', name: 'transactionId', primaryKey: true, required: false },
+          { type: 'BigDecimal', objectType: 'java', name: 'amount', positive: true, required: true, minLength: 1 },
+          { type: 'LocalDate', objectType: 'java', name: 'transactionDate', after: true, required: false },
         ],
       },
     ];
@@ -292,9 +292,9 @@ describe('DTO generator', () => {
         name: 'DadosFactura',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'valor', required: false },
-          { type: 'String', ns: 'java', name: 'medico', required: false },
-          { type: 'String', ns: 'java', name: 'farmacia', required: false },
+          { type: 'String', objectType: 'java', name: 'valor', required: false },
+          { type: 'String', objectType: 'java', name: 'medico', required: false },
+          { type: 'String', objectType: 'java', name: 'farmacia', required: false },
         ],
       },
       {
@@ -303,8 +303,8 @@ describe('DTO generator', () => {
         name: 'Documento',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'tipoDocumento', required: true },
-          { type: 'String', ns: 'java', name: 'ficheiro', required: true }
+          { type: 'String', objectType: 'java', name: 'tipoDocumento', required: true },
+          { type: 'String', objectType: 'java', name: 'ficheiro', required: true }
         ],
       },
       {
@@ -313,14 +313,14 @@ describe('DTO generator', () => {
         name: 'Refund',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'tipoPedido', required: false },
-          { type: 'String', ns: 'java', name: 'numUtente', required: false },
-          { type: 'String', ns: 'java', name: 'tipoUtente', required: false },
-          { type: 'DadosFacturaDTO', ns: 'dto', name: 'dadosFactura', required: false },
-          { type: 'String', ns: 'java', name: 'origemPedido', required: false },
-          { type: 'String', ns: 'java', name: 'dataPrescricao', required: false },
-          { type: 'String', ns: 'java', name: 'observacoes', required: false },
-          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, collectionType: 'list' },
+          { type: 'String', objectType: 'java', name: 'tipoPedido', required: false },
+          { type: 'String', objectType: 'java', name: 'numUtente', required: false },
+          { type: 'String', objectType: 'java', name: 'tipoUtente', required: false },
+          { type: 'DadosFacturaDTO', objectType: 'dto', name: 'dadosFactura', required: false },
+          { type: 'String', objectType: 'java', name: 'origemPedido', required: false },
+          { type: 'String', objectType: 'java', name: 'dataPrescricao', required: false },
+          { type: 'String', objectType: 'java', name: 'observacoes', required: false },
+          { type: 'DocumentoDTO', objectType: 'dto', name: 'documentos', required: false, collectionType: 'list' },
 
 
 
@@ -333,11 +333,11 @@ describe('DTO generator', () => {
         name: 'IdentificacaoRequerente',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'tipo_documento_req', required: true },
-          { type: 'String', ns: 'java', name: 'numero_doc_req', required: true },
-          { type: 'String', ns: 'java', name: 'data_nascimento_req', required: true },
-          { type: 'String', ns: 'java', name: 'nome_pai_req', required: true },
-          { type: 'String', ns: 'java', name: 'nome_mae_req', required: true }
+          { type: 'String', objectType: 'java', name: 'tipo_documento_req', required: true },
+          { type: 'String', objectType: 'java', name: 'numero_doc_req', required: true },
+          { type: 'String', objectType: 'java', name: 'data_nascimento_req', required: true },
+          { type: 'String', objectType: 'java', name: 'nome_pai_req', required: true },
+          { type: 'String', objectType: 'java', name: 'nome_mae_req', required: true }
         ],
       },
       {
@@ -346,11 +346,11 @@ describe('DTO generator', () => {
         name: 'IdentificacaoFalecido',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'num_utente', required: true },
-          { type: 'String', ns: 'java', name: 'nome_utente', required: true },
-          { type: 'String', ns: 'java', name: 'data_nascimento', required: true },
-          { type: 'String', ns: 'java', name: 'data_obito', required: true },
-          { type: 'String', ns: 'java', name: 'tipo_utente', required: true }
+          { type: 'String', objectType: 'java', name: 'num_utente', required: true },
+          { type: 'String', objectType: 'java', name: 'nome_utente', required: true },
+          { type: 'String', objectType: 'java', name: 'data_nascimento', required: true },
+          { type: 'String', objectType: 'java', name: 'data_obito', required: true },
+          { type: 'String', objectType: 'java', name: 'tipo_utente', required: true }
         ],
       },
 
@@ -360,11 +360,11 @@ describe('DTO generator', () => {
         name: 'SubsidioFuneral',
         template: 'record',
         attributes: [
-          { type: 'String', ns: 'java', name: 'tipo_subsidio', required: true },
-          { type: 'String', ns: 'java', name: 'observacoes', required: false },
-          { type: 'IdentificacaoFalecidoDTO', ns: 'dto', name: 'identificacao_falecido', required: true },
-          { type: 'IdentificacaoRequerenteDTO', ns: 'dto', name: 'identificacao_requerente', required: true },
-          { type: 'DocumentoDTO', ns: 'dto', name: 'documentos', required: false, collectionType: 'map', minLength: 1 },
+          { type: 'String', objectType: 'java', name: 'tipo_subsidio', required: true },
+          { type: 'String', objectType: 'java', name: 'observacoes', required: false },
+          { type: 'IdentificacaoFalecidoDTO', objectType: 'dto', name: 'identificacao_falecido', required: true },
+          { type: 'IdentificacaoRequerenteDTO', objectType: 'dto', name: 'identificacao_requerente', required: true },
+          { type: 'DocumentoDTO', objectType: 'dto', name: 'documentos', required: false, collectionType: 'map', minLength: 1 },
         ],
       },
 
@@ -374,15 +374,15 @@ describe('DTO generator', () => {
         name: 'Utente',
         template: 'record',
         attributes: [
-          { type: 'Long', ns: 'java', name: 'id', required: false },
-          { type: 'Long', ns: 'java', name: 'idGeografiaNat', required: false },
-          { type: 'String', ns: 'java', name: 'nome', required: false },
-          { type: 'String', ns: 'java', name: 'cidnome', required: false },
-          { type: 'String', ns: 'java', name: 'naturalidade', required: false },
-          { type: 'String', ns: 'java', name: 'dataNascimento', required: false },
-          { type: 'String', ns: 'java', name: 'nomePai', required: false },
-          { type: 'String', ns: 'java', name: 'nomeMae', required: false },
-          { type: 'String', ns: 'java', name: 'numSegurado', required: false },
+          { type: 'Long', objectType: 'java', name: 'id', required: false },
+          { type: 'Long', objectType: 'java', name: 'idGeografiaNat', required: false },
+          { type: 'String', objectType: 'java', name: 'nome', required: false },
+          { type: 'String', objectType: 'java', name: 'cidnome', required: false },
+          { type: 'String', objectType: 'java', name: 'naturalidade', required: false },
+          { type: 'String', objectType: 'java', name: 'dataNascimento', required: false },
+          { type: 'String', objectType: 'java', name: 'nomePai', required: false },
+          { type: 'String', objectType: 'java', name: 'nomeMae', required: false },
+          { type: 'String', objectType: 'java', name: 'numSegurado', required: false },
         ],
       },
 
@@ -392,12 +392,12 @@ describe('DTO generator', () => {
         name: 'Empresa',
         template: 'record',
         attributes: [
-          { type: 'Long', ns: 'java', name: 'id', required: false },
-          { type: 'String', ns: 'java', name: 'estatutoJuridico', required: false },
-          { type: 'String', ns: 'java', name: 'denominacaoSocial', required: false },
-          { type: 'String', ns: 'java', name: 'cidNom', required: false },
-          { type: 'String', ns: 'java', name: 'numeroContribuinte', required: false },
-          { type: 'String', ns: 'java', name: 'idTipoDocumento', required: false },
+          { type: 'Long', objectType: 'java', name: 'id', required: false },
+          { type: 'String', objectType: 'java', name: 'estatutoJuridico', required: false },
+          { type: 'String', objectType: 'java', name: 'denominacaoSocial', required: false },
+          { type: 'String', objectType: 'java', name: 'cidNom', required: false },
+          { type: 'String', objectType: 'java', name: 'numeroContribuinte', required: false },
+          { type: 'String', objectType: 'java', name: 'idTipoDocumento', required: false },
         ],
       },
 
@@ -407,12 +407,12 @@ describe('DTO generator', () => {
         name: 'UtenteDeceased',
         template: 'record',
         attributes: [
-          { type: 'Long', ns: 'java', name: 'id', required: false },
-          { type: 'String', ns: 'java', name: 'cidnome', required: false },
-          { type: 'String', ns: 'java', name: 'dataNascimento', required: false },
-          { type: 'String', ns: 'java', name: 'dataFalecimento', required: false },
-          { type: 'String', ns: 'java', name: 'numero', required: false },
-          { type: 'String', ns: 'java', name: 'idtipoUtente', required: false },
+          { type: 'Long', objectType: 'java', name: 'id', required: false },
+          { type: 'String', objectType: 'java', name: 'cidnome', required: false },
+          { type: 'String', objectType: 'java', name: 'dataNascimento', required: false },
+          { type: 'String', objectType: 'java', name: 'dataFalecimento', required: false },
+          { type: 'String', objectType: 'java', name: 'numero', required: false },
+          { type: 'String', objectType: 'java', name: 'idtipoUtente', required: false },
         ],
       },
 
@@ -436,52 +436,52 @@ describe('DTO generator', () => {
         "attributes": [
           {
             "type": "string",
-            "ns": "java",
+            "objectType": "java",
             "name": "seccao_portal",
             "required": true
           },
           {
             "type": "string",
-            "ns": "java",
+            "objectType": "java",
             "name": "num_utente",
             "required": true
           },
           {
             "type": "integer",
-            "ns": "java",
+            "objectType": "java",
             "name": "tipo_utente_id",
             "required": true,
             "positive": false
           },
           {
             "type": "string",
-            "ns": "java",
+            "objectType": "java",
             "name": "origem_pedido",
             "required": true
           },
           {
             "type": "string",
-            "ns": "java",
+            "objectType": "java",
             "name": "data_prescricao",
             "required": false,
             "regex": "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\\d{4})$"
           },
           {
             "type": "string",
-            "ns": "java",
+            "objectType": "java",
             "name": "observacoes",
             "required": false
           },
           {
             "type": "FileDTO",
-            "ns": "dto",
+            "objectType": "dto",
             "name": "documentos",
             "required": true,
             "collectionType": "list"
           },
           {
             "name": "submetido_por",
-            "ns": "java",
+            "objectType": "java",
             "type": "string",
             "required": true,
             "before": false,
@@ -493,7 +493,7 @@ describe('DTO generator', () => {
           },
           {
             "name": "tipo_reembolso",
-            "ns": "java",
+            "objectType": "java",
             "type": "string",
             "required": true,
             "before": false,
@@ -505,7 +505,7 @@ describe('DTO generator', () => {
           },
           {
             "name": "codigo_processo",
-            "ns": "java",
+            "objectType": "java",
             "type": "string",
             "required": true,
             "before": false,
@@ -517,7 +517,7 @@ describe('DTO generator', () => {
           },
           {
             "name": "valor",
-            "ns": "java",
+            "objectType": "java",
             "type": "integer",
             "required": true,
             "before": false,
@@ -529,7 +529,7 @@ describe('DTO generator', () => {
           },
           {
             "name": "medico_id",
-            "ns": "java",
+            "objectType": "java",
             "type": "integer",
             "required": true,
             "before": false,
@@ -541,7 +541,7 @@ describe('DTO generator', () => {
           },
           {
             "name": "farmacia_id",
-            "ns": "java",
+            "objectType": "java",
             "type": "integer",
             "required": true,
             "before": false,

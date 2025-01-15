@@ -18,6 +18,7 @@ import {
 } from './constants';
 import { extractTypeFromList, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
+import { getEnumAttributes } from '../modules/enum/helpers';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);

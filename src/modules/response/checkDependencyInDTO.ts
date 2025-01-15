@@ -9,7 +9,7 @@ export const checkDependencyInDTO = async function(context: RenderContext<Respon
   const errors: Array<{message: string}> = [];
   for(const t of types.values()) {
     t.attributes.map(attr => {
-      if (attr.ns === 'dto') {
+      if (attr.objectType === 'dto') {
         let type: JavaType;
         if (typeof attr.type === 'string') {
           type = { name: attr.type };

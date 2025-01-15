@@ -16,7 +16,7 @@ describe('DTO deletion', () => {
             name: 'DTO2Delete',
             template: 'record',
             attributes: [
-              { type: 'String', ns: 'java', name: 't0', required: false},
+              { type: 'String', objectType: 'java', name: 't0', required: false},
             ]
         };
 
@@ -44,10 +44,10 @@ describe('DTO deletion', () => {
           name: 'DTO2DeleteV1',
           template: 'record',
           attributes: [
-            { type: 'String', ns: 'java', name: 't0', required: false },
+            { type: 'String', objectType: 'java', name: 't0', required: false },
             {
               type: 'DTO2DeleteV11',
-              ns: 'dto',
+              objectType: 'dto',
               name: 't1',
               required: false,
             },
@@ -59,7 +59,7 @@ describe('DTO deletion', () => {
             name: 'DTO2DeleteV11',
             template: 'record',
             attributes: [
-              { type: 'String', ns: 'java', name: 't0', required: false},
+              { type: 'String', objectType: 'java', name: 't0', required: false},
             ]
         };
 

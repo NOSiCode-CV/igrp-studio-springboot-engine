@@ -72,12 +72,6 @@ export interface IEndpoint {
   path: string
 }
 
-export interface GenericType {
-  name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
-}
-
 export interface JavaType {
   name: string;
   namespace?: string;
@@ -86,7 +80,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  ns: 'dto' | 'model' | 'java';
+  objectType: 'dto' | 'model' | 'java';
   required: boolean;
   before?: boolean,
   after?: boolean,
@@ -136,7 +130,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  ns: 'dto' | 'model' | 'java';
+  objectType: 'dto' | 'model' | 'java';
 }
 
 export interface DTOBaseConfig {
@@ -166,7 +160,7 @@ export interface Attribute {
   generationType?: GenerationType;
   defaultValue?: string;
   relation?: Relation;
-  ns?: 'dto' | 'model' | 'java';
+  objectType?: 'dto' | 'model' | 'java';
 }
 
 export interface Relation {
@@ -278,20 +272,28 @@ export type RenderContext<T = undefined> = {
 
 export interface SchemaField {
   type: string;
-  $ref?: string,
+  objectType?: string,
   required?: boolean;
   identifier?: boolean;
   description?: string;
   example?: any;
   deprecated?: boolean;
+  items?: SchemaField; // For array types
+  properties?: { [key: string]: PropertySchemaField }; // For object types
+}
+
+export interface SchemaEnum {
+  name?: string,
+  values?: string[]
+}
+
+export interface PropertySchemaField extends SchemaField{
   minimum?: number;
   maximum?: number;
   pattern?: string;
   format?: string;
-  enum?: string[];
+  enum?: SchemaEnum;
   default?: any;
-  items?: SchemaField; // For array types
-  properties?: { [key: string]: SchemaField }; // For object types
 }
 
 export interface BaseBody {

@@ -12,9 +12,9 @@ import {
   Body,
   ControllerAction,
   ControllerConfig,
-  HttpHeader, Relation,
+  HttpHeader, PropertySchemaField, Relation,
   RequestParams,
-  SchemaContent,
+  SchemaContent, SchemaEnum,
   SchemaField,
 } from '../interfaces/types';
 
@@ -75,6 +75,7 @@ const relationSchema: JSONSchemaType<Relation> = {
 /**
  * JSON schema for validating the SchemaField interface.
  */
+
 const schemaField: JSONSchemaType<SchemaField> = {
   type: "object",
   properties: {
@@ -83,11 +84,11 @@ const schemaField: JSONSchemaType<SchemaField> = {
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
     },
-    $ref: {
+    objectType: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage: "The attribute $ref must contain only alphabetic characters and cannot contain spaces or special characters.",
+      errorMessage: "The attribute 'objectType' must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     required: {
       type: "boolean",
@@ -115,38 +116,6 @@ const schemaField: JSONSchemaType<SchemaField> = {
       nullable: true,
       errorMessage: "The 'deprecated' field, if provided, must be a boolean.",
     },
-    minimum: {
-      type: "number",
-      nullable: true,
-      errorMessage: "The 'minimum' field, if provided, must be a number.",
-    },
-    maximum: {
-      type: "number",
-      nullable: true,
-      errorMessage: "The 'maximum' field, if provided, must be a number.",
-    },
-    pattern: {
-      type: "string",
-      nullable: true,
-      errorMessage: "The 'pattern' field, if provided, must be a string.",
-    },
-    format: {
-      type: "string",
-      nullable: true,
-      errorMessage: "The 'format' field, if provided, must be a string.",
-    },
-    enum: {
-      type: "array",
-      items: { type: "string" },
-      nullable: true,
-      errorMessage: "The 'enum' field, if provided, must be an array of strings.",
-    },
-    default: {
-      type: "object",
-      nullable: true,
-      additionalProperties: true,
-      errorMessage: "The 'default' field can be any type.",
-    },
     items: {
       type: "object",
       required: ["type"],
@@ -168,10 +137,136 @@ const schemaField: JSONSchemaType<SchemaField> = {
           { type: "object" }, // For dynamic content types
         ],
       },
-      errorMessage: "The 'properties' field must be an object with SchemaField values.",
+      errorMessage: "The 'properties' field must be an object with PropertySchemaField values.",
     },
   },
   required: ["type"],
+  additionalProperties: false,
+};
+
+
+/**
+ * JSON schema for validating the SchemaEnum interface.
+ */
+const schemaEnum: JSONSchemaType<SchemaEnum> = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The attribute $ref must contain only alphabetic characters and cannot contain spaces or special characters.",
+    },
+    values: {
+      type: "array",
+      items: { type: "string" },
+      nullable: true,
+      errorMessage: "The 'enum' field, if provided, must be an array of strings.",
+    },
+  },
+  additionalProperties: false,
+};
+
+/**
+ * JSON schema for validating the PropertySchemaField interface.
+ */
+const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
+  type: 'object',
+  properties: {
+    type: {
+      type: 'string',
+      nullable: false,
+      errorMessage: "The 'type' field is required and must be a string.",
+    },
+    objectType: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage:
+        'The attribute $ref must contain only alphabetic characters and cannot contain spaces or special characters.',
+    },
+    required: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: "The 'required' field, if provided, must be a boolean.",
+    },
+    identifier: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: "The 'identifier' field, if provided, must be a boolean.",
+    },
+    description: {
+      type: 'string',
+      nullable: true,
+      errorMessage: "The 'description' field, if provided, must be a string.",
+    },
+    example: {
+      type: 'object',
+      nullable: true,
+      additionalProperties: true,
+      errorMessage: "The 'example' field can be any type.",
+    },
+    deprecated: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: "The 'deprecated' field, if provided, must be a boolean.",
+    },
+    minimum: {
+      type: 'number',
+      nullable: true,
+      errorMessage: "The 'minimum' field, if provided, must be a number.",
+    },
+    maximum: {
+      type: 'number',
+      nullable: true,
+      errorMessage: "The 'maximum' field, if provided, must be a number.",
+    },
+    pattern: {
+      type: 'string',
+      nullable: true,
+      errorMessage: "The 'pattern' field, if provided, must be a string.",
+    },
+    format: {
+      type: 'string',
+      nullable: true,
+      errorMessage: "The 'format' field, if provided, must be a string.",
+    },
+    enum: {
+      oneOf: [ schemaEnum ],
+      nullable: true,
+      errorMessage: "The 'enum' field, if provided, must be an array of SchemaEnum.",
+    },
+    default: {
+      type: 'object',
+      nullable: true,
+      additionalProperties: true,
+      errorMessage: "The 'default' field can be any type.",
+    },
+    items: {
+      type: 'object',
+      required: ['type'],
+      nullable: true,
+      anyOf: [
+        { $ref: '#' }, // reference to the definition
+        { type: 'null' },
+      ],
+    },
+    properties: {
+      type: 'object',
+      required: [],
+      nullable: true,
+      additionalProperties: {
+        type: 'object',
+        required: [],
+        nullable: true,
+        anyOf: [
+          { type: 'object' }, // For dynamic content types
+        ],
+      },
+      errorMessage: "The 'properties' field must be an object with SchemaField values.",
+    },
+  },
+  required: ['type'],
   additionalProperties: false,
 };
 
@@ -366,10 +461,10 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The primary key, if provided, must be a valid boolean.'
     },
-    ns: {
+    objectType: {
       type: "string",
       nullable: true,
-      errorMessage: 'The primary key, if provided, must be a valid boolean.'
+      errorMessage: 'The objectType, if provided, must be a valid string.'
     },
     relation: {
       type: "object",

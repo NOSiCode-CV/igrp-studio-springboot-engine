@@ -139,7 +139,7 @@ export const transformSchemaDTOConfig = async function(
       if (mtypes === undefined) {
         mtypes = await getModelTypes(DIRECTORIES.SHARED, basePath);
       }
-      const mt = mtypes.get(attr.$ref!);
+      const mt = mtypes.get(attr.objectType!);
       if (mt) {
         if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
           type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
@@ -154,11 +154,11 @@ export const transformSchemaDTOConfig = async function(
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
       }
 
-      const dt = dtypes.get(attr.$ref!);
+      const dt = dtypes.get(attr.objectType!);
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.$ref!);
+        const dtype = dtypes.get(attr.objectType!);
         if(!dtype) {
             typeNotFound = true;
         }
@@ -186,15 +186,15 @@ export const transformSchemaDTOConfig = async function(
 
     if (typeNotFound) {
       errors.push({
-        message: `on attribute ${key}, Type ${(type.name != 'dto' && type.name != 'model')? type.name : attr.$ref} not on the allowed '${(type.name == 'dto' || type.name == 'model')? type.name : 'java'}' list`,
+        message: `on attribute ${key}, Type ${(type.name != 'dto' && type.name != 'model')? type.name : attr.objectType} not on the allowed '${(type.name == 'dto' || type.name == 'model')? type.name : 'java'}' list`,
       });
     }
 
     attr.type = type.name;
     ncfg.attributes.push({
       name: key,
-      type: (attr.type == 'dto' || attr.type == 'model')? attr.$ref! : attr.type,
-      ns: (attr.type != 'dto' && attr.type != 'model')? 'java' : attr.type,
+      type: attr.type!,
+      objectType: (attr.type != 'dto' && attr.type != 'model')? 'java' : attr.type,
       required: attr.required ?? false,
       minLength: attr.minimum,
       maxLength: attr.maximum,

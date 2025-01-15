@@ -291,7 +291,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
       resourceConfig: await transformDTOConfig({
         name: config.name,
         template: 'classic',
-        attributes: config.attributes.map(e => ({ name: e.name, type: e.type, ns: e.ns!, primaryKey: e.primaryKey})),
+        attributes: config.attributes.map(e => ({ name: e.name, type: e.type, objectType: e.ns!, primaryKey: e.primaryKey})),
         type: 'dataobject',
         aggregate: config.aggregate
         }, baseConfig, basePath
@@ -470,13 +470,13 @@ export const deleteModel = async (config: ModelConfig, basePath: string) => {
  *   type: 'dto',
  *   name: 'User',
  *   attributes: [
- *     { type: 'String', ns: 'java', name: 't0'},
- *     { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
- *     { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
- *     { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
+ *     { type: 'String', objectType: 'java', name: 't0'},
+ *     { type: { name: 'DTO1' }, objectType: 'dto', name: 't1'},
+ *     { type: { name: 'CTO1' }, objectType: 'dto', name: 't2'},
+ *     { type: { name: 'TPessoa' }, objectType: 'model', name: 't21'},
  *
- *     { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
- *     { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
+ *     { type: { name: 'List', generics:[{name: 'Integer', objectType: 'java'}]}, objectType: 'java', name: 't3'},
+ *     { type: { name: 'List', generics:[{name: 'BigDecimal', objectType: 'java'}]}, objectType: 'java', name: 't4'},
  *   ]
  * };
  * const basePath = 'C://your_project_path';
@@ -835,12 +835,12 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           module: module,
           attributes: act?.requestBody
             ? config!.attributes
-            : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, ns: 'dto', required: false }] : []).concat(act?.pathVariables
+            : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, objectType: 'dto', required: false }] : []).concat(act?.pathVariables
                 ? act.pathVariables
                     .map((e) => ({
                       name: e.name,
                       type: e.type,
-                      ns: 'java',
+                      objectType: 'java',
                       required: true,
                     }))
                     .concat(
@@ -848,7 +848,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                         ? act.requestParams.map((e) => ({
                             name: e.name,
                             type: e.type,
-                            ns: 'java',
+                            objectType: 'java',
                             required: true,
                           }))
                         : [],
@@ -858,7 +858,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                       .map((e) => ({
                         name: e.name,
                         type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                        ns: 'java',
+                        objectType: 'java',
                         required: true,
                       }))
                       .concat(
@@ -866,13 +866,13 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
                           ? act.pathVariables.map((e) => ({
                               name: e.name,
                               type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                              ns: 'java',
+                              objectType: 'java',
                               required: true,
                             }))
-                          : [{ name: 'none', type: 'object', ns: 'java', required: false }],
+                          : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
                       )
                   : [
-                      { name: 'none', type: 'object', ns: 'java', required: false },
+                      { name: 'none', type: 'object', objectType: 'java', required: false },
                     ]) as JavaAttribute[]),
           response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
         } as HandlerConfig,

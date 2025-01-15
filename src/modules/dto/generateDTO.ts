@@ -102,7 +102,7 @@ export const transformDTOConfig = async function (
     type = { name: attr.type };
 
     let typeNotFound = false;
-    if (attr.ns === PACKAGE_NS.java) {
+    if (attr.objectType === PACKAGE_NS.java) {
       const jtOpt: { java: { name: string, primitive: boolean, namespace?: string }, dotnet: { name: string, primitive: boolean, namespace?: string }, python: { name: string, primitive: boolean, namespace?: string }, kotlin: { name: string, primitive: boolean, namespace?: string } } | undefined =
         GENERIC_TYPES.get(type.name)
       if (jtOpt) {
@@ -113,7 +113,7 @@ export const transformDTOConfig = async function (
       } else {
         typeNotFound = true;
       }
-    } else if (attr.ns === PACKAGE_NS.model) {
+    } else if (attr.objectType === PACKAGE_NS.model) {
       if (mtypes === undefined) {
         mtypes = await getModelTypes(config.module ?? DIRECTORIES.SHARED, basePath);
       }
@@ -127,7 +127,7 @@ export const transformDTOConfig = async function (
       } else {
         typeNotFound = true;
       }
-    } else if (attr.ns === PACKAGE_NS.dto) {
+    } else if (attr.objectType === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(config.module ?? DIRECTORIES.SHARED, basePath);
       }
@@ -156,7 +156,7 @@ export const transformDTOConfig = async function (
 
     if (typeNotFound) {
       errors.push({
-        message: `on attribute ${attr.name}, Type ${type.name} not on the allowed '${attr.ns}' list`,
+        message: `on attribute ${attr.name}, Type ${type.name} not on the allowed '${attr.objectType}' list`,
       });
     }
 

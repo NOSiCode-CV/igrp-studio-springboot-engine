@@ -14,7 +14,7 @@ export const checkDependencyInModel = async function(context: RenderContext<DTOB
   for (const dto of dtoTypes.values()) {
     dto.attributes.map(attr => {
       
-      if (attr.ns === 'model') {
+      if (attr.objectType === 'model') {
         let type: JavaType;
         if (typeof attr.type === 'string') {
           type = { name: attr.type };
