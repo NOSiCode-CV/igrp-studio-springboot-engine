@@ -95,11 +95,11 @@ export const transformSchemaDTOConfig = async function(
     type = { name: attr.type };
 
     let typeNotFound = false;
-    if (attr.type === PACKAGE_NS.model) {
+    if (attr.objectType === PACKAGE_NS.model) {
       if (mtypes === undefined) {
         mtypes = await getModelTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
       }
-      const mt = mtypes.get(attr.objectType!);
+      const mt = mtypes.get(attr.type!);
       if (mt) {
         if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
@@ -109,16 +109,16 @@ export const transformSchemaDTOConfig = async function(
       } else {
         typeNotFound = true;
       }
-    } else if (attr.type === PACKAGE_NS.dto) {
+    } else if (attr.objectType === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
         dtypes = await getDTOTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
       }
 
-      const dt = dtypes.get(attr.objectType!);
+      const dt = dtypes.get(attr.type!);
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.objectType!);
+        const dtype = dtypes.get(attr.type!);
         if(!dtype) {
             typeNotFound = true;
         }

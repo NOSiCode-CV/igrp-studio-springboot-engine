@@ -430,8 +430,7 @@ describe('DTO generator', () => {
     const testCases: DTOConfig[] = [
       {
         "type": "dto",
-        "module": "reembolso",
-        "name": "Refund",
+        "name": "Cat",
         "template": "record",
         "attributes": [
           {

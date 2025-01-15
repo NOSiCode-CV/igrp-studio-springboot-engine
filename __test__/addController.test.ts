@@ -6,55 +6,27 @@ import { debugSchema } from '../src/schema/controllerConfig';
 const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 const controllerConfig: ControllerConfig = {
   "type": "controller",
-  "name": "Peoples",
-  "basePath": "peoples",
+  "name": "Cats",
+  "basePath": "cats",
   "actions": [
     {
-      "actionName": "getPeople",
-      "path": "get-people",
+      "actionName": "getCat",
+      "path": "get-cat",
       "method": "GET",
       "responses": {
         "200": {
-          "module": "ModuloTetse",
-          "name": "TestResponseOneDTO",
-          "description": "OK",
+          "name": "OK",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "newField1": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "actionName": "getDelete",
-      "path": "deletePeoplo",
-      "method": "POST",
-      "responses": {
-        "400": {
-          "module": "ModuloTetse",
-          "name": "TestResponseTwo",
-          "description": "OK",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": ""
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "",
-                    "properties": {}
+                  "cod": {
+                    "type": "CatDTO",
+                    "objectType": "dto",
+                    "properties": {
+                    },
+                    "description": "bb"
                   }
                 }
               }
@@ -65,9 +37,32 @@ const controllerConfig: ControllerConfig = {
       "requestParams": [],
       "pathVariables": [],
       "headers": []
+    },
+    {
+      "actionName": "deleteCat",
+      "path": "delete-cat",
+      "method": "DELETE",
+      "responses": {
+        "200": {
+          "name": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "New Field 1": {
+                    "type": "string",
+                    "description": "e"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ],
-  "module": "ModuloTetse"
+  "module": "Gest"
 }
 
 beforeAll(async () => {
