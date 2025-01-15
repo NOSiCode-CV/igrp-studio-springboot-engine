@@ -224,7 +224,7 @@ export const transformSchemaDTOConfig = async function(
     ncfg.attributes.push({
       name: key,
       type: attr.type!,
-      objectType: (attr.type != 'dto' && attr.type != 'model')? 'java' : attr.type,
+      objectType: (attr.objectType != 'dto' && attr.objectType != 'model')? 'java' : attr.objectType,
       required: attr.required ?? false,
       minLength: attr.minimum,
       maxLength: attr.maximum,
