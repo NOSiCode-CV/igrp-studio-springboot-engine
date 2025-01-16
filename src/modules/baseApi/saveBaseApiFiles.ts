@@ -105,7 +105,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
       },
-
+      {
+        output: exceptionsPath,
+        template: TEMPLATES.IGRP_PROBLEM,
+        name: COMMON_FILES.IGRP_PROBLEM,
+      },
       {
         output: path.join(infraPath, DIRECTORIES.SPRING),
         template: TEMPLATES.DDD_SPRING_COMMAND_BUS,
@@ -165,6 +169,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: exceptionPath,
         template: TEMPLATES.GLOBAL_EXCEPTION_HANDLER,
         name: COMMON_FILES.GLOBAL_EXCEPTION_HANDLER,
+      },
+      {
+        output: exceptionPath,
+        template: TEMPLATES.IGRP_PROBLEM,
+        name: COMMON_FILES.IGRP_PROBLEM,
       },
       {
         output: exceptionPath,

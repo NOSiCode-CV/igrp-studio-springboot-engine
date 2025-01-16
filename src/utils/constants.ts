@@ -271,6 +271,7 @@ export const TEMPLATES = {
   DDD_VALUE_OBJECT: 'struct/domain/java/domain/aggregate/valueobject.hbs',
   GLOBAL_EXCEPTION_HANDLER: 'struct/domain/java/domain/exceptions/globalexceptionhandler.hbs',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'struct/domain/java/domain/exceptions/baseexception.hbs',
+  IGRP_PROBLEM: 'struct/domain/java/domain/exceptions/igrpproblem.hbs',
   CUSTOM_RESPONSE_STATUS_EXCEPTION: 'struct/domain/java/domain/exceptions/objectexception.hbs',
   DDD_EVENT: 'struct/domain/java/domain/event/event.hbs',
   DDD_EVENT_BUS: 'struct/domain/java/domain/event/eventbus.hbs',
@@ -399,6 +400,7 @@ export const COMMON_FILES = {
   APPLICATION_SECURITY: 'SecurityConfig.java',
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',
+  IGRP_PROBLEM: 'IgrpProblem.java',
 
   // DOMAIN DRIVEN DESIGN
   COMMAND: 'Command.java',

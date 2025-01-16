@@ -1,3 +1,5 @@
+{{>package-java}}
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,10 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IgrpResponseStatusException.class)
-    public <T> ResponseEntity<T> handleIgrpException(IgrpResponseStatusException<T> ex) {
+    public ResponseEntity<Object> handleIgrpException(IgrpResponseStatusException ex) {
+        IgrpProblem<?> problem = ex.getProblem();
         return ResponseEntity
-                .status(ex.getStatus())
-                .body(ex.getObject());
+                .status(problem.getStatus())
+                .body(problem);
     }
 
 }

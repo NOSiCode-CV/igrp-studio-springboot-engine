@@ -7,7 +7,7 @@
     this.queryBus = queryBus;
   }
 {{else}}
-public {{resourceConfig.name}}Controller({{resourceConfig.name}}ServiceInterface {{toCamelCase resourceConfig.name}}Service){
+public {{resourceConfig.name}}Controller(I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service){
   this.{{toCamelCase resourceConfig.name}}Service = {{toCamelCase resourceConfig.name}}Service;
 }
 {{/if}}

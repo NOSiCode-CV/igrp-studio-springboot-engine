@@ -8,10 +8,15 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.
 import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{normalizeDto resourceConfig.body}};
 {{/if}}
 
-public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException<{{normalizeDto resourceConfig.body}}> {
+public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException {
 
-   public {{capitalize resourceConfig.name}}Exception(HttpStatus status, {{normalizeDto resourceConfig.body}} body) {
-      super(status, object);
-   }
+    public {{capitalize resourceConfig.name}}Exception(IgrpProblem<{{normalizeDto resourceConfig.body}}> problem) {
+        super(problem);
+    }
+
+    @Override
+    public IgrpProblem<{{normalizeDto resourceConfig.body}}> getProblem() {
+        return (IgrpProblem<{{normalizeDto resourceConfig.body}}>) super.getProblem();
+    }
 
 }

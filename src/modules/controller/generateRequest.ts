@@ -40,7 +40,7 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
       fullPath: context.basePath,
     };
 
-    await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
+    //await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
 
     const modelOutputPath = getDTOOutputPath(dtoContext);
     const template = await _renderDTO(dtoContext);

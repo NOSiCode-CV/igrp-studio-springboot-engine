@@ -76,7 +76,7 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   @org.hibernate.annotations.Type(type = "org.hibernate.type.BinaryType")
   {{/if}}
   {{#ifNot (eq this.type "relation")}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
   @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}

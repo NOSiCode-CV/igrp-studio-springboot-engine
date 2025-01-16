@@ -19,6 +19,7 @@ import {
 import { extractTypeFromList, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { getEnumAttributes } from '../modules/enum/helpers';
+import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -197,12 +198,12 @@ Handlebars.registerHelper(
         if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request"))
           if (domainDriven === true)
             imports.push(
-              `import ${group}.${packageName}.${mod}.application.dto.${capitalize(action.actionName) + "Request"};`,
+              `import ${group}.${packageName}.${mod}.application.dto.${normalizeName(action.actionName, 'dto') + "RequestDTO"};`,
             );
-          else imports.push(`import ${group}.${packageName}.dto.${capitalize(action.actionName) + "Request"};`);
+          else imports.push(`import ${group}.${packageName}.dto.${normalizeName(action.actionName, 'dto') + "RequestDTO"};`);
       if (action.responses)
         for (const response of Object.values(action.responses)) {
-          const className = capitalize(response.name)
+          const className = normalizeName(response.name, 'dto') + "DTO"
           if (extractTypeFromList(className)) {
             const type = extractTypeFromList(className);
             if (domainDriven === true)

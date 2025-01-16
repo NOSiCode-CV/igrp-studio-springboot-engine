@@ -17,7 +17,7 @@ export const checkDependencyInController = async function (context: RenderContex
     for (const action of controller.actions) {
       if(action.responses)
         for (const response of Object.values(action.responses)) {
-          if (response.name === dtoName || response.content["application/json"].schema.objectType == dtoName) {
+          if (response.name === dtoName || response.content["application/json"].schema.type == dtoName) {
             errors.push({
               message: `DTO '${dtoName}' is being used as a response in controller '${controller.name}' in action '${action.actionName}'.`,
             });
