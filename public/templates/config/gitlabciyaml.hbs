@@ -1,2 +1,147 @@
-your gitlab configuration here
+###### DEV PIPELINE ######
+image: docker:27.3.1
+services:
+  - name: docker:27.3.1-dind
+    command: [ "--tls=false", "--mtu=1240" ]
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  KUBECONFIG: "/kube/config"
+  KUBE_NAMESPACE: "p2" 
+  API_URL: "https://user-manager-dev.inss.gw/identity/resources" 
+  APPLICATION_NAME: "application-1"  
+  HOME_URL: "wayvant-test.com/" 
+  RESOURCE_NAME: "p2" 
+  RESOURCE_DESCRIPTION: "staff 1" 
+  REGISTRY_USERNAME: "bittor.vpn"
+  REGISTRY_PASSWORD: "Bh1030_1812#"
+  REGISTRY_URL: "registry.nosi.cv"
+stages:
+  - setup
+  - build
+  - deploy
+  - buildjson
+  - deployjson
+
+setup:
+  stage: setup
+  image: alpine:latest
+  script:
+    - |
+      echo "Configurando el entorno..."
+      # Esto es un ejemplo, pero la idea es leer variables que vengan del usuario (ej. $CUSTOM_KUBE_NAMESPACE)
+      # Si el usuario no define una variable, se usa el valor por defecto
+      export KUBE_NAMESPACE_FINAL="${CUSTOM_KUBE_NAMESPACE:-$KUBE_NAMESPACE}"
+      export API_URL_FINAL="${CUSTOM_API_URL:-$API_URL}"
+      export APPLICATION_NAME_FINAL="${CUSTOM_APPLICATION_NAME:-$APPLICATION_NAME}"
+      export HOME_URL_FINAL="${CUSTOM_HOME_URL:-$HOME_URL}"
+      export RESOURCE_NAME_FINAL="${CUSTOM_RESOURCE_NAME:-$RESOURCE_NAME}"
+      export RESOURCE_DESCRIPTION_FINAL="${CUSTOM_RESOURCE_DESCRIPTION:-$RESOURCE_DESCRIPTION}"
+
+      # Leemos el contenido del archivo paths.json
+      export PATHS_JSON=$(cat .igrpstudio/baseApi.json)
+
+      echo "KUBE_NAMESPACE_FINAL: $KUBE_NAMESPACE_FINAL"
+      echo "API_URL_FINAL: $API_URL_FINAL"
+      echo "APPLICATION_NAME_FINAL: $APPLICATION_NAME_FINAL"
+      echo "HOME_URL_FINAL: $HOME_URL_FINAL"
+      echo "RESOURCE_NAME_FINAL: $RESOURCE_NAME_FINAL"
+      echo "RESOURCE_DESCRIPTION_FINAL: $RESOURCE_DESCRIPTION_FINAL"
+      echo "PATHS_JSON: $PATHS_JSON" 
+
+      TMP_FILE=$(mktemp)
+      printf 'KUBE_NAMESPACE_FINAL="%s"\n' "$KUBE_NAMESPACE_FINAL" >> "$TMP_FILE"
+      printf 'API_URL_FINAL="%s"\n' "$API_URL_FINAL" >> "$TMP_FILE"
+      printf 'APPLICATION_NAME_FINAL="%s"\n' "$APPLICATION_NAME_FINAL" >> "$TMP_FILE"
+      printf 'HOME_URL_FINAL="%s"\n' "$HOME_URL_FINAL" >> "$TMP_FILE"
+      printf 'RESOURCE_NAME_FINAL="%s"\n' "$RESOURCE_NAME_FINAL" >> "$TMP_FILE"
+      printf 'RESOURCE_DESCRIPTION_FINAL="%s"\n' "$RESOURCE_DESCRIPTION_FINAL" >> "$TMP_FILE"
+      printf 'PATHS_JSON="%s"\n' "$PATHS_JSON" >> "$TMP_FILE"  
+      
+      cat "$TMP_FILE" > variables.env # Sustituye el contenido
+      rm "$TMP_FILE"
+  artifacts:
+    paths:
+      - variables.env
+
+build:
+  stage: build
+  script:
+    - source variables.env
+    - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+    - docker build -t $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID .
+    - docker tag $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID $REGISTRY_URL/bittortest/api-bittor-test:demo
+    - docker push $REGISTRY_URL/bittortest/api-bittor-test:$CI_PIPELINE_ID
+    - docker push $REGISTRY_URL/bittortest/api-bittor-test:demo
+  only:
+    - dev
+deploy:
+  stage: deploy
+  image: ubuntu:22.04
+  needs: [setup]
+  before_script:
+    - apt-get update && apt-get install -y openssh-client
+    - apt-get -y install sshpass
+    - apt-get install -y apt-transport-https ca-certificates curl gnupg
+    - curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    - chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg 
+    - echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+    - chmod 644 /etc/apt/sources.list.d/kubernetes.list   
+    - apt-get update
+    - apt-get install -y kubectl
+    - apt-get install -y gettext
+    - mkdir -p /kube
+  script:
+    - source variables.env
+    - echo "$KUBECONFIG_CONTENT" > $KUBECONFIG
+    - envsubst < ./k8s/deployment.yaml > ./k8s/deployment-substituted.yaml 
+    - kubectl apply -f ./k8s/deployment-substituted.yaml -n $KUBE_NAMESPACE_FINAL
+    - kubectl rollout status deployment/igrp-studio -n $KUBE_NAMESPACE_FINAL
+
+build_json:
+  stage: buildjson
+  image: alpine/curl
+  needs: [setup]
+  script:
+    - source variables.env
+    - apk add jq
+    - |
+      PATHS="$PATHS_JSON"
+      echo "Paths obtenidos: ${PATHS}"
+
+      JSON_PAYLOAD=$(jq -n \
+        --arg application "$APPLICATION_NAME_FINAL" \
+        --arg homeUrl "$HOME_URL_FINAL" \
+        --arg name "$RESOURCE_NAME_FINAL" \
+        --arg description "$RESOURCE_DESCRIPTION_FINAL" \
+        --argjson endpoints "$PATHS" \
+        '{
+            application: $application,
+            homeUrl: $homeUrl,
+            name: $name,
+            description: $description,
+            endpoints: $endpoints
+        }'
+      )
+      echo "JSON a enviar:"
+      echo "${JSON_PAYLOAD}"
+      echo "${JSON_PAYLOAD}" > payload.json
+  artifacts:
+    paths:
+      - payload.json
+
+deploy_resource:
+  stage: deployjson
+  image: alpine/curl
+  needs: [build_json, setup] 
+  script:
+    - source variables.env
+    - |
+      curl -X POST \
+        -H "Content-Type: application/json" \
+        -d @payload.json \
+        "$API_URL_FINAL"
+  
 
