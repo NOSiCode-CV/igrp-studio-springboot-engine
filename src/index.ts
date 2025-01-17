@@ -1,6 +1,6 @@
 import {
   ApiConfig,
-  BaseApiConfig,
+  BaseApiConfig, ControllerAction,
   ControllerConfig, DeleteConfig,
   DTOBaseConfig,
   DTOConfig, EnumConfig,
@@ -703,7 +703,7 @@ export const deleteResponse = async (config: ResponseConfig, basePath: string) =
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await deleteResponseConfig(context, false);
@@ -730,6 +730,29 @@ export const deleteElement = async (config: DeleteConfig, basePath: string) => {
 
   await deleteElementConfig(context, false);
 };
+
+async function requestDtoConfig(module: string, context: RenderContext<ControllerConfig>, act: ControllerAction): Promise<DTOConfig> {
+  try {
+    return await loadDTOConfig(
+      'dto',
+      path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
+      capitalize(
+        act?.requestBody?.content['application/json']?.schema.type ??
+          act?.requestBody?.content['multipart/form-data'].schema.type ?? '',
+      ).replace(/dto$/i, ''),
+    );
+  } catch (e) {
+    module = DIRECTORIES.SHARED;
+    return await loadDTOConfig(
+      'dto',
+      path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
+      capitalize(
+        act?.requestBody?.content['application/json']?.schema.type ??
+        act?.requestBody?.content['multipart/form-data'].schema.type ?? '',
+      ).replace(/dto$/i, ''),
+    );
+  }
+}
 
 /**
  * Generates and saves a controller in the API.
@@ -821,11 +844,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
     for (const act of config.actions) {
       const config: DTOConfig | null = (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
-        ? await loadDTOConfig(
-            'dto',
-            path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
-            (capitalize(act.actionName) + "Request").replace(/dto$/i, ''),
-          )
+        ? await requestDtoConfig(module, context, act)
         : null;
       await addDTO(
         {

@@ -51,7 +51,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{/if}}
     {{/if}}
 
-    {{#if (eq method "GET")}}return queryBus.handle({{#if requestBody}}{{toCamelCase actionName}}Request{{/if}}{{#if requestParams}}query{{else}}query{{/if}});{{else}}return commandBus.send({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
+    {{#if (eq method "GET")}}return queryBus.handle({{#if requestBody}}{{toCamelCase actionName}}Request{{else if requestParams}}query{{else}}query{{/if}});{{else}}return commandBus.send({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
 
   {{else}}
     return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});

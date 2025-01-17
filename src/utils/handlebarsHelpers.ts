@@ -202,12 +202,12 @@ Handlebars.registerHelper(
         if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request"))
           if (domainDriven === true)
             imports.push(
-              `import ${group}.${packageName}.${mod}.application.dto.${normalizeName(action.actionName, 'dto') + "RequestDTO"};`,
+              `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + "RequestDTO"};`,
             );
-          else imports.push(`import ${group}.${packageName}.dto.${normalizeName(action.actionName, 'dto') + "RequestDTO"};`);
+          else imports.push(`import ${group}.${packageName}.dto.${capitalize(normalizeName(action.actionName, 'dto')) + "RequestDTO"};`);
       if (action.responses)
         for (const response of Object.values(action.responses)) {
-          const className = normalizeName(response.name, 'dto') + "DTO"
+          const className = capitalize(normalizeName(response.name, 'dto')) + "DTO"
           if (extractTypeFromList(className)) {
             const type = extractTypeFromList(className);
             if (domainDriven === true)
@@ -599,6 +599,18 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
 Handlebars.registerHelper('containsFormData', (content:  { [p: string]: SchemaContent }): boolean => {
   if (!content) return false;
   return !!content["multipart/form-data"];
+});
+
+Handlebars.registerHelper('isRefSchema', (content:  { [p: string]: SchemaContent }): boolean => {
+  if (!content) return false;
+  const schema = content["application/json"] ?? content["multipart/form-data"];
+  return !!schema.schema.objectType;
+});
+
+Handlebars.registerHelper('resolve-body', (content:  { [p: string]: SchemaContent }): string => {
+  if (!content) return '';
+  const schema = content["application/json"] ?? content["multipart/form-data"];
+  return capitalize(schema.schema.type);
 });
 
 function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {

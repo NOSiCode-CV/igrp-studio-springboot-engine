@@ -31,7 +31,11 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
 
   for(const action of context.resourceConfig.actions) {
 
-    if(!action.requestBody || (!Object.keys(action.requestBody.content).includes("application/json") && !Object.keys(action.requestBody.content).includes("multipart/form-data"))) continue
+    if(!action.requestBody ||
+      (!Object.keys(action.requestBody.content).includes("application/json")
+      && !Object.keys(action.requestBody.content).includes("multipart/form-data"))
+      || (action.requestBody.content["application/json"] ?? action.requestBody.content["multipart/form-data"]).schema.objectType
+    ) continue
 
     const dtoContext: RenderContext<DTOConfig> = {
       baseConfig: context.baseConfig,
