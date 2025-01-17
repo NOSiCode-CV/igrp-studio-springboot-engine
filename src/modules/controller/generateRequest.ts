@@ -31,7 +31,7 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
 
   for(const action of context.resourceConfig.actions) {
 
-    if(!action.requestBody || !Object.keys(action.requestBody.content).includes("application/json")) continue
+    if(!action.requestBody || (!Object.keys(action.requestBody.content).includes("application/json") && !Object.keys(action.requestBody.content).includes("multipart/form-data"))) continue
 
     const dtoContext: RenderContext<DTOConfig> = {
       baseConfig: context.baseConfig,
@@ -124,7 +124,7 @@ export const transformSchemaDTOConfig = async function(
     module: DIRECTORIES.SHARED,
     attributes: []
   };
-  const schemacfg = bodyCfg.content["application/json"].schema
+  const schemacfg = bodyCfg.content["application/json"]?.schema ?? bodyCfg.content["multipart/form-data"]?.schema
   const errors = [];
 
   let mtypes: Map<string, ModelConfig> | undefined = undefined;

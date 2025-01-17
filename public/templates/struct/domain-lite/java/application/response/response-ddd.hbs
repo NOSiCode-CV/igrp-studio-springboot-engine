@@ -17,7 +17,7 @@ import jakarta.validation.constraints.*;
 public class {{resourceConfig.name}}DTO {
 
     {{#each resourceConfig.content}}
-    {{#if (eq @key "application/json")}}
+    {{#if (or (eq @key "application/json") (eq @key "multipart/form-data"))}}
       {{#each this.schema.properties}}
       @Schema(
           description = "{{this.description}}",

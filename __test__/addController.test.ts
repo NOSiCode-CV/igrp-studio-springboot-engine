@@ -13,6 +13,24 @@ const controllerConfig: ControllerConfig = {
       "actionName": "getCat",
       "path": "get-cat",
       "method": "GET",
+      "requestBody": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cod": {
+                  "type": "CatDTO",
+                  "objectType": "dto",
+                  "properties": {
+                  },
+                  "description": "bb"
+                }
+              }
+            }
+          }
+        }
+      },
       "responses": {
         "200": {
           "module": "gest",
@@ -23,7 +41,7 @@ const controllerConfig: ControllerConfig = {
                 "type": "object",
                 "properties": {
                   "cod": {
-                    "type": "OKDTO",
+                    "type": "CatDTO",
                     "objectType": "dto",
                     "properties": {
                     },

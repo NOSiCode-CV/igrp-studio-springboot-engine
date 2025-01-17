@@ -538,7 +538,7 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
   const config: ResponseConfig = cleaner(dirty);
 
   // this function check is the request params in actions have duplicateds names
-  checkDuplicated([], [], [], [], config.content["application/json"]);
+  checkDuplicated([], [], [], [], config.content["application/json"] ?? config.content["multipart/form-data"]);
 
   const valid = validateResponse(config);
 
@@ -820,7 +820,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      const config: DTOConfig | null = (act?.requestBody)
+      const config: DTOConfig | null = (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
         ? await loadDTOConfig(
             'dto',
             path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
@@ -833,7 +833,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           name: act.actionName,
           template: 'classic',
           module: module,
-          attributes: act?.requestBody
+          attributes: (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
             ? config!.attributes
             : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, objectType: 'dto', required: false }] : []).concat(act?.pathVariables
                 ? act.pathVariables

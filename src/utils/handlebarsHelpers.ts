@@ -8,7 +8,7 @@ import {
   JavaAttribute,
   JavaType,
   ModelConfig,
-  Relation,
+  Relation, SchemaContent,
 } from '../interfaces/types';
 import {
   DIRECTORIES,
@@ -32,6 +32,10 @@ Handlebars.registerHelper('capitalizeEntity', (str: string) => {
 Handlebars.registerHelper('toCamelCase', (str: string) => {
   if (!str) return '';
   return str.charAt(0).toLowerCase() + str.slice(1);
+});
+
+Handlebars.registerHelper('concat', (str1: string, str2: string) => {
+  return str1 + str2;
 });
 
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
@@ -334,7 +338,7 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   // Extract only the meaningful parts of the path for the Java package
   const packagePath = relativePath
     .split('/')
-    .filter((segment) => !['src', 'main', 'java'].includes(segment)) // Exclude common directory names
+    .filter((segment) => !['src', 'main', 'test', 'java'].includes(segment)) // Exclude common directory names
     .join('.');
 
   return packagePath;
@@ -590,6 +594,11 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
   return capitalize(str).replace(/dto$/i, "") + "DTO";
+});
+
+Handlebars.registerHelper('containsFormData', (content:  { [p: string]: SchemaContent }): boolean => {
+  if (!content) return false;
+  return !!content["multipart/form-data"];
 });
 
 function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
