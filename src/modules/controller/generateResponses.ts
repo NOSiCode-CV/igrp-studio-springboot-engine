@@ -1,10 +1,13 @@
 import {
-  ApiConfig, Body,
+  ApiConfig,
+  Body,
   ControllerConfig,
-  DTOConfig, ExceptionConfig,
+  DTOConfig,
+  ExceptionConfig,
   JavaType,
   ModelConfig,
   RenderContext,
+  ResponseConfig
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -39,20 +42,31 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
       // If there's no name attribute that means it's a reference, so do not need to generate the DTO
       if(!response.name) continue;
+      if(status == "204") continue;
+
+      const baseConfig = context.baseConfig
+      const basePath = context.basePath
 
       const dtoContext: RenderContext<DTOConfig> = {
-        baseConfig: context.baseConfig,
-        basePath: context.basePath,
+        baseConfig: baseConfig,
+        basePath: basePath,
         resourceConfig: await transformSchemaDTOConfig(
           response,
-          context.baseConfig,
-          context.basePath,
+          baseConfig,
+          basePath,
         ),
-        fullPath: context.basePath,
+        fullPath: basePath,
       };
 
-      const modelOutputPath = getDTOOutputPath(dtoContext);
-      const template = await _renderDTO(dtoContext);
+      const responseContext: RenderContext<ResponseConfig> = {
+        resourceConfig: { ...response, statusCode: status, template: 'classic' },
+        basePath,
+        baseConfig,
+        fullPath: basePath,
+      };
+
+      const modelOutputPath = getDTOOutputPath(dtoContext, responseContext);
+      const template = await _renderDTO(responseContext);
 
       await saveToFile(template, modelOutputPath);
 
@@ -83,57 +97,23 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
 /**
  * Generates the DTO in the API using the provided configuration.
- * WARN: this is for internal use only 
+ * WARN: this is for internal use only
  * @param context - The configuration of the DTO including the DTO name and attributes.
  * @returns - A string representing the DTO generated from the template.
  * @throws - Throws an error if the DTO configuration is invalid or has no attributes.
  */
-export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
+export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
 
-  if (context.resourceConfig.attributes.length === 0) {
-    throw ERROR_MESSAGE.EMPTY_ACTION_ATTRIBUTES;
+  if (Object.entries(context.resourceConfig.content).length === 0) {
+    throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
   let tn;
-  
-  switch (context.resourceConfig.type) {
-    case "dto":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
-      else
-        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
-      break;
-    case "response":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
-      else
-        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
-      break;
-    case "filter":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        tn = TEMPLATES.DDD_LITE_FILTER;
-      else
-        tn = TEMPLATES.DOMAIN_FILTER;
-      break;
-    /*case "dataobject":
-      tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
-      break;*/
-    case "command":
-      tn = TEMPLATES.DDD_LITE_COMMAND[context.resourceConfig.template];
-      break;
-    case "query":
-      tn = TEMPLATES.DDD_LITE_QUERY[context.resourceConfig.template];
-      break;
-    case "event":
-      tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
-      break;
-    /*case "valueobject":
-      tn = TEMPLATES.DDD_VALUE_OBJECT_DTO[context.resourceConfig.template];
-      break;
-    case "domainentity":
-      tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
-      break;*/
-  }
-  
+
+  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    tn = TEMPLATES.DDD_RESPONSE_DTO[context.resourceConfig.template];
+  else
+    tn = TEMPLATES.DOMAIN_RESPONSE[context.resourceConfig.template];
+
   if (!tn) {
     throw ERROR_MESSAGE.TEMPLATE_NAME_NOT_REGISTERED;
   }
@@ -246,66 +226,16 @@ export const transformSchemaDTOConfig = async function(
   return ncfg;
 };
 
-const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
+const getDTOOutputPath = (dtoContext: RenderContext<DTOConfig>, context: RenderContext<ResponseConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    switch (context.resourceConfig.type) {
-      case "dto": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
-      }
-      case "response": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
-      }
-      case "filter": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
-      }
-      /*case "dataobject":
-        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
-      case "command": {
-        const outputDir = getDDDCommandOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`,
-        );
-      }
-      case "query": {
-        const outputDir = getDDDQueryOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`,
-        );
-      }
-      case "event": {
-        const outputDir = getDDDEventOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`,
-        );
-      }
-      /*case "valueobject":
-        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
-      case "domainentity":
-        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
-    }
+    const outputDir = getDDDDtoOutputDir(dtoContext)
+    context.fullPath = outputDir
+    return path.join(
+      outputDir,
+      `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
+    );
   } else {
-    const outputDir = getDtoOutputDir(context);
+    const outputDir = getDtoOutputDir(dtoContext);
     context.fullPath = outputDir
     return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }

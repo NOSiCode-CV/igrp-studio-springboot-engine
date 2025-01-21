@@ -124,6 +124,7 @@ const schemaField: JSONSchemaType<SchemaField> = {
         { $ref: "#" }, // reference to the definition
         { type: "null" },
       ],
+      errorMessage: "Invalid property items.",
     },
     properties: {
       type: "object",
@@ -250,6 +251,7 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
         { $ref: '#' }, // reference to the definition
         { type: 'null' },
       ],
+      errorMessage: "Invalid property's items."
     },
     properties: {
       type: 'object',
@@ -315,6 +317,7 @@ const bodySchema: JSONSchemaType<Body> = {
       nullable: false,
       additionalProperties: {
         type: "object",
+        errorMessage: "Content fields are invalid",
         required: [],
         nullable: true,
         anyOf: [
@@ -337,6 +340,7 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
       nullable: false,
       additionalProperties: {
         type: "object",
+        errorMessage: "Content fields are invalid",
         required: [],
         nullable: true,
         anyOf: [

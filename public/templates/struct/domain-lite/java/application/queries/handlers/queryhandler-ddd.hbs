@@ -19,7 +19,7 @@ public class {{capitalize resourceConfig.name}}QueryHandler {
 
    @IgrpQueryHandler
    @EventListener
-   public ResponseEntity<{{normalizeDto response}}> handle({{capitalize resourceConfig.name}}Query query) {
+   public ResponseEntity<{{normalizeDto resourceConfig.response}}> handle({{capitalize resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
       return null;
    }

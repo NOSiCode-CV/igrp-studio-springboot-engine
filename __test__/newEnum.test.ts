@@ -1,12 +1,14 @@
 import fs from 'fs-extra';
-import { addEnum, addModule } from '../src/index';
-import { EnumConfig, ModuleConfig } from '../src/interfaces/types';
+import { addEnum } from '../src';
+import { EnumConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
+const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
+const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
-const fullEnumConfig: EnumConfig = {
+const domainEnumConfig : EnumConfig = {
   type: 'enum',
-  name: "SuperLevel",
+  name: "Level",
+  module: "core",
   values: [
     { name: "HIGH", attributes: ["1", "High"] },
     { name: "LOW", attributes: ["0", "Low"] }
@@ -14,7 +16,7 @@ const fullEnumConfig: EnumConfig = {
   attributes: [{ name: 'code', type: 'string' }, { name: 'description', type: 'string' }]
 };
 
-const simpleEnumConfig: EnumConfig = {
+const technicalEnumConfig: EnumConfig = {
   type: 'enum',
   name: "Level",
   values: [
@@ -23,43 +25,25 @@ const simpleEnumConfig: EnumConfig = {
   ]
 };
 
-const testEnum: EnumConfig = {
-  "type": "enum",
-  "module": "shared",
-  "name": "ewewe",
-  "values": [
-    {
-      "name": "ew",
-      "attributes": [
-        'ew',
-        'edsgh'
-      ]
-    },
-    {
-      "name": "eweewew",
-      "attributes": [
-        'we',
-        'ee'
-      ]
-    }
-  ],
-  "attributes": [
-    { name: 'code', type: 'string' },
-    { name: 'description', type: 'string' },
-  ]
-}
-
 beforeEach(async () => {
-  await fs.mkdir(OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
   // await fs.rm(OUTPUT_DIR, { recursive: true });
 });
 
-describe('New Enum', () => {
+describe('New Enum in domain driven design project style', () => {
 
   it('should create the enum class.', async () => {
-    await addEnum(testEnum, OUTPUT_DIR);
+    await addEnum(domainEnumConfig, DOMAIN_OUTPUT_DIR);
+  });
+});
+
+describe('New Enum in technical project style', () => {
+
+  it('should create the enum class.', async () => {
+    await addEnum(technicalEnumConfig, TECHNICAL_OUTPUT_DIR);
   });
 });

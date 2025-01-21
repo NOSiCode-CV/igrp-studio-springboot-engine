@@ -22,6 +22,8 @@ export const createModuleDirectory = async (context: RenderContext<ModuleConfig>
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
 
+  context.resourceConfig.name = context.resourceConfig.name.toLowerCase()
+
   const { group, packageName } = context.baseConfig;
   const basePath = context.basePath
 

@@ -840,7 +840,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   await generateResponses(context);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    const module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+    const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
       const config: DTOConfig | null = (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)

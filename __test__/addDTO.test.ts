@@ -2,561 +2,178 @@ import fs from 'fs-extra';
 import { addDTO } from '../src';
 import { DTOConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
-const HUB_DIR = 'C:\\Users\\marcelo.monteiro\\IdeaProjects\\inss-sisgb-portal-integration-hub-service';
+const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
+const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
 beforeAll(async () => {
-  await fs.mkdir(OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 describe('DTO generator', () => {
-  /*it('should generate a classic command DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'command',
-      name: 'CreateRental',
-      template: 'classic',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-      ],
-    };
 
-    await addDTO(model, OUTPUT_DIR);
-  });*/
+  it('should create DTO for domain driven design project style', async() => {
 
-  /*it('should generate a record command DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      aggregate: 'CarRental',
-      type: 'command',
-      name: 'CreateRental',
-      template: 'record',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-      ],
-    };
+    const domainTestCases: DTOConfig[] = [
 
-    await addDTO(model, OUTPUT_DIR);
-  });*/
+      // Animal DTO
 
-  /*it('should generate a classic command DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'command',
-      name: 'UpdateRental',
-      template: 'classic',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a record command DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      aggregate: 'CarRental',
-      type: 'command',
-      name: 'UpdateRental',
-      template: 'record',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  it('should generate a classic event DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'event',
-      name: 'RentalCreated',
-      template: 'classic',
-      attributes: [
-        { type: 'Long', objectType: 'java', name: 'id', primaryKey: true, required: false },
-        { type: 'String', objectType: 'java', name: 'customerName', required: false },
-        { type: 'LocalDate', objectType: 'java', name: 'rentalDate', required: false },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });
-
-  /*it('should generate a record event DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      aggregate: 'CarRental',
-      type: 'event',
-      name: 'RentalCreated',
-      template: 'record',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'LocalDate', ns: 'java', name: 'rentalDate' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a classic domain entity DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'domainentity',
-      name: 'Rental',
-      template: 'classic',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-        { type: 'LocalDate', ns: 'java', name: 'rentalDate' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a record data object DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      aggregate: 'CarRental',
-      type: 'dataobject',
-      name: 'Rental',
-      template: 'record',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'customerName' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-        { type: 'LocalDate', ns: 'java', name: 'rentalDate' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a classic domain entity DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'domainentity',
-      name: 'Car',
-      template: 'classic',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'id', primaryKey: true },
-        { type: 'String', ns: 'java', name: 'carBrand' },
-        { type: 'String', ns: 'java', name: 'carModel' },
-        { type: 'String', ns: 'java', name: 'carPlate' },
-        { type: 'String', ns: 'java', name: 'registrationDate' },
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a classic value object DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'valueobject',  // 'valueobject' type for a DDD value object
-      name: 'CarRentalInfo', // Value object name that reflects the domain concept
-      template: 'classic',
-      attributes: [
-        { type: 'String', ns: 'java', name: 'carBrand' },         // Immutable field representing car brand
-        { type: 'String', ns: 'java', name: 'carModel' },         // Immutable field representing car model
-        { type: 'String', ns: 'java', name: 'carPlate' },         // Immutable field for car plate
-        { type: 'String', ns: 'java', name: 'registrationDate' },   // Immutable field for registration date
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  /*it('should generate a GetRental query DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'query',  // Type set to 'query' for a query DTO
-      name: 'GetRental', // Query name
-      template: 'classic',
-      attributes: [
-        { type: 'Long', ns: 'java', name: 'rentalId' },          // Field for rental ID filter
-        { type: 'String', ns: 'java', name: 'carPlate' },         // Field for car plate filter
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });
-
-
-  it('should generate a GetAllRentals query DTO with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'query',  // Type set to 'query' for a query DTO
-      name: 'GetAllRentals', // Query name
-      template: 'classic',
-      attributes: [
-        { type: 'String', ns: 'java', name: 'carBrand' },        // Field for car brand filter
-        { type: 'String', ns: 'java', name: 'carModel' },        // Field for car model filter
-        { type: 'String', ns: 'java', name: 'carPlate' },        // Field for car plate filter
-        { type: 'String', ns: 'java', name: 'registrationDate' },  // Field for registration date filter
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });*/
-
-  it('should generate a Rental DataTransferObject with declared fields', async () => {
-    const model: DTOConfig = {
-      module: 'CarRental',
-      type: 'dto', // Type set to 'dto' for a DTO
-      name: 'Rental', // DTO name
-      template: 'classic',
-      attributes: [
-        { type: 'Long', objectType: 'java', name: 'rentalId', primaryKey: true, required: false },    // Primary key for the rental
-        { type: 'Long', objectType: 'java', name: 'carId', required: false },                          // Field for car ID
-        { type: 'String', objectType: 'java', name: 'customerName', required: false },                 // Field for the customer name
-        { type: 'String', objectType: 'java', name: 'rentalStartDate', required: false },                // Field for rental start date
-        { type: 'String', objectType: 'java', name: 'rentalEndDate', required: false },                  // Field for rental end date
-        { type: 'String', objectType: 'java', name: 'rentalStatus', required: false },                 // Field for rental status
-        { type: 'BigDecimal', objectType: 'java', name: 'rentalPrice', required: false },              // Field for rental price
-      ],
-    };
-
-    await addDTO(model, OUTPUT_DIR);
-  });
-
-  it('should generate DTOs with proper Jakarta Validation annotations for various scenarios', async () => {
-    const testCases: DTOConfig[] = [
-      {
-        module: 'CarRental',
-        type: 'dto',
-        name: 'Rental',
-        template: 'classic',
-        attributes: [
-          { type: 'Long', objectType: 'java', name: 'rentalId', primaryKey: true, required: true },
-          { type: 'String', objectType: 'java', name: 'customerName', required: true, minLength: 3, maxLength: 50 },
-          { type: 'BigDecimal', objectType: 'java', name: 'rentalPrice', positive: true, required: true },
-          { type: 'String', objectType: 'java', name: 'rentalStatus', regex: '^(ACTIVE|CANCELLED|COMPLETED)$', required: false },
-        ],
-      },
-      {
-        module: 'CarRental',
-        type: 'dto',
-        name: 'User',
-        template: 'classic',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'username', required: true, minLength: 5, maxLength: 20 },
-          { type: 'String', objectType: 'java', name: 'email', isEmail: true, required: true },
-          { type: 'LocalDate', objectType: 'java', name: 'dateOfBirth', before: true, required: false },
-        ],
-      },
-      {
-        module: 'CarRental',
-        type: 'dto',
-        name: 'Endpoint',
-        template: 'classic',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'url', isUrl: true, required: true },
-          { type: 'String', objectType: 'java', name: 'regexPattern', regex: '^https?://.*', required: false },
-        ],
-      },
-      {
-        module: 'CarRental',
-        type: 'dto',
-        name: 'Transaction',
-        template: 'classic',
-        attributes: [
-          { type: 'Long', objectType: 'java', name: 'transactionId', primaryKey: true, required: false },
-          { type: 'BigDecimal', objectType: 'java', name: 'amount', positive: true, required: true, minLength: 1 },
-          { type: 'LocalDate', objectType: 'java', name: 'transactionDate', after: true, required: false },
-        ],
-      },
-    ];
-
-    for (const testCase of testCases) {
-      await addDTO(testCase, OUTPUT_DIR);
-    }
-
-    // Assertions for annotations can be done by reading the generated DTO files
-    // and validating their content matches the expected output for each case.
-  });
-
-  it('should generate DTOs for integration hub', async () => {
-    const testCases: DTOConfig[] = [
-      {
-        module: 'reembolso',
-        type: 'dto',
-        name: 'DadosFactura',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'valor', required: false },
-          { type: 'String', objectType: 'java', name: 'medico', required: false },
-          { type: 'String', objectType: 'java', name: 'farmacia', required: false },
-        ],
-      },
-      {
-        module: 'shared',
-        type: 'dto',
-        name: 'Documento',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'tipoDocumento', required: true },
-          { type: 'String', objectType: 'java', name: 'ficheiro', required: true }
-        ],
-      },
-      {
-        module: 'reembolso',
-        type: 'dto',
-        name: 'Refund',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'tipoPedido', required: false },
-          { type: 'String', objectType: 'java', name: 'numUtente', required: false },
-          { type: 'String', objectType: 'java', name: 'tipoUtente', required: false },
-          { type: 'DadosFacturaDTO', objectType: 'dto', name: 'dadosFactura', required: false },
-          { type: 'String', objectType: 'java', name: 'origemPedido', required: false },
-          { type: 'String', objectType: 'java', name: 'dataPrescricao', required: false },
-          { type: 'String', objectType: 'java', name: 'observacoes', required: false },
-          { type: 'DocumentoDTO', objectType: 'dto', name: 'documentos', required: false, collectionType: 'list' },
-
-
-
-        ],
-      },
-
-      {
-        module: 'subsidiofuneral',
-        type: 'dto',
-        name: 'IdentificacaoRequerente',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'tipo_documento_req', required: true },
-          { type: 'String', objectType: 'java', name: 'numero_doc_req', required: true },
-          { type: 'String', objectType: 'java', name: 'data_nascimento_req', required: true },
-          { type: 'String', objectType: 'java', name: 'nome_pai_req', required: true },
-          { type: 'String', objectType: 'java', name: 'nome_mae_req', required: true }
-        ],
-      },
-      {
-        module: 'subsidiofuneral',
-        type: 'dto',
-        name: 'IdentificacaoFalecido',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'num_utente', required: true },
-          { type: 'String', objectType: 'java', name: 'nome_utente', required: true },
-          { type: 'String', objectType: 'java', name: 'data_nascimento', required: true },
-          { type: 'String', objectType: 'java', name: 'data_obito', required: true },
-          { type: 'String', objectType: 'java', name: 'tipo_utente', required: true }
-        ],
-      },
-
-      {
-        module: 'subsidiofuneral',
-        type: 'dto',
-        name: 'SubsidioFuneral',
-        template: 'record',
-        attributes: [
-          { type: 'String', objectType: 'java', name: 'tipo_subsidio', required: true },
-          { type: 'String', objectType: 'java', name: 'observacoes', required: false },
-          { type: 'IdentificacaoFalecidoDTO', objectType: 'dto', name: 'identificacao_falecido', required: true },
-          { type: 'IdentificacaoRequerenteDTO', objectType: 'dto', name: 'identificacao_requerente', required: true },
-          { type: 'DocumentoDTO', objectType: 'dto', name: 'documentos', required: false, collectionType: 'map', minLength: 1 },
-        ],
-      },
-
-      {
-        module: 'shared',
-        type: 'dto',
-        name: 'Utente',
-        template: 'record',
-        attributes: [
-          { type: 'Long', objectType: 'java', name: 'id', required: false },
-          { type: 'Long', objectType: 'java', name: 'idGeografiaNat', required: false },
-          { type: 'String', objectType: 'java', name: 'nome', required: false },
-          { type: 'String', objectType: 'java', name: 'cidnome', required: false },
-          { type: 'String', objectType: 'java', name: 'naturalidade', required: false },
-          { type: 'String', objectType: 'java', name: 'dataNascimento', required: false },
-          { type: 'String', objectType: 'java', name: 'nomePai', required: false },
-          { type: 'String', objectType: 'java', name: 'nomeMae', required: false },
-          { type: 'String', objectType: 'java', name: 'numSegurado', required: false },
-        ],
-      },
-
-      {
-        module: 'shared',
-        type: 'dto',
-        name: 'Empresa',
-        template: 'record',
-        attributes: [
-          { type: 'Long', objectType: 'java', name: 'id', required: false },
-          { type: 'String', objectType: 'java', name: 'estatutoJuridico', required: false },
-          { type: 'String', objectType: 'java', name: 'denominacaoSocial', required: false },
-          { type: 'String', objectType: 'java', name: 'cidNom', required: false },
-          { type: 'String', objectType: 'java', name: 'numeroContribuinte', required: false },
-          { type: 'String', objectType: 'java', name: 'idTipoDocumento', required: false },
-        ],
-      },
-
-      {
-        module: 'shared',
-        type: 'dto',
-        name: 'UtenteDeceased',
-        template: 'record',
-        attributes: [
-          { type: 'Long', objectType: 'java', name: 'id', required: false },
-          { type: 'String', objectType: 'java', name: 'cidnome', required: false },
-          { type: 'String', objectType: 'java', name: 'dataNascimento', required: false },
-          { type: 'String', objectType: 'java', name: 'dataFalecimento', required: false },
-          { type: 'String', objectType: 'java', name: 'numero', required: false },
-          { type: 'String', objectType: 'java', name: 'idtipoUtente', required: false },
-        ],
-      },
-
-    ];
-
-    for (const testCase of testCases) {
-      await addDTO(testCase, HUB_DIR);
-    }
-
-    // Assertions for annotations can be done by reading the generated DTO files
-    // and validating their content matches the expected output for each case.
-  });
-
-  it('should create DTO', async() => {
-    const testCases: DTOConfig[] = [
       {
         "type": "dto",
-        "name": "Cat",
+        "module": "core",
+        "name": "Animal",
         "template": "record",
         "attributes": [
           {
             "type": "string",
             "objectType": "java",
-            "name": "seccao_portal",
+            "name": "species",
             "required": true
           },
           {
             "type": "string",
             "objectType": "java",
-            "name": "num_utente",
+            "name": "name",
             "required": true
           },
           {
             "type": "integer",
             "objectType": "java",
-            "name": "tipo_utente_id",
+            "name": "age",
             "required": true,
-            "positive": false
+            "positive": true
           },
           {
-            "type": "string",
+            "type": "boolean",
             "objectType": "java",
-            "name": "origem_pedido",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "data_prescricao",
-            "required": false,
-            "regex": "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\\d{4})$"
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "observacoes",
+            "name": "vaccinated",
             "required": false
           },
           {
-            "type": "FileDTO",
+            "type": "OwnerDTO",
             "objectType": "dto",
-            "name": "documentos",
+            "name": "owner",
+            "required": true
+          }
+        ]
+      },
+
+      // Owner DTO
+
+      {
+        "type": "dto",
+        "module": "core",
+        "name": "Owner",
+        "template": "record",
+        "attributes": [
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "ownerName",
+            "required": true
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "contactNumber",
             "required": true,
+            "regex": "^\\+?[0-9]{7,15}$"
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "email",
+            "required": false,
+            "isEmail": true
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "address",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "objectType": "java",
+            "name": "animalsOwnedId",
+            "required": false,
             "collectionType": "list"
-          },
-          {
-            "name": "submetido_por",
-            "objectType": "java",
-            "type": "string",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
-          },
-          {
-            "name": "tipo_reembolso",
-            "objectType": "java",
-            "type": "string",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
-          },
-          {
-            "name": "codigo_processo",
-            "objectType": "java",
-            "type": "string",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
-          },
-          {
-            "name": "valor",
-            "objectType": "java",
-            "type": "integer",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
-          },
-          {
-            "name": "medico_id",
-            "objectType": "java",
-            "type": "integer",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
-          },
-          {
-            "name": "farmacia_id",
-            "objectType": "java",
-            "type": "integer",
-            "required": true,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false
           }
         ]
       }
 
     ];
 
-    for (const testCase of testCases) {
-      await addDTO(testCase, OUTPUT_DIR);
+    for (const testCase of domainTestCases) {
+      await addDTO(testCase, DOMAIN_OUTPUT_DIR);
+    }
+  })
+
+  it('should create DTO for technical project style', async() => {
+
+    const technicalTestCases: DTOConfig[] = [
+
+      // User DTO
+
+      {
+        "type": "dto",
+        "name": "User",
+        "template": "classic",
+        "attributes": [
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "username",
+            "required": true
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "email",
+            "required": true,
+            "isEmail": true
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "password",
+            "required": true,
+            "regex": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "roles",
+            "required": false,
+            "collectionType": "list"
+          },
+          {
+            "type": "date",
+            "objectType": "java",
+            "name": "lastLogin",
+            "required": false
+          }
+        ]
+      },
+
+      {
+        "type": "dto",
+        "name": "Teste",
+        "template": "classic",
+        "attributes": [
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "field",
+            "required": true
+          },
+        ]
+      }
+
+    ];
+
+    for (const testCase of technicalTestCases) {
+      await addDTO(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
 

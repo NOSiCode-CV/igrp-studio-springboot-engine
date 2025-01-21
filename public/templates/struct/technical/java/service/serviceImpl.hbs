@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
 
 @Service
-public class {{resourceConfig.name}}ServiceImpl implements I{{resourceConfig.name}}Service {
+public class {{resourceConfig.name}}Service implements I{{resourceConfig.name}}Service {
 
-  private static final Logger logger = LoggerFactory.getLogger({{resourceConfig.name}}ServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
 
   {{#each resourceConfig.actions}}
   @Override

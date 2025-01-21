@@ -1,16 +1,16 @@
 import fs from 'fs-extra';
-import { addModule } from '../src/index';
+import { addModule } from '../src';
 import { ModuleConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\spring-engine\generatedTest'
+const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
 const moduleConfig: ModuleConfig = {
   type: 'module',
-  name: 'CarRental',
+  name: 'external',
 };
 
 beforeEach(async () => {
-  await fs.mkdir(OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
@@ -20,6 +20,6 @@ afterEach(async () => {
 describe('New Module', () => {
 
   it('should create the module structure with all the directories.', async () => {
-    await addModule(moduleConfig, OUTPUT_DIR);
+    await addModule(moduleConfig, DOMAIN_OUTPUT_DIR);
   });
 });

@@ -1,36 +1,37 @@
 import fs from 'fs-extra';
-import { newApi } from '../src/index';
+import { newApi } from '../src';
 import { BaseApiConfig } from '../src/interfaces/types';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generTeste'
-const TECHNICAL_OUTPUT_DIR = 'generatedEnvironment'
+const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
+const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
-const apiConfig: BaseApiConfig = {
+const domainApiConfig: BaseApiConfig = {
   type: 'springboot',
-  apiName: 'carRental',
-  group: 'cv.nosi',
-  artifact: 'rental',
+  apiName: 'demoDomain',
+  group: 'com.petshop',
+  artifact: 'animals',
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'domain',
   enableObservability: true,
-  igrpCoreVersion: "0.0.1-20241129.022358-2"
+  igrpCoreVersion: "0.0.1-20250115.133643-3"
 };
 
-const apiTechnicalConfig: BaseApiConfig = {
+const technicalApiConfig: BaseApiConfig = {
   type: 'springboot',
-  apiName: 'books',
+  apiName: 'demoTechnical',
   group: 'cv.nosi',
-  artifact: 'book-library',
+  artifact: 'users',
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'technical',
-  enableObservability: true,
-  igrpCoreVersion: "0.0.1-20241129.022358-2"
+  enableObservability: false,
+  igrpCoreVersion: "0.0.1-20250115.133643-3"
 };
 
-beforeEach(async () => {
-  await fs.mkdir(OUTPUT_DIR, { recursive: true });
+beforeAll(async () => {
+  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
@@ -40,11 +41,11 @@ afterEach(async () => {
 describe('New API Module', () => {
 
   it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
-    await newApi(apiConfig, OUTPUT_DIR);
+    await newApi(domainApiConfig, DOMAIN_OUTPUT_DIR);
   });
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(apiTechnicalConfig, TECHNICAL_OUTPUT_DIR);
+    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR);
   });
 
 });

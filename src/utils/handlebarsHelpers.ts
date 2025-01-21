@@ -199,12 +199,31 @@ Handlebars.registerHelper(
 
     for (const action of actions) {
       if (action.requestBody)
-        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request"))
-          if (domainDriven === true)
-            imports.push(
-              `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + "RequestDTO"};`,
-            );
-          else imports.push(`import ${group}.${packageName}.dto.${capitalize(normalizeName(action.actionName, 'dto')) + "RequestDTO"};`);
+        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request")) {
+          const schema = (
+            action.requestBody.content['application/json'] ??
+            action.requestBody.content['multipart/form-data']
+          ).schema;
+          if (schema.objectType) {
+            if (domainDriven === true)
+              imports.push(
+                `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
+              );
+            else
+              imports.push(
+                `import ${group}.${packageName}.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
+              );
+          } else {
+            if (domainDriven === true)
+              imports.push(
+                `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
+              );
+            else
+              imports.push(
+                `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
+              );
+          }
+        }
       if (action.responses)
         for (const response of Object.values(action.responses)) {
           const className = capitalize(normalizeName(response.name, 'dto')) + "DTO"
