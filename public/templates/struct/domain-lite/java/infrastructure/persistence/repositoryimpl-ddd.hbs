@@ -10,7 +10,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 {{import-uuid resourceConfig}}
 
 @Repository
-@RepositoryRestResource(path = "{{resourceConfig.crud.path}}")
+{{#if resourceConfig.crud}}
+@RepositoryRestResource(path = "{{toCamelCase resourceConfig.name}}")
+{{/if}}
 public interface {{resourceConfig.name}}Repository extends JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>, JpaSpecificationExecutor<{{resourceConfig.name}}> {
 
   {{#if resourceConfig.crud.disabledMethods}}

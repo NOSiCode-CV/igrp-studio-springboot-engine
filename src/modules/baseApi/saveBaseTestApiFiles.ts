@@ -29,6 +29,8 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       getTestPath(context.baseConfig.group, context.baseConfig.packageName)
     );
 
+  context.fullPath = testPath;
+
   return [
     { output: testPath, template: TEMPLATES.APPLICATION_TEST, name: apiName },
   ];

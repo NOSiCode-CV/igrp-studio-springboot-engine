@@ -1,6 +1,6 @@
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import cv.igrp.core.CommandBus;
-import cv.igrp.core.QueryBus;
+import cv.igrp.core.domain.CommandBus;
+import cv.igrp.core.domain.QueryBus;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;

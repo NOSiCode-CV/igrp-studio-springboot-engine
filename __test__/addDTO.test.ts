@@ -16,48 +16,6 @@ describe('DTO generator', () => {
 
     const domainTestCases: DTOConfig[] = [
 
-      // Animal DTO
-
-      {
-        "type": "dto",
-        "module": "core",
-        "name": "Animal",
-        "template": "record",
-        "attributes": [
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "species",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "name",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "objectType": "java",
-            "name": "age",
-            "required": true,
-            "positive": true
-          },
-          {
-            "type": "boolean",
-            "objectType": "java",
-            "name": "vaccinated",
-            "required": false
-          },
-          {
-            "type": "OwnerDTO",
-            "objectType": "dto",
-            "name": "owner",
-            "required": true
-          }
-        ]
-      },
-
       // Owner DTO
 
       {
@@ -98,6 +56,48 @@ describe('DTO generator', () => {
             "name": "animalsOwnedId",
             "required": false,
             "collectionType": "list"
+          }
+        ]
+      },
+
+      // Animal DTO
+
+      {
+        "type": "dto",
+        "module": "core",
+        "name": "Animal",
+        "template": "record",
+        "attributes": [
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "species",
+            "required": true
+          },
+          {
+            "type": "string",
+            "objectType": "java",
+            "name": "name",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "objectType": "java",
+            "name": "age",
+            "required": true,
+            "positive": true
+          },
+          {
+            "type": "boolean",
+            "objectType": "java",
+            "name": "vaccinated",
+            "required": false
+          },
+          {
+            "type": "OwnerDTO",
+            "objectType": "dto",
+            "name": "owner",
+            "required": true
           }
         ]
       }

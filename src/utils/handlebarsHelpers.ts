@@ -410,6 +410,8 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
       else imports.add(`import ${type.namespace}.${type.name};`);
     }
+    console.log("attr name: " + attr.name)
+    console.log("attr type: " + attr.collectionType)
     switch (attr.collectionType) {
       case 'list':
         imports.add('import java.util.List;');
@@ -612,6 +614,7 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 
 Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
+  if (str == '?') return '?';
   return capitalize(str).replace(/dto$/i, "") + "DTO";
 });
 

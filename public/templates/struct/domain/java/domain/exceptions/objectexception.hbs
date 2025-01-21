@@ -2,6 +2,7 @@
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.{{normalizeDto resourceConfig.body}};
 {{#ifNot (eq resourceConfig.module "Shared")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpProblem;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpResponseStatusException;
 {{/ifNot}}
 {{else}}

@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 {{import-uuid resourceConfig}}
 
 @Repository
+{{#if resourceConfig.crud}}
+@RepositoryRestResource(path = "{{toCamelCase resourceConfig.name}}")
+{{/if}}
 public interface {{resourceConfig.name}}Repository extends JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>, JpaSpecificationExecutor<{{resourceConfig.name}}> {
 
 }

@@ -52,7 +52,7 @@ describe('Model generator', () => {
             "type": "relation",
             "name": "owner",
             "relation": {
-              "type": "many-to-one",
+              "type": "ManyToOne",
               "cardinality": "twoWay",
               "entity": "Owner",
               "mappedBy": "animals",
@@ -96,7 +96,7 @@ describe('Model generator', () => {
             "type": "relation",
             "name": "animals",
             "relation": {
-              "type": "one-to-many",
+              "type": "OneToMany",
               "cardinality": "twoWay",
               "entity": "Animal",
               "mappedBy": "Owner",

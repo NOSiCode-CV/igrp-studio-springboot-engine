@@ -84,12 +84,13 @@ const domainControllerConfig: ControllerConfig = {
                 species: {
                   type: "string",
                   description: "Species of the new animal",
-                  required: true
+                  required: true,
+                  minimum: 0,
+                  maximum: 255
                 },
                 age: {
                   type: "integer",
                   description: "Age of the new animal",
-                  minimum: 0,
                 },
               },
             },
@@ -175,6 +176,7 @@ const domainControllerConfig: ControllerConfig = {
       ],
       responses: {
         "200": {
+          module: "core",
           name: "AnimalDeleted",
           content: {
             "application/json": {

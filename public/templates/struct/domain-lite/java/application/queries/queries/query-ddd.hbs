@@ -1,6 +1,6 @@
 {{> package-java }}
 
-import cv.igrp.core.Query;
+import cv.igrp.core.domain.Query;
 {{> lombok-java-imports}}
 {{{resolve-imports resourceConfig}}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
@@ -9,7 +9,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}Query extends Query {
+public class {{resourceConfig.name}}Query implements Query {
 
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}

@@ -1,6 +1,6 @@
 {{> package-java }}
 
-import cv.igrp.core.Command;
+import cv.igrp.core.domain.Command;
 {{> lombok-java-imports}}
 {{{resolve-imports resourceConfig}}}
 
@@ -8,7 +8,7 @@ import cv.igrp.core.Command;
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
-public class {{resourceConfig.name}}Command extends Command {
+public class {{resourceConfig.name}}Command implements Command {
 
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}
