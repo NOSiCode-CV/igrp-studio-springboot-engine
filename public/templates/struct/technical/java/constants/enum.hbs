@@ -1,8 +1,14 @@
 {{> package-java}}
 
+{{#if resourceConfig.attributes}}
+import lombok.Getter;{{/if}}
+
+{{#if resourceConfig.attributes}}
+@Getter{{/if}}
 public enum {{resourceConfig.name}} {
+
   {{#each resourceConfig.values}}
-  {{this.name}}{{#if this.attributes}}(
+  {{toUpperCase this.name}}{{#if this.attributes}}(
     {{#each this.attributes}}
     {{{formatAttribute this}}}{{#unless @last}}, {{/unless}}
     {{/each}}
@@ -11,19 +17,13 @@ public enum {{resourceConfig.name}} {
 
   {{#if resourceConfig.attributes}}
   {{#each resourceConfig.attributes}}
-  private final {{resolve-type this}} {{this.name}};
+  private final {{resolve-type this}} {{toLowerCase this.name}};
   {{/each}}
 
-  {{resourceConfig.name}}({{#each resourceConfig.attributes}}{{resolve-type this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+  {{resourceConfig.name}}({{#each resourceConfig.attributes}}{{resolve-type this}} {{toLowerCase this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
     {{#each resourceConfig.attributes}}
-    this.{{this.name}} = {{this.name}};
+    this.{{toLowerCase this.name}} = {{toLowerCase this.name}};
     {{/each}}
   }
-
-  {{#each resourceConfig.attributes}}
-  public {{resolve-type this}} {{this.name}}() {
-    return this.{{this.name}};
-  }
-  {{/each}}
   {{/if}}
 }

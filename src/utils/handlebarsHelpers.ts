@@ -61,6 +61,10 @@ Handlebars.registerHelper('toLowerCase', (str: string) => {
   return (str || '').toLowerCase();
 });
 
+Handlebars.registerHelper('toUpperCase', (str: string) => {
+  return (str || '').toUpperCase();
+});
+
 Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
   const lowerStr = str.toLowerCase();
 
