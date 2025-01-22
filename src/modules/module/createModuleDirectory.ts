@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, ModuleConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
-import { getMainPath, getTestPath } from '../../utils/helpers';
+import { getMainPath, getTestPath, normalizePackageName } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
@@ -22,7 +22,7 @@ export const createModuleDirectory = async (context: RenderContext<ModuleConfig>
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
 
-  context.resourceConfig.name = context.resourceConfig.name.toLowerCase()
+  context.resourceConfig.name = normalizePackageName(context.resourceConfig.name).toLowerCase()
 
   const { group, packageName } = context.baseConfig;
   const basePath = context.basePath
@@ -47,7 +47,7 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      path.join(igrpSharedPath, DIRECTORIES.ENUM),
+      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       modulePath,
 
@@ -128,7 +128,7 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      path.join(igrpSharedPath, DIRECTORIES.ENUM),
+      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(mainPath, DIRECTORIES.MODELS),
       path.join(mainPath, DIRECTORIES.SERVICES),

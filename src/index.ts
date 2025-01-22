@@ -619,7 +619,8 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  await saveEnumConfig(config, basePath);
+  // [22-01-2025] No need to save enum config
+  //await saveEnumConfig(config, basePath);
 
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,
