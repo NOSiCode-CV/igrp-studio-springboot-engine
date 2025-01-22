@@ -37,10 +37,17 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
   const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(modulePath, DIRECTORIES.INFRASTRUCTURE);
+  const igrpSharedPath = path.join(igrpstudioPath, context.resourceConfig.name);
 
   if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const paths = [
+
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+      path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       modulePath,
 
@@ -116,16 +123,18 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
   } else {
 
     const paths = [
-      path.join(basePath, DIRECTORIES.RESOURCES),
+
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+      path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(mainPath, DIRECTORIES.MODELS),
       path.join(mainPath, DIRECTORIES.SERVICES),
       path.join(mainPath, DIRECTORIES.CONTROLLERS),
       path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
       path.join(mainPath, DIRECTORIES.SECURITY),
-
-      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpstudioPath, DIRECTORIES.MODELS),
 
     ];
 

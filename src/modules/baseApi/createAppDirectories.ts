@@ -45,12 +45,17 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+  const igrpSharedPath = path.join(igrpstudioPath, DIRECTORIES.SHARED);
 
   if(config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const paths = [
 
-      path.join(igrpstudioPath, DIRECTORIES.SHARED),
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+      path.join(igrpSharedPath, DIRECTORIES.ENUM),
       path.join(basePath, DIRECTORIES.RESOURCES),
 
       sharedPath,
@@ -137,7 +142,11 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
 
     const paths = [
 
-      path.join(igrpstudioPath, DIRECTORIES.SHARED),
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+      path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(basePath, DIRECTORIES.RESOURCES),
 

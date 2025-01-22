@@ -25,6 +25,7 @@ export const DIRECTORIES = {
   MODELS: 'models',
   MODEL: 'model',
   DTO: 'dto',
+  ENUM: 'enum',
   RESOURCES: 'src/main/resources',
   REPOSITORIES: 'repositories',
   SERVICES: 'services',
