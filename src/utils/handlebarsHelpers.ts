@@ -266,20 +266,22 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
 
   // String-specific validations
   if (attribute.type === 'string') {
-    if (attribute.minLength !== undefined || attribute.maxLength !== undefined) {
+    if(attribute.minLength !== undefined)
       annotations.push(
         `@Size(${[
-          attribute.minLength !== undefined
-            ? `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres."`
-            : '',
-          attribute.maxLength !== undefined
-            ? `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres."`
-            : '',
+          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres."`
         ]
           .filter(Boolean)
           .join(', ')})`,
       );
-    }
+    if(attribute.maxLength !== undefined)
+      annotations.push(
+        `@Size(${[
+          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres."`
+        ]
+          .filter(Boolean)
+          .join(', ')})`,
+      );
     if (attribute.regex) {
       annotations.push(
         `@Pattern(message = "Invalid value format for field <${attribute.name}>.", regexp = "${attribute.regex.replace(/\\/g, '\\\\')}")`,
