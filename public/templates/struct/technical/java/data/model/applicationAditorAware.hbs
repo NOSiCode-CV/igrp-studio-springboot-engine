@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -15,7 +14,7 @@ public class ApplicationAuditorAware implements AuditorAware<String> {
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    String preferredUsername = getPreferredUsername();
+    var preferredUsername = getPreferredUsername();
     return Optional.of(preferredUsername);
   }
 
@@ -26,13 +25,16 @@ public class ApplicationAuditorAware implements AuditorAware<String> {
   * @throws IllegalStateException if the JWT token is not found in the security context
   */
   public String getPreferredUsername() {
+
     if ("development".equals(activeProfile) || "staging".equals(activeProfile)) {
       return "";
     }
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    var authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
       return jwt.getClaimAsString("preferred_username");
     }
+
     throw new IllegalStateException("JWT token not found in security context");
   }
 
