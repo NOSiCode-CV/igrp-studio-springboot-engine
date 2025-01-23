@@ -156,6 +156,11 @@ describe('Model generator', () => {
             "nullable": false
           },
           {
+            "type": "file",
+            "name": "document",
+            "nullable": false
+          },
+          {
             "type": "boolean",
             "name": "active",
             "nullable": false,
@@ -204,6 +209,7 @@ describe('Model generator', () => {
             "type": "relation",
             "name": "user",
             "relation": {
+              "fieldName": "owner",
               "type": "OneToOne",
               "cardinality": "oneWay",
               "entity": "User"

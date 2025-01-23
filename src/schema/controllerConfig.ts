@@ -1,5 +1,5 @@
 import {
-  GENERIC_ATTRIBUTE_TYPES, GENERATION_TYPES,
+  GENERATION_TYPES,
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
@@ -30,6 +30,12 @@ const relationSchema: JSONSchemaType<Relation> = {
       type: "string",
       pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    fieldName: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The fieldName field, if provided, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
     },
     mappedBy: {
       type: "string",

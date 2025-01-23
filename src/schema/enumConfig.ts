@@ -2,7 +2,6 @@ import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types'
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import {
-  CRUD_DISABLED_OPTIONS,
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
   PATTERNS,
@@ -22,22 +21,28 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       errorMessage: 'The entity name is required and cannot be empty.'
     },
+    fieldName: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The fieldName field, if provided, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
+    },
     mappedBy: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
-    cardinality: {
-      type: 'string',
-      enum: ['oneWay', 'twoWay'],
-      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
-    },
     referencedColumnName: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
+    },
+    cardinality: {
+      type: 'string',
+      enum: ['oneWay', 'twoWay'],
+      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
     },
     joinTable: {
       type: "string",

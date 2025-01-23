@@ -1,11 +1,18 @@
 import {
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
-  GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, HTTP_METHOD_TYPES,
+  GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+  HTTP_METHOD_TYPES,
   MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES, CONFIG_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
+  STRUCT_TYPES,
+  GENERIC_COLLECTION_TYPES,
+  HTTP_HEADER_TYPES,
+  CONFIG_TYPES,
+  GENERIC_MODEL_ATTRIBUTE_TYPES,
+  RELATIONSHIP_TYPES,
 } from '../utils/constants';
 
 export interface TypeMetadata {
@@ -164,9 +171,10 @@ export interface Attribute {
 }
 
 export interface Relation {
-  type: string;
+  type: RelationshipTypes;
   cardinality: 'twoWay' | 'oneWay'
   entity: string;
+  fieldName?: string;
   mappedBy?: string;
   referencedColumnName?: string;
   joinTable?: string;
@@ -335,6 +343,7 @@ export type ConfigTypes = (typeof CONFIG_TYPES)[number];
 export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
+export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type MimeTypes = (typeof MIME_TYPES)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
