@@ -10,18 +10,26 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375
   KUBECONFIG: "/tmp/kubeconfig"
-  KUBE_NAMESPACE: "api1"
-  API_URL: "https://app-manager-dev-test.nosi.cv/apps/9/resources"
-  APPLICATION_NAME: "application-1"
-  HOME_URL: "spring-boot-api-dev-test.nosi.cv/" # Updated HOME_URL
+  KUBE_NAMESPACE: "app1-back"
+  API_URL: "https://app-manager-dev-test.nosi.cv/apps/67/resources"
+  APPLICATION_NAME: "Application1"
+  HOME_URL: "api-dev-test.nosi.cv"
   RESOURCE_NAME: "p2"
   RESOURCE_DESCRIPTION: "staff 1"
   REGISTRY_USERNAME: "bittor.vpn"
   REGISTRY_PASSWORD: "Bh1030_1812#"
   REGISTRY_URL: "registry.nosi.cv"
-  # Variables adicionales para la generación del JSON
-  APP_URL: "http://example.com"
-  RESOURCE_ID: "9"
+  REGISTRY_PROJECT: "bittortest"
+  REGISTRY_IMAGE: "spring-api"
+  REGISTRY_TAG: "demo"
+  APP_URL: "https://api-dev-test.nosi.cv"
+  RESOURCE_ID: "67"
+  KEYCLOAK_URL: "https://keycloak-dev-test.nosi.cv"
+  KEYCLOAK_REALM: "igrp"
+  APP_MANAGER_CLIENT_ID: "user-manager-sa"
+  APP_MANAGER_CLIENT_SECRET: "ij4RZGLxbYTCeGfrv5zU4HjsjnPrGTop"
+  KEYCLOAK_USERNAME: "admin"
+  KEYCLOAK_PASSWORD: "igrp30"
 
 stages:
   - setup
@@ -44,6 +52,13 @@ setup:
     export APP_URL_FINAL="${CUSTOM_APP_URL:-$APP_URL}" &&
     export RESOURCE_ID_FINAL="${CUSTOM_RESOURCE_ID:-$RESOURCE_ID}" &&
     export PATHS_JSON=$(cat .igrpstudio/baseApi.json) &&
+    export APP_MANAGER_CLIENT_ID_FINAL="${CUSTOM_APP_MANAGER_CLIENT_ID:-$APP_MANAGER_CLIENT_ID}" &&
+    export APP_MANAGER_CLIENT_SECRET_FINAL="${CUSTOM_APP_MANAGER_CLIENT_SECRET:-$APP_MANAGER_CLIENT_SECRET}" &&
+    export KEYCLOAK_USERNAME_FINAL="${CUSTOM_KEYCLOAK_USERNAME:-$KEYCLOAK_USERNAME}" &&
+    export KEYCLOAK_PASSWORD_FINAL="${CUSTOM_KEYCLOAK_PASSWORD:-$KEYCLOAK_PASSWORD}" &&
+    export KEYCLOAK_URL_FINAL="${CUSTOM_KEYCLOAK_URL:-$KEYCLOAK_URL}" &&
+    export KEYCLOAK_REALM_FINAL="${CUSTOM_KEYCLOAK_REALM:-$KEYCLOAK_REALM}" &&
+    
 
     echo "KUBE_NAMESPACE_FINAL: $KUBE_NAMESPACE_FINAL" &&
     echo "API_URL_FINAL: $API_URL_FINAL" &&
@@ -52,9 +67,14 @@ setup:
     echo "RESOURCE_NAME_FINAL: $RESOURCE_NAME_FINAL" &&
     echo "RESOURCE_DESCRIPTION_FINAL: $RESOURCE_DESCRIPTION_FINAL" &&
     echo "PATHS_JSON: $PATHS_JSON" &&
-
     echo "APP_URL_FINAL: $APP_URL_FINAL" &&
     echo "RESOURCE_ID_FINAL: $RESOURCE_ID_FINAL" &&
+    echo "APP_MANAGER_CLIENT_ID_FINAL: $APP_MANAGER_CLIENT_ID_FINAL" &&
+    echo "APP_MANAGER_CLIENT_SECRET_FINAL: $APP_MANAGER_CLIENT_SECRET_FINAL" &&
+    echo "KEYCLOAK_USERNAME_FINAL: $KEYCLOAK_USERNAME_FINAL" &&
+    echo "KEYCLOAK_PASSWORD_FINAL: $KEYCLOAK_PASSWORD_FINAL" &&
+    echo "KEYCLOAK_URL_FINAL: $KEYCLOAK_URL_FINAL" &&
+    echo "KEYCLOAK_REALM_FINAL: $KEYCLOAK_REALM_FINAL" &&
     
     printf 'KUBE_NAMESPACE_FINAL="%s"\n' "$KUBE_NAMESPACE_FINAL" > variables.env &&
     printf 'API_URL_FINAL="%s"\n' "$API_URL_FINAL" >> variables.env &&
@@ -64,7 +84,13 @@ setup:
     printf 'RESOURCE_DESCRIPTION_FINAL="%s"\n' "$RESOURCE_DESCRIPTION_FINAL" >> variables.env &&
     printf 'PATHS_JSON="%s"\n' "$PATHS_JSON" >> variables.env &&
     printf 'APP_URL_FINAL="%s"\n' "$APP_URL_FINAL" >> variables.env &&
-    printf 'RESOURCE_ID_FINAL="%s"\n' "$RESOURCE_ID_FINAL" >> variables.env
+    printf 'RESOURCE_ID_FINAL="%s"\n' "$RESOURCE_ID_FINAL" >> variables.env &&
+    printf 'APP_MANAGER_CLIENT_ID_FINAL="%s"\n' "$APP_MANAGER_CLIENT_ID_FINAL" >> variables.env &&
+    printf 'APP_MANAGER_CLIENT_SECRET_FINAL="%s"\n' "$APP_MANAGER_CLIENT_SECRET_FINAL" >> variables.env &&
+     printf 'KEYCLOAK_USERNAME_FINAL="%s"\n' "$KEYCLOAK_USERNAME_FINAL" >> variables.env &&
+    printf 'KEYCLOAK_PASSWORD_FINAL="%s"\n' "$KEYCLOAK_PASSWORD_FINAL" >> variables.env &&
+    printf 'KEYCLOAK_URL_FINAL="%s"\n' "$KEYCLOAK_URL_FINAL" >> variables.env &&
+    printf 'KEYCLOAK_REALM_FINAL="%s"\n' "$KEYCLOAK_REALM_FINAL" >> variables.env
   artifacts:
     paths:
       - variables.env
@@ -74,10 +100,10 @@ build:
   script:
     - source variables.env
     - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
-    - docker build -t $REGISTRY_URL/bittortest/spring-boot-api:$CI_PIPELINE_ID . # Updated image name
-    - docker tag $REGISTRY_URL/bittortest/spring-boot-api:$CI_PIPELINE_ID $REGISTRY_URL/bittortest/spring-boot-api:demo # Updated tag
-    - docker push $REGISTRY_URL/bittortest/spring-boot-api:$CI_PIPELINE_ID # Updated push
-    - docker push $REGISTRY_URL/bittortest/spring-boot-api:demo # Updated push
+    - docker build -t $REGISTRY_URL/$REGISTRY_PROJECT/$REGISTRY_IMAGE:$CI_PIPELINE_ID .
+    - docker tag $REGISTRY_URL/$REGISTRY_PROJECT/$REGISTRY_IMAGE:$CI_PIPELINE_ID $REGISTRY_URL/$REGISTRY_PROJECT/$REGISTRY_IMAGE:$REGISTRY_TAG
+    - docker push $REGISTRY_URL/$REGISTRY_PROJECT/$REGISTRY_IMAGE:$CI_PIPELINE_ID
+    - docker push $REGISTRY_URL/$REGISTRY_PROJECT/$REGISTRY_IMAGE:$REGISTRY_TAG
 
 deploy:
   stage: deploy
@@ -105,6 +131,8 @@ deploy:
     - envsubst < ./k8s/service.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
     # Process and apply Ingress manifest
     - envsubst < ./k8s/ingress.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
+    # Process and apply cluster manifest
+    - envsubst < ./k8s/cluster.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
     
 build_json:
   stage: buildjson
@@ -119,40 +147,55 @@ build_json:
     - |
       jq -n \
         --arg app_url "$APP_URL_FINAL" \
+        --arg home_url "$HOME_URL_FINAL" \
+        --arg application_name "$APPLICATION_NAME_FINAL" \
         --arg resource_id "$RESOURCE_ID_FINAL" \
+        --argjson pages_meta "$(cat .igrpstudio/baseApi.json)" \
         '{
-          "type": "UI",
-          "url": ($app_url + "/resource" + $resource_id),
-          "description": "Descripción del recurso.",
+          "type": "API",
+          "url": $app_url,
+          "description": "Demo backend",
           "resourceItems": [
               {
-                  "name": "si",
-                  "url": ($app_url + "/resource" + $resource_id),
-                  "resourceItemType": "PAGE",
-                  "description": "Descripción del recurso."
+                  "name": "Test get",
+                  "url": ($app_url + "/api/test-endpoint"),
+                  "resourceItemType": "ENDPOINT",
+                  "description": "Endpoint de test para ver registros"
+              },
+              {
+                   "name": "Test post",
+                  "url": ($app_url + "/api/another-endpoint"),
+                   "resourceItemType": "ENDPOINT",
+                  "description": "Endpoint de test para crear un registro"
               }
           ],
           "identityConfig": {
-              "application": "app1",
-              "homeUrl": "http://localhost",
+              "application": $application_name,
+              "homeUrl": $home_url,
               "name": ("app1-resource" + $resource_id),
-              "description": "Description for test application",
+              "description": "App para registros de formaciones",
               "endpoints": [
                   {
-                  "name": "Test get",
+                  "name": "Ver registros",
                   "methods": ["GET"],
-                  "path": "/api/test-endpoint",
-                  "permission": "test-permission"
+                  "path": "/api/registros",
+                  "permission": "professor"
                   },
                   {
-                  "name": "Test post",
+                  "name": "Crear registro",
                   "methods": ["POST"],
-                  "path": "/api/another-endpoint",
-                  "permission": "admin-permission"
+                  "path": "/api/registros",
+                  "permission": "director"
+                  },
+                  {
+                  "name": "Eliminar registro",
+                  "methods": ["DELETE"],
+                  "path": "/api/registros/deleteByDocid",
+                  "permission": "superdirector"
                   }
               ]
           }
-      }' > payload.json
+        }' > payload.json
     - cat payload.json
   artifacts:
     paths:
@@ -170,10 +213,13 @@ deploy_resource:
     - |
       TOKEN=$(
         curl -v -X POST \
-          https://keycloak-dev-test.nosi.cv/realms/igrp/protocol/openid-connect/token \
+          "$KEYCLOAK_URL_FINAL/realms/$KEYCLOAK_REALM_FINAL/protocol/openid-connect/token" \
           -H 'content-type: application/x-www-form-urlencoded' \
-          -d 'client_id=user-manager-sa&client_secret=ij4RZGLxbYTCeGfrv5zU4HjsjnPrGTop' \
-          -d 'username=admin&password=igrp30&grant_type=password' | jq --raw-output '.access_token'
+          -d "client_id=$APP_MANAGER_CLIENT_ID_FINAL" \
+          -d "client_secret=$APP_MANAGER_CLIENT_SECRET_FINAL" \
+          -d "username=$KEYCLOAK_USERNAME_FINAL" \
+          -d "password=$KEYCLOAK_PASSWORD_FINAL" \
+          -d 'grant_type=password' | jq --raw-output '.access_token'
       )
     - |
       curl -X POST \
