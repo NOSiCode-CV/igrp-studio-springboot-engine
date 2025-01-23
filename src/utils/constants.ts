@@ -114,6 +114,7 @@ export const TEMPLATES = {
   CONFIG_DEPLOYMENT: 'config/k8s/deploymentyaml.hbs',
   CONFIG_INGRESS: 'config/k8s/ingressyaml.hbs',
   CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
+  CONFIG_CLUSTER: 'config/k8s/clusteryaml.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -145,6 +146,7 @@ export const COMMON_FILES = {
   APPLICATION_SECURITY: 'SecurityConfig.java',
   DEPLOYMENT: 'deployment.yaml',
   INGRESS: 'ingress.yaml',
+  CLUSTER: 'cluster.yaml',
   SERVICE_K8S: 'service.yaml'
 };
 
