@@ -14,6 +14,7 @@ describe('Generic deletion in domain driven design project style', () => {
         const element: DeleteConfig = {
           name: "TestResponseIsolated",
           type: 'response',
+          module: 'core'
         };
 
         await deleteElement(element, DOMAIN_OUTPUT_DIR)

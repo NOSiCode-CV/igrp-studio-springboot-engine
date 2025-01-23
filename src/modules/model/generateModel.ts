@@ -137,7 +137,7 @@ const validateColumnDefault = (attribute: Attribute) => {
         throw new Error(`The default value "${defaultValue}" is not valid for the boolean type ${type}.`);
       }
     } else {
-      console.warn(`No specific validation for the type ${type}.`);
+      //console.warn(`No specific validation for the type ${type}.`);
     }
   }
 };
