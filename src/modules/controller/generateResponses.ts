@@ -51,6 +51,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
         baseConfig: baseConfig,
         basePath: basePath,
         resourceConfig: await transformSchemaDTOConfig(
+          (context.resourceConfig.module ?? DIRECTORIES.SHARED),
           response,
           baseConfig,
           basePath,
@@ -121,6 +122,7 @@ export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
 };
 
 export const transformSchemaDTOConfig = async function(
+  module: string,
   config: Body,
   api: ApiConfig,
   basePath: string,
@@ -148,7 +150,7 @@ export const transformSchemaDTOConfig = async function(
     let typeNotFound = false;
     if (attr.objectType === PACKAGE_NS.model) {
       if (mtypes === undefined) {
-        mtypes = await getModelTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
+        mtypes = await getModelTypes(module ?? DIRECTORIES.SHARED, basePath);
       }
       const mt = mtypes.get(attr.type!);
       if (mt) {
@@ -162,7 +164,7 @@ export const transformSchemaDTOConfig = async function(
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
       if (dtypes === undefined) {
-        dtypes = await getDTOTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
+        dtypes = await getDTOTypes(module ?? DIRECTORIES.SHARED, basePath);
       }
 
       const dt = dtypes.get(attr.type!);

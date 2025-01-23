@@ -4,6 +4,7 @@ import { ControllerConfig } from '../src/interfaces/types';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+const TEST_OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
 
 const domainControllerConfig: ControllerConfig = {
   type: "controller",
@@ -435,5 +436,13 @@ describe('Domain Controller Module', () => {
 describe('Technical Controller Module', () => {
   it('should create the controller class and the service interface in technical style', async () => {
     await addController(technicalControllerConfig, TECHNICAL_OUTPUT_DIR);
+  });
+});
+
+const testControllerConfig: ControllerConfig = {"type":"controller","name":"Todo","basePath":"api","actions":[{"actionName":"getAll","path":"todo","method":"GET","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"TodoDTO","objectType":"dto"}}}}}}}},{"actionName":"createTodo","path":"todo","method":"POST","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"string"}}}}}}}}],"module":"todo"}
+
+describe('Test Controller Module', () => {
+  it('should create the controller class and the service interface in test', async () => {
+    await addController(testControllerConfig, TEST_OUTPUT_DIR);
   });
 });

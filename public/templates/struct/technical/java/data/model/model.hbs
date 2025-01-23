@@ -5,7 +5,7 @@
     {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{capitalizeEntity this.relation.entity}};
     {{else}}
-import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entity}}.{{this.entity}};
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.relation.entity}}.{{capitalizeEntity this.relation.entity}};
     {{/if}}
   {{/if}}
 {{/each}}{{#if resourceConfig.audit}}

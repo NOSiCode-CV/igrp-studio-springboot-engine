@@ -1,8 +1,12 @@
 {{> package-java }}
 
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+{{#if resourceConfig.crud}}
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+{{/if}}
+import org.springframework.stereotype.Repository;
+
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
 {{import-uuid resourceConfig}}
 

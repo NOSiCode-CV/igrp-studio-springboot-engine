@@ -164,7 +164,56 @@ describe('Model generator', () => {
         ],
         "crud": true,
         "audit": true
-      }
+      },
+
+      // Contact
+
+      {
+        "type": "model",
+        "name": "Contact",
+        "tableName": "contact",
+        "attributes": [
+          {
+            "type": "integer",
+            "name": "id",
+            "primaryKey": true,
+            "generationType": "IDENTITY",
+            "nullable": false
+          },
+          {
+            "type": "string",
+            "name": "email",
+            "length": 255,
+            "nullable": false,
+            "unique": true
+          },
+          {
+            "type": "integer",
+            "name": "phoneNumber",
+            "length": 7,
+            "nullable": false,
+            "unique": true
+          },
+          {
+            "type": "boolean",
+            "name": "active",
+            "nullable": false,
+            "defaultValue": "true"
+          },
+          {
+            "type": "relation",
+            "name": "user",
+            "relation": {
+              "type": "OneToOne",
+              "cardinality": "oneWay",
+              "entity": "User"
+            },
+            "nullable": true
+          }
+        ],
+        "crud": true,
+        "audit": true
+      },
 
 
     ];

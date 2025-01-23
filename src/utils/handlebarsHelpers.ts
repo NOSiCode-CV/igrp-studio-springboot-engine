@@ -273,7 +273,7 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
     if(attribute.minLength !== undefined)
       annotations.push(
         `@Size(${[
-          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characteres."`
+          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters."`
         ]
           .filter(Boolean)
           .join(', ')})`,
@@ -281,7 +281,7 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
     if(attribute.maxLength !== undefined)
       annotations.push(
         `@Size(${[
-          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characteres."`
+          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters."`
         ]
           .filter(Boolean)
           .join(', ')})`,
@@ -416,8 +416,6 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
       else imports.add(`import ${type.namespace}.${type.name};`);
     }
-    console.log("attr name: " + attr.name)
-    console.log("attr type: " + attr.collectionType)
     switch (attr.collectionType) {
       case 'list':
         imports.add('import java.util.List;');
