@@ -26,11 +26,16 @@ const relationSchema: JSONSchemaType<Relation> = {
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
     },
-
     entity: {
       type: "string",
       pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
       errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    fieldName: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The fieldName field, if provided, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
     },
     mappedBy: {
       type: "string",
@@ -38,16 +43,16 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
     },
-    cardinality: {
-      type: 'string',
-      enum: ['oneWay', 'twoWay'],
-      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
-    },
     referencedColumnName: {
       type: "string",
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
+    },
+    cardinality: {
+      type: 'string',
+      enum: ['oneWay', 'twoWay'],
+      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
     },
     joinTable: {
       type: "string",
@@ -55,7 +60,6 @@ const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
     },
-
     inverseJoinColumn: {
       type: "string",
       nullable: true,

@@ -416,6 +416,12 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
         imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
       else imports.add(`import ${type.namespace}.${type.name};`);
     }
+
+    if(attr.type == 'file' || attr.type == 'binary') {
+      imports.add(`import org.hibernate.annotations.JdbcType;`);
+      imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
+    }
+
     switch (attr.collectionType) {
       case 'list':
         imports.add('import java.util.List;');
@@ -487,7 +493,7 @@ Handlebars.registerHelper('model-imports', function (this: any, config: ModelCon
 
 Handlebars.registerHelper('import-uuid', function (this: any, config: ModelConfig) {
   const imports = new Set();
-  const uuid = config.attributes.find((attr) => attr.type === 'UUID');
+  const uuid = config.attributes.find((attr) => attr.type.toLowerCase() === 'uuid');
   if (uuid) imports.add('import java.util.UUID;');
   return Array.from(imports).sort().join('\n');
 });

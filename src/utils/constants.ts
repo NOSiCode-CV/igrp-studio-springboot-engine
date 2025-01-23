@@ -1019,10 +1019,10 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
     },
     file: {
-      java: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart.MultipartFile' },
+      java: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart' },
       dotnet: { name: 'byte', primitive: true },
       python: { name: 'int', primitive: true },
-      kotlin: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart.MultipartFile' },
+      kotlin: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart' },
     },
     // Collections
     list: {
@@ -1056,6 +1056,12 @@ export const GENERIC_TYPES: Map<
       python: { name: 'object', primitive: false },
       kotlin: { name: 'Any', primitive: false },
     },
+    binary: {
+      java: { name: 'byte[]', primitive: true },
+      dotnet: { name: 'byte[]', primitive: true },
+      python: { name: 'bytes', primitive: true },
+      kotlin: { name: "ByteArray", primitive: true }
+    }
   })
 );
 
