@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import cv.igrp.core.domain.QueryHandler;
 import cv.igrp.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +12,13 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 import java.util.List;
 
 @Service
-public class {{capitalize resourceConfig.name}}QueryHandler {
+public class {{capitalize resourceConfig.name}}QueryHandler  implements QueryHandler<{{capitalize resourceConfig.name}}Query, ResponseEntity<{{normalizeDto resourceConfig.response}}>>{
 
    public {{capitalize resourceConfig.name}}QueryHandler() {
 
    }
 
    @IgrpQueryHandler
-   @EventListener
    public ResponseEntity<{{normalizeDto resourceConfig.response}}> handle({{capitalize resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
       return null;
