@@ -50,6 +50,9 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     const template = await _renderDTO(dtoContext);
 
     await saveToFile(template, modelOutputPath);
+
+    return dtoContext;
+
   }
 };
 

@@ -836,7 +836,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
   await generateController(context);
 
-  await generateRequest(context);
+  const requestConfig = await generateRequest(context);
 
   await generateResponses(context);
 
@@ -853,8 +853,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           name: act.actionName,
           template: 'classic',
           module: module,
-          attributes: (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
-            ? config!.attributes
+          attributes: (act?.requestBody?.content["application/json"] ?? act?.requestBody?.content["multipart/form-data"]) ? (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
+            ? config!.attributes : requestConfig?.resourceConfig.attributes
             : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, objectType: 'dto', required: false }] : []).concat(act?.pathVariables
                 ? act.pathVariables
                     .map((e) => ({
