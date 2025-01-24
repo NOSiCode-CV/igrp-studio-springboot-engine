@@ -40,11 +40,11 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
     {{#if (eq method "GET")}}
-    {{#if requestParams}}final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if (and modelAttribute pathVariables)}}, {{else}}{{#if (and modelAttribute requestParams)}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
+    {{#if (or requestParams pathVariables)}}final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if (and modelAttribute pathVariables)}}, {{else}}{{#if (and modelAttribute requestParams)}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
     final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}});
     {{/if}}
     {{else}}
-    {{#if requestBody}}{{else if requestParams}}final var command = new {{capitalize actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
+    {{#if requestBody}}{{else if (or requestParams pathVariables)}}final var command = new {{capitalize actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
     final var command = new {{capitalize actionName}}Command();
     {{/if}}
     {{/if}}
