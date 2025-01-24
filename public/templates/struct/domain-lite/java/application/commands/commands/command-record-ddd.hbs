@@ -1,15 +1,21 @@
 {{> package-java }}
 
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{resolve-imports resourceConfig}}
 
 {{#each resourceConfig.annotations}}
-  @{{this.annotation}}
+@{{this.annotation}}
 {{/each}}
 public record {{capitalize resourceConfig.name}}Command (
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}
-    @{{this.annotation}}
+  @{{this.annotation}}
   {{/each}}
+  {{#if (and (eq (resolve-type this) "Object") (eq this.name "none"))}}
+  {{!-- Skip attribute if type is "Object" and name is "none" --}}
+  {{else}}
+  {{{resolve-annotations this}}}
   {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+  {{/if}}
 {{/each}}
 )

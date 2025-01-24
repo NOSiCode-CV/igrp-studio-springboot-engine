@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{resolve-imports resourceConfig}}
 
 {{#each resourceConfig.annotations}}
@@ -8,8 +9,9 @@
 public record {{capitalize resourceConfig.name}}Event (
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}
-    @{{this.annotation}}
+  @{{this.annotation}}
   {{/each}}
+  {{{resolve-annotations this}}}
   {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
 {{/each}}
 ) {}

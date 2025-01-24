@@ -1,5 +1,6 @@
 {{> package-java }}
 
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{> lombok-java-imports}}
 {{{resolve-imports resourceConfig}}}
 
@@ -11,8 +12,9 @@ public class {{resourceConfig.name}}Event {
 
 {{#each resourceConfig.attributes}}
   {{#each this.annotations}}
-    @{{this.annotation}}
+  @{{this.annotation}}
   {{/each}}
+  {{{resolve-annotations this}}}
   private {{{resolve-type this}}} {{this.name}};
 
 {{/each}}
