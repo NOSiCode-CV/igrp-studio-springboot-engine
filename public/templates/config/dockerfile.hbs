@@ -2,11 +2,11 @@ FROM maven:3.8.5-openjdk-17 AS build
 
 WORKDIR /app
 
-COPY igrp-user-management/pom.xml .
+COPY ./pom.xml .
 
 RUN mvn dependency:go-offline -B
 
-COPY igrp-user-management/src ./src
+COPY ./src ./src
 
 RUN mvn package -DskipTests
 
@@ -16,7 +16,6 @@ RUN mkdir /config
 
 COPY --from=build /app/target/*.jar /app/app.jar
 
-EXPOSE 8080
+EXPOSE 80
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-

@@ -46,6 +46,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     { output: securityPath, template: TEMPLATES.CONFIG_SECURITY, name: COMMON_FILES.APPLICATION_SECURITY},
     { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
     { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
+    { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER},
     { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S}
   ]
 };
