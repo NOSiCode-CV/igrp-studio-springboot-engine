@@ -10,10 +10,10 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375
   KUBECONFIG: "/tmp/kubeconfig"
-  KUBE_NAMESPACE: "app1-back"
-  API_URL: "https://app-manager-dev-test.nosi.cv/apps/67/resources"
-  APPLICATION_NAME: "Application1"
-  HOME_URL: "api-dev-test.nosi.cv"
+  KUBE_NAMESPACE: "formacion6-back"
+  API_URL: "https://app-manager-dev-test.nosi.cv/apps/2/resources"
+  APPLICATION_NAME: "Formacion6"
+  HOME_URL: "frontend-dev-test.nosi.cv/wayvantbackend"
   RESOURCE_NAME: "p2"
   RESOURCE_DESCRIPTION: "staff 1"
   REGISTRY_USERNAME: "bittor.vpn"
@@ -21,13 +21,13 @@ variables:
   REGISTRY_URL: "registry.nosi.cv"
   REGISTRY_PROJECT: "bittortest"
   REGISTRY_IMAGE: "spring-api"
-  REGISTRY_TAG: "demo"
-  APP_URL: "https://api-dev-test.nosi.cv"
-  RESOURCE_ID: "67"
+  REGISTRY_TAG: "formacion6"
+  APP_URL: "https://frontend-dev-test.nosi.cv/wayvantbackend"
+  RESOURCE_ID: "2"
   KEYCLOAK_URL: "https://keycloak-dev-test.nosi.cv"
   KEYCLOAK_REALM: "igrp"
-  APP_MANAGER_CLIENT_ID: "app-manager-sa"
-  APP_MANAGER_CLIENT_SECRET: "ij4RZGLxbYTCeGfrv5zU4HjsjnPrGTop"
+  APP_MANAGER_CLIENT_ID: "CLIENT_igrp-app-manager"
+  APP_MANAGER_CLIENT_SECRET: "150TOLCyHV3PaofJLPaPjK1sGCNLDlJM"
   KEYCLOAK_USERNAME: "admin"
   KEYCLOAK_PASSWORD: "igrp30"
 
@@ -124,15 +124,18 @@ deploy:
     - source variables.env
     - echo "$KUBECONFIG_CONTENT" > $KUBECONFIG
     - kubectl create ns $KUBE_NAMESPACE_FINAL || true
-
+    # Process and apply cluster manifest
+    - envsubst < ./k8s/configmap.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
+    # Process and apply cluster manifest
+    - envsubst < ./k8s/cluster.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
+    - sleep 120
     # Process and apply Deployment manifest
     - envsubst < ./k8s/deployment.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
     # Process and apply Service manifest
     - envsubst < ./k8s/service.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
     # Process and apply Ingress manifest
     - envsubst < ./k8s/ingress.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
-    # Process and apply cluster manifest
-    - envsubst < ./k8s/cluster.yaml | kubectl apply -f - -n $KUBE_NAMESPACE_FINAL
+    
     
 build_json:
   stage: buildjson
@@ -145,61 +148,67 @@ build_json:
     - source variables.env
     - echo "Building payload.json..."
     - |
+      permissions=$(jq -c '.' .igrpstudio/permissions.json)
+
+      if [ -z "$permissions" ] || [ "$permissions" = "[]" ]; then
+        echo "Error: permissions.json no contiene datos válidos."
+        exit 1
+      fi
+
+      endpoints=$(echo "$permissions" | jq '
+        map({
+          permission: .name,
+          endpoints: [.endpoints[] | {
+            name: .resource | sub("\\..*"; ""),
+            methods: [.method],
+            path: (if .path then "/" + .path else "/*" end)
+          }]
+        }) | 
+        group_by(.permission) | 
+        map({
+          permission: .[0].permission,
+          name: .[0].permission,
+          methods: (map(.endpoints[].methods[]) | unique),
+          path: "/*"
+        })
+      ')
+
       jq -n \
         --arg app_url "$APP_URL_FINAL" \
         --arg home_url "$HOME_URL_FINAL" \
         --arg application_name "$APPLICATION_NAME_FINAL" \
         --arg resource_id "$RESOURCE_ID_FINAL" \
-        --argjson pages_meta "$(cat .igrpstudio/baseApi.json)" \
+        --argjson endpoints "$endpoints" \
         '{
           "type": "API",
           "url": $app_url,
           "description": "Demo backend",
           "resourceItems": [
-              {
-                  "name": "Test get",
-                  "url": ($app_url + "/api/test-endpoint"),
-                  "resourceItemType": "ENDPOINT",
-                  "description": "Endpoint de test para ver registros"
-              },
-              {
-                   "name": "Test post",
-                  "url": ($app_url + "/api/another-endpoint"),
-                   "resourceItemType": "ENDPOINT",
-                  "description": "Endpoint de test para crear un registro"
-              }
+            {
+              "name": "Backend permissions",
+              "url": $app_url,
+              "resourceItemType": "API_RESOURCE",
+              "description": "Permissions from the backend"
+            }
           ],
           "identityConfig": {
-              "application": $application_name,
-              "homeUrl": $home_url,
-              "name": ("app1-resource" + $resource_id),
-              "description": "App para registros de formaciones",
-              "endpoints": [
-                  {
-                  "name": "Ver registros",
-                  "methods": ["GET"],
-                  "path": "/api/registros",
-                  "permission": "professor"
-                  },
-                  {
-                  "name": "Crear registro",
-                  "methods": ["POST"],
-                  "path": "/api/registros",
-                  "permission": "director"
-                  },
-                  {
-                  "name": "Eliminar registro",
-                  "methods": ["DELETE"],
-                  "path": "/api/registros/deleteByDocid",
-                  "permission": "superdirector"
-                  }
-              ]
+            "application": $application_name,
+            "homeUrl": $app_url,
+            "name": ("app2-resource" + $resource_id),
+            "description": "App para registros de formaciones",
+            "endpoints": $endpoints
           }
         }' > payload.json
+
     - cat payload.json
   artifacts:
     paths:
       - payload.json
+
+
+
+
+
 
 deploy_resource:
   stage: deployjson
