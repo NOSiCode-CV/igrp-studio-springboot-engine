@@ -63,8 +63,6 @@ export const DIRECTORIES = {
   PERSISTENCE: 'persistence',
   MODULE: 'module',
   CONSTANTS: 'constants',
-
-  SECURITY: 'security',
   KUBERNETES: 'k8s'
 };
 
