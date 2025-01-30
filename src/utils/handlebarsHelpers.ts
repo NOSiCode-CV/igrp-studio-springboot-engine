@@ -421,20 +421,6 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
       imports.add(`import org.hibernate.annotations.JdbcType;`);
       imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
     }
-
-    switch (attr.collectionType) {
-      case 'list':
-        imports.add('import java.util.List;');
-        break;
-      case 'map':
-        imports.add('import java.util.Map;');
-        break;
-      case 'set':
-        imports.add('import java.util.Set;');
-        break;
-      default:
-      // Optionally handle unknown collection types
-    }
   });
 
   if (config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).length > 0) {
@@ -444,6 +430,22 @@ Handlebars.registerHelper('resolve-imports', function (config: any) {
   if (config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
     imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
   }
+
+  config.attributes.filter((it: JavaAttribute) => it.collectionType).forEach((attr: JavaAttribute) => {
+    switch (attr.collectionType) {
+      case 'list':
+        imports.add(`import java.util.List;`);
+        break;
+      case 'map':
+        imports.add(`import java.util.Map;`);
+        break;
+      case 'set':
+        imports.add(`import java.util.Set;`);
+        break;
+      default:
+      // Optionally handle unknown collection types
+    }
+  })
 
   return Array.from(imports).sort().join('\n');
 });

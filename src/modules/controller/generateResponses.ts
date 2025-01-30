@@ -44,6 +44,9 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       if(!response.name) continue;
       if(status == "204") continue;
 
+      // Capitalize the response name
+      response.name = capitalize(response.name)
+
       const baseConfig = context.baseConfig
       const basePath = context.basePath
 

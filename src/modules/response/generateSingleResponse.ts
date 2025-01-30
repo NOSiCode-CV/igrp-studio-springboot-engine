@@ -24,6 +24,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
+import { capitalize } from '../../utils/capitalizeStrings';
 
 export const generateSingleResponse = async (context: RenderContext<ResponseConfig>) => {
 
@@ -79,7 +80,7 @@ export const transformSchemaDTOConfig = async function(
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'response',
-    name: bodyCfg.name,
+    name: capitalize(bodyCfg.name),
     template: 'classic',
     module: bodyCfg.module,
     attributes: []
