@@ -458,13 +458,13 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   let rtype: string;
   switch (t1.collectionType) {
     case 'list':
-      rtype = `List<${attributeType}>`;
+      rtype = `List<${capitalize(attributeType)}>`;
       break;
     case 'set':
-      rtype = `Set<${attributeType}>`;
+      rtype = `Set<${capitalize(attributeType)}>`;
       break;
     case 'map':
-      rtype = `Map<Object, ${attributeType}>`; // TODO: handle the key type
+      rtype = `Map<Object, ${capitalize(attributeType)}>`; // TODO: handle the key type
       break;
     default:
       rtype = attributeType; // Default type if no collection type matches

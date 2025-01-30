@@ -23,6 +23,12 @@ describe('Model generator', () => {
         "name": "Animal",
         "tableName": "animal",
         "module": "core",
+        "uniqueConstraints": [
+          {
+            "name": "UniqueAnimalName",
+            "columns": ["name"]
+          }
+        ],
         "attributes": [
           {
             "type": "integer",

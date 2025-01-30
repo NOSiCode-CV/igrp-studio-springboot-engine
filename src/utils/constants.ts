@@ -903,12 +903,13 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'object',
   'binary',
   'file',
-  'character',
   'instant',
 ];
 
+const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter(type => type !== "object");
+
 export const GENERIC_MODEL_ATTRIBUTE_TYPES = [
-  ...GENERIC_ATTRIBUTE_TYPES, 'relation'
+  ...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'
 ]
 
 export const GENERIC_DTO_ATTRIBUTE_TYPES = [

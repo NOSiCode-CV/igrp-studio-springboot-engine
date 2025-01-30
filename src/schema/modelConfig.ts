@@ -153,7 +153,6 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
-
 const permissionSchema: JSONSchemaType<IModelPermission> = {
   type: "object",
   properties: {
@@ -169,8 +168,6 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
   required: ['method', 'permissions'],
   additionalProperties: false,
 }
-
-
 
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",
@@ -264,7 +261,10 @@ const uniqueConstraintSchema: JSONSchemaType<UniqueConstraint> = {
     }
   },
   required: ["name", "columns"],
-  additionalProperties: false
+  additionalProperties: false,
+  errorMessage: {
+    additionalProperties: 'No additional properties are allowed in the unique constraint configuration schema.'
+  }
 };
 
 const entityIndexSchema: JSONSchemaType<EntityIndex> = {
@@ -290,7 +290,10 @@ const entityIndexSchema: JSONSchemaType<EntityIndex> = {
     },
   },
   required: ["name", "columns", "unique"],
-  additionalProperties: false
+  additionalProperties: false,
+  errorMessage: {
+    additionalProperties: 'No additional properties are allowed in the entity index configuration schema.'
+  }
 };
 
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
