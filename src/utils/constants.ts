@@ -960,6 +960,12 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'String', primitive: false },
     },
     char: {
+      java: { name: 'char', primitive: true },
+      dotnet: { name: 'char', primitive: true },
+      python: { name: 'str', primitive: true }, // Python treats characters as strings of length 1
+      kotlin: { name: 'Char', primitive: true },
+    },
+    character: {
       java: { name: 'Character', primitive: true },
       dotnet: { name: 'char', primitive: true },
       python: { name: 'str', primitive: true }, // Python treats characters as strings of length 1

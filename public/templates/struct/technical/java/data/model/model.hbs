@@ -46,9 +46,8 @@ import java.math.{{this}};
       }
     ){{#unless @last}},{{/unless}}
   {{/each}}
-  }{{#if resourceConfig.indexes}},{{/if}}
-{{/if}}
-{{#if resourceConfig.indexes}}
+  }{{/if}}
+{{#if resourceConfig.indexes}},
   indexes = {
   {{#each resourceConfig.indexes}}
     @Index(name = "{{toLowerCase this.name}}", columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"{{#if this.unique}}, unique = true{{/if}}){{#unless @last}},{{/unless}}
