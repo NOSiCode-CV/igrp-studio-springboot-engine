@@ -64,6 +64,8 @@ export const DIRECTORIES = {
   MODULE: 'module',
   CONSTANTS: 'constants',
 
+  SECURITY: 'security',
+  KUBERNETES: 'k8s'
 };
 
 export const PACKAGES = {
@@ -338,6 +340,10 @@ export const TEMPLATES = {
   DDD_LITE_CONTROLLER: 'struct/domain-lite/java/infrastructure/controller/controller-ddd.hbs',
   DDD_LITE_REPOSITORY_IMPL: 'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
 
+  CONFIG_DEPLOYMENT: 'config/k8s/deploymentyaml.hbs',
+  CONFIG_INGRESS: 'config/k8s/ingressyaml.hbs',
+  CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
+  CONFIG_CLUSTER: 'config/k8s/clusteryaml.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -349,7 +355,7 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_EDITOR_CONFIG, output: '.editorconfig' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
@@ -390,7 +396,7 @@ export const COMMON_FILES = {
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
   GITIGNORE: '.gitignore',
-  GITLAB_CI_YAML: 'gitlab-ci.yaml',
+  GITLAB_CI_YAML: '.gitlab-ci.yml',
   MVNW: 'mvnw',
   MVNW_CMD: 'mvnw.cmd',
   POM_XML: 'pom.xml',
@@ -428,12 +434,16 @@ export const COMMON_FILES = {
   BASE_REPOSITORY: 'BaseRepository.java',
   SPRING_COMMAND_BUS: 'SpringCommandBus.java',
   SPRING_QUERY_BUS: 'SpringQueryBus.java',
-  SPRING_EVENT_BUS: 'SpringEventBus.java'
-
+  SPRING_EVENT_BUS: 'SpringEventBus.java',
+  DEPLOYMENT: 'deployment.yaml',
+  INGRESS: 'ingress.yaml',
+  CLUSTER: 'cluster.yaml',
+  SERVICE_K8S: 'service.yaml'
 };
 
 export const HELPER_FILES = {
   JAR_INSPECTOR: 'jar-inspector-1.0-SNAPSHOT.jar',
+  APPLICATION_SECURITY: 'SecurityConfig.java',
 };
 
 export const EXTENSIONS = {
@@ -853,6 +863,7 @@ export const VALID_PRIMARY_KEY = ['int','integer', 'long', 'uuid', 'string']
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
   'short': { name: 'short', primitive: true },
+  'char': { name: 'char', primitive: true },
   'int': { name: 'int', primitive: true },
   'long': { name: 'long', primitive: true },
   'float': { name: 'float', primitive: true },
@@ -863,6 +874,7 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'Long': { name: 'Long', primitive: false },
   'Double': { name: 'Double', primitive: false },
   'String': { name: 'String', primitive: false },
+  'Character': { name: 'Character', primitive: false },
   'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
   'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
   'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },

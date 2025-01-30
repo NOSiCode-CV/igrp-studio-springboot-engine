@@ -31,6 +31,8 @@ ENV SPRING_PROFILES_ACTIVE=docker
 # Set the working directory
 WORKDIR /app
 
+RUN mkdir /config
+
 COPY --from=build /app/target/{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar ./
 
 # Expose the port that the application will run on

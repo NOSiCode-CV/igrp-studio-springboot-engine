@@ -40,7 +40,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       context.basePath,
       getMainPath(context.baseConfig.group, context.baseConfig.packageName)
     );
-  
+
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
@@ -53,9 +53,15 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
     const exceptionsPath = path.join(domainPath, DIRECTORIES.EXCEPTIONS);
     const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+    const kubernetesPath = path.join(context.basePath, 'k8s');
 
     return [
       { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S}
 
       // DOMAIN LAYER
       { output: eventPath, template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER, name: COMMON_FILES.EVENT_PUBLISHER},
@@ -127,9 +133,14 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
     const exceptionPath = path.join(mainPath, 'exceptions');
+    const kubernetesPath = path.join(context.basePath, 'k8s');
 
     return [
       { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S},
       {
         output: configPath,
         template: TEMPLATES.DOMAIN_MODEL_AUDIT,
@@ -216,7 +227,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
       // INFRASTRUCTURE LAYER
       { output: path.join(infraPath, DIRECTORIES.CACHE), template: TEMPLATES.DDD_CACHE_SERVICE, name: COMMON_FILES.CACHE_SERVICE},
-      
+
       { output: path.join(dbPath, DIRECTORIES.CONVERTER), template: TEMPLATES.DDD_CONVERTER, name: COMMON_FILES.CONVERTER},
       { output: path.join(dbPath, DIRECTORIES.DATA_OBJECT), template: TEMPLATES.DDD_DATA_OBJECT, name: COMMON_FILES.DATA_OBJECT},
       { output: path.join(dbPath, DIRECTORIES.ENTITY), template: TEMPLATES.DDD_ENTITY_BASE, name: COMMON_FILES.ENTITY_BASE},
