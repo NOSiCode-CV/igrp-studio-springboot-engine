@@ -176,7 +176,7 @@ export const TEMPLATES = {
   APPLICATION_RESOURCES_DEVELOPMENT: 'struct/resource/application-development.properties.hbs',
   APPLICATION_RESOURCES_STAGING: 'struct/resource/application-staging.properties.hbs',
   APPLICATION_RESOURCES_PRODUCTION: 'struct/resource/application-production.properties.hbs',
-  DOMAIN_MODEL_PRIMARY_KEY: 'struct/technical/java/data/model/primarykey.hbs',
+  DOMAIN_MODEL_PRIMARY_KEY: 'struct/technical/java/data/model/primaryKey.hbs',
   DOMAIN_MODEL_AUDIT: 'struct/technical/java/data/model/audit.hbs',
   APPLICATION_AUDIT_AWARE: 'struct/technical/java/data/model/applicationAditorAware.hbs',
 
