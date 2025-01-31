@@ -30,7 +30,7 @@ services:
     environment:
       - SERVER_PORT=${SERVICE_PORT}
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
-      - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
+      - SPRING_ACTIVE_PROFILE=${SERVICE_PROFILE}
       {{> database-docker-env }}
       {{#if baseConfig.enableObservability}}
       {{> observability-docker-env }}
