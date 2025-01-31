@@ -30,8 +30,8 @@ const technicalApiConfig: BaseApiConfig = {
 };
 
 beforeAll(async () => {
-  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
-  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
