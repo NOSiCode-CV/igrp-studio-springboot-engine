@@ -30,6 +30,77 @@ Once the project has been compiled, you can test the various functions of the ap
 
 - npm test fileNameTest (you can find all tests files in the "** test **" directory)
 
+### Publishing of the package:
+
+Before publishing the package you must change few parameters in `package.json` file:
+
+The version to `0.0.1` with your name without spaces or special characters attached to it.
+
+The author with your name and your organization.
+
+```json
+{
+  "name": "@igrp/spring-engine",
+  "version": "0.0.1-<YOUR_NAME_WITHOUT_SPACES>",
+  "description": "Spring API Creation Engine",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "tsc && vite build",
+    "start": "tsc && vite",
+    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.nosi.cv/igrp-3_0/spring-engine.git"
+  },
+  "keywords": [
+    "Spring",
+    "Engine",
+    "TypeScript",
+    "Handlebars",
+    "API",
+    "API-Rest"
+  ],
+  "author": "<YOUR_NAME> - <YOUR_ORGANIZATION>",
+  "license": "ISC",
+  "dependencies": {
+    // ...
+  },
+  "devDependencies": {
+    // ...
+  },
+  "type": "commonjs",
+  "exports": {
+    "./types": {
+      "import": "./dist/interfaces/types.d.ts"
+    },
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts",
+      "constants": "./dist/utils/constants.d.ts"
+    }
+  }
+}
+
+```
+
+After changing the file `package.json`, you must run the following command:
+
+```npm run build```
+
+If everything succeed you can now run this command:
+
+```npm publish --registry=https://sonatype.nosi.cv/repository/igrp/```
+
+
+
 ### Important Notes
 
 - To get accurate test results, ensure that the tests not of current interest are commented out. This will help you focus on the results of the specific tests you wish to evaluate.
