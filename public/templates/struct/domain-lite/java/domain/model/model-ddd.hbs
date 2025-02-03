@@ -8,11 +8,14 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceCo
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{this.entity}}.{{this.entity}};
     {{/if}}
   {{/if}}
-{{/each}}{{#if resourceConfig.audit}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;{{/if}}
+{{/each}}{{#if resourceConfig.audit~}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
+import org.hibernate.envers.Audited;
+{{~/if}}
 
 {{{resolve-imports resourceConfig}}}
 
+import org.hibernate.envers.Audited;
 import cv.igrp.stereotype.IgrpEntity;
 import jakarta.persistence.*;
 import jakarta.validation.*;
@@ -21,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 {{#each dateTimeAttributes}}
 import java.time.{{this}};
 {{/each}}
@@ -30,6 +34,7 @@ import java.math.{{this}};
 {{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 {{model-imports resourceConfig}}
 
+{{#if resourceConfig.audit~}}@Audited{{~/if}}
 @Getter
 @Setter
 @IgrpEntity
