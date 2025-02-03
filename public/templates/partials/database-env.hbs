@@ -10,7 +10,6 @@ MYSQL_SERVICE_NAME=mysql
 MYSQL_INTERNAL_PORT=3306
 MYSQL_EXTERNAL_PORT=3306
 MYSQL_DATABASE={{toLowerCase baseConfig.name}}_db
-MYSQL_USER=root
 MYSQL_PASSWORD=root
 MYSQL_ROOT_PASSWORD=root
 {{else if (eq baseConfig.database "Oracle")}}
