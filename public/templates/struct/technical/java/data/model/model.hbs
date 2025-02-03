@@ -8,8 +8,10 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceCo
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.relation.entity}}.{{capitalizeEntity this.relation.entity}};
     {{/if}}
   {{/if}}
-{{/each}}{{#if resourceConfig.audit}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
+{{/each}}{{#if resourceConfig.audit~}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
+import org.hibernate.envers.Audited;
+{{~/if}}
 
 {{{resolve-imports resourceConfig}}}
 
@@ -21,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 {{#each dateTimeAttributes}}
 import java.time.{{this}};
 {{/each}}
@@ -30,8 +33,10 @@ import java.math.{{this}};
 {{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 {{model-imports resourceConfig}}
 
+{{#if resourceConfig.audit~}}@Audited{{~/if}}
 @Getter
 @Setter
+@ToString
 @IgrpEntity
 @Entity
 @NoArgsConstructor

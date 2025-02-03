@@ -173,7 +173,7 @@ describe('Model generator', () => {
             "defaultValue": "true"
           }
         ],
-        "crud": true,
+        "crud": false,
         "audit": true
       },
 
@@ -224,7 +224,7 @@ describe('Model generator', () => {
           }
         ],
         "crud": true,
-        "audit": true
+        "audit": false
       },
 
 
