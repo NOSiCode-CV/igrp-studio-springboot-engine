@@ -16,21 +16,23 @@ Clone or download the project to your local machine.
 
 From the project's root directory, run the following command to install all necessary dependencies:
 
-- npm install
+```npm install```
 
 ### 3. Compile the Project:
 
 Compile the project by running the following command
 
-- npm run build
+```npm run build```
 
 ### Run Tests:
 
 Once the project has been compiled, you can test the various functions of the application by executing the following command:
 
-- npm test fileNameTest (you can find all tests files in the "** test **" directory)
+```npm test fileNameTest``` (you can find all tests files in the "`__test__`" directory)
 
-### Publishing of the package:
+fileNameTest should be the prefix to the .test.ts extension. The file in the test directory would be **fileNameTest**.test.ts
+
+### Publishing of the package (FOR THE TRAINING ONLY):
 
 Before publishing the package you must change few parameters in `package.json` file:
 
@@ -88,7 +90,6 @@ The author with your name and your organization.
     }
   }
 }
-
 ```
 
 After changing the file `package.json`, you must run the following command:
