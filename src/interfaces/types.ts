@@ -344,7 +344,5 @@ export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
-export type MimeTypes = (typeof MIME_TYPES)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
-export type SchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean';

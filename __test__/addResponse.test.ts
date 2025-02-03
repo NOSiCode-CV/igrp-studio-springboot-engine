@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
-import { addController, addResponse } from '../src';
-import { ControllerConfig, ResponseConfig } from '../src/interfaces/types';
-import { debugSchema } from '../src/schema/controllerConfig';
+import { addResponse } from '../src';
+import { ResponseConfig } from '../src/interfaces/types';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'

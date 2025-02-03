@@ -97,9 +97,7 @@ After changing the file `package.json`, you must run the following command:
 
 If everything succeed you can now run this command:
 
-```npm publish --registry=https://sonatype.nosi.cv/repository/igrp/```
-
-
+```npm run deploy```
 
 ### Important Notes
 
@@ -125,12 +123,15 @@ import { newApi } from "@igrp/spring-engine"
 import { ApiConfig } from "@igrp/spring-engine/dist/interfaces/types";
 
 const baseConfig: ApiConfig = {
-	type: 'springboot',
-    apiName: 'demo', //Names with hyphens or spaces are not accepted.
-    group: 'com.example',
-    artifact: 'demo',
-    description: 'Demo project for Spring Boot',
-    database: 'Postgresql' // you can choose between MySQL and PostgreSQL
+  type: 'springboot',
+  apiName: 'demoTechnical',
+  group: 'cv.nosi',
+  artifact: 'users',
+  description: 'Demo project for Spring Boot',
+  database: 'Postgresql',
+  projectStructureStyle: 'technical',
+  enableObservability: false,
+  igrpCoreVersion: "0.0.1-20250115.133643-3"
 }
 const basePath = 'your/absolute path/'
 
@@ -159,33 +160,83 @@ import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
 //Model with simple primary key
 const config: ModelConfig = {
   type: 'model',
-  name: 'User',
+  name: 'Animal',
+  tableName: 'animal',
+  module: 'core',
+  uniqueConstraints: [
+    {
+      name: 'UniqueAnimalName',
+      columns: ['name']
+    }
+  ],
   attributes: [
-    { type: 'Long', name: 'userID', primaryKey: true, generationType:"SEQUENCE" },
-    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
-    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
-  ]
+    {
+      type: 'integer',
+      name: 'id',
+      primaryKey: true,
+      generationType: 'IDENTITY',
+      nullable: false
+    },
+    {
+      type: 'string',
+      name: 'name',
+      length: 255,
+      nullable: false
+    },
+    {
+      type: 'string',
+      name: 'species',
+      length: 100,
+      nullable: false
+    },
+    {
+      type: 'date',
+      name: 'birthDate',
+      nullable: true
+    }
+  ],
+  crud: false,
+  audit: false
 };
 
 //Model with compound primary keys
 const config2: ModelConfig = {
   type: 'model',
-  name: 'User',
+  name: 'owner',
+  tableName: 'owner',
+  module: 'core',
   attributes: [
-    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
-    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
+    {
+      type: 'integer',
+      name: 'id',
+      nullable: false
+    },
+    {
+      type: 'string',
+      name: 'name',
+      length: 255,
+      nullable: false
+    },
+    {
+      type: 'string',
+      name: 'contactNumber',
+      length: 20,
+      nullable: false
+    }
   ],
   primaryKey: [
     {
-      name: 'userId',
-      type: 'Long',
+      name: 'id',
+      type: 'integer',
     },
     {
-      name: 'userName',
+      name: 'contactNumber',
       type: 'String',
-      length: 2000,
+      length: 7,
     },
-  ]
+  ],
+  crud: false,
+  audit: true
 };
 
 const basePath = 'your_absolute_project_path';
@@ -210,55 +261,56 @@ const config: ModelConfig = {
   type: 'model',
   name: 'User',
   attributes: [
-    { type: 'Long', name: 'userID', primaryKey: true, generationType:"SEQUENCE" },
-    { type: 'String', name: 'email', length:30, unique: true, nullable: false, required: true },
-    { type: 'String', name: 'password', unique: false, length:30, nullable: true, required: true },
+    { type: 'long', name: 'userID', primaryKey: true, generationType: "SEQUENCE" },
+    { type: 'string', name: 'email', length: 30, unique: true, nullable: false, required: true },
+    { type: 'string', name: 'password', unique: false, length:30, nullable: true, required: true }
   ],
-  crud: {
-    enabled: true,
-    path: 'products',
-    disabledMethods: ['delete'] // Example of disabling the DELETE method
-  }
+  crud: true // Enable CRUD
 };
 
 const basePath = 'your_absolute_project_path';
 
-const addProductCrud = async () => {
+const addUserCrud = async () => {
   try {
     await addCrud(config, basePath);
-    console.log('CRUD operations for Product have been successfully added.');
+    console.log('CRUD operations for User have been successfully added.');
   } catch (error) {
     console.error('Error adding CRUD operations:', error);
   }
 };
 ```
-All methods of this crud will be available at the url http://localhost:8080/products
+All methods of this crud will be available at the url http://localhost:8080/user
 
 - Add Relationship - Adds a relationship between the specified models.
 ```java
 This function modifies the configuration of an existing model to include a new relationship. 
-The relationship is defined in the `relations` property of the `ModelConfig` object.
+The relationship is defined in the `relation` property type of the attribute in `ModelConfig` object.
 All models involved in the relationship should already be created. 
-The function will update the model configuration file by adding the relation parameter and then call the `addModel` function to apply the changes.
+The function will update the model configuration file by adding the `relation` type attribute and then call the `addModel` function to apply the changes.
 @param {ModelConfig} config - The model configuration object, including the relationship details.
 @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
 ```
 ```ts
-import { addRelationship } from '@igrp/spring-engine';
+import { addModel } from '@igrp/spring-engine';
 import { ModelConfig } from "@igrp/spring-engine/dist/interfaces/types";
 
 const config: ModelConfig = {
   type: 'model',
   name: 'Order',
   attributes: [
-    { type: 'Long', name: 'orderID', primaryKey: true, generationType:"SEQUENCE" },
-    { type: 'String', name: 'description', nullable: false }
-  ],
-  relations: [
+    { type: 'long', name: 'orderID', primaryKey: true, generationType:"SEQUENCE" },
+    { type: 'string', name: 'description', nullable: false },
     {
-      relationType: 'ManyToOne',
-      entity: 'Customer', 
-      joinColumn: 'customer_id'
+      type: 'relation',
+      name: 'documents',
+      relation: {
+        type: 'OneToMany',
+        cardinality: 'twoWay',
+        entity: 'Document',
+        mappedBy: 'order',
+        joinTable: 'order_document'
+      },
+      nullable: true
     }
   ]
 };
@@ -267,79 +319,98 @@ const basePath = 'your_absolute_project_path';
 
 const addOrderRelationship = async () => {
   try {
-    await addRelationship(config, basePath);
-    console.log('Relationship between Order and Customer has been successfully added.');
+    await addModel(config, basePath);
+    console.log('Relationship between Order and Documents has been successfully added.');
   } catch (error) {
     console.error('Error adding relationship:', error);
   }
 };
 ```
 
-- Delete Model - This function removes a model configuration and its related repository files based on the provided configuration.
-  It ensures that the model is properly deleted from the specified API base path.
+- Delete Element - This function removes an element configuration and its related files based on the provided configuration.
+  It ensures that the element is properly deleted from the specified API base path.
 
 ```java
-@param {ModelConfig} config - The model configuration object, which primarily includes the type and name of the model to be deleted.
-@param {string} basePath - The base path of the application where the model and repository are located.
+@param {DeleteConfig} config - The deletion configuration object, which primarily includes the type, module (if present) and name of the element to be deleted.
+@param {string} basePath - The base path of the application where the element and related files are located.
 ```
 
 ```ts
-import { deleteModel } from '@igrp/spring-engine';
-import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { deleteElement } from '@igrp/spring-engine';
+import { DeleteConfig } from '@igrp/spring-engine/dist/interfaces/types';
 
-const config: ModelConfig = {
-  type: 'model',
-  name: 'User',
-  attributes: [
-    { type: 'Long', name: 'userId', primarykey: true, generationType: "SEQUENCE"},
-    { type: 'String', name: 'email', unique: true, required: true },
-    { type: 'String', name: 'password', nullable: false, required: true },
-  ],
-  crud: {},
-  relations: [],
+const config: DeleteConfig = {
+  name: 'Teste',
+  type: 'dto',
 };
 const basePath = 'C://your_project_path';
 
-const removeModel = async () => {
+const removeElement = async () => {
   try {
-    await deleteModel(config, basePath);
+    await deleteElement(config, basePath);
   } catch (error) {
     console.error(error);
   }
 };
 ```
 
+- Add a new DTO or editing an existing DTO - This function creates a DTO based on the provided configuration and saves it to the specified API base path.
+
 ```ts
 /**
-* Generates and saves a model to the API.
-* This function creates a model based on the provided configuration and saves it to the specified API base path.
-* It also generates the associated CRUD operations if enabled in the configuration.
-*
-* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
-* @param {string} basePath - Application base path where the model will be saved and generated to the API.
-* 
-* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
-* @throws {Error} Will throw an error if the base path is not provided.
-* 
-*/
- // Example usage:
-import { addDTO } from "@igrp/spring-engine";
-import { DTOConfig } from "@igrp/spring-engine/dist/interfaces/types";;
+ * Generates and saves a DTO to the API.
+ * This function creates a DTO based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {DTOConfig} config - DTO configuration object, which includes the name and other details of the DTO.
+ * @param {string} basePath - Application base path where the DTO will be saved and generated to the API.
+ *
+ * @throws {Error} Will throw an error if the DTO configuration is invalid or the DTO name is missing.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ *
+ */
+// Example usage:
+import { addDTO } from "spring-engine";
+import { DTOConfig } from "spring-engine/dist/interfaces/types";
 const config: DTOConfig = {
   type: 'dto',
   name: 'User',
+  template: 'classic',
   attributes: [
-    { type: 'String', ns: 'java', name: 't0'},
-    { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
-    { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
-    { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
- 
-    { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
-    { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
+    {
+      type: 'string',
+      objectType: 'java',
+      name: 'username',
+      required: true
+    },
+    {
+      type: 'string',
+      objectType: 'java',
+      name: 'email',
+      required: true,
+      isEmail: true
+    },
+    {
+      type: 'string',
+      objectType: 'java',
+      name: 'password',
+      required: true,
+      regex: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$'
+    },
+    {
+      type: 'string',
+      objectType: 'java',
+      name: 'roles',
+      required: false,
+      collectionType: 'list'
+    },
+    {
+      type: 'date',
+      objectType: 'java',
+      name: 'lastLogin',
+      required: false
+    }
   ]
 };
-
-const basePath = 'C://your_project_path';
  
 const createDTO = async () => {
   try {
@@ -351,15 +422,14 @@ const createDTO = async () => {
 /*
 * when ns=model it will check if that model exist in json config.
 * when ns=dto it will check if that dto exist in json config
-* when ns=java it will check if that java class exists on the * allowed list 
-* when ns=local it will check if that type name exist on DTO wide config, it will check if this DTO has that name as Generic Param Type 
+* when ns=java it will check if that java class exists on the java allowed list 
 */
 // JAVA LIST
 
 export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'boolean': { name: 'boolean', primitive: true },
-  'char': { name: 'char', primitive: true },
   'short': { name: 'short', primitive: true },
+  'char': { name: 'char', primitive: true },
   'int': { name: 'int', primitive: true },
   'long': { name: 'long', primitive: true },
   'float': { name: 'float', primitive: true },
@@ -375,46 +445,13 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
   'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
   'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
   'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  'LocalTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-
+  'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+  'ZoneDateTime': { name: 'ZoneDateTime', primitive: false, namespace: 'java.time' },
+  'OffsetDateTime': { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
+  'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
   'List': { name: 'List', primitive: false, namespace: 'java.util', },
+  'Object': { name: 'Object', primitive: false },
 }));
-```
-
-```ts
-/**
- * Deletes a dto from the API.
- *
- * This function removes a dto configuration based on the provided configuration.
- * It ensures that the dto is properly deleted from the specified API base path.
- *
- * @param {DTOBaseConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
- * @param {string} basePath - The base path of the application where the dto and repository are located.
- *
- * @throws {Error} Will throw an error if the dto configuration is invalid.
- * @throws {Error} Will throw an error if the base path is not provided.
- * @throws {Error} Will throw an error the DTO is beeing used in other json configuration.
- *
- * @example
- * // Example usage:
- *  */
-
-import { deleteDTO } from "@igrp/spring-engine";
-import { DTOBaseConfig } from "@igrp/spring-engine/dist/interfaces/types";;
- 
-const config: DTOBaseConfig = {
-  type: 'dto',
-  name: 'User'
-};
-const basePath = 'C://your_project_path';
-  
-const removeDTO = async () => {
-  try {
-    await deleteDTO(config, basePath);
-  } catch (error) {
-    console.error(error);
-  }
-};
 ```
 
 - Add new controller - This function creates a controller based on the provided configuration and integrates it into the specified API base path.
@@ -429,42 +466,211 @@ const removeDTO = async () => {
 import { addController } from '@igrp/spring-engine';
 import { ControllerConfig } from '@igrp/spring-engine/dist/interfaces/types';
 
-const controllerConfig: ControllerConfig = {
-  type: "controller",
-  name: "Greeting",
-  basePath: "greetings",
+const controllerConfig: ControllerConfig = const config: ControllerConfig = {
+  type: 'controller',
+  name: 'User',
+  basePath: 'users',
   actions: [
     {
-      path: 'hello',
+      actionName: 'getUserById',
+      path: 'get-user',
       method: 'GET',
-      actionName: 'hello',
-      accepts: 'application/x-cdf',
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String'
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'id',
+          isRequired: true
+        },
+      ],
+      responses: {
+        '200': {
+          name: 'UserResponse',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Unique ID of the user',
+                  },
+                  username: {
+                    type: 'string',
+                    description: 'Username of the user',
+                  },
+                  email: {
+                    type: 'string',
+                    description: 'Email address of the user',
+                  },
+                },
+              },
+            },
+          },
+        },
+        '404': {
+          name: 'UserNotFound',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    description: 'Error message indicating user not found',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     {
-      path: 'addGreeting',
+      actionName: 'createUser',
+      path: 'create-user',
       method: 'POST',
-      actionName: 'addGreeting',
-      requestBody: 'greeting',
-      pathVariables:[],
-      requestParams: [],
-      response: 'Object',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                username: {
+                  type: 'string',
+                  description: 'Username of the new user',
+                  required: true
+                },
+                email: {
+                  type: 'string',
+                  description: 'Email address of the new user',
+                  required: true
+                },
+                password: {
+                  type: 'string',
+                  description: 'Password for the new user',
+                  required: true
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        '201': {
+          name: 'UserCreatedResponse',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Unique ID of the created user',
+                  },
+                  username: {
+                    type: 'string',
+                    description: 'Username of the created user',
+                  },
+                  email: {
+                    type: 'string',
+                    description: 'Email of the created user',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     {
-      path: 'goodbye',
-      method: 'GET',
-      actionName: 'goodBye',
-      pathVariables:[{ type: 'Long', name: 'id' }],
-      requestParams: [{ type: 'String', name: 'greetingName' }],
-      response: 'String',
-    }
-  ]
+      actionName: 'updateUser',
+      path: 'update-user',
+      method: 'PUT',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'UserDTO',
+              objectType: 'dto'
+            },
+          },
+        },
+      },
+      responses: {
+        '201': {
+          name: 'UserUpdatedResponse',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  username: {
+                    type: 'string',
+                    description: 'Username of the updated user',
+                  },
+                  email: {
+                    type: 'string',
+                    description: 'Email of the updated user',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      actionName: 'deleteUser',
+      path: 'delete-user',
+      method: 'DELETE',
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'id',
+          isRequired: true,
+        },
+      ],
+      responses: {
+        '200': {
+          name: 'UserDeleted',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  deleted: {
+                    type: 'boolean',
+                    description: 'Boolean value to confirm the deletion',
+                  },
+                },
+              },
+            }
+          },
+        },
+        '404': {
+          name: 'UserNotFound',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    description: 'Error message indicating user not found',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
 };
 
 const applicationBasePath = 'C://your_project_path';
 
-const generateGreetingController = async () => {
+const generateUserController = async () => {
   try {
     await addController(config, applicationBasePath);
     console.log('UserController has been successfully generated.');
@@ -473,25 +679,143 @@ const generateGreetingController = async () => {
   }
 };
 ```
-Note: To access the generated endpoints, it is necessary to implement the methods declared in the controller interface automatically generated. This implementation is done by the programmer.
+Note: To access the generated endpoints, it is necessary to implement the methods declared in the controller interface (for technical style) or query/command handlers (for domain style) automatically generated. This implementation is done by the programmer.
 The implemented methods will be available at:
 ```ts
-GET: http://localhost:8080/greetings/hello
-POST: http://localhost:8080/greetings/addGreeting
-GET: http://localhost:8080/greetings/goodbye/<id>
+GET: http://localhost:8080/users/get-user/<id>
+POST: http://localhost:8080/users/create-user
+PUT: http://localhost:8080/users/update-user
+DELETE: http://localhost:8080/users/delete-user/<id>
+```
+
+- Create a new module: This function initializes and sets up the module structure for an API based on the provided configuration.
+
+```java
+@param {ModuleConfig} config - The module configuration object, including the module name.
+@param {string} basePath - The base path of the application where the module will be generated.
+```
+
+```ts
+import { addModule } from '../src';
+import { ModuleConfig } from '../src/interfaces/types';
+
+const config: ModuleConfig = {
+  type: 'module',
+  name: 'external',
+};
+
+const applicationBasePath = 'C://your_project_path';
+
+const generateModule = async () => {
+  try {
+    await addModule(config, applicationBasePath);
+    console.log('Module has been successfully generated.');
+  } catch (error) {
+    console.error('Error generating module:', error);
+  }
+};
+
+```
+
+- Create a new response: This function initializes and sets up the response configuration for an API based on the provided configuration.
+
+```java
+@param {ResponseConfig} config - The response configuration object.
+@param {string} basePath - The base path of the application where the response will be generated and saved.
+```
+
+```ts
+import { addResponse } from '../src';
+import { ResponseConfig } from '../src/interfaces/types';
+
+const config: ResponseConfig = {
+  template: 'record',
+  statusCode: '200',
+  module: 'core',
+  name: 'NewResponse',
+  description: 'OK',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          newField1: {
+            type: 'string',
+            description: 'New field 1',
+            example: 'newValue1',
+            default: 'newValue'
+          }
+        }
+      }
+    }
+  }
+};
+
+const applicationBasePath = 'C://your_project_path';
+
+const generateResponse = async () => {
+  try {
+    await addResponse(config, applicationBasePath);
+    console.log('Response has been successfully generated.');
+  } catch (error) {
+    console.error('Error generating response:', error);
+  }
+};
+```
+- Create a new enum: This function initializes and sets up the enum configuration for an API based on the provided configuration.
+
+```java
+@param {EnumConfig} config - The enum configuration object, including the enum name and its values.
+@param {string} basePath - The base path of the application where the enum will be generated.
+```
+
+```ts
+import { addEnum } from '../src';
+import { EnumConfig } from '../src/interfaces/types';
+
+const config: EnumConfig = {
+  type: 'enum',
+  name: 'Level',
+  module: 'core',
+  values: [
+    { name: 'HIGH', attributes: ['1', 'High'] },
+    { name: 'LOW', attributes: ['0', 'Low'] }
+  ],
+  attributes: [{ name: 'code', type: 'string' }, { name: 'description', type: 'string' }]
+};
+
+const applicationBasePath = 'C://your_project_path';
+
+const generateEnum = async () => {
+  try {
+    await addEnum(config, applicationBasePath);
+    console.log('Enum has been successfully generated.');
+  } catch (error) {
+    console.error('Error generating enum:', error);
+  }
+};
 ```
 
 ### Types
 
 ```ts
-
 export interface TypeMetadata {
   name: string;
-  primitive: boolean; 
-  namespace?:string;
+  primitive: boolean;
+  namespace?: string;
 }
+```
+- **TypeMetadata**: Represents metadata for a data type, indicating whether it is a primitive type and optionally specifying a namespace.
 
-export interface ApiConfig {
+```ts
+export interface ApiConfig extends BaseApiConfig {
+  packageName: string;
+}
+```
+- **ApiConfig**: Extends `BaseApiConfig` to include the package name for the API.
+
+```ts
+export interface BaseApiConfig {
   type: 'springboot';
   apiName: string;
   group: string;
@@ -499,132 +823,491 @@ export interface ApiConfig {
   database: DatabaseTypes;
   description?: string;
   package?: string;
+  projectStructureStyle: ProjectStructureStyle;
   name?: string;
+  enableObservability: boolean;
+  igrpCoreVersion: string;
 }
+```
+- **BaseApiConfig**: Defines the fundamental configuration for an API, including details about the project structure, database, and observability settings.
 
+```ts
 export interface ModelConfig {
   type: 'model';
   name: string;
   tableName: string;
   attributes: Attribute[];
+  uniqueConstraints?: UniqueConstraint[];
+  indexes?: EntityIndex[];
   primaryKey?: PrimaryKey[];
-  crud?: Crud;
-  relations?: Relation[];
+  crud?: boolean;
+  audit?: boolean;
+  module?: string;
 }
+```
+- **ModelConfig**: Represents the configuration for a data model, including attributes, constraints, indexes, and CRUD/audit settings.
 
-export interface GenericType {
+```ts
+export interface EntityIndex {
   name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
+  columns: string[];
+  unique: boolean;
 }
+```
+- **EntityIndex**: Defines an index on a model entity with specified columns and uniqueness constraint.
 
+```ts
+export interface ModuleConfig {
+  type: 'module';
+  name: string;
+}
+```
+- **ModuleConfig**: Represents the configuration for a module, including its name.
+
+```ts
+export interface PermissionConfig {
+  type: 'permission';
+  name: string;
+  description: string;
+  endpoints: IEndpoint[];
+}
+```
+- **PermissionConfig**: Configures permissions, including associated endpoints and descriptions.
+
+```ts
+export interface IEndpoint {
+  type: string;
+  resource: string;
+  method: HttpMethod | DisabledMethods;
+  path: string;
+}
+```
+- **IEndpoint**: Represents an API endpoint, including HTTP method, resource name, and path.
+
+```ts
 export interface JavaType {
   name: string;
   namespace?: string;
-  generics?: GenericType[];
 }
+```
+- **JavaType**: Defines a Java type with an optional namespace.
 
+```ts
 export interface JavaAttribute {
   name: string;
-  type: string | JavaType;
-  ns: 'dto'|'model'|'java';
+  type: string | AttributeType;
+  objectType: 'dto' | 'model' | 'java';
+  required: boolean;
+  before?: boolean;
+  after?: boolean;
+  positive?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  regex?: string;
+  collectionType?: CollectionType;
+  isEmail?: boolean;
+  isUrl?: boolean;
+  primaryKey?: boolean;
+  jsonAttributeName?: string;
+  xmlAttributeName?: string;
 }
+```
+- **JavaAttribute**: Represents an attribute in Java objects, supporting validation rules and optional metadata.
 
+```ts
 export interface DTOBaseConfig {
-  type: 'dto';
+  type: ObjectTypes;
   name: string;
+  module?: string;
 }
+```
+- **DTOBaseConfig**: Defines the base configuration for a Data Transfer Object (DTO), including its type and module.
 
+```ts
 export interface DTOConfig extends DTOBaseConfig {
-  generics?: string[];
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
+```
+- **DTOConfig**: Extends `DTOBaseConfig` to include a template type and associated attributes.
 
+```ts
+export interface HandlerConfig extends DTOConfig {
+  response: string;
+}
+```
+- **HandlerConfig**: Extends `DTOConfig` to define a handler with a specific response type.
+
+```ts
+export interface ExceptionConfig {
+  name: string;
+  body: string;
+  module?: string;
+}
+```
+- **ExceptionConfig**: Represents a custom exception configuration, specifying its name and body.
+
+```ts
+export interface UniqueConstraint {
+  name: string;
+  columns: string[];
+}
+```
+- **UniqueConstraint**: Defines a uniqueness constraint on specified columns in a model.
+
+```ts
 export interface Icontroller {
   type: 'icontroller';
   name: string;
 }
+```
+- **Icontroller**: Represents a controller interface configuration.
 
+```ts
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+```
+- **PrimaryKey**: Represents the primary key of a model, inheriting type, name, and length properties from `Attribute`.
 
+```ts
 export interface Attribute {
-  type: AttributeType;
+  type: ModelAttributeType;
   name: string;
-  length?: number;
+  length?: number | null;
   nullable?: boolean;
   unique?: boolean;
   primaryKey?: boolean;
-  generationType?: GenerationType
+  generationType?: GenerationType;
   defaultValue?: string;
+  relation?: Relation;
+  objectType?: 'dto' | 'model' | 'java';
 }
+```
+- **Attribute**: Defines an attribute for a model, including its type, constraints, and relationships.
 
+```ts
 export interface Relation {
-  relationType: string;
+  type: RelationshipTypes;
+  cardinality: 'twoWay' | 'oneWay';
   entity: string;
+  fieldName?: string;
   mappedBy?: string;
-  joinColumn?: string;
+  referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
 }
+```
+- **Relation**: Specifies relationships between entities, including cardinality and foreign key details.
 
+```ts
 export interface Crud {
   enabled: boolean;
   path: string;
+  permissions?: IModelPermission[];
   disabledMethods: DisabledMethods[];
 }
+```
+- **Crud**: Defines CRUD operations with permissions and disabled methods.
 
-export interface Table {
-  name: string;
-  joinColumns: string;
-  inverseJoinColumns: string;
+```ts
+export interface IModelPermission {
+  method: DisabledMethods;
+  permissions: string[];
 }
+```
+- **IModelPermission**: Represents permissions for a specific model operation.
 
+```ts
 export interface ControllerConfig {
   type: 'controller';
   name: string;
   basePath: string;
   actions: ControllerAction[];
+  module?: string;
 }
+```
+- **ControllerConfig**: Defines a controller's structure, including its actions and associated module.
 
+```ts
+export interface DeleteConfig {
+  name: string;
+  module?: string;
+  type: ConfigTypes;
+}
+```
+- **DeleteConfig**: Represents configuration for deletion operations within a module.
+
+```ts
+export interface SchemaContent {
+  schema: SchemaField;
+}
+```
+- **SchemaContent**: Defines the structure of a schema, encapsulating a `SchemaField` that describes the field properties.
+
+```ts
+export interface ResponseConfig extends Body {
+  statusCode: string,
+  template: 'classic' | 'record'
+}
+```
+- **ResponseConfig**: Extends `Body` to include an HTTP status code and a response template type.
+
+```ts
+export interface RequestConfig extends Body {}
+```
+- **RequestConfig**: A type alias extending `Body`, representing the configuration of an HTTP request body.
+
+```ts
+export interface Body extends BaseBody{
+  description?: string;
+  name: string;
+  module?: string;
+}
+```
+- **Body**: Extends `BaseBody`, adding optional description and module properties, along with a mandatory name field.
+
+```ts
+export interface BaseBody {
+  content: {
+    [contentType: string]: SchemaContent; // e.g., "application/json"
+  };
+}
+```
+- **BaseBody**: Represents the base structure of an HTTP request/response body, mapping content types to their schema definitions.
+
+### Types
+
+```ts
+export interface DeleteConfig {
+  name: string,
+  module?: string,
+  type: ConfigTypes
+}
+```
+- **DeleteConfig**: Represents the configuration for a delete operation, specifying the name, module, and configuration type.
+
+```ts
+export interface SchemaContent {
+  schema: SchemaField;
+}
+```
+- **SchemaContent**: Defines the structure of a schema, encapsulating a `SchemaField` that describes the field properties.
+
+```ts
+export interface ResponseConfig extends Body {
+  statusCode: string,
+  template: 'classic' | 'record'
+}
+```
+- **ResponseConfig**: Extends `Body` to include an HTTP status code and a response template type.
+
+```ts
+export interface RequestConfig extends Body {}
+```
+- **RequestConfig**: A type alias extending `Body`, representing the configuration of an HTTP request body.
+
+```ts
+export interface Body extends BaseBody{
+  description?: string;
+  name: string;
+  module?: string;
+}
+```
+- **Body**: Extends `BaseBody`, adding optional description and module properties, along with a mandatory name field.
+
+```ts
+export interface BaseBody {
+  content: {
+    [contentType: string]: SchemaContent; // e.g., "application/json"
+  };
+}
+```
+- **BaseBody**: Represents the base structure of an HTTP request/response body, mapping content types to their schema definitions.
+
+```ts
+export interface ControllerConfig {
+  type: 'controller';
+  name: string;
+  basePath: string;
+  actions: ControllerAction[];
+  module?: string;
+}
+```
+- **ControllerConfig**: Defines the structure for a controller, including its name, base path, actions, and optional module.
+
+```ts
 export interface ControllerAction {
-  path: string;
+  path?: string;
+  permissions?: string[];
   actionName: string;
   method: HttpMethod;
-  accepts?: MimeTypes;
-  contentType?: MimeTypes;
-  requestBody?: string;
+  headers?: HttpHeader[];
+  modelAttribute?: string;
   requestParams?: RequestParams[];
-  response: string;
+  requestBody?: BaseBody;
+  responses?: {
+    [statusCode: string]: Body;
+  };
   pathVariables?: PathVariables[];
+  multipartFiles?: MultipartFile[];
 }
+```
+- **ControllerAction**: Represents an action within a controller, defining attributes such as path, permissions, HTTP method, request parameters, and response handling.
 
+```ts
+export interface MultipartFile {
+  type: ParamsTypes;
+  name: string;
+  value?: string;
+  isRequired: boolean;
+}
+```
+- **MultipartFile**: Represents a file parameter in a multipart request, specifying its type, name, and whether it's required.
+
+```ts
 export interface RequestParams {
   type: ParamsTypes;
   name: string;
+  value?: string;
+  isRequired: boolean;
 }
+```
+- **RequestParams**: Defines request parameters, including their type, name, optional value, and whether they are required.
 
+```ts
 export interface PathVariables {
   type: string;
   name: string;
+  value?: string;
+  isRequired: boolean;
 }
-
-export type RenderContext<T = undefined> = {
-  resourceConfig: T;
-  basePath: string;
-  baseConfig: ApiConfig;
-  mathAttributes?: string[];
-  dateTimeUniqueAttributes?: string[];
-};
-
-export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
-export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
-export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
-export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
-export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
-export type ParamsTypes = (typeof PARAMS_TYPES)[number];
-export type MimeTypes = (typeof MIME_TYPES)[number];
-export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
-export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`
-export type GenerationType = (typeof GENERATION_TYPES)[number]
 ```
+- **PathVariables**: Represents variables found in the request path, detailing their type, name, and required status.
+
+```ts
+export interface EnumConfig {
+  type: 'enum';
+  name: string;
+  module?: string;
+  values: EnumValue[];
+  attributes?: Attribute[];
+}
+```
+- **EnumConfig**: Defines an enumeration, specifying its name, module, values, and optional attributes.
+
+```ts
+export interface EnumValue {
+  name: string;
+  attributes?: string[];
+}
+```
+- **EnumValue**: Represents a value within an enumeration, optionally including additional attributes.
+
+```ts
+export interface HttpHeader {
+  type: ParamsTypes;
+  header: HttpHeaderTypes;
+  value: string;
+  isRequired: boolean;
+}
+```
+- **HttpHeader**: Defines an HTTP header, specifying its type, header name, value, and whether it is required.
+
+```ts
+export interface SchemaField {
+  type: string;
+  objectType?: string;
+  required?: boolean;
+  identifier?: boolean;
+  description?: string;
+  example?: any;
+  deprecated?: boolean;
+  items?: SchemaField; // For array types
+  properties?: { [key: string]: PropertySchemaField }; // For object types
+}
+```
+- **SchemaField**: Represents a field in a schema, including its type, object type, optional properties, and constraints.
+
+```ts
+export interface SchemaEnum {
+  name?: string;
+  values?: string[];
+}
+```
+- **SchemaEnum**: Defines an enumeration schema, listing possible values.
+
+```ts
+export interface PropertySchemaField extends SchemaField {
+  minimum?: number;
+  maximum?: number;
+  pattern?: string;
+  format?: string;
+  enum?: SchemaEnum;
+  default?: any;
+}
+```
+- **PropertySchemaField**: Extends `SchemaField` to add constraints such as minimum and maximum values, patterns, and format specifications.
+
+```ts
+export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
+```
+- **HttpMethod**: Represents an HTTP method type extracted from the predefined `HTTP_METHOD_TYPES` array.
+
+```ts
+export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
+```
+- **AttributeType**: Defines a generic attribute type derived from `GENERIC_ATTRIBUTE_TYPES`.
+
+```ts
+export type ModelAttributeType = (typeof GENERIC_MODEL_ATTRIBUTE_TYPES)[number];
+```
+- **ModelAttributeType**: Represents a model attribute type taken from `GENERIC_MODEL_ATTRIBUTE_TYPES`.
+
+```ts
+export type CollectionType = (typeof GENERIC_COLLECTION_TYPES)[number];
+```
+- **CollectionType**: Specifies a type of collection based on `GENERIC_COLLECTION_TYPES`.
+
+```ts
+export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+```
+- **DatabaseTypes**: Represents a database type derived from `DATABASE_TYPES`.
+
+```ts
+export type ObjectTypes = (typeof OBJECT_TYPES)[number];
+```
+- **ObjectTypes**: Defines a set of object types based on `OBJECT_TYPES`.
+
+```ts
+export type ConfigTypes = (typeof CONFIG_TYPES)[number];
+```
+- **ConfigTypes**: Represents different configuration types from `CONFIG_TYPES`.
+
+```ts
+export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
+```
+- **ProjectStructureStyle**: Defines various project structure styles from `STRUCT_TYPES`.
+
+```ts
+export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
+```
+- **DisabledMethods**: Represents CRUD methods that are disabled based on `CRUD_DISABLED_OPTIONS`.
+
+```ts
+export type ParamsTypes = (typeof PARAMS_TYPES)[number];
+```
+- **ParamsTypes**: Defines different types of parameters derived from `PARAMS_TYPES`.
+
+```ts
+export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
+```
+- **RelationshipTypes**: Specifies types of relationships extracted from `RELATIONSHIP_TYPES`.
+
+```ts
+export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
+```
+- **HttpHeaderTypes**: Represents HTTP header types taken from `HTTP_HEADER_TYPES`.
+
+```ts
+export type GenerationType = (typeof GENERATION_TYPES)[number];
+```
+- **GenerationType**: Defines various generation strategies from `GENERATION_TYPES`.
