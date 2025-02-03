@@ -1202,6 +1202,6 @@ export const CRUD_DISABLED_OPTIONS = [
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object'] as const
+export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const

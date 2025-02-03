@@ -2,7 +2,7 @@
 
 import { runJarInspector } from '../src/modules/baseApi/helpers';
 
-const OUTPUT_DIR = 'C:\\spring-engine\\generatedTest'
+const OUTPUT_DIR = 'C:\\jar\\test'
 
 // Example of a JAR file path (this should be a real path during the test execution)
 const jarPath = 'C:\\jar\\shared-test.jar';
@@ -21,6 +21,6 @@ describe('Jar Inspector Integration', () => {
 
   it('should run the jar inspector and generate the correct JSON output', async () => {
     // Call the function to execute the JAR
-    runJarInspector(OUTPUT_DIR, jarPath);
+    await runJarInspector(OUTPUT_DIR, jarPath);
   });
 });

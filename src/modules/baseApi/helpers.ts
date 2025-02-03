@@ -14,19 +14,28 @@ function normalizeJarPath(jarPath: string): string {
 /**
  * Executes the Jar Inspector Java JAR file with the given arguments.
  */
-export const runJarInspector = (basePath: string, jarPath: string) => {
-  const normalizedJarName = normalizeJarPath(jarPath);
+export const runJarInspector = async (basePath: string, jarPath: string) => {
+
   const outputJsonPath = path.join(
     basePath,
-    DIRECTORIES.IGRPSTUDIO,
-    DIRECTORIES.CONFIG_LIBRARIES,
-    normalizedJarName,
-    `${DIRECTORIES.CONFIG_LIBRARY}${EXTENSIONS.JSON}`
+    DIRECTORIES.IGRPSTUDIO
   );
 
-  const outputDir = path.dirname(outputJsonPath);
+  const igrpSharedPath = path.join(outputJsonPath, DIRECTORIES.SHARED);
+
+  const paths = [
+
+    outputJsonPath,
+    igrpSharedPath,
+    path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+    path.join(igrpSharedPath, DIRECTORIES.MODELS),
+    path.join(igrpSharedPath, DIRECTORIES.DTO)
+
+  ]
+
+  const outputDir = path.dirname(igrpSharedPath);
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
+    await Promise.all(paths.map((dir) => fs.mkdirSync(dir, { recursive: true })));
   }
 
   // Prepare the Java command
