@@ -16,14 +16,13 @@ import {
 } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import {
-  getDDDCommandOutputDir,
-  getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDtoOutputDir,
+  getDDDDtoOutputDir, getDtoOutputDir,
   getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
-import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
+import { normalizeName } from '../dto/saveDTOConfig';
 import { capitalize } from '../../utils/capitalizeStrings';
 
 export const generateSingleResponse = async (context: RenderContext<ResponseConfig>) => {

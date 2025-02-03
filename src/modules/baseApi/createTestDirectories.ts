@@ -6,7 +6,7 @@ import { getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containning all the basic API information.
+ * @param config - API base configuration file containing all the basic API information.
  * @param output - Output path where directories are created
  */
 export const createTestDirectories = async (context: RenderContext) => {
@@ -16,7 +16,7 @@ export const createTestDirectories = async (context: RenderContext) => {
 
 /**
  * Function that generates a list of directory paths to create based on the configuration and the output path.
- * @param config - API base configuration file containning all the basic API information.
+ * @param config - API base configuration file containing all the basic API information.
  * @param basePath - Output path where directories will be created
  * @return List of directory paths to create.
  */

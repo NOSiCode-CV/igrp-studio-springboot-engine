@@ -1,10 +1,5 @@
-import { addDTO, deleteDTO, deleteElement, deleteResponse } from '../src';
-import { ApiConfig, DeleteConfig, DTOConfig, ResponseConfig } from '../src/interfaces/types';
-import { readJsonFile } from '../src/utils/readJsonFiles';
-import { DIRECTORIES, EXTENSIONS } from "../src/utils/constants";
-import { getMainPath } from '../src/utils/helpers';
-import path from 'path';
-import fs from 'fs-extra';
+import { deleteElement } from '../src';
+import { DeleteConfig } from '../src/interfaces/types';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
