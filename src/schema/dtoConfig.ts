@@ -1,6 +1,6 @@
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { Attribute, AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute, JavaType } from '../interfaces/types';
+import { AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute } from '../interfaces/types';
 import { PATTERNS } from "../utils/constants";
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {

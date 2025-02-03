@@ -1,7 +1,7 @@
-import { ApiConfig, ModuleConfig } from '../interfaces/types';
+import { ModuleConfig } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
+import { PATTERNS } from "../utils/constants";
 
 
 const moduleSchema: JSONSchemaType<ModuleConfig> = {

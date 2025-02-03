@@ -89,9 +89,6 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
       else
         tn = TEMPLATES.DOMAIN_FILTER;
       break;
-    /*case "dataobject":
-      tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
-      break;*/
     case "command":
       tn = TEMPLATES.DDD_LITE_COMMAND[context.resourceConfig.template];
       break;
@@ -101,12 +98,6 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
     case "event":
       tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
       break;
-    /*case "valueobject":
-      tn = TEMPLATES.DDD_VALUE_OBJECT_DTO[context.resourceConfig.template];
-      break;
-    case "domainentity":
-      tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
-      break;*/
   }
   
   if (!tn) {
@@ -275,10 +266,6 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
           `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`,
         );
       }
-      /*case "valueobject":
-        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
-      case "domainentity":
-        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
     }
   } else {
     const outputDir = getDtoOutputDir(context);

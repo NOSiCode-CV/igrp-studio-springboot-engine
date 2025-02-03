@@ -6,7 +6,7 @@ import { getMainPath, getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containning all the basic API information.
+ * @param config - API base configuration file containing all the basic API information.
  * @param output - Output path where directories are created
  */
 export const createAppDirectories = async (context: RenderContext) => {
@@ -16,7 +16,7 @@ export const createAppDirectories = async (context: RenderContext) => {
 
 /**
  * Function that generates a list of directory paths to create based on the configuration and the output path.
- * @param config - API base configuration file containning all the basic API information.
+ * @param config - API base configuration file containing all the basic API information.
  * @param basePath - Output path where directories will be created
  * @return List of directory paths to create.
  */
@@ -28,15 +28,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const testPath = path.join(basePath, getTestPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
   const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
-
-  /*
-  FULL DDD
-  const apiPath = path.join(mainPath, DIRECTORIES.API);
-  const applicationPath = path.join(mainPath, DIRECTORIES.APPLICATION);
-  const queryPath = path.join(applicationPath, DIRECTORIES.QUERY);
-  const domainPath = path.join(mainPath, DIRECTORIES.DOMAIN);
-  const infraPath = path.join(mainPath, DIRECTORIES.INFRASTRUCTURE);
-  */
 
   const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
   const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
@@ -87,44 +78,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
-
-      /*
-
-      FULL DDD
-
-      path.join(basePath, DIRECTORIES.RESOURCES),
-
-      path.join(mainPath, DIRECTORIES.API),
-      path.join(mainPath, DIRECTORIES.APPLICATION),
-      path.join(mainPath, DIRECTORIES.DOMAIN),
-      path.join(mainPath, DIRECTORIES.INFRASTRUCTURE),
-
-      path.join(apiPath, DIRECTORIES.CONTROLLER),
-
-      path.join(applicationPath, DIRECTORIES.COMMAND),
-      path.join(applicationPath, DIRECTORIES.QUERY),
-
-      path.join(queryPath, DIRECTORIES.ASSEMBLER),
-      path.join(queryPath, DIRECTORIES.DTO),
-
-      path.join(domainPath, DIRECTORIES.AGGREGATE),
-      path.join(domainPath, DIRECTORIES.EVENT),
-      path.join(domainPath, DIRECTORIES.EXCEPTIONS),
-      path.join(domainPath, DIRECTORIES.IMPLEMENTATION),
-      path.join(domainPath, DIRECTORIES.REPOSITORIES),
-      path.join(domainPath, DIRECTORIES.SERVICE),
-
-      path.join(infraPath, DIRECTORIES.CACHE),
-      path.join(infraPath, DIRECTORIES.DATABASE),
-      path.join(infraPath, DIRECTORIES.SPRING),
-
-      path.join(testPath, DIRECTORIES.REPOSITORIES),
-      path.join(testPath, DIRECTORIES.SERVICES),
-
-      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpstudioPath, DIRECTORIES.MODELS),
-
-      */
 
     ];
 

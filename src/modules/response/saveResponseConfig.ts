@@ -1,7 +1,7 @@
 import { saveToFile } from '../common/saveToFile';
-import { DTOConfig, ObjectTypes, RequestConfig, ResponseConfig } from '../../interfaces/types';
+import { ResponseConfig } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
-import { getDTOConfigPath, getResponseConfigPath } from '../../utils/helpers';
+import { getResponseConfigPath } from '../../utils/helpers';
 
 /**
  * Generates and saves the configuration file of a response.
