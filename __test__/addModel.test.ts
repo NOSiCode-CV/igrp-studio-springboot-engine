@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import { ModelConfig } from '../src/interfaces/types';
-import { addModel } from '../src';
+import { JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
+import { addModel, serializeElement } from '../src';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
@@ -234,5 +234,62 @@ describe('Model generator', () => {
       await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
+
+  it('should create a model based on JSON serialization', async() => {
+
+    const sampleJson = {
+      id: 1,
+      name: "XPTO LLC",
+      foundingYear: 1996,
+      foundingDate: "1996-04-01"
+    }
+
+    const json = JSON.stringify(sampleJson)
+
+    const config : JsonConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      json: json
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  })
+
+  it('should create a model based on XML serialization', async() => {
+
+    const sampleXml = `
+      <id>1</id>
+      <name>XPTO LLC</name>
+      <foundingYear>1996</foundingYear>
+      <foundingDate>1996-04-01</foundingDate>
+  `;
+
+    const config: XmlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      xml: sampleXml
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a model based on SQL SELECT command serialization', async() => {
+
+    const sampleSql = "SELECT id, name, foundingYear, foudingDate FROM companies";
+
+    const config: SqlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      sql: sampleSql
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
 
 });

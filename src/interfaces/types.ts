@@ -333,6 +333,25 @@ export interface DeleteConfig {
   type: ConfigTypes
 }
 
+export interface SerializationConfig {
+  name: string,
+  module?: string,
+  type: 'dto' | 'model' | 'response',
+  template: 'classic' | 'record'
+}
+
+export interface JsonConfig extends SerializationConfig {
+  json: string
+}
+
+export interface SqlConfig extends SerializationConfig {
+  sql: string
+}
+
+export interface XmlConfig extends SerializationConfig {
+  xml: string
+}
+
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
 export type ModelAttributeType = (typeof GENERIC_MODEL_ATTRIBUTE_TYPES)[number];

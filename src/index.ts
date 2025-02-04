@@ -4,11 +4,11 @@ import {
   ControllerConfig, DeleteConfig,
   DTOConfig, EnumConfig,
   HandlerConfig,
-  JavaAttribute,
+  JavaAttribute, JsonConfig,
   ModelConfig,
   ModuleConfig,
   PermissionConfig,
-  RenderContext, ResponseConfig,
+  RenderContext, ResponseConfig, SqlConfig, XmlConfig,
 } from './interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
@@ -66,6 +66,8 @@ import { saveResponseConfig } from './modules/response/saveResponseConfig';
 import { generateSingleResponse } from './modules/response/generateSingleResponse';
 import { deleteValidation } from './schema/deleteConfig';
 import { deleteElementConfig } from './modules/delete/deleteElementConfig';
+import { serializationValidation } from './schema/serializationConfig';
+import { serializeData } from './modules/serialization/serializeData';
 
 /**
  * Main Function that creates the base api
@@ -1058,6 +1060,68 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
   };
 
   await deletePerm(context);
+};
+
+/**
+ * Main Function that creates the module
+ *
+ * This function creates a module based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {ModuleConfig} config - The configuration object containing all the basic module information.
+ * @param {string} basePath - The output path where the module will be created
+ * @throws {Error} Will throw an error if the module configuration is invalid.
+ *
+ * @example
+ * Example usage:
+ * import { addModule } from "spring-engine";
+ * import { ModuleConfig } from "spring-engine/dist/interfaces/types";
+ *
+ * const config: ModuleConfig = {
+ *   type: 'module',
+ *   name: 'external',
+ * };
+ *
+ * const basePath: 'C://your_path';
+ *
+ * const createModule = async () => {
+ *    try {
+ *      await addModule(config, basePath)
+ *    }
+ *    catch(error) {
+ *      console.log(error)
+ *    }
+ * }
+ *
+ */
+export const serializeElement = async (dirty: JsonConfig | XmlConfig | SqlConfig, basePath: string) => {
+  const config = cleaner(dirty);
+  const valid = serializationValidation(config);
+
+  if (!valid && serializationValidation.errors) throw serializationValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  const data = await serializeData(config);
+
+  if(!data)
+    throw Error("Invalid data configuration. Supported serializations are JSON, XML and SQL commands")
+
+  switch (config.type) {
+    case 'dto':
+      await addDTO(data as DTOConfig, basePath)
+      break;
+    case 'model':
+      await addModel(data as ModelConfig, basePath)
+      break;
+    case 'response':
+      await addResponse(data as ResponseConfig, basePath)
+      break;
+    default:
+      throw Error("Invalid type for serialization configuration. Supported types are 'dto', 'model' and 'response'")
+  }
+
 };
 
 /**

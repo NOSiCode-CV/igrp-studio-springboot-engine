@@ -459,8 +459,11 @@ export const PATTERNS = {
   PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
-  PATH_VALIDATION: '^[a-zA-Z_/]+$',  
+  PATH_VALIDATION: '^[a-zA-Z_/]+$',
   STATUS_CODE: '^\\d{3}$',
+  JSON_PATTERN: '^\\{(?:[^{}]|(?:\\{[^{}]*\\}))*\\}$',
+  XML_PATTERN: '^<([a-zA-Z_][a-zA-Z0-9_-]*)(?:\\s+[^<>]*)*>([\\s\\S]*?)<\\/\\1>\\s*$',
+  SQL_PATTERN: '^SELECT\\s+[a-zA-Z0-9_ ,]+\\s+FROM\\s+[a-zA-Z0-9_]+;?$'
 };
 
 const IMPORT_MAP = {
@@ -1085,6 +1088,64 @@ export const GENERIC_TYPES: Map<
     }
   })
 );
+
+export const TYPESCRIPT_TYPES: Map<
+  string,
+  { java: TypeMetadata; dotnet: TypeMetadata; python: TypeMetadata; kotlin: TypeMetadata; generic: TypeMetadata; }
+> = new Map(
+  Object.entries({
+    boolean: {
+      java: { name: 'boolean', primitive: true },
+      dotnet: { name: 'bool', primitive: true },
+      python: { name: 'bool', primitive: true },
+      kotlin: { name: 'Boolean', primitive: true },
+      generic: { name: 'boolean', primitive: true }
+    },
+    number: {
+      java: { name: 'Double', primitive: true },
+      dotnet: { name: 'double', primitive: true },
+      python: { name: 'float', primitive: true },
+      kotlin: { name: 'Double', primitive: true },
+      generic: { name: 'double', primitive: true }
+    },
+    string: {
+      java: { name: 'String', primitive: false },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'String', primitive: false },
+      generic: { name: 'string', primitive: true }
+    },
+    object: {
+      java: { name: 'Object', primitive: false },
+      dotnet: { name: 'object', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Any', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    undefined: {
+      java: { name: 'Void', primitive: false },
+      dotnet: { name: 'void', primitive: false },
+      python: { name: 'None', primitive: false },
+      kotlin: { name: 'Unit', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    function: {
+      java: { name: 'Runnable', primitive: false },
+      dotnet: { name: 'Action', primitive: false, namespace: 'System' },
+      python: { name: 'Callable', primitive: false, namespace: 'collections.abc' },
+      kotlin: { name: '() -> Unit', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    symbol: {
+      java: { name: 'Object', primitive: false },
+      dotnet: { name: 'object', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Any', primitive: false },
+      generic: { name: 'object', primitive: true }
+    }
+  })
+);
+
 
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 //export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]

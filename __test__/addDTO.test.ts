@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import { addDTO } from '../src';
-import { DTOConfig } from '../src/interfaces/types';
+import { addDTO, serializeElement } from '../src';
+import { DTOConfig, JsonConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
@@ -177,5 +177,59 @@ describe('DTO generator', () => {
     }
   })
 
+  it('should create a DTO based on JSON serialization', async() => {
+
+    const sampleJson = {
+      name: "John Doe",
+      age: 34,
+      birthDate: "1995-09-10"
+    }
+
+    const json = JSON.stringify(sampleJson)
+
+    const config : JsonConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      json: json
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  })
+
+  it('should create a DTO based on XML serialization', async() => {
+
+    const sampleXml: string = `
+      <name>John Doe</name>
+      <age>34</age>
+      <birthDate>1995-09-10</birthDate>
+  `;
+
+    const config: XmlConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      xml: sampleXml
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a DTO based on SQL SELECT command serialization', async() => {
+
+    const sampleSql = "SELECT name, age, birth_date FROM persons";
+
+    const config: SqlConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      sql: sampleSql
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
 
 });
