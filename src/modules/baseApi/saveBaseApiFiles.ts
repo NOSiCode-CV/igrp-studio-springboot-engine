@@ -92,6 +92,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_PRODUCTION,
       },
       {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_BANNER,
+        name: COMMON_FILES.APPLICATION_BANNER_FILE,
+      },
+      {
         output: configPath,
         template: TEMPLATES.APPLICATION_AUDIT_AWARE,
         name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
@@ -165,6 +170,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: resourcePath,
         template: TEMPLATES.APPLICATION_RESOURCES_PRODUCTION,
         name: COMMON_FILES.APPLICATION_PROPERTIES_FILE_PRODUCTION,
+      },
+      {
+        output: resourcePath,
+        template: TEMPLATES.APPLICATION_RESOURCES_BANNER,
+        name: COMMON_FILES.APPLICATION_BANNER_FILE,
       },
       {
         output: configPath,
