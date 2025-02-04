@@ -141,6 +141,12 @@ describe('DTO generator', () => {
             "regex": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"
           },
           {
+            "type": "Level",
+            "objectType": "enum",
+            "name": "userLevel",
+            "required": true
+          },
+          {
             "type": "string",
             "objectType": "java",
             "name": "roles",
@@ -167,6 +173,13 @@ describe('DTO generator', () => {
             "name": "field",
             "required": true
           },
+          {
+            "type": "UserDTO",
+            "objectType": "dto",
+            "name": "user",
+            "required": true
+          },
+
         ]
       }
 

@@ -13,7 +13,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
 import org.hibernate.envers.Audited;
 {{~/if}}
 
-{{{resolve-imports resourceConfig}}}
+{{{resolve-imports resourceConfig baseConfig}}}
 
 import cv.igrp.stereotype.IgrpEntity;
 import jakarta.persistence.*;
@@ -59,7 +59,7 @@ import java.math.{{this}};
   {{/each}}
   }
 {{/if}})
-public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditEntity {{/if}}{
+public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
 
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId
@@ -78,6 +78,9 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   {{#if (eq this.type "file")}}
   @Lob
   @JdbcType(BinaryJdbcType.class)
+  {{/if}}
+  {{#if (eq this.objectType "enum")}}
+  @Enumerated(EnumType.STRING)
   {{/if}}
   {{#ifNot (eq this.type "relation")}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})

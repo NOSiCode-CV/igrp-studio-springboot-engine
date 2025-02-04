@@ -2,12 +2,12 @@ import {
   ApiConfig,
   Body,
   ControllerConfig,
-  DTOConfig,
+  DTOConfig, EnumConfig,
   ExceptionConfig,
   JavaType,
   ModelConfig,
   RenderContext,
-  ResponseConfig
+  ResponseConfig,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -29,6 +29,7 @@ import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
+import { getEnumTypes } from '../enum/helpers';
 
 export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
@@ -143,6 +144,7 @@ export const transformSchemaDTOConfig = async function(
 
   let mtypes: Map<string, ModelConfig> | undefined = undefined;
   let dtypes: Map<string, DTOConfig> | undefined = undefined;
+  let etypes: Map<string, EnumConfig> | undefined = undefined;
 
   for (const [key, attr] of Object.entries(schemacfg.properties ?? {})) {
     let type: JavaType;
@@ -183,6 +185,29 @@ export const transformSchemaDTOConfig = async function(
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
+        }
+      }
+
+    } else if (attr.objectType === PACKAGE_NS.enum) {
+      if (etypes === undefined) {
+        etypes = await getEnumTypes(config.module ?? DIRECTORIES.SHARED, basePath);
+      }
+
+      const et = etypes.get(type.name);
+
+      if (!et) {
+        etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
+        const etype = etypes.get(type.name);
+        if(!etype) {
+          typeNotFound = true;
+        }
+      }
+
+      if(!typeNotFound) {
+        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+          type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
 

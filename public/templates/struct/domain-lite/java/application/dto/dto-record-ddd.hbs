@@ -4,7 +4,7 @@ import cv.igrp.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
-{{resolve-imports resourceConfig}}
+{{resolve-imports resourceConfig baseConfig}}
 
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}

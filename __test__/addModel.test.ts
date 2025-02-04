@@ -123,7 +123,7 @@ describe('Model generator', () => {
     }
   })
 
-  it('should create DTO for technical project style', async() => {
+  it('should create model for technical project style', async() => {
 
     const technicalTestCases: ModelConfig[] = [
 
@@ -144,6 +144,14 @@ describe('Model generator', () => {
           {
             "type": "string",
             "name": "username",
+            "length": 255,
+            "nullable": false,
+            "unique": true
+          },
+          {
+            "type": "Level",
+            "objectType": "enum",
+            "name": "userLevel",
             "length": 255,
             "nullable": false,
             "unique": true

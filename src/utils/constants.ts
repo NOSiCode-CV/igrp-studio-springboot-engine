@@ -71,12 +71,14 @@ export const DIRECTORIES = {
 export const PACKAGES = {
   MODELS: 'models',
   DTO: 'dto',
-  CONTROLLERS: 'controller'
+  CONTROLLERS: 'controller',
+  CONSTANTS: 'constants'
 };
 
 export const PACKAGE_NS = {
   local: 'local',
   java: 'java',
+  enum: 'enum',
   model: 'model',
   dto: 'dto',
   controller: 'controller'

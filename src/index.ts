@@ -68,6 +68,7 @@ import { deleteValidation } from './schema/deleteConfig';
 import { deleteElementConfig } from './modules/delete/deleteElementConfig';
 import { serializationValidation } from './schema/serializationConfig';
 import { serializeData } from './modules/serialization/serializeData';
+import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 
 /**
  * Main Function that creates the base api
@@ -586,8 +587,8 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  // [22-01-2025] No need to save enum config
-  //await saveEnumConfig(config, basePath);
+  // [22-01-2025] No need to save enum config; [04-02-2025] Enum config is necessary for attribute setting
+  await saveEnumConfig(config, basePath);
 
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,

@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   UniqueConstraint,
   IModelPermission,
-  EntityIndex,
+  EntityIndex, AttributeType,
 } from '../interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
@@ -17,6 +17,13 @@ import {
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
 } from '../utils/constants';
+
+const genericAttributeSchema: JSONSchemaType<AttributeType> = {
+  type: "string",
+  nullable: false,
+  pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+  errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+}
 
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
@@ -83,8 +90,7 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   properties: {
     type: {
       type: "string",
-      enum: GENERIC_MODEL_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
-      errorMessage: `The attribute type must be one of ${GENERIC_MODEL_ATTRIBUTE_TYPES} and cannot be empty.`
+      oneOf: genericAttributeSchema.oneOf
     },
     name: {
       type: "string",

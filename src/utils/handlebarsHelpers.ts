@@ -12,11 +12,11 @@ import {
 } from '../interfaces/types';
 import {
   DIRECTORIES,
-  GENERIC_TYPES,
+  GENERIC_TYPES, PACKAGES, PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { extractTypeFromList, validateAnnotations } from './helpers';
+import { extractTypeFromList, getPackageNameFromConfig, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
@@ -334,7 +334,7 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
   }
 
   // Return the generated annotations as a joined string
-  return annotations.join('\n  ');
+  return annotations.join('\n\t');
 });
 
 Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
@@ -396,24 +396,46 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
-Handlebars.registerHelper('resolve-imports', function (config: any) {
-  // TODO: attempt to import models and dtos too [30-11-2024 - 16:08]
+Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
 
   if (!config) return null;
+  if (!baseConfig) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
+  const api = baseConfig
+
   const imports = new Set();
   config.attributes.forEach((attr: JavaAttribute) => {
+
+    if(attr.objectType === 'model') {
+      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`);
+      else
+        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
+      return;
+    } else if (attr.objectType === 'dto') {
+      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${attr.type};`);
+      else
+        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${attr.type};`);
+      return;
+    } else if (attr.objectType === 'enum') {
+      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`);
+      else
+        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
+      return;
+    }
+
     const genType = GENERIC_TYPES.get(attr.type);
     if (genType?.java.primitive) return null;
     const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
     if (type.name == '') return null;
-    if (type.namespace) {
-      if (type.namespace.includes('models'))
-        imports.add(`import ${type.namespace}.${type.name}.${type.name};`);
-      else imports.add(`import ${type.namespace}.${type.name};`);
+
+    if(type.namespace) {
+      imports.add(`import ${type.namespace}.${type.name};`);
     }
 
     if(attr.type == 'file' || attr.type == 'binary') {

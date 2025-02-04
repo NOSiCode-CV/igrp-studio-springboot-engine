@@ -24,7 +24,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
     },
     objectType: {
       type: "string", 
-      enum: ['model', 'dto', 'java'],
+      enum: ['model', 'dto', 'java', 'enum'],
       errorMessage: 'The abbreaviated namespace must model, dto, java.'
     },
     required: {
