@@ -352,6 +352,10 @@ export interface XmlConfig extends SerializationConfig {
   xml: string
 }
 
+export interface DdlConfig extends SerializationConfig {
+  ddl: string;
+}
+
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
 export type ModelAttributeType = (typeof GENERIC_MODEL_ATTRIBUTE_TYPES)[number];

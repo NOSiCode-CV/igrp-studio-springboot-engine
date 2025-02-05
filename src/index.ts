@@ -1,7 +1,7 @@
 import {
   ApiConfig,
   BaseApiConfig, ControllerAction,
-  ControllerConfig, DeleteConfig,
+  ControllerConfig, DdlConfig, DeleteConfig,
   DTOConfig, EnumConfig,
   HandlerConfig,
   JavaAttribute, JsonConfig,
@@ -1098,7 +1098,7 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
  * }
  *
  */
-export const serializeElement = async (dirty: JsonConfig | XmlConfig | SqlConfig, basePath: string) => {
+export const serializeElement = async (dirty: JsonConfig | XmlConfig | SqlConfig | DdlConfig, basePath: string) => {
   const config = cleaner(dirty);
   const valid = serializationValidation(config);
 

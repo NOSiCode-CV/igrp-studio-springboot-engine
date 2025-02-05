@@ -343,7 +343,6 @@ export const TEMPLATES = {
   DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd.hbs',
   DDD_LITE_TEST_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd-test.hbs',
   DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
-  DDD_LITE_MODEL: 'struct/domain-lite/java/domain/model/model-ddd.hbs',
   DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',
   DDD_LITE_CONTROLLER: 'struct/domain-lite/java/infrastructure/controller/controller-ddd.hbs',
   DDD_LITE_REPOSITORY_IMPL: 'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
@@ -471,7 +470,6 @@ export const PATTERNS = {
   PATH_VALIDATION: '^[a-zA-Z_/]+$',
   STATUS_CODE: '^\\d{3}$',
   JSON_PATTERN: '^\\{(?:[^{}]|(?:\\{[^{}]*\\}))*\\}$',
-  XML_PATTERN: '^<([a-zA-Z_][a-zA-Z0-9_-]*)(?:\\s+[^<>]*)*>([\\s\\S]*?)<\\/\\1>\\s*$',
   SQL_PATTERN: '^SELECT\\s+[a-zA-Z0-9_ ,]+\\s+FROM\\s+[a-zA-Z0-9_]+;?$'
 };
 

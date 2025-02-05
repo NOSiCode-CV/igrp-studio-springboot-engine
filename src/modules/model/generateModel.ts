@@ -76,11 +76,8 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
-  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    return await renderTemplate(TEMPLATES.DDD_LITE_MODEL, context);
-  } else {
-    return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
-  }
+  return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
+
 };
 
 const renderPrimaryKey = async (context: RenderContext<ModelConfig>) => {

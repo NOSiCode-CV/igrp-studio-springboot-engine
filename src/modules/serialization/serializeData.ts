@@ -5,12 +5,12 @@ import {
   DTOConfig,
   ModelConfig,
   ResponseConfig,
-  JavaAttribute, PropertySchemaField, Attribute,
+  JavaAttribute, PropertySchemaField, Attribute, DdlConfig,
 } from '../../interfaces/types';
 import { DIRECTORIES, TYPESCRIPT_TYPES } from '../../utils/constants';
-import { parseSqlCommand, parseXml } from './helpers';
+import { mapSqlTypeToGenericType, parseDdlScript, parseSqlCommand, parseXml } from './helpers';
 
-export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig) => {
+export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig | DdlConfig) => {
   if (!config) return;
 
   if ('json' in config && config.json) {
@@ -60,6 +60,17 @@ export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig) 
       return mapXmlToResponseConfig(xmlData, config);
     }
   }
+
+  if ('ddl' in config && config.ddl) {
+
+    const ddlData = parseDdlScript(config.ddl);
+
+    if (config.type === 'model') {
+      return mapDdlToModelConfig(ddlData, config);
+    }
+
+  }
+
 };
 
 const mapJsonToDtoConfig = (jsonData: any, config: JsonConfig): DTOConfig => {
@@ -355,4 +366,60 @@ const mapXmlToProperties = (obj: any): { [key: string]: PropertySchemaField } =>
   });
 
   return properties;
+};
+
+const mapDdlToModelConfig = (ddlData: { columns: string; table: string }, config: DdlConfig): ModelConfig => {
+
+  // Split column definitions into individual lines
+  const columnLines = ddlData.columns
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('constraint') && !line.startsWith('primary key') && !line.startsWith('check'));
+
+  // Map columns to attributes
+  const attributes: Attribute[] = columnLines.map((line) => {
+    const [name, typeAndConstraints] = line.split(/\s+/);
+    const [type, ...constraints] = typeAndConstraints.split(/\s+/);
+
+    // Map SQL type to generic type
+    const genericType = mapSqlTypeToGenericType(type);
+
+    // Extract constraints
+    const isIdentity = line.toLowerCase().includes('identity');
+    const isSerial = line.toLowerCase().includes('serial');
+    const isPrimaryKey = line.toLowerCase().includes('primary key');
+    const isNullable = !line.toLowerCase().includes('not null');
+    const isUnique = line.toLowerCase().includes('unique');
+    const defaultValue = line.match(/default\s+'([^']+)'/i)?.[1];
+
+    return {
+      name,
+      type: genericType,
+      nullable: isNullable,
+      unique: isUnique,
+      primaryKey: isPrimaryKey,
+      generationType: isPrimaryKey? (isIdentity? 'IDENTITY' : isSerial? 'SEQUENCE' : 'AUTO') : undefined,
+      defaultValue,
+    };
+  });
+
+  if(attributes.filter(it => it.name.toLowerCase() == "id").length == 0)
+    attributes.push(
+      {
+        name: "id",
+        type: 'integer',
+        primaryKey: true,
+        generationType: 'IDENTITY',
+        nullable: false
+      }
+    )
+
+  return {
+    type: 'model',
+    name: config.name,
+    tableName: ddlData.table,
+    attributes,
+    crud: true,
+    audit: false,
+  };
 };

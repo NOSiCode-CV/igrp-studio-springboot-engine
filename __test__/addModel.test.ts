@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
+import { DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
 import { addModel, serializeElement } from '../src';
 
 const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
@@ -294,6 +294,26 @@ describe('Model generator', () => {
       template: "classic",
       type: "model",
       sql: sampleSql
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a model based on DDL create table script serialization', async() => {
+
+    const sampleDdl = `
+      CREATE TABLE companies (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          foundingYear INT,
+          foundingDate DATE );`;
+
+    const config: DdlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      ddl: sampleDdl
     };
 
     await serializeElement(config, TECHNICAL_OUTPUT_DIR);
