@@ -34,10 +34,10 @@ public class {{resourceConfig.name}}ServiceTest {
         // Example:
         // Given
         // {{resolveResponse this.responses}} expectedResponse = ...;
-        // when(i{{resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
+        // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
 
         // When
-        // ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase resourceConfig.name}}Service.{{actionName}}(...);
+        // ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase ../resourceConfig.name}}Service.{{actionName}}(...);
 
         // Then
         // assertNotNull(response);
