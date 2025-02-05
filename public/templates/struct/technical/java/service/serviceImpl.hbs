@@ -19,7 +19,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
 @Service
 public class {{resourceConfig.name}}Service implements I{{resourceConfig.name}}Service {
 
-  private static final Logger logger = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
 
   {{#each resourceConfig.actions}}
   @Override
