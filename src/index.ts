@@ -69,6 +69,8 @@ import { deleteElementConfig } from './modules/delete/deleteElementConfig';
 import { serializationValidation } from './schema/serializationConfig';
 import { serializeData } from './modules/serialization/serializeData';
 import { saveEnumConfig } from './modules/enum/saveEnumConfig';
+import { generateTestServiceInmpl } from './modules/test/generateTestService';
+import { generateTestHandlers } from './modules/test/generateTestHandlers';
 
 /**
  * Main Function that creates the base api
@@ -450,6 +452,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
       context.resourceConfig.type === 'query'
     ) {
       await generateHandlers(context);
+      await generateTestHandlers(context);
     }
   }
 };
@@ -1018,6 +1021,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
   } else {
     await generateServiceInterface(context);
     await generateServiceInmpl(context);
+    await generateTestServiceInmpl(context);
   }
 };
 

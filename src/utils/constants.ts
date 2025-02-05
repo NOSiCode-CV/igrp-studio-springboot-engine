@@ -173,6 +173,7 @@ export const TEMPLATES = {
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
+  DOMAIN_TEST_SERVICE: 'struct/technical/java/service/serviceImplTest.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
   DOMAIN_ENUM: 'struct/technical/java/constants/enum.hbs',
   DOMAIN_REPOSITORY: 'struct/technical/java/data/repository/repository.hbs',
@@ -287,6 +288,7 @@ export const TEMPLATES = {
   DDD_AGGREGATE_SERVICE: 'struct/domain/java/domain/service/aggregateservice.hbs',
   DDD_CMD_SERVICE: 'struct/domain/java/domain/service/cmdservice.hbs',
   DDD_CMD_SERVICE_IMPL: 'struct/domain/java/domain/impl/cmdserviceimpl.hbs',
+  DDD_TEST_CMD_SERVICE_IMPL: 'struct/domain/java/domain/impl/cmdserviceimpltest.hbs',
   DDD_QUERY_SERVICE: 'struct/domain/java/domain/service/queryservice.hbs',
   DDD_QUERY_SERVICE_IMPL: 'struct/domain/java/domain/impl/queryserviceimpl.hbs',
   DDD_DOMAIN_ENTITY: 'struct/domain/java/domain/domainentity.hbs',
@@ -311,6 +313,7 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd.hbs',
+  DDD_LITE_TEST_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd-test.hbs',
 
   DDD_LITE_DTO: {
     'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
@@ -330,6 +333,7 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd.hbs',
+  DDD_LITE_TEST_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd-test.hbs',
 
   DDD_LITE_EVENT: {
     'classic': 'struct/domain-lite/java/domain/events/events/event-ddd.hbs',
@@ -337,6 +341,7 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd.hbs',
+  DDD_LITE_TEST_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd-test.hbs',
   DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
   DDD_LITE_MODEL: 'struct/domain-lite/java/domain/model/model-ddd.hbs',
   DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',

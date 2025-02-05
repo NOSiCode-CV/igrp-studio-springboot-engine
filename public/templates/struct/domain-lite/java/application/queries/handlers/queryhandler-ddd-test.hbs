@@ -1,0 +1,42 @@
+{{> package-java }}
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class {{capitalize resourceConfig.name}}QueryHandlerTest {
+
+    @InjectMocks
+    private {{capitalize resourceConfig.name}}QueryHandler {{toCamelCase resourceConfig.name}}QueryHandler;
+
+    @BeforeEach
+    void setUp() {
+        // TODO: Initialize mock dependencies if needed
+    }
+
+    @Test
+    void testHandle{{capitalize resourceConfig.name}}Query() {
+        // TODO: Implement unit test for handle method
+        // Example:
+        // Given
+        // {{capitalize resourceConfig.name}}Query query = new {{capitalize resourceConfig.name}}Query(...);
+        //
+        // When
+        // ResponseEntity<{{normalizeDto resourceConfig.response}}> response = {{toCamelCase resourceConfig.name}}QueryHandler.handle(query);
+        //
+        // Then
+        // assertNotNull(response);
+        // assertEquals(..., response.getBody());
+    }
+}

@@ -201,6 +201,16 @@ export const getDDDCommandHandlerOutputDir = (context: RenderContext<DTOBaseConf
     DIRECTORIES.HANDLERS
   );
 
+export const getDDDTestCommandHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.COMMANDS,
+    DIRECTORIES.HANDLERS
+  );
+
 export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
@@ -221,6 +231,16 @@ export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     DIRECTORIES.HANDLERS
   );
 
+export const getDDDTestQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERIES,
+    DIRECTORIES.HANDLERS
+  );
+
 export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
@@ -235,6 +255,16 @@ export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.EVENTS,
+    DIRECTORIES.HANDLERS
+  );
+
+export const getDDDTestEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
     DIRECTORIES.EVENTS,
@@ -359,10 +389,26 @@ export const getServiceDir = (context: RenderContext<ControllerConfig | ModelCon
     DIRECTORIES.SERVICES
   );
 
+export const getTestServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    DIRECTORIES.SERVICES
+  );
+
 export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.SERVICE
+  );
+
+export const getDDDTestServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
     DIRECTORIES.SERVICE

@@ -1,0 +1,54 @@
+{{> package-java }}
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+
+@ExtendWith(MockitoExtension.class)
+public class {{capitalize resourceConfig.name}}CommandServiceTest {
+
+    @InjectMocks
+    private {{capitalize resourceConfig.name}}CmdServiceImpl {{toCamelCase resourceConfig.name}}CmdService;
+
+    {{#each resourceConfig.actions}}
+      {{#ifNot (eq method "GET")}}
+    @Mock
+    private {{capitalize actionName}}CommandHandler {{toCamelCase actionName}}CommandHandler;
+      {{/ifNot}}
+    {{/each}}
+
+    @BeforeEach
+    void setUp() {
+        // TODO: initialize mock dependencies if needed
+    }
+
+    {{#each resourceConfig.actions}}
+      {{#ifNot (eq method "GET")}}
+    @Test
+    void test{{capitalize actionName}}() {
+        // TODO: Implement unit test for {{actionName}}
+        // Example:
+        // Given
+        // {{capitalize actionName}}Command command = new {{capitalize actionName}}Command(...);
+        // when({{toCamelCase actionName}}CommandHandler.handle(any())).thenReturn(ResponseEntity.ok(...));
+
+        // When
+        // ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase resourceConfig.name}}CmdService.{{toCamelCase actionName}}(command);
+
+        // Then
+        // assertNotNull(response);
+        // assertEquals(..., response.getBody());
+    }
+      {{/ifNot}}
+    {{/each}}
+}
