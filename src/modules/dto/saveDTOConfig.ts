@@ -1,6 +1,6 @@
 import { saveToFile } from '../common/saveToFile';
 import { DTOConfig, ObjectTypes } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { getDTOConfigPath } from '../../utils/helpers';
 
 /**
@@ -16,7 +16,7 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
   }
 
   const output = getDTOConfigPath(normalizeDTOType(config.type), config.module ?? DIRECTORIES.SHARED, normalizeName(config.name, config.type), basePath);
-  await saveToFile(JSON.stringify(config), output);
+  await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_DTO, config.id, config.module, basePath, EXTENSIONS.JSON);
 };
 
 export const normalizeDTOType = (type: ObjectTypes): string => {

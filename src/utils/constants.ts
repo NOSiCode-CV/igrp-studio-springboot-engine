@@ -72,7 +72,8 @@ export const PACKAGES = {
   MODELS: 'models',
   DTO: 'dto',
   CONTROLLERS: 'controller',
-  CONSTANTS: 'constants'
+  CONSTANTS: 'constants',
+  ENUM: 'enum',
 };
 
 export const PACKAGE_NS = {

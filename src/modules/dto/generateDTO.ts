@@ -33,7 +33,7 @@ export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
   const template = await _renderDTO(context);
 
-  await saveToFile(template, modelOutputPath);
+  await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 };
 
 /**

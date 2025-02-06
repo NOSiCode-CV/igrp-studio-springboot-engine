@@ -300,6 +300,11 @@ const responseSchemaContent: JSONSchemaType<SchemaContent> = {
 const bodySchema: JSONSchemaType<Body> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     description: {
       type: "string",
       nullable: true,
@@ -340,6 +345,11 @@ const bodySchema: JSONSchemaType<Body> = {
 const baseBodySchema: JSONSchemaType<BaseBody> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     content: {
       type: "object",
       required: [],
@@ -588,6 +598,11 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
 const controllerSchema: JSONSchemaType<ControllerConfig> = {
   type: 'object',
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     type: { 
       type: 'string', 
       const: 'controller',

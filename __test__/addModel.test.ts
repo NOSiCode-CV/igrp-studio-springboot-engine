@@ -19,6 +19,7 @@ describe('Model generator', () => {
       // Animal model
 
       {
+        "id": "dspza5xl7e",
         "type": "model",
         "name": "Animal",
         "tableName": "animal",
@@ -74,6 +75,7 @@ describe('Model generator', () => {
       // Owner model
 
       {
+        "id": "mgg6olyps8",
         "type": "model",
         "name": "owner",
         "tableName": "owner",
@@ -130,6 +132,7 @@ describe('Model generator', () => {
       // User
 
       {
+        "id": "sfk6hpjtcg",
         "type": "model",
         "name": "User",
         "tableName": "user",
@@ -188,6 +191,7 @@ describe('Model generator', () => {
       // Contact
 
       {
+        "id": "ylmvzj5cuy",
         "type": "model",
         "name": "Contact",
         "tableName": "contact",

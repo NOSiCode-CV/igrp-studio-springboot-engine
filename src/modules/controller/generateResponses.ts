@@ -71,7 +71,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       const modelOutputPath = getDTOOutputPath(dtoContext, responseContext);
       const template = await _renderDTO(responseContext);
 
-      await saveToFile(template, modelOutputPath);
+      await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
 
       // await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
 
@@ -246,6 +246,7 @@ export const transformSchemaDTOConfig = async function(
 
   // normalize the name of the DTO
   ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {
     throw errors;

@@ -42,7 +42,7 @@ export const generateSingleResponse = async (context: RenderContext<ResponseConf
       const modelOutputPath = getDTOOutputPath(dtoContext, context);
       const template = await _renderDTO(context);
 
-      await saveToFile(template, modelOutputPath);
+      await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
 
 };
 
@@ -192,6 +192,7 @@ export const transformSchemaDTOConfig = async function(
 
   // normalize the name of the DTO
   ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {
     throw errors;

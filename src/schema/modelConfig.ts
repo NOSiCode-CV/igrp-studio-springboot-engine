@@ -305,8 +305,13 @@ const entityIndexSchema: JSONSchemaType<EntityIndex> = {
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
-    type: { 
-      type: "string", 
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
+    type: {
+      type: "string",
       const: "model",
       errorMessage: 'The type must be "model".'
     },

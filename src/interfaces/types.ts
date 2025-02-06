@@ -15,6 +15,10 @@ import {
   RELATIONSHIP_TYPES,
 } from '../utils/constants';
 
+interface IdentifiableElement {
+  id?: string
+}
+
 export interface TypeMetadata {
   name: string;
   primitive: boolean;
@@ -40,7 +44,7 @@ export interface BaseApiConfig {
 }
 
 
-export interface ModelConfig {
+export interface ModelConfig extends IdentifiableElement {
   type: 'model';
   name: string;
   tableName: string;
@@ -103,7 +107,7 @@ export interface JavaAttribute {
   xmlAttributeName?: string;
 }
 
-export interface DTOBaseConfig {
+export interface DTOBaseConfig extends IdentifiableElement {
   type: ObjectTypes;
   name: string;
   module?: string;
@@ -140,7 +144,7 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface DTOBaseConfig {
+export interface DTOBaseConfig extends IdentifiableElement {
   type: ObjectTypes;
   name: string;
 }
@@ -198,7 +202,7 @@ export interface Table {
   inverseJoinColumns: string;
 }
 
-export interface ControllerConfig {
+export interface ControllerConfig extends IdentifiableElement {
   type: 'controller';
   name: string;
   basePath: string;
@@ -248,7 +252,7 @@ export interface ISelectPermissions {
   value: string;
 }
 
-export interface EnumConfig {
+export interface EnumConfig extends IdentifiableElement {
   type: 'enum';
   name: string;
   module?: string;
@@ -304,7 +308,7 @@ export interface PropertySchemaField extends SchemaField{
   default?: any;
 }
 
-export interface BaseBody {
+export interface BaseBody extends IdentifiableElement {
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
   };

@@ -19,6 +19,7 @@ describe('DTO generator', () => {
       // Owner DTO
 
       {
+        "id": "ab3de9fghj",
         "type": "dto",
         "module": "core",
         "name": "Owner",
@@ -63,6 +64,7 @@ describe('DTO generator', () => {
       // Animal DTO
 
       {
+        "id": "yjektfkd2g",
         "type": "dto",
         "module": "core",
         "name": "Animal",
@@ -116,6 +118,7 @@ describe('DTO generator', () => {
       // User DTO
 
       {
+        "id": "mlu6m6vxha",
         "type": "dto",
         "name": "User",
         "template": "classic",
@@ -163,6 +166,7 @@ describe('DTO generator', () => {
       },
 
       {
+        "id": "hcxghbutva",
         "type": "dto",
         "name": "Teste",
         "template": "classic",

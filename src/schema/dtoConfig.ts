@@ -121,6 +121,11 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
 const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     type: { 
       type: "string",
       errorMessage: 'The type must be valid.'
@@ -167,6 +172,11 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
 const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     type: { 
       type: "string", 
       const: "dto",

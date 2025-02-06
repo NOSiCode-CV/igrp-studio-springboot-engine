@@ -24,7 +24,7 @@ import {
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
-import { normalizeName, saveDTOConfig } from '../dto/saveDTOConfig';
+import { normalizeName } from '../dto/saveDTOConfig';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { getEnumTypes } from '../enum/helpers';
 
@@ -50,7 +50,7 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     const modelOutputPath = getDTOOutputPath(dtoContext);
     const template = await _renderDTO(dtoContext);
 
-    await saveToFile(template, modelOutputPath);
+    await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
 
     return dtoContext;
 
@@ -230,6 +230,9 @@ export const transformSchemaDTOConfig = async function(
 
   // normalize the name of the DTO
   ncfg.name = normalizeName(capitalize(action.actionName) + "Request", 'dto')
+
+  // the action identifier
+  ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {
     throw errors;

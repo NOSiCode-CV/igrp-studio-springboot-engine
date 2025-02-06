@@ -6,6 +6,7 @@ const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
 const domainEnumConfig : EnumConfig = {
+  id: 'bipojm4zvl',
   type: 'enum',
   name: "Level",
   module: "core",
@@ -17,6 +18,7 @@ const domainEnumConfig : EnumConfig = {
 };
 
 const technicalEnumConfig: EnumConfig = {
+  id: 'ctdhem8cim',
   type: 'enum',
   name: "Level",
   values: [

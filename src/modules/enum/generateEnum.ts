@@ -1,5 +1,5 @@
 import { EnumConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { getDDDEnumOutputDir, getEnumOutputDir } from '../../utils/helpers';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
@@ -10,7 +10,7 @@ export const generateEnum = async (context: RenderContext<EnumConfig>) => {
   const enumOutputPath = getEnumOutputPath(context);
   const template = await _renderEnum(context);
 
-  await saveToFile(template, enumOutputPath)
+  await saveToFile(template, enumOutputPath, true, DIRECTORIES.ENUM, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
 }
 

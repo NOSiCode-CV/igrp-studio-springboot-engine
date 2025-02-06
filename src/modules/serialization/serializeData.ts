@@ -8,7 +8,7 @@ import {
   JavaAttribute, PropertySchemaField, Attribute, DdlConfig,
 } from '../../interfaces/types';
 import { DIRECTORIES, TYPESCRIPT_TYPES } from '../../utils/constants';
-import { mapSqlTypeToGenericType, parseDdlScript, parseSqlCommand, parseXml } from './helpers';
+import { generateElementId, mapSqlTypeToGenericType, parseDdlScript, parseSqlCommand, parseXml } from './helpers';
 
 export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig | DdlConfig) => {
   if (!config) return;
@@ -82,6 +82,7 @@ const mapJsonToDtoConfig = (jsonData: any, config: JsonConfig): DTOConfig => {
   }));
 
   return {
+    id: generateElementId(),
     type: 'dto',
     name: config.name,
     module: config.module ?? DIRECTORIES.SHARED,
@@ -117,6 +118,7 @@ const mapJsonToModelConfig = (jsonData: any, config: JsonConfig): ModelConfig =>
     )
 
   return {
+    id: generateElementId(),
     type: 'model',
     module: config.module ?? DIRECTORIES.SHARED,
     name: config.name, // Replace with a meaningful name if available
@@ -145,6 +147,7 @@ const mapJsonToResponseConfig = (jsonData: any, config: JsonConfig): ResponseCon
   });
 
   return {
+    id: generateElementId(),
     name: config.name,
     statusCode: '200',
     template: config.template,
@@ -188,6 +191,7 @@ const mapSqlToDtoConfig = (sqlData: { columns: string[]; table: string }, config
   }));
 
   return {
+    id: generateElementId(),
     type: 'dto',
     name: config.name,
     module: config.module ?? DIRECTORIES.SHARED,
@@ -224,6 +228,7 @@ const mapSqlToModelConfig = (sqlData: { columns: string[]; table: string }, conf
     )
 
   return {
+    id: generateElementId(),
     type: 'model',
     module: config.module ?? DIRECTORIES.SHARED,
     name: config.name,
@@ -248,6 +253,7 @@ const mapSqlToResponseConfig = (sqlData: { columns: string[]; table: string }, c
   });
 
   return {
+    id: generateElementId(),
     name: config.name,
     statusCode: '200',
     template: config.template,
@@ -271,6 +277,7 @@ const mapXmlToDtoConfig = (xmlData: any, config: XmlConfig): DTOConfig => {
   }));
 
   return {
+    id: generateElementId(),
     type: 'dto',
     name: config.name,
     module: config.module ?? DIRECTORIES.SHARED,
@@ -306,6 +313,7 @@ const mapXmlToModelConfig = (xmlData: any, config: XmlConfig): ModelConfig => {
     )
 
   return {
+    id: generateElementId(),
     type: 'model',
     name: config.name,
     module: config.module ?? DIRECTORIES.SHARED,
@@ -334,6 +342,7 @@ const mapXmlToResponseConfig = (xmlData: any, config: XmlConfig): ResponseConfig
   });
 
   return {
+    id: generateElementId(),
     name: config.name,
     statusCode: '200',
     template: config.template,
@@ -393,6 +402,7 @@ const mapDdlToModelConfig = (ddlData: { columns: string; table: string }, config
     const defaultValue = line.match(/default\s+'([^']+)'/i)?.[1];
 
     return {
+      id: generateElementId(),
       name,
       type: genericType,
       nullable: isNullable,
@@ -415,6 +425,7 @@ const mapDdlToModelConfig = (ddlData: { columns: string; table: string }, config
     )
 
   return {
+    id: generateElementId(),
     type: 'model',
     name: config.name,
     tableName: ddlData.table,

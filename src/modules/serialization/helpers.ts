@@ -1,4 +1,4 @@
-import { XMLParser } from "fast-xml-parser";
+import { XMLParser } from 'fast-xml-parser';
 
 export const parseXml = (xml: string): any => {
   const parser = new XMLParser({
@@ -56,3 +56,6 @@ export const mapSqlTypeToGenericType = (sqlType: string): string => {
   return typeMapping[sqlType.toLowerCase()] || 'string'; // Default to 'string' if type is not recognized
 };
 
+export const generateElementId = (): string => {
+  return Math.random().toString(36).slice(2, 12);
+};

@@ -486,6 +486,10 @@ export const loadEnumConfigs = async function (module: string, basePath: string)
   return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module })));
 }
 
+export const loadResponseConfigs = async function (module: string, basePath: string): Promise<EnumConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_RESPONSE, { module })));
+}
+
 export const loadModelConfigs = async function (module: string, basePath: string): Promise<ModelConfig[]> {
   return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_MODEL, { module })));
 }
@@ -565,3 +569,12 @@ export const extractTypeFromList = (typeString: string): string | null => {
     return typeString
   return null; 
 };
+
+/**
+ * Extracts the directory path from a given full file path.
+ * @param filePath - The full path of the file.
+ * @returns The directory path containing the file.
+ */
+export const getDirectoryPath = (filePath: string): string => {
+  return path.dirname(filePath);
+}

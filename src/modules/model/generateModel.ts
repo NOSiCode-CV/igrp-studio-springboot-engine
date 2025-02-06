@@ -37,11 +37,11 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     const primaryKeyTemplate = await renderPrimaryKey(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
-  } 
+  }
+
+  await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
   await saveModelConfig(context.resourceConfig, context.basePath);
-
-  await saveToFile(template, modelOutputPath);
 
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 

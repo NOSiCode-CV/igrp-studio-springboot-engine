@@ -6,6 +6,7 @@ const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
 const domainResponseConfig: ResponseConfig = {
+  id: "u1obufwcjf",
   template: "record",
   statusCode: "200",
   module: "core",
@@ -29,9 +30,10 @@ const domainResponseConfig: ResponseConfig = {
 }
 
 const technicalResponseConfig: ResponseConfig = {
+  id: "3igib0o5fe",
   template: "record",
   statusCode: "200",
-  name: "TestResponseIsolated",
+  name: "TestResponseIsolated2",
   description: "OK",
   content: {
     "application/json": {

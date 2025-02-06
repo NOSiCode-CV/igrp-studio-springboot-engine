@@ -434,8 +434,6 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  if (config.type === 'dto') await saveDTOConfig(config, basePath);
-
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
@@ -444,6 +442,8 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   };
 
   await generateDTO(context);
+
+  if (config.type === 'dto') await saveDTOConfig(config, basePath);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     if (
@@ -523,8 +523,6 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  await saveResponseConfig(config, basePath);
-
   const context: RenderContext<ResponseConfig> = {
     resourceConfig: config,
     basePath,
@@ -533,6 +531,8 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
   };
 
   await generateSingleResponse(context);
+
+  await saveResponseConfig(config, basePath);
 
 };
 
@@ -590,9 +590,6 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  // [22-01-2025] No need to save enum config; [04-02-2025] Enum config is necessary for attribute setting
-  await saveEnumConfig(config, basePath);
-
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,
     basePath,
@@ -601,6 +598,9 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
   };
 
   await generateEnum(context);
+
+  // [22-01-2025] No need to save enum config; [04-02-2025] Enum config is necessary for attribute setting
+  await saveEnumConfig(config, basePath);
 
 };
 

@@ -24,6 +24,7 @@ const domainControllerConfig: ControllerConfig = {
       ],
       responses: {
         "200": {
+          id: 'uVl1MViEeK',
           module: "core",
           name: "AnimalResponse",
           content: {
@@ -49,6 +50,7 @@ const domainControllerConfig: ControllerConfig = {
           },
         },
         "404": {
+          id: 'EG1n4GoPv5',
           name: "AnimalNotFound",
           module: "core",
           content: {
@@ -72,6 +74,7 @@ const domainControllerConfig: ControllerConfig = {
       path: "create-animal",
       method: "POST",
       requestBody: {
+        id: 'l5MTlX7-eN',
         content: {
           "application/json": {
             schema: {
@@ -100,6 +103,7 @@ const domainControllerConfig: ControllerConfig = {
       },
       responses: {
         "201": {
+          id: "7p930bfvbe",
           module: "core",
           name: "AnimalCreatedResponse",
           content: {
@@ -131,6 +135,7 @@ const domainControllerConfig: ControllerConfig = {
       path: "update-animal",
       method: "PUT",
       requestBody: {
+        id: 'g1OmlhfeUB',
         content: {
           "application/json": {
             schema: {
@@ -142,6 +147,7 @@ const domainControllerConfig: ControllerConfig = {
       },
       responses: {
         "200": {
+          id: 'swhGmpOkSw',
           module: "core",
           name: "AnimalUpdatedResponse",
           content: {
@@ -177,6 +183,7 @@ const domainControllerConfig: ControllerConfig = {
       ],
       responses: {
         "200": {
+          id: "svg3lsx7dc",
           module: "core",
           name: "AnimalDeleted",
           content: {
@@ -194,6 +201,7 @@ const domainControllerConfig: ControllerConfig = {
           },
         },
         "404": {
+          id: "49eckmfjtp",
           name: "AnimalNotFound",
           module: "core",
           content: {
@@ -234,6 +242,7 @@ const technicalControllerConfig: ControllerConfig = {
       ],
       responses: {
         "200": {
+          id: "gddhpx1q82",
           name: "UserResponse",
           content: {
             "application/json": {
@@ -258,6 +267,7 @@ const technicalControllerConfig: ControllerConfig = {
           },
         },
         "404": {
+          id: "u9sr9nefjg",
           name: "UserNotFound",
           content: {
             "application/json": {
@@ -280,6 +290,7 @@ const technicalControllerConfig: ControllerConfig = {
       path: "create-user",
       method: "POST",
       requestBody: {
+        id: "0zduoqcb5m",
         content: {
           "application/json": {
             schema: {
@@ -307,6 +318,7 @@ const technicalControllerConfig: ControllerConfig = {
       },
       responses: {
         "201": {
+          id: "5ldyzgea5u",
           name: "UserCreatedResponse",
           content: {
             "application/json": {
@@ -337,6 +349,7 @@ const technicalControllerConfig: ControllerConfig = {
       path: "update-user",
       method: "PUT",
       requestBody: {
+        id: "rwOtlt5qls",
         content: {
           "application/json": {
             schema: {
@@ -348,6 +361,7 @@ const technicalControllerConfig: ControllerConfig = {
       },
       responses: {
         "201": {
+          id: "bn8oyncamx",
           name: "UserUpdatedResponse",
           content: {
             "application/json": {
@@ -382,6 +396,7 @@ const technicalControllerConfig: ControllerConfig = {
       ],
       responses: {
         "200": {
+          id: "6baanljjfk",
           name: "UserDeleted",
           content: {
             "application/json": {
@@ -398,6 +413,7 @@ const technicalControllerConfig: ControllerConfig = {
           },
         },
         "404": {
+          id: "dtyt73utth",
           name: "UserNotFound",
           content: {
             "application/json": {
