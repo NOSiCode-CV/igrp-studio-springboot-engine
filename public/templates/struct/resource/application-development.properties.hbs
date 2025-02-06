@@ -1,6 +1,5 @@
 # General
 spring.config.import=optional:file:.env[.properties]
-spring.application.name={{baseConfig.name}}
 
 # Datasource
 spring.datasource.url={{#if (eq baseConfig.database "Postgresql")}}jdbc:postgresql://host.docker.internal:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}{{else if (eq baseConfig.database "MySQL")}}jdbc:mysql://host.docker.internal:${MYSQL_INTERNAL_PORT}/${MYSQL_DATABASE}{{else if (eq baseConfig.database "Oracle")}}jdbc:oracle:thin:@host.docker.internal:${ORACLE_INTERNAL_PORT}:${ORACLE_DATABASE}{{/if}}
