@@ -14,5 +14,5 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
   const singleBody = responses[keys[0]];
 
   // Return the "name" attribute if it exists, otherwise return an empty string
-  return singleBody?.content[0].schema.objectType? capitalize(singleBody?.content[0].schema.type?.replace(/dto$/i, '') + "DTO") : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")  || "?";
+  return singleBody?.content[0]?.schema.objectType? capitalize(singleBody?.content[0].schema.type?.replace(/dto$/i, '') + "DTO") : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")  || "?";
 };
