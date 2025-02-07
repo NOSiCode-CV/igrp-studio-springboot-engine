@@ -13,6 +13,6 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
 
   const singleBody = responses[keys[0]];
 
-  // Return the "name" attribute if it exists, otherwise return an empty string
-  return singleBody?.content[0]?.schema.objectType? capitalize(singleBody?.content[0].schema.type?.replace(/dto$/i, '') + "DTO") : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")  || "?";
+  // Return the "name" attribute if it exists, otherwise return the type from the reference
+  return ((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']).schema.objectType)? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']).schema.type?.replace(/dto$/i, '') + "DTO") : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")  || "?";
 };

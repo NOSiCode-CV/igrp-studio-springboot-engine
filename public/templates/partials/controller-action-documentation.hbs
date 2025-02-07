@@ -18,7 +18,7 @@
                   {{/if}}
                   {{/if}}
                   {{#if this.schema.type}}
-                  type = "{{this.schema.type}}"{{/if}}{{#if this.schema.description}},
+                  type = {{#if this.schema.objectType}}"{{normalizeDto this.schema.type}}"{{else}}"{{this.schema.type}}"{{/if}}{{/if}}{{#if this.schema.description}},
                   description = "{{this.schema.description}}"{{/if}}{{#if this.schema.example}},
                   example = "{{this.schema.example}}"{{/if}}{{#if this.schema.required}},
                   required = true{{/if}}{{#if this.deprecated}},
