@@ -39,8 +39,8 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
     for (const [status, response] of Object.entries(action.responses)) {
 
-      // If there's no name attribute that means it's a reference, so do not need to generate the DTO
-      if(!response.name && (response?.content['application/json'] ?? response?.content['multipart/form-data'])) continue;
+      // If it's a reference attribute that means do not need to generate the DTO
+      if((response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema.objectType) continue;
       if(status == "204") continue;
 
       // Capitalize the response name
