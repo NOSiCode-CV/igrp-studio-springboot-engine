@@ -11,7 +11,7 @@
               mediaType = "{{@key}}",
               schema = @Schema(
                   {{#if this.schema.objectType}}
-                  implementation = {{this.schema.type}}.class,
+                  implementation = {{normalizeDto this.schema.type}}.class,
                   {{else}}
                   {{#if ../this.name}}
                   implementation = {{normalizeDto ../this.name}}.class,

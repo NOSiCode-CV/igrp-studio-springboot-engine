@@ -276,6 +276,7 @@ export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;
   baseConfig: ApiConfig;
+  baseVersion?: string;
   fullPath: string;
   mathAttributes?: string[];
   dateTimeAttributes?: string[];

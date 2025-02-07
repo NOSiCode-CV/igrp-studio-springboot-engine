@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { newApi } from '../src';
 import { BaseApiConfig } from '../src/interfaces/types';
 
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
+const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical33'
 const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
 
 const domainApiConfig: BaseApiConfig = {

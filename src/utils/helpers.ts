@@ -578,3 +578,10 @@ export const extractTypeFromList = (typeString: string): string | null => {
 export const getDirectoryPath = (filePath: string): string => {
   return path.dirname(filePath);
 }
+
+export const normalizeOutput = (outputPath: string): string => {
+  console.log("Length: ", outputPath.length)
+  if (process.platform === "win32" && outputPath.length > 50) {
+    return "\\\\?\\" + path.resolve(outputPath);
+  } else return outputPath;
+}
