@@ -13,8 +13,12 @@
                   {{#if this.schema.objectType}}
                   implementation = {{normalizeDto this.schema.type}}.class,
                   {{else}}
+                  {{#if (eq this.schema.type 'array')}}
+                  implementation = {{normalizeDto this.schema.items.type}}.class,
+                  {{else}}
                   {{#if ../this.name}}
                   implementation = {{normalizeDto ../this.name}}.class,
+                  {{/if}}
                   {{/if}}
                   {{/if}}
                   {{#if this.schema.type}}

@@ -247,42 +247,15 @@ const technicalControllerConfig: ControllerConfig = {
           content: {
             "application/json": {
               schema: {
-                type: "object",
-                properties: {
-                  id: {
-                    type: "string",
-                    description: "Unique ID of the user",
-                  },
-                  username: {
-                    type: "string",
-                    description: "Username of the user",
-                  },
-                  email: {
-                    type: "string",
-                    description: "Email address of the user",
-                  },
+                type: "array",
+                items: {
+                  type: "UserDTO",
+                  objectType: "dto",
                 },
               },
             },
           },
-        },
-        "404": {
-          id: "u9sr9nefjg",
-          name: "UserNotFound",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  message: {
-                    type: "string",
-                    description: "Error message indicating user not found",
-                  },
-                },
-              },
-            },
-          },
-        },
+        }
       },
     },
     {

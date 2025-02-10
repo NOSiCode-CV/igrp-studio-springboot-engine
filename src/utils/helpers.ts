@@ -585,3 +585,7 @@ export const normalizeOutput = (outputPath: string): string => {
     return "\\\\?\\" + path.resolve(outputPath);
   } else return outputPath;
 }
+
+export const isResponseCollection = (type: string): boolean => {
+  return type === 'array'
+}
