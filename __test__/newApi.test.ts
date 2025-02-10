@@ -14,7 +14,7 @@ const domainApiConfig: BaseApiConfig = {
   database: 'Postgresql',
   projectStructureStyle: 'domain',
   enableObservability: true,
-  igrpCoreVersion: "0.0.1-20250115.133643-3"
+  igrpCoreVersion: "0.0.1-SNAPSHOT"
 };
 
 const technicalApiConfig: BaseApiConfig = {
@@ -26,7 +26,7 @@ const technicalApiConfig: BaseApiConfig = {
   database: 'Postgresql',
   projectStructureStyle: 'technical',
   enableObservability: false,
-  igrpCoreVersion: "0.0.1-20250115.133643-3"
+  igrpCoreVersion: "0.0.1-SNAPSHOT"
 };
 
 beforeAll(async () => {
