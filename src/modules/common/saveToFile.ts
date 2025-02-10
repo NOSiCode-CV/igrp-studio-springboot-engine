@@ -23,15 +23,15 @@ import { closeSync, openSync } from 'node:fs';
  * @throws {Error} - Throws an error if the content or output path is invalid.
  */
 export const saveToFile = async (content: string, outputPath: string, override: boolean = true, type: (string | undefined) = undefined, id: (string | undefined) = undefined, module: (string | undefined) = undefined, basePath: (string | undefined) = undefined, extension: string = EXTENSIONS.JAVA) => {
-  const exists = (await fs.pathExists(outputPath))
+  const exists = (await fs.pathExists(outputPath));
   if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
   if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-  if (!override && exists) return
+  if (!override && exists) return;
 
   if(type && id) {
     if(!basePath) throw ERROR_MESSAGE.INVALID_API_CONFIG;
     if(type === DIRECTORIES.MODELS || type === DIRECTORIES.CONFIG_MODEL) {
-      const models = await loadModelConfigs(module ?? DIRECTORIES.SHARED, basePath)
+      const models = await loadModelConfigs(module ?? DIRECTORIES.SHARED, basePath);
       const model = models.find((it) => it.id === id);
       if (model) {
         let sourcePath;
@@ -51,28 +51,36 @@ export const saveToFile = async (content: string, outputPath: string, override: 
           await fs.remove(sourcePath);
         }
 
-        if(outputPath.includes("domain")) {
-          const repositorySourcePath = join(getDirectoryPath(getDirectoryPath(outputPath)), DIRECTORIES.REPOSITORY, "I" + model.name.concat("Repository" + extension));
+        if(outputPath.includes('domain')) {
+          const repositorySourcePath = join(getDirectoryPath(getDirectoryPath(outputPath)), DIRECTORIES.REPOSITORY, 'I' + model.name.concat('Repository' + extension));
           await fs.remove(repositorySourcePath);
         }
 
       }
 
     } else if(type === DIRECTORIES.DTO || type === DIRECTORIES.CONFIG_DTO) {
-      const dtos = await loadDTOConfigs(module ?? DIRECTORIES.SHARED, basePath)
-      const dto = dtos.find(it => it.id === id)
-      if(dto)
-        fs.rm(join(getDirectoryPath(outputPath), dto.name.replace(/dto$/i, '').concat('DTO', extension)))
+      const dtos = await loadDTOConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const dto = dtos.find(it => it.id === id);
+      if(dto) {
+        const sourcePath = join(getDirectoryPath(outputPath), dto.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), dto.name.replace(/dto$/i, '').concat('DTO', extension)));
+      }
     } else if(type === DIRECTORIES.ENUM || type === DIRECTORIES.CONFIG_ENUM) {
-      const enums = await loadEnumConfigs(module ?? DIRECTORIES.SHARED, basePath)
-      const theEnum = enums.find(it => it.id === id)
-      if(theEnum)
-        fs.rm(join(getDirectoryPath(outputPath), theEnum.name.concat(extension)))
+      const enums = await loadEnumConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const theEnum = enums.find(it => it.id === id);
+      if(theEnum) {
+        const sourcePath = join(getDirectoryPath(outputPath), theEnum.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), theEnum.name.concat(extension)));
+      }
     } else if(type === DIRECTORIES.CONFIG_RESPONSE) {
-      const responses = await loadResponseConfigs(module ?? DIRECTORIES.SHARED, basePath)
-      const response = responses.find(it => it.id === id)
+      const responses = await loadResponseConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const response = responses.find(it => it.id === id);
       if(response) {
-        fs.rm(join(getDirectoryPath(outputPath), response.name.concat(extension)));
+        const sourcePath = join(getDirectoryPath(outputPath), response.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), response.name.concat(extension)));
       }
     }
 
@@ -88,7 +96,7 @@ export const saveToFile = async (content: string, outputPath: string, override: 
 export const saveBinaryToFile = async (
   content: Buffer,  // Content should be a Buffer for binary files
   outputPath: string,
-  override: boolean = true
+  override: boolean = true,
 ) => {
   if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
   if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;

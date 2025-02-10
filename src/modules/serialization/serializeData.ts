@@ -8,7 +8,14 @@ import {
   JavaAttribute, PropertySchemaField, Attribute, DdlConfig,
 } from '../../interfaces/types';
 import { DIRECTORIES, TYPESCRIPT_TYPES } from '../../utils/constants';
-import { generateElementId, mapSqlTypeToGenericType, parseDdlScript, parseSqlCommand, parseXml } from './helpers';
+import {
+  generateElementId,
+  inferTypeFromValue,
+  mapSqlTypeToGenericType,
+  parseDdlScript,
+  parseSqlCommand,
+  parseXml,
+} from './helpers';
 
 export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig | DdlConfig) => {
   if (!config) return;
@@ -200,32 +207,44 @@ const mapSqlToDtoConfig = (sqlData: { columns: string[]; table: string }, config
   };
 };
 
-const mapSqlToModelConfig = (sqlData: { columns: string[]; table: string }, config: SqlConfig): ModelConfig => {
+const mapSqlToModelConfig = (
+  sqlData: { columns: string[]; table: string },
+  config: SqlConfig,
+): ModelConfig => {
+  const attributes: Attribute[] = sqlData.columns.map((column) => {
+    const [value, alias] = column.split(/\s+AS\s+/i);
+    const type = inferTypeFromValue(value.trim());
 
-  const attributes: Attribute[] = sqlData.columns.map((column) => (column.toLowerCase() === 'id' ?
-    {
-      name: column,
+    if(!value || !alias) {
+      throw Error("Invalid or unsupported SQL SELECT command format. Please check if the values and the alias are defined correctly!")
+    }
+
+    if (alias.trim().toLowerCase() === 'id') {
+      return {
+        name: alias.trim(),
+        type: type,
+        primaryKey: true,
+        generationType: 'AUTO',
+        nullable: false,
+      };
+
+    } else {
+      return {
+        name: alias.trim(),
+        type,
+        nullable: true,
+      };
+    }
+  });
+
+  if (attributes.filter((it) => it.name.toLowerCase() == 'id').length == 0)
+    attributes.push({
+      name: 'id',
       type: 'integer',
       primaryKey: true,
-      generationType: 'AUTO',
-      nullable: false
-    }
-    : {
-    name: column,
-    type: 'string', // Default to 'string'; adjust based on actual data
-    nullable: true,
-  }));
-
-  if(attributes.filter(it => it.name.toLowerCase() == "id").length == 0)
-    attributes.push(
-      {
-        name: "id",
-        type: 'integer',
-        primaryKey: true,
-        generationType: 'IDENTITY',
-        nullable: false
-      }
-    )
+      generationType: 'IDENTITY',
+      nullable: false,
+    });
 
   return {
     id: generateElementId(),
@@ -237,7 +256,6 @@ const mapSqlToModelConfig = (sqlData: { columns: string[]; table: string }, conf
     crud: false,
     audit: false,
   };
-
 };
 
 const mapSqlToResponseConfig = (sqlData: { columns: string[]; table: string }, config: SqlConfig): ResponseConfig => {

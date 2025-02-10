@@ -291,7 +291,7 @@ describe('Model generator', () => {
 
   it('should create a model based on SQL SELECT command serialization', async() => {
 
-    const sampleSql = "SELECT id, name, foundingYear, foudingDate FROM companies";
+    const sampleSql = "SELECT 1 as id, 'XPTO LLC' as name, 1996 as foundingYear, '1996-04-01' as foundingDate FROM companies";
 
     const config: SqlConfig = {
       name: "Company",

@@ -40,9 +40,7 @@ const serializationSchema: JSONSchemaType<SerializationConfig> = {
     },
     sql: {
       type: "string",
-      nullable: true,
-      pattern: PATTERNS.SQL_PATTERN,
-      errorMessage: "Invalid SQL SELECT command format. Valid format: SELECT column_name FROM table_name"
+      nullable: true
     },
     ddl: {
       type: "string",
