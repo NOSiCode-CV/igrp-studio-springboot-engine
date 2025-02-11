@@ -3,6 +3,7 @@ node_modules/
 
 # Tests
 #__test__
+generatedEnvironment/
 
 # Logs
 logs
