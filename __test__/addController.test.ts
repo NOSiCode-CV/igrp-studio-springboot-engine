@@ -1,10 +1,8 @@
 import fs from 'fs-extra';
 import { addController } from '../src';
 import { ControllerConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
-const TEST_OUTPUT_DIR = 'C:\\spring-engine\\generatedNewVersion'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR } from './outputDirPath';
 
 const domainControllerConfig: ControllerConfig = {
   type: "controller",

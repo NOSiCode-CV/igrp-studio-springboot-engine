@@ -1,9 +1,8 @@
 import fs from 'fs-extra';
 import { addEnum } from '../src';
 import { EnumConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 const domainEnumConfig : EnumConfig = {
   id: 'bipojm4zvl',

@@ -509,6 +509,8 @@ Handlebars.registerHelper('model-imports', function (this: any, config: ModelCon
       imports.add('import jakarta.validation.constraints.NotNull;');
 
     if (attr.type === 'UUID') imports.add('import java.util.UUID;');
+
+    if (attr.skipFieldRevision) imports.add('import org.hibernate.envers.NotAudited;');
   });
 
   return Array.from(imports).sort().join('\n');

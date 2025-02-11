@@ -1,9 +1,8 @@
 import fs from 'fs-extra';
 import { addDTO, serializeElement } from '../src';
 import { DTOConfig, JsonConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 beforeAll(async () => {
   await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });

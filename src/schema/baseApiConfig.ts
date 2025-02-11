@@ -64,6 +64,10 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       type: "boolean",
       nullable: false
     },
+    enableEntityRevision: {
+      type: "boolean",
+      nullable: false
+    },
     igrpCoreVersion: {
       type: "string",
       nullable: false

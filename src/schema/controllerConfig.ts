@@ -460,6 +460,11 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
     },
+    skipFieldRevision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
+    },
     nullable: {
       type: "boolean",
       nullable: true,

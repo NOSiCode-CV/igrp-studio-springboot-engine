@@ -40,6 +40,7 @@ export interface BaseApiConfig {
   projectStructureStyle: ProjectStructureStyle;
   name?: string;
   enableObservability: boolean;
+  enableEntityRevision: boolean;
   igrpCoreVersion: string;
 }
 
@@ -54,6 +55,7 @@ export interface ModelConfig extends IdentifiableElement {
   primaryKey?: PrimaryKey[];
   crud?: boolean;
   audit?: boolean;
+  revision?: boolean;
   module?: string;
 }
 
@@ -171,6 +173,7 @@ export interface Attribute {
   generationType?: GenerationType;
   defaultValue?: string;
   relation?: Relation;
+  skipFieldRevision?: boolean;
   objectType?: 'dto' | 'model' | 'java' | 'enum';
 }
 

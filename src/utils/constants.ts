@@ -121,7 +121,8 @@ export const PARTIALS = [
   "package-java.hbs",
   "postgres-docker-service.hbs",
   "security-maven-dependencies.hbs",
-  "spring-maven-dependencies.hbs"
+  "spring-maven-dependencies.hbs",
+  "spring-entity-revision-dependencies.hbs"
 ]
 
 export const ERROR_MESSAGE = {

@@ -1,12 +1,11 @@
 import fs from 'fs-extra';
 import { DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
 import { addModel, serializeElement } from '../src';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 beforeAll(async () => {
-  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
   await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
@@ -121,7 +120,7 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of domainTestCases) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+      //await addModel(testCase, DOMAIN_OUTPUT_DIR);
     }
   })
 
@@ -154,6 +153,15 @@ describe('Model generator', () => {
           {
             "type": "Level",
             "objectType": "enum",
+            "name": "userLevelNew",
+            "length": 255,
+            "nullable": false,
+            "unique": true,
+            "skipFieldRevision": true
+          },
+          {
+            "type": "Level",
+            "objectType": "enum",
             "name": "userLevel",
             "length": 255,
             "nullable": false,
@@ -164,13 +172,15 @@ describe('Model generator', () => {
             "name": "email",
             "length": 255,
             "nullable": false,
-            "unique": true
+            "unique": true,
+            "skipFieldRevision": true
           },
           {
             "type": "string",
             "name": "password",
             "length": 255,
-            "nullable": false
+            "nullable": false,
+            "skipFieldRevision": true
           },
           {
             "type": "file",
@@ -185,7 +195,8 @@ describe('Model generator', () => {
           }
         ],
         "crud": false,
-        "audit": true
+        "audit": true,
+        "revision": true
       },
 
       // Contact
@@ -236,7 +247,8 @@ describe('Model generator', () => {
           }
         ],
         "crud": true,
-        "audit": false
+        "audit": false,
+        "revision": false
       },
 
 

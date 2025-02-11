@@ -14,11 +14,11 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity
   {{else}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
   {{/if}}
-import org.hibernate.envers.Audited;
 {{~/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.revision~}}import org.hibernate.envers.Audited;{{~/if}}
 import cv.igrp.stereotype.IgrpEntity;
 import jakarta.persistence.*;
 import jakarta.validation.*;
@@ -37,7 +37,7 @@ import java.math.{{this}};
 {{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 {{model-imports resourceConfig}}
 
-{{#if resourceConfig.audit~}}@Audited{{~/if}}
+{{#if resourceConfig.revision~}}@Audited{{~/if}}
 @Getter
 @Setter
 @ToString
@@ -67,7 +67,9 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
 
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId
-  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}{{#if this.primaryKey}}
+  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}
+  {{#if this.skipFieldRevision}}@NotAudited{{/if~}}
+  {{#if this.primaryKey}}
   @Id
   @GeneratedValue(strategy = GenerationType.{{this.generationType}})
   @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)

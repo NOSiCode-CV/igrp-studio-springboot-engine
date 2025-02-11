@@ -107,6 +107,11 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
     },
+    skipFieldRevision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
+    },
     nullable: {
       type: "boolean",
       nullable: true,
@@ -357,6 +362,11 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'The audit field, if provided, must be a boolean value.'
+    },
+    revision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The revision definition, if provided, must be a boolean value.'
     },
     module: {
       type: "string",
