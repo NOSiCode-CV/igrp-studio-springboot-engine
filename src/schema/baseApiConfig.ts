@@ -73,7 +73,7 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision"],
   additionalProperties: false,
   errorMessage: {
     required: {
