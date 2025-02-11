@@ -1,11 +1,40 @@
 stages:
   - build
-build_packagedev:
+  - publish
+
+# Build for public NPM package (for public NPM package for production)
+build_package:
   image: node:slim
   stage: build
   only:
     - master
+    - npm-publish
+  before_script:
+    # Configure .npmrc to use the NOSi Nexus Sonatype credentials
+    - echo "Publishing version $VERSION to sonatype.nosi.cv"
+    - echo "@igrp:registry=https://sonatype.nosi.cv/repository/igrp/" >> ~/.npmrc
+    - echo "//sonatype.nosi.cv/repository/igrp/:username=${SONATYPE_USERNAME}" >> ~/.npmrc
+    - echo "//sonatype.nosi.cv/repository/igrp/:_password=${SONATYPE_PASSWORD}" >> ~/.npmrc
   script:
     - npm install
     - npm run build
     - npm publish --registry=https://sonatype.nosi.cv/repository/igrp/
+
+# Publish to public NPM registry (for public NPM registry for production)
+publish_to_public_npm:
+  image: node:slim
+  stage: publish
+  only:
+    - npm-publish
+  before_script:
+    # Configure .npmrc to use the NPM Token for npmjs.org
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+    # Set the version dynamically based on the package version from Nexus
+    - VERSION=$(npm show @igrp/spring-engine@latest version --registry=https://sonatype.nosi.cv/repository/igrp/)
+    - echo "Fetched version $VERSION from private Nexus"
+    # Pack the latest version from Nexus
+    - npm pack @igrp/spring-engine@$VERSION --registry=https://sonatype.nosi.cv/repository/igrp/
+  script:
+    # Publish the fetched package to npmjs.org
+    - echo "Publishing version $VERSION to npmjs.org"
+    - npm publish --access public --registry=https://registry.npmjs.org/
