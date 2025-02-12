@@ -1,5 +1,6 @@
 {{#if (eq baseConfig.database "Postgresql")}}
 POSTGRES_SERVICE_NAME=postgres
+POSTGRES_HOST=host.docker.internal
 POSTGRES_INTERNAL_PORT=5432
 POSTGRES_EXTERNAL_PORT=5432
 POSTGRES_DATABASE={{toLowerCase baseConfig.name}}_db
