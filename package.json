@@ -1,6 +1,6 @@
 {
   "name": "@igrp/spring-engine",
-  "version": "0.3.0-alpha-5.0.4",
+  "version": "0.0.1-alpha",
   "description": "Spring API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://git.nosi.cv/igrp-3_0/spring-engine.git"
+    "url": "https://github.com/NOSiCode-CV/igrp-studio-springboot-engine.git"
   },
   "keywords": [
     "Spring",
@@ -26,7 +26,7 @@
     "API",
     "API-Rest"
   ],
-  "author": "Marcelo Monteiro - NOSi",
+  "author": "NOSi E.P.E - Núcleo Operacional Para a Sociedade de Informação",
   "license": "ISC",
   "dependencies": {
     "ajv": "^8.17.1",
