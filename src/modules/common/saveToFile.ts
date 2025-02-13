@@ -1,17 +1,90 @@
 import fs from 'fs-extra';
-import { ERROR_MESSAGE } from '../../utils/constants';
-import { dirname } from 'path';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PACKAGES } from '../../utils/constants';
+import { dirname, join } from 'path';
+import {
+  getDirectoryPath,
+  loadControllerConfigs,
+  loadDTOConfigs,
+  loadEnumConfigs,
+  loadModelConfigs, loadResponseConfigs,
+} from '../../utils/helpers';
+import { closeSync, openSync } from 'node:fs';
 
 /**
  * Saves the rendered template into the specified file. It will create the dir if it does not exist.
  * @param {string} content - The content to save in the file.
  * @param {string} outputPath - The output path where the content will be saved.
+ * @param {boolean} override - Overrides the file if true
+ * @param {string | undefined} type - The type of the element to be saved
+ * @param {string | undefined} id - The element's identifier
+ * @param {string | undefined} module - The element's module
+ * @param {string | undefined} basePath - The application base path
+ * @param {string} extension - The file extension
  * @throws {Error} - Throws an error if the content or output path is invalid.
  */
-export const saveToFile = async (content: string, outputPath: string, override: boolean = true) => {
+export const saveToFile = async (content: string, outputPath: string, override: boolean = true, type: (string | undefined) = undefined, id: (string | undefined) = undefined, module: (string | undefined) = undefined, basePath: (string | undefined) = undefined, extension: string = EXTENSIONS.JAVA) => {
+  const exists = (await fs.pathExists(outputPath));
   if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
   if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-  if (!override && (await fs.pathExists(outputPath))) return
+  if (!override && exists) return;
+
+  if(type && id) {
+    if(!basePath) throw ERROR_MESSAGE.INVALID_API_CONFIG;
+    if(type === DIRECTORIES.MODELS || type === DIRECTORIES.CONFIG_MODEL) {
+      const models = await loadModelConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const model = models.find((it) => it.id === id);
+      if (model) {
+        let sourcePath;
+        if(extension === EXTENSIONS.JSON)
+          sourcePath = join(getDirectoryPath(outputPath), model.name.concat(extension));
+        else {
+          if (outputPath.includes('domain'))
+            sourcePath = join(getDirectoryPath(outputPath), model.name.concat(extension));
+          else
+            sourcePath = join(
+              getDirectoryPath(getDirectoryPath(outputPath)),
+              model.name.toLowerCase(),
+            );
+        }
+
+        if(sourcePath != outputPath && sourcePath != getDirectoryPath(outputPath)) {
+          await fs.remove(sourcePath);
+        }
+
+        if(outputPath.includes('domain')) {
+          const repositorySourcePath = join(getDirectoryPath(getDirectoryPath(outputPath)), DIRECTORIES.REPOSITORY, 'I' + model.name.concat('Repository' + extension));
+          await fs.remove(repositorySourcePath);
+        }
+
+      }
+
+    } else if(type === DIRECTORIES.DTO || type === DIRECTORIES.CONFIG_DTO) {
+      const dtos = await loadDTOConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const dto = dtos.find(it => it.id === id);
+      if(dto) {
+        const sourcePath = join(getDirectoryPath(outputPath), dto.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), dto.name.replace(/dto$/i, '').concat('DTO', extension)));
+      }
+    } else if(type === DIRECTORIES.ENUM || type === DIRECTORIES.CONFIG_ENUM) {
+      const enums = await loadEnumConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const theEnum = enums.find(it => it.id === id);
+      if(theEnum) {
+        const sourcePath = join(getDirectoryPath(outputPath), theEnum.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), theEnum.name.concat(extension)));
+      }
+    } else if(type === DIRECTORIES.CONFIG_RESPONSE) {
+      const responses = await loadResponseConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const response = responses.find(it => it.id === id);
+      if(response) {
+        const sourcePath = join(getDirectoryPath(outputPath), response.name.concat(extension));
+        if(sourcePath != outputPath)
+          await fs.remove(join(getDirectoryPath(sourcePath), response.name.concat(extension)));
+      }
+    }
+
+  }
 
   await fs.mkdir(dirname(outputPath), {recursive: true});
 
@@ -23,7 +96,7 @@ export const saveToFile = async (content: string, outputPath: string, override: 
 export const saveBinaryToFile = async (
   content: Buffer,  // Content should be a Buffer for binary files
   outputPath: string,
-  override: boolean = true
+  override: boolean = true,
 ) => {
   if (!content) throw ERROR_MESSAGE.INVALID_API_CONFIG;
   if (!outputPath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;

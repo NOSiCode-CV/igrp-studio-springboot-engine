@@ -201,6 +201,16 @@ export const getDDDCommandHandlerOutputDir = (context: RenderContext<DTOBaseConf
     DIRECTORIES.HANDLERS
   );
 
+export const getDDDTestCommandHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.COMMANDS,
+    DIRECTORIES.HANDLERS
+  );
+
 export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
@@ -221,6 +231,16 @@ export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     DIRECTORIES.HANDLERS
   );
 
+export const getDDDTestQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERIES,
+    DIRECTORIES.HANDLERS
+  );
+
 export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
@@ -235,6 +255,16 @@ export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.EVENTS,
+    DIRECTORIES.HANDLERS
+  );
+
+export const getDDDTestEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
     DIRECTORIES.EVENTS,
@@ -359,10 +389,26 @@ export const getServiceDir = (context: RenderContext<ControllerConfig | ModelCon
     DIRECTORIES.SERVICES
   );
 
+export const getTestServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
+    DIRECTORIES.SERVICES
+  );
+
 export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.DOMAIN,
+    DIRECTORIES.SERVICE
+  );
+
+export const getDDDTestServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+  path.join(
+    context.basePath,
+    getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
     DIRECTORIES.SERVICE
@@ -438,6 +484,10 @@ export const loadDTOConfigs = async function (module: string, basePath: string):
 
 export const loadEnumConfigs = async function (module: string, basePath: string): Promise<EnumConfig[]> {
   return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module })));
+}
+
+export const loadResponseConfigs = async function (module: string, basePath: string): Promise<EnumConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_RESPONSE, { module })));
 }
 
 export const loadModelConfigs = async function (module: string, basePath: string): Promise<ModelConfig[]> {
@@ -519,3 +569,23 @@ export const extractTypeFromList = (typeString: string): string | null => {
     return typeString
   return null; 
 };
+
+/**
+ * Extracts the directory path from a given full file path.
+ * @param filePath - The full path of the file.
+ * @returns The directory path containing the file.
+ */
+export const getDirectoryPath = (filePath: string): string => {
+  return path.dirname(filePath);
+}
+
+export const normalizeOutput = (outputPath: string): string => {
+  console.log("Length: ", outputPath.length)
+  if (process.platform === "win32" && outputPath.length > 50) {
+    return "\\\\?\\" + path.resolve(outputPath);
+  } else return outputPath;
+}
+
+export const isResponseCollection = (type: string): boolean => {
+  return type === 'array'
+}

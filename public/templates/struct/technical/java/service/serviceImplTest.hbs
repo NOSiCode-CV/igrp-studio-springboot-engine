@@ -1,0 +1,48 @@
+{{> package-java }}
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
+
+@ExtendWith(MockitoExtension.class)
+public class {{resourceConfig.name}}ServiceTest {
+
+    @InjectMocks
+    private {{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
+
+    @Mock
+    private I{{resourceConfig.name}}Service i{{resourceConfig.name}}Service;
+
+    @BeforeEach
+    void setUp() {
+        // TODO: initialize mock dependencies if needed
+    }
+
+    {{#each resourceConfig.actions}}
+    @Test
+    void test{{capitalize actionName}}() {
+        // TODO: Implement unit test for {{actionName}}
+        // Example:
+        // Given
+        // {{resolveResponse this.responses}} expectedResponse = ...;
+        // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
+
+        // When
+        // ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase ../resourceConfig.name}}Service.{{actionName}}(...);
+
+        // Then
+        // assertNotNull(response);
+        // assertEquals(expectedResponse, response.getBody());
+    }
+
+    {{/each}}
+}

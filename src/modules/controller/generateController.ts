@@ -31,9 +31,9 @@ export const generateController = async (context: RenderContext<ControllerConfig
   checkAcceptsAndRequestBody(context.resourceConfig.actions);
   await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes);
 
-  await saveControllerConfig(context.resourceConfig, context.basePath);
+  await saveToFile(controller, controllerOutputPath, true, DIRECTORIES.CONTROLLER, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
-  await saveToFile(controller, controllerOutputPath);
+  await saveControllerConfig(context.resourceConfig, context.basePath);
 
   // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created controller has the correct access rights configured

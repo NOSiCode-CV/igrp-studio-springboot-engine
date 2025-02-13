@@ -2,7 +2,7 @@
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{> lombok-java-imports}}
-{{{resolve-imports resourceConfig}}}
+{{{resolve-imports resourceConfig baseConfig}}}
 
 {{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}

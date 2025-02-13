@@ -1,9 +1,8 @@
 import fs from 'fs-extra';
-import { addDTO } from '../src';
-import { DTOConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+import { addDTO, serializeElement } from '../src';
+import { DTOConfig, JsonConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 beforeAll(async () => {
   await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -19,6 +18,7 @@ describe('DTO generator', () => {
       // Owner DTO
 
       {
+        "id": "ab3de9fghj",
         "type": "dto",
         "module": "core",
         "name": "Owner",
@@ -63,6 +63,7 @@ describe('DTO generator', () => {
       // Animal DTO
 
       {
+        "id": "yjektfkd2g",
         "type": "dto",
         "module": "core",
         "name": "Animal",
@@ -116,6 +117,7 @@ describe('DTO generator', () => {
       // User DTO
 
       {
+        "id": "mlu6m6vxha",
         "type": "dto",
         "name": "User",
         "template": "classic",
@@ -141,6 +143,12 @@ describe('DTO generator', () => {
             "regex": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"
           },
           {
+            "type": "Level",
+            "objectType": "enum",
+            "name": "userLevel",
+            "required": true
+          },
+          {
             "type": "string",
             "objectType": "java",
             "name": "roles",
@@ -157,6 +165,7 @@ describe('DTO generator', () => {
       },
 
       {
+        "id": "hcxghbutva",
         "type": "dto",
         "name": "Teste",
         "template": "classic",
@@ -167,6 +176,13 @@ describe('DTO generator', () => {
             "name": "field",
             "required": true
           },
+          {
+            "type": "UserDTO",
+            "objectType": "dto",
+            "name": "user",
+            "required": true
+          },
+
         ]
       }
 
@@ -177,5 +193,59 @@ describe('DTO generator', () => {
     }
   })
 
+  it('should create a DTO based on JSON serialization', async() => {
+
+    const sampleJson = {
+      name: "John Doe",
+      age: 34,
+      birthDate: "1995-09-10"
+    }
+
+    const json = JSON.stringify(sampleJson)
+
+    const config : JsonConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      json: json
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  })
+
+  it('should create a DTO based on XML serialization', async() => {
+
+    const sampleXml: string = `
+      <name>John Doe</name>
+      <age>34</age>
+      <birthDate>1995-09-10</birthDate>
+  `;
+
+    const config: XmlConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      xml: sampleXml
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a DTO based on SQL SELECT command serialization', async() => {
+
+    const sampleSql = "SELECT name, age, birth_date FROM persons";
+
+    const config: SqlConfig = {
+      name: "Person",
+      template: "classic",
+      type: "dto",
+      sql: sampleSql
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
 
 });

@@ -897,7 +897,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java';
+  objectType: 'dto' | 'model' | 'java' | 'enum';
   required: boolean;
   before?: boolean;
   after?: boolean;
@@ -980,7 +980,7 @@ export interface Attribute {
   generationType?: GenerationType;
   defaultValue?: string;
   relation?: Relation;
-  objectType?: 'dto' | 'model' | 'java';
+  objectType?: 'dto' | 'model' | 'java' | 'enum';
 }
 ```
 - **Attribute**: Defines an attribute for a model, including its type, constraints, and relationships.

@@ -64,12 +64,16 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       type: "boolean",
       nullable: false
     },
+    enableEntityRevision: {
+      type: "boolean",
+      nullable: false
+    },
     igrpCoreVersion: {
       type: "string",
       nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision"],
   additionalProperties: false,
   errorMessage: {
     required: {

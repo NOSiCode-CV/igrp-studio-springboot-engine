@@ -122,6 +122,11 @@ const enumAttributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
     },
+    skipFieldRevision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
+    },
     nullable: {
       type: "boolean",
       nullable: true,
@@ -177,6 +182,11 @@ const enumAttributeSchema: JSONSchemaType<Attribute> = {
 const enumSchema: JSONSchemaType<EnumConfig> = {
   type: 'object',
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     type: {
       type: 'string',
       const: 'enum',

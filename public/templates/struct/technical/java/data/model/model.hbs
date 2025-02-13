@@ -8,11 +8,17 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceCo
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.relation.entity}}.{{capitalizeEntity this.relation.entity}};
     {{/if}}
   {{/if}}
-{{/each}}{{#if resourceConfig.audit}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;{{/if}}
+{{/each}}{{#if resourceConfig.audit~}}
+  {{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
+  {{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
+  {{/if}}
+{{~/if}}
 
-{{{resolve-imports resourceConfig}}}
+{{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.revision~}}import org.hibernate.envers.Audited;{{~/if}}
 import cv.igrp.stereotype.IgrpEntity;
 import jakarta.persistence.*;
 import jakarta.validation.*;
@@ -21,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 {{#each dateTimeAttributes}}
 import java.time.{{this}};
 {{/each}}
@@ -30,8 +37,10 @@ import java.math.{{this}};
 {{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
 {{model-imports resourceConfig}}
 
+{{#if resourceConfig.revision~}}@Audited{{~/if}}
 @Getter
 @Setter
+@ToString
 @IgrpEntity
 @Entity
 @NoArgsConstructor
@@ -54,11 +63,13 @@ import java.math.{{this}};
   {{/each}}
   }
 {{/if}})
-public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditEntity {{/if}}{
+public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
 
   {{#if resourceConfig.primaryKey}}
   @EmbeddedId
-  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}{{#if this.primaryKey}}
+  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}
+  {{#if this.skipFieldRevision}}@NotAudited{{/if~}}
+  {{#if this.primaryKey}}
   @Id
   @GeneratedValue(strategy = GenerationType.{{this.generationType}})
   @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
@@ -67,15 +78,18 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}} extends AuditE
   @NotBlank(message = "{{this.name}} is mandatory"){{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
   private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
   @ColumnDefault("{{this.defaultValue}}"){{/if}}
   {{#if (eq this.type "file")}}
   @Lob
   @JdbcType(BinaryJdbcType.class)
   {{/if}}
+  {{#if (eq this.objectType "enum")}}
+  @Enumerated(EnumType.STRING)
+  {{/if}}
   {{#ifNot (eq this.type "relation")}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
   private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
   @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}

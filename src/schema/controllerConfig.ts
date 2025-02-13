@@ -300,6 +300,11 @@ const responseSchemaContent: JSONSchemaType<SchemaContent> = {
 const bodySchema: JSONSchemaType<Body> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     description: {
       type: "string",
       nullable: true,
@@ -340,6 +345,11 @@ const bodySchema: JSONSchemaType<Body> = {
 const baseBodySchema: JSONSchemaType<BaseBody> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     content: {
       type: "object",
       required: [],
@@ -449,6 +459,11 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
+    },
+    skipFieldRevision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
     },
     nullable: {
       type: "boolean",
@@ -588,6 +603,11 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
 const controllerSchema: JSONSchemaType<ControllerConfig> = {
   type: 'object',
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     type: { 
       type: 'string', 
       const: 'controller',

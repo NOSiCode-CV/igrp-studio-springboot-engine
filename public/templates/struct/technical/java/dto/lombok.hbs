@@ -5,14 +5,14 @@ import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 {{> lombok-java-imports}}
 
-{{{resolve-imports resourceConfig}}}
+{{{resolve-imports resourceConfig baseConfig}}}
 
 {{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
 @IgrpDTO
-public class {{resourceConfig.name}}DTO{
+public class {{resourceConfig.name}}DTO {
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}

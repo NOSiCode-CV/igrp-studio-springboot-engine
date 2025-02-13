@@ -13,6 +13,11 @@ import {
 const bodySchema: JSONSchemaType<ResponseConfig> = {
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
     description: {
       type: "string",
       nullable: true,

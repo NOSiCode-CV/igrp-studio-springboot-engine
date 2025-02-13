@@ -71,12 +71,15 @@ export const DIRECTORIES = {
 export const PACKAGES = {
   MODELS: 'models',
   DTO: 'dto',
-  CONTROLLERS: 'controller'
+  CONTROLLERS: 'controller',
+  CONSTANTS: 'constants',
+  ENUM: 'enum',
 };
 
 export const PACKAGE_NS = {
   local: 'local',
   java: 'java',
+  enum: 'enum',
   model: 'model',
   dto: 'dto',
   controller: 'controller'
@@ -118,7 +121,8 @@ export const PARTIALS = [
   "package-java.hbs",
   "postgres-docker-service.hbs",
   "security-maven-dependencies.hbs",
-  "spring-maven-dependencies.hbs"
+  "spring-maven-dependencies.hbs",
+  "spring-entity-revision-dependencies.hbs"
 ]
 
 export const ERROR_MESSAGE = {
@@ -171,6 +175,7 @@ export const TEMPLATES = {
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
+  DOMAIN_TEST_SERVICE: 'struct/technical/java/service/serviceImplTest.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
   DOMAIN_ENUM: 'struct/technical/java/constants/enum.hbs',
   DOMAIN_REPOSITORY: 'struct/technical/java/data/repository/repository.hbs',
@@ -178,6 +183,7 @@ export const TEMPLATES = {
   APPLICATION_RESOURCES_DEVELOPMENT: 'struct/resource/application-development.properties.hbs',
   APPLICATION_RESOURCES_STAGING: 'struct/resource/application-staging.properties.hbs',
   APPLICATION_RESOURCES_PRODUCTION: 'struct/resource/application-production.properties.hbs',
+  APPLICATION_RESOURCES_BANNER: 'struct/resource/banner.hbs',
   DOMAIN_MODEL_PRIMARY_KEY: 'struct/technical/java/data/model/primaryKey.hbs',
   DOMAIN_MODEL_AUDIT: 'struct/technical/java/data/model/audit.hbs',
   APPLICATION_AUDIT_AWARE: 'struct/technical/java/data/model/applicationAditorAware.hbs',
@@ -284,6 +290,7 @@ export const TEMPLATES = {
   DDD_AGGREGATE_SERVICE: 'struct/domain/java/domain/service/aggregateservice.hbs',
   DDD_CMD_SERVICE: 'struct/domain/java/domain/service/cmdservice.hbs',
   DDD_CMD_SERVICE_IMPL: 'struct/domain/java/domain/impl/cmdserviceimpl.hbs',
+  DDD_TEST_CMD_SERVICE_IMPL: 'struct/domain/java/domain/impl/cmdserviceimpltest.hbs',
   DDD_QUERY_SERVICE: 'struct/domain/java/domain/service/queryservice.hbs',
   DDD_QUERY_SERVICE_IMPL: 'struct/domain/java/domain/impl/queryserviceimpl.hbs',
   DDD_DOMAIN_ENTITY: 'struct/domain/java/domain/domainentity.hbs',
@@ -308,6 +315,7 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd.hbs',
+  DDD_LITE_TEST_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd-test.hbs',
 
   DDD_LITE_DTO: {
     'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
@@ -327,6 +335,7 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd.hbs',
+  DDD_LITE_TEST_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd-test.hbs',
 
   DDD_LITE_EVENT: {
     'classic': 'struct/domain-lite/java/domain/events/events/event-ddd.hbs',
@@ -334,8 +343,8 @@ export const TEMPLATES = {
   },
 
   DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd.hbs',
+  DDD_LITE_TEST_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd-test.hbs',
   DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
-  DDD_LITE_MODEL: 'struct/domain-lite/java/domain/model/model-ddd.hbs',
   DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',
   DDD_LITE_CONTROLLER: 'struct/domain-lite/java/infrastructure/controller/controller-ddd.hbs',
   DDD_LITE_REPOSITORY_IMPL: 'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
@@ -392,6 +401,7 @@ export const COMMON_FILES = {
   APPLICATION_PROPERTIES_FILE_DEVELOPMENT: 'application-development.properties',
   APPLICATION_PROPERTIES_FILE_STAGING: 'application-staging.properties',
   APPLICATION_PROPERTIES_FILE_PRODUCTION: 'application-production.properties',
+  APPLICATION_BANNER_FILE: 'banner.txt',
   BASE_API: 'baseApi.json',
   DOCKERFILE: 'Dockerfile',
   DOCKERIGNORE: '.dockerignore',
@@ -459,8 +469,10 @@ export const PATTERNS = {
   PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
-  PATH_VALIDATION: '^[a-zA-Z_/]+$',  
+  PATH_VALIDATION: '^[a-zA-Z_/]+$',
   STATUS_CODE: '^\\d{3}$',
+  JSON_PATTERN: '^\\{(?:[^{}]|(?:\\{[^{}]*\\}))*\\}$',
+  SQL_PATTERN: '^SELECT\\s+[a-zA-Z0-9_ ,]+\\s+FROM\\s+[a-zA-Z0-9_]+;?$'
 };
 
 const IMPORT_MAP = {
@@ -1086,6 +1098,64 @@ export const GENERIC_TYPES: Map<
   })
 );
 
+export const TYPESCRIPT_TYPES: Map<
+  string,
+  { java: TypeMetadata; dotnet: TypeMetadata; python: TypeMetadata; kotlin: TypeMetadata; generic: TypeMetadata; }
+> = new Map(
+  Object.entries({
+    boolean: {
+      java: { name: 'boolean', primitive: true },
+      dotnet: { name: 'bool', primitive: true },
+      python: { name: 'bool', primitive: true },
+      kotlin: { name: 'Boolean', primitive: true },
+      generic: { name: 'boolean', primitive: true }
+    },
+    number: {
+      java: { name: 'Double', primitive: true },
+      dotnet: { name: 'double', primitive: true },
+      python: { name: 'float', primitive: true },
+      kotlin: { name: 'Double', primitive: true },
+      generic: { name: 'double', primitive: true }
+    },
+    string: {
+      java: { name: 'String', primitive: false },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'String', primitive: false },
+      generic: { name: 'string', primitive: true }
+    },
+    object: {
+      java: { name: 'Object', primitive: false },
+      dotnet: { name: 'object', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Any', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    undefined: {
+      java: { name: 'Void', primitive: false },
+      dotnet: { name: 'void', primitive: false },
+      python: { name: 'None', primitive: false },
+      kotlin: { name: 'Unit', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    function: {
+      java: { name: 'Runnable', primitive: false },
+      dotnet: { name: 'Action', primitive: false, namespace: 'System' },
+      python: { name: 'Callable', primitive: false, namespace: 'collections.abc' },
+      kotlin: { name: '() -> Unit', primitive: false },
+      generic: { name: 'object', primitive: true }
+    },
+    symbol: {
+      java: { name: 'Object', primitive: false },
+      dotnet: { name: 'object', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Any', primitive: false },
+      generic: { name: 'object', primitive: true }
+    }
+  })
+);
+
+
 export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
 //export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
 
@@ -1202,6 +1272,6 @@ export const CRUD_DISABLED_OPTIONS = [
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object'] as const
+export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const

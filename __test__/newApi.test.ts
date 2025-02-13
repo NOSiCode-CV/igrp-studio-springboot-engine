@@ -1,9 +1,8 @@
-import fs from 'fs-extra';
+
 import { newApi } from '../src';
 import { BaseApiConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from 'outputDirPath';
 
 const domainApiConfig: BaseApiConfig = {
   type: 'springboot',
@@ -14,7 +13,8 @@ const domainApiConfig: BaseApiConfig = {
   database: 'Postgresql',
   projectStructureStyle: 'domain',
   enableObservability: true,
-  igrpCoreVersion: "0.0.1-20250115.133643-3"
+  enableEntityRevision: true,
+  igrpCoreVersion: "0.0.1-SNAPSHOT"
 };
 
 const technicalApiConfig: BaseApiConfig = {
@@ -26,7 +26,8 @@ const technicalApiConfig: BaseApiConfig = {
   database: 'Postgresql',
   projectStructureStyle: 'technical',
   enableObservability: false,
-  igrpCoreVersion: "0.0.1-20250115.133643-3"
+  enableEntityRevision: true,
+  igrpCoreVersion: "0.0.1-SNAPSHOT"
 };
 
 beforeAll(async () => {

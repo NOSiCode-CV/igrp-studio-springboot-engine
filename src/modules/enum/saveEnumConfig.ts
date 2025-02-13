@@ -1,6 +1,6 @@
 import { saveToFile } from '../common/saveToFile';
 import { EnumConfig } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { getEnumConfigPath } from '../../utils/helpers';
 
 /**
@@ -16,5 +16,5 @@ export const saveEnumConfig = async (config: EnumConfig, basePath: string) => {
   }
 
   const output = getEnumConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
-  await saveToFile(JSON.stringify(config), output);
+  await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_ENUM, config.id, config.module, basePath, EXTENSIONS.JSON);
 };

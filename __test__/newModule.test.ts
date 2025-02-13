@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import { addModule } from '../src';
 import { ModuleConfig } from '../src/interfaces/types';
-
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR } from './outputDirPath';
 
 const moduleConfig: ModuleConfig = {
   type: 'module',

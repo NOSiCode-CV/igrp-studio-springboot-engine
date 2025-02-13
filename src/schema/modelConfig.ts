@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   UniqueConstraint,
   IModelPermission,
-  EntityIndex,
+  EntityIndex, AttributeType,
 } from '../interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
@@ -17,6 +17,13 @@ import {
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
 } from '../utils/constants';
+
+const genericAttributeSchema: JSONSchemaType<AttributeType> = {
+  type: "string",
+  nullable: false,
+  pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+  errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+}
 
 const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
@@ -83,8 +90,7 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   properties: {
     type: {
       type: "string",
-      enum: GENERIC_MODEL_ATTRIBUTE_TYPES,  // Ensure no duplicates in this enum list
-      errorMessage: `The attribute type must be one of ${GENERIC_MODEL_ATTRIBUTE_TYPES} and cannot be empty.`
+      oneOf: genericAttributeSchema.oneOf
     },
     name: {
       type: "string",
@@ -100,6 +106,11 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'The unique attribute must be a boolean value if provided.'
+    },
+    skipFieldRevision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
     },
     nullable: {
       type: "boolean",
@@ -299,8 +310,13 @@ const entityIndexSchema: JSONSchemaType<EntityIndex> = {
 const modelConfigSchema: JSONSchemaType<ModelConfig> = {
   type: "object",
   properties: {
-    type: { 
-      type: "string", 
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The id if provided must be a string.'
+    },
+    type: {
+      type: "string",
       const: "model",
       errorMessage: 'The type must be "model".'
     },
@@ -346,6 +362,11 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'The audit field, if provided, must be a boolean value.'
+    },
+    revision: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'The revision definition, if provided, must be a boolean value.'
     },
     module: {
       type: "string",

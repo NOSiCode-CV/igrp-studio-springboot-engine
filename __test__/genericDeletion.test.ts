@@ -1,8 +1,7 @@
 import { deleteElement } from '../src';
 import { DeleteConfig } from '../src/interfaces/types';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 describe('Generic deletion in domain driven design project style', () => {
     it('should delete a element', async () => {

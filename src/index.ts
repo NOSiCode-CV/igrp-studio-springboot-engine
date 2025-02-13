@@ -1,14 +1,22 @@
 import {
   ApiConfig,
-  BaseApiConfig, ControllerAction,
-  ControllerConfig, DeleteConfig,
-  DTOConfig, EnumConfig,
+  BaseApiConfig,
+  ControllerAction,
+  ControllerConfig,
+  DdlConfig,
+  DeleteConfig,
+  DTOConfig,
+  EnumConfig,
   HandlerConfig,
   JavaAttribute,
+  JsonConfig,
   ModelConfig,
   ModuleConfig,
   PermissionConfig,
-  RenderContext, ResponseConfig,
+  RenderContext,
+  ResponseConfig,
+  SqlConfig,
+  XmlConfig,
 } from './interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
@@ -16,12 +24,16 @@ import {
   DIRECTORIES,
   ERROR_MESSAGE,
   GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_COLLECTION_TYPES,
+  GENERIC_MODEL_ATTRIBUTE_TYPES,
+  HTTP_HEADER_TYPES,
   HTTP_METHOD_TYPES,
   MIME_TYPES,
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  SCHEMA_TYPES, GENERIC_ATTRIBUTE_TYPES, GENERIC_COLLECTION_TYPES, HTTP_HEADER_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
+  SCHEMA_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -66,13 +78,18 @@ import { saveResponseConfig } from './modules/response/saveResponseConfig';
 import { generateSingleResponse } from './modules/response/generateSingleResponse';
 import { deleteValidation } from './schema/deleteConfig';
 import { deleteElementConfig } from './modules/delete/deleteElementConfig';
+import { serializationValidation } from './schema/serializationConfig';
+import { serializeData } from './modules/serialization/serializeData';
+import { saveEnumConfig } from './modules/enum/saveEnumConfig';
+import { generateTestServiceInmpl } from './modules/test/generateTestService';
+import { generateTestHandlers } from './modules/test/generateTestHandlers';
 
 /**
  * Main Function that creates the base api
  *
  * This function initializes and sets up the base structure for an API based on the provided configuration.
  *
- * @param {ApiConfig} config - The configuration object containing all the basic API information.
+ * @param {BaseApiConfig} dirty - The configuration object containing all the basic API information.
  * @param {string} basePath - The output path where the API will be created. This path must be empty.
  * @throws {Error} Will throw an error if the API configuration is invalid or if the specified directory is not empty.
  *
@@ -123,7 +140,8 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     projectStructureStyle: baseConfig.projectStructureStyle,
     name: baseConfig.name,
     enableObservability: baseConfig.enableObservability,
-    igrpCoreVersion: baseConfig.igrpCoreVersion
+    enableEntityRevision: baseConfig.enableEntityRevision,
+    igrpCoreVersion: baseConfig.igrpCoreVersion,
   };
 
   if (!basePath) {
@@ -140,7 +158,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     resourceConfig: undefined, // On base API, there is no specific config.
     basePath,
     baseConfig: config,
-    fullPath: basePath
+    fullPath: basePath,
   };
   /**
    * Creates the folder structure needed for the API.
@@ -163,7 +181,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
  *
  * This function creates a module based on the provided configuration and saves it to the specified API base path.
  *
- * @param {ModuleConfig} config - The configuration object containing all the basic module information.
+ * @param {ModuleConfig} dirty - The configuration object containing all the basic module information.
  * @param {string} basePath - The output path where the module will be created
  * @throws {Error} Will throw an error if the module configuration is invalid.
  *
@@ -205,7 +223,7 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig: baseConfig,
-    fullPath: getMainPath(baseConfig.group, baseConfig.packageName)
+    fullPath: getMainPath(baseConfig.group, baseConfig.packageName),
   };
 
   if (
@@ -230,7 +248,7 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
  * This function creates a model based on the provided configuration and saves it to the specified API base path.
  * It also generates the associated CRUD operations if enabled in the configuration.
  *
- * @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
+ * @param {ModelConfig} dirty - Model configuration object, which includes the name and other details of the model.
  * @param {string} basePath - Application base path where the model will be saved and generated to the API.
  *
  * @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
@@ -241,52 +259,52 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
  * import { addModel } from "spring-engine";
  * import { ModelConfig } from "spring-engine/dist/interfaces/types";
  * const config: ModelConfig = {
-*    type: 'model',
-*    name: 'User',
-*    tableName: 'user',
-*    attributes: [
-*      {
-*        type: 'integer',
-*        name: 'id',
-*        primaryKey: true,
-*        generationType: 'IDENTITY',
-*        nullable: false
-*      },
-*      {
-*        type: 'string',
-*        name: 'username',
-*        length: 255,
-*        nullable: false,
-*        unique: true
-*      },
-*      {
-*        type: 'string',
-*        name: 'email',
-*        length: 255,
-*        nullable: false,
-*        unique: true
-*      },
-*      {
-*        type: 'string',
-*        name: 'password',
-*        length: 255,
-*        nullable: false
-*      },
-*      {
-*        type: 'file',
-*        name: 'document',
-*        nullable: false
-*      },
-*      {
-*        type: 'boolean',
-*        name: 'active',
-*        nullable: false,
-*        defaultValue: true
-*      }
-*    ],
-*    crud: true,
-*    audit: true
-*  };
+ *    type: 'model',
+ *    name: 'User',
+ *    tableName: 'user',
+ *    attributes: [
+ *      {
+ *        type: 'integer',
+ *        name: 'id',
+ *        primaryKey: true,
+ *        generationType: 'IDENTITY',
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'username',
+ *        length: 255,
+ *        nullable: false,
+ *        unique: true
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'email',
+ *        length: 255,
+ *        nullable: false,
+ *        unique: true
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'password',
+ *        length: 255,
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'file',
+ *        name: 'document',
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'boolean',
+ *        name: 'active',
+ *        nullable: false,
+ *        defaultValue: true
+ *      }
+ *    ],
+ *    crud: true,
+ *    audit: true
+ *  };
  * const basePath = 'C://your_project_path';
  *
  * const createModel = async () => {
@@ -333,7 +351,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await generateModel(context);
@@ -349,7 +367,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
  * Generates and saves a DTO to the API.
  * This function creates a DTO based on the provided configuration and saves it to the specified API base path.
  *
- * @param {DTOConfig} config - DTO configuration object, which includes the name and other details of the DTO.
+ * @param {DTOConfig} dirty - DTO configuration object, which includes the name and other details of the DTO.
  * @param {string} basePath - Application base path where the DTO will be saved and generated to the API.
  *
  * @throws {Error} Will throw an error if the DTO configuration is invalid or the DTO name is missing.
@@ -429,16 +447,16 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  if (config.type === 'dto') await saveDTOConfig(config, basePath);
-
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await generateDTO(context);
+
+  if (config.type === 'dto') await saveDTOConfig(config, basePath);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     if (
@@ -447,6 +465,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
       context.resourceConfig.type === 'query'
     ) {
       await generateHandlers(context);
+      await generateTestHandlers(context);
     }
   }
 };
@@ -455,7 +474,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
  * Generates and saves a response to the API.
  * This function creates a response based on the provided configuration and saves it to the specified API base path.
  *
- * @param {ResponseConfig} config - Response configuration object, which includes the name and other details of the response.
+ * @param {ResponseConfig} dirty - Response configuration object, which includes the name and other details of the response.
  * @param {string} basePath - Application base path where the response will be saved and generated to the API.
  *
  * @throws {Error} Will throw an error if the response configuration is invalid or the response name is missing.
@@ -504,7 +523,13 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
   const config: ResponseConfig = cleaner(dirty);
 
   // this function check is the request params in actions have duplicated names
-  checkDuplicated([], [], [], [], config.content["application/json"] ?? config.content["multipart/form-data"]);
+  checkDuplicated(
+    [],
+    [],
+    [],
+    [],
+    config.content['application/json'] ?? config.content['multipart/form-data'],
+  );
 
   const valid = validateResponse(config);
 
@@ -517,17 +542,16 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  await saveResponseConfig(config, basePath);
-
   const context: RenderContext<ResponseConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await generateSingleResponse(context);
 
+  await saveResponseConfig(config, basePath);
 };
 
 /**
@@ -584,18 +608,17 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  // [22-01-2025] No need to save enum config
-  //await saveEnumConfig(config, basePath);
-
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await generateEnum(context);
 
+  // [22-01-2025] No need to save enum config; [04-02-2025] Enum config is necessary for attribute setting
+  await saveEnumConfig(config, basePath);
 };
 
 /**
@@ -647,7 +670,7 @@ export const deleteElement = async (config: DeleteConfig, basePath: string) => {
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await deleteElementConfig(context, false);
@@ -665,14 +688,19 @@ export const deleteElement = async (config: DeleteConfig, basePath: string) => {
  * @param {ControllerAction} act - The controller action, used to determine the request body schema type.
  * @returns {Promise<DTOConfig>} A promise resolving to the DTO configuration.
  */
-async function requestDtoConfig(module: string, context: RenderContext<ControllerConfig>, act: ControllerAction): Promise<DTOConfig> {
+async function requestDtoConfig(
+  module: string,
+  context: RenderContext<ControllerConfig>,
+  act: ControllerAction,
+): Promise<DTOConfig> {
   try {
     return await loadDTOConfig(
       'dto',
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-        act?.requestBody?.content['multipart/form-data'].schema.type ?? '',
+          act?.requestBody?.content['multipart/form-data'].schema.type ??
+          '',
       ).replace(/dto$/i, ''),
     );
   } catch (e) {
@@ -682,7 +710,8 @@ async function requestDtoConfig(module: string, context: RenderContext<Controlle
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-        act?.requestBody?.content['multipart/form-data'].schema.type ?? '',
+          act?.requestBody?.content['multipart/form-data'].schema.type ??
+          '',
       ).replace(/dto$/i, ''),
     );
   }
@@ -694,7 +723,7 @@ async function requestDtoConfig(module: string, context: RenderContext<Controlle
  * This function creates a controller based on the provided configuration and integrates it into the specified API base path.
  * It also generates the corresponding service interface for the controller actions defined.
  *
- * @param {ControllerConfig} config - The controller configuration object, including the controller name, base path, and actions.
+ * @param {ControllerConfig} dirty - The controller configuration object, including the controller name, base path, and actions.
  * @param {string} basePath - The base path of the application where the controller will be generated and saved.
  *
  * @throws {Error} Throws an error if the controller configuration is invalid or if the base path is not provided.
@@ -943,7 +972,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     resourceConfig: config,
     basePath,
     baseConfig,
-    fullPath: basePath
+    fullPath: basePath,
   };
 
   await generateController(context);
@@ -956,65 +985,94 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      const config: DTOConfig | null = (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
-        ? await requestDtoConfig(module, context, act)
-        : null;
+      const config: DTOConfig | null =
+        (act?.requestBody?.content['application/json']?.schema.objectType ??
+        act?.requestBody?.content['multipart/form-data']?.schema.objectType)
+          ? await requestDtoConfig(module, context, act)
+          : null;
       await addDTO(
         {
           type: act.method === 'GET' ? 'query' : 'command',
           name: act.actionName,
           template: 'classic',
           module: module,
-          attributes: (act?.requestBody?.content["application/json"] ?? act?.requestBody?.content["multipart/form-data"]) ? (act?.requestBody?.content["application/json"]?.schema.objectType ?? act?.requestBody?.content["multipart/form-data"]?.schema.objectType)
-            ? config!.attributes : requestConfig?.resourceConfig.attributes
-            : ((act?.modelAttribute ? [{ name: act.modelAttribute.toLowerCase(), type: act.modelAttribute, objectType: 'dto', required: false }] : []).concat(act?.pathVariables
-                ? act.pathVariables
-                    .map((e) => ({
-                      name: e.name,
-                      type: e.type,
-                      objectType: 'java',
-                      required: true,
-                    }))
-                    .concat(
-                      act?.requestParams
-                        ? act.requestParams.map((e) => ({
+          attributes:
+            (act?.requestBody?.content['application/json'] ??
+            act?.requestBody?.content['multipart/form-data'])
+              ? (act?.requestBody?.content['application/json']?.schema.objectType ??
+                act?.requestBody?.content['multipart/form-data']?.schema.objectType)
+                ? config!.attributes
+                : requestConfig?.resourceConfig.attributes
+              : ((act?.modelAttribute
+                  ? [
+                      {
+                        name: act.modelAttribute.toLowerCase(),
+                        type: act.modelAttribute,
+                        objectType: 'dto',
+                        required: false,
+                      },
+                    ]
+                  : []
+                ).concat(
+                  act?.pathVariables
+                    ? act.pathVariables
+                        .map((e) => ({
+                          name: e.name,
+                          type: e.type,
+                          objectType: 'java',
+                          required: true,
+                        }))
+                        .concat(
+                          act?.requestParams
+                            ? act.requestParams.map((e) => ({
+                                name: e.name,
+                                type: e.type,
+                                objectType: 'java',
+                                required: true,
+                              }))
+                            : [],
+                        )
+                    : act?.requestParams
+                      ? act.requestParams
+                          .map((e) => ({
                             name: e.name,
-                            type: e.type,
+                            type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
                             objectType: 'java',
                             required: true,
                           }))
-                        : [],
-                    )
-                : act?.requestParams
-                  ? act.requestParams
-                      .map((e) => ({
-                        name: e.name,
-                        type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                        objectType: 'java',
-                        required: true,
-                      }))
-                      .concat(
-                        act?.pathVariables
-                          ? act.pathVariables.map((e) => ({
-                              name: e.name,
-                              type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                              objectType: 'java',
-                              required: true,
-                            }))
-                          : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-                      )
-                  : [
-                      { name: 'none', type: 'object', objectType: 'java', required: false },
-                    ]) as JavaAttribute[]),
+                          .concat(
+                            act?.pathVariables
+                              ? act.pathVariables.map((e) => ({
+                                  name: e.name,
+                                  type: e.type as
+                                    | 'long'
+                                    | 'string'
+                                    | 'integer'
+                                    | 'boolean'
+                                    | 'object',
+                                  objectType: 'java',
+                                  required: true,
+                                }))
+                              : [
+                                  {
+                                    name: 'none',
+                                    type: 'object',
+                                    objectType: 'java',
+                                    required: false,
+                                  },
+                                ],
+                          )
+                      : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
+                ) as JavaAttribute[]),
           response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,
       );
     }
-
   } else {
     await generateServiceInterface(context);
     await generateServiceInmpl(context);
+    await generateTestServiceInmpl(context);
   }
 };
 
@@ -1061,6 +1119,74 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
 };
 
 /**
+ * Main Function that creates the module
+ *
+ * This function creates a module based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {SerializationConfig} dirty - The configuration object containing all the basic module information.
+ * @param {string} basePath - The output path where the module will be created
+ * @throws {Error} Will throw an error if the module configuration is invalid.
+ *
+ * @example
+ * Example usage:
+ * import { addModule } from "spring-engine";
+ * import { ModuleConfig } from "spring-engine/dist/interfaces/types";
+ *
+ * const config: ModuleConfig = {
+ *   type: 'module',
+ *   name: 'external',
+ * };
+ *
+ * const basePath: 'C://your_path';
+ *
+ * const createModule = async () => {
+ *    try {
+ *      await addModule(config, basePath)
+ *    }
+ *    catch(error) {
+ *      console.log(error)
+ *    }
+ * }
+ *
+ */
+export const serializeElement = async (
+  dirty: JsonConfig | XmlConfig | SqlConfig | DdlConfig,
+  basePath: string,
+) => {
+  const config = cleaner(dirty);
+  const valid = serializationValidation(config);
+
+  if (!valid && serializationValidation.errors) throw serializationValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  const data = await serializeData(config);
+
+  if (!data)
+    throw Error(
+      'Invalid data configuration. Supported serializations are JSON, XML and SQL commands',
+    );
+
+  switch (config.type) {
+    case 'dto':
+      await addDTO(data as DTOConfig, basePath);
+      break;
+    case 'model':
+      await addModel(data as ModelConfig, basePath);
+      break;
+    case 'response':
+      await addResponse(data as ResponseConfig, basePath);
+      break;
+    default:
+      throw Error(
+        "Invalid type for serialization configuration. Supported types are 'dto', 'model' and 'response'",
+      );
+  }
+};
+
+/**
  *
  * @param module
  * @param basePath
@@ -1075,7 +1201,7 @@ export const engineTypes = async (module: string, basePath: string) => {
   for (const dto of typesDTOs.values()) {
     dtos.push(`${dto.name}DTO`);
   }
-  const schemaTypes = [...SCHEMA_TYPES]
+  const schemaTypes = [...SCHEMA_TYPES];
 
   const bodyDtos = [...dtos, ...dtos.map((dto) => `List<${dto}>`)];
 
@@ -1083,7 +1209,7 @@ export const engineTypes = async (module: string, basePath: string) => {
 
   let paramsTypes = [...PARAMS_TYPES, ...dtos];
 
-  const allTypes = [
+  return [
     { MYME_TYPES: MIME_TYPES },
     { BODY_REQUEST: bodyRequests },
     { PARAMS_TYPES: paramsTypes },
@@ -1100,6 +1226,4 @@ export const engineTypes = async (module: string, basePath: string) => {
     { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },
     { GENERATION_TYPES: GENERATION_TYPES.filter((gt) => gt !== '') },
   ];
-
-  return allTypes;
 };

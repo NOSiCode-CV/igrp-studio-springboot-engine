@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { Handlebars } from '../../utils/handlebarsHelpers';
-import { ERROR_MESSAGE, TEMPLATE_DIR } from '../../utils/constants';
+import { ERROR_MESSAGE, TEMPLATE_DIR, TEMPLATES } from '../../utils/constants';
 import { loadPartials } from '../../utils/helpers';
 
 /**
@@ -21,6 +21,12 @@ export const renderTemplate = async (templateName: string, context: any) => {
   }
 
   await loadPartials();
+
+  if(templateName === TEMPLATES.APPLICATION_RESOURCES_BANNER) {
+
+    context.baseVersion = "0.3.0-alpha-5.0.0";
+
+  }
 
   const templatePath = path.join(TEMPLATE_DIR, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');

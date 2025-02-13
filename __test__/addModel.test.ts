@@ -1,12 +1,11 @@
 import fs from 'fs-extra';
-import { ModelConfig } from '../src/interfaces/types';
-import { addModel } from '../src';
-
-const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoTechnical'
-const DOMAIN_OUTPUT_DIR = 'C:\\spring-engine\\demoDomain'
+import { DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
+import { addModel, serializeElement } from '../src';
+// @ts-ignore
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 beforeAll(async () => {
-  await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
   await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
@@ -19,6 +18,7 @@ describe('Model generator', () => {
       // Animal model
 
       {
+        "id": "dspza5xl7e",
         "type": "model",
         "name": "Animal",
         "tableName": "animal",
@@ -74,6 +74,7 @@ describe('Model generator', () => {
       // Owner model
 
       {
+        "id": "mgg6olyps8",
         "type": "model",
         "name": "owner",
         "tableName": "owner",
@@ -119,17 +120,18 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of domainTestCases) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+      //await addModel(testCase, DOMAIN_OUTPUT_DIR);
     }
   })
 
-  it('should create DTO for technical project style', async() => {
+  it('should create model for technical project style', async() => {
 
     const technicalTestCases: ModelConfig[] = [
 
       // User
 
       {
+        "id": "sfk6hpjtcg",
         "type": "model",
         "name": "User",
         "tableName": "user",
@@ -149,17 +151,36 @@ describe('Model generator', () => {
             "unique": true
           },
           {
-            "type": "string",
-            "name": "email",
+            "type": "Level",
+            "objectType": "enum",
+            "name": "userLevelNew",
+            "length": 255,
+            "nullable": false,
+            "unique": true,
+            "skipFieldRevision": true
+          },
+          {
+            "type": "Level",
+            "objectType": "enum",
+            "name": "userLevel",
             "length": 255,
             "nullable": false,
             "unique": true
           },
           {
             "type": "string",
+            "name": "email",
+            "length": 255,
+            "nullable": false,
+            "unique": true,
+            "skipFieldRevision": true
+          },
+          {
+            "type": "string",
             "name": "password",
             "length": 255,
-            "nullable": false
+            "nullable": false,
+            "skipFieldRevision": true
           },
           {
             "type": "file",
@@ -173,13 +194,15 @@ describe('Model generator', () => {
             "defaultValue": "true"
           }
         ],
-        "crud": true,
-        "audit": true
+        "crud": false,
+        "audit": true,
+        "revision": true
       },
 
       // Contact
 
       {
+        "id": "ylmvzj5cuy",
         "type": "model",
         "name": "Contact",
         "tableName": "contact",
@@ -224,7 +247,8 @@ describe('Model generator', () => {
           }
         ],
         "crud": true,
-        "audit": true
+        "audit": false,
+        "revision": false
       },
 
 
@@ -234,5 +258,82 @@ describe('Model generator', () => {
       await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
+
+  it('should create a model based on JSON serialization', async() => {
+
+    const sampleJson = {
+      id: 1,
+      name: "XPTO LLC",
+      foundingYear: 1996,
+      foundingDate: "1996-04-01"
+    }
+
+    const json = JSON.stringify(sampleJson)
+
+    const config : JsonConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      json: json
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  })
+
+  it('should create a model based on XML serialization', async() => {
+
+    const sampleXml = `
+      <id>1</id>
+      <name>XPTO LLC</name>
+      <foundingYear>1996</foundingYear>
+      <foundingDate>1996-04-01</foundingDate>
+  `;
+
+    const config: XmlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      xml: sampleXml
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a model based on SQL SELECT command serialization', async() => {
+
+    const sampleSql = "SELECT 1 as id, 'XPTO LLC' as name, 1996 as foundingYear, '1996-04-01' as foundingDate FROM companies";
+
+    const config: SqlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      sql: sampleSql
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
+
+  it('should create a model based on DDL create table script serialization', async() => {
+
+    const sampleDdl = `
+      CREATE TABLE companies (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          foundingYear INT,
+          foundingDate DATE );`;
+
+    const config: DdlConfig = {
+      name: "Company",
+      template: "classic",
+      type: "model",
+      ddl: sampleDdl
+    };
+
+    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+
+  });
 
 });

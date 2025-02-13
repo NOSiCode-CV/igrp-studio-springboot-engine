@@ -1,6 +1,6 @@
 {{> package-java }}
 
-{{resolve-imports resourceConfig}}
+{{resolve-imports resourceConfig baseConfig}}
 
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}

@@ -2,12 +2,12 @@ import {
   ApiConfig,
   Body,
   ControllerConfig,
-  DTOConfig,
+  DTOConfig, EnumConfig,
   ExceptionConfig,
   JavaType,
   ModelConfig,
   RenderContext,
-  ResponseConfig
+  ResponseConfig,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -29,6 +29,7 @@ import { capitalize } from '../../utils/capitalizeStrings';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
+import { getEnumTypes } from '../enum/helpers';
 
 export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
@@ -38,8 +39,8 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
     for (const [status, response] of Object.entries(action.responses)) {
 
-      // If there's no name attribute that means it's a reference, so do not need to generate the DTO
-      if(!response.name) continue;
+      // If it's a reference attribute that means do not need to generate the DTO
+      if((response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema.objectType) continue;
       if(status == "204") continue;
 
       // Capitalize the response name
@@ -70,7 +71,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       const modelOutputPath = getDTOOutputPath(dtoContext, responseContext);
       const template = await _renderDTO(responseContext);
 
-      await saveToFile(template, modelOutputPath);
+      await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
 
       // await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
 
@@ -143,6 +144,7 @@ export const transformSchemaDTOConfig = async function(
 
   let mtypes: Map<string, ModelConfig> | undefined = undefined;
   let dtypes: Map<string, DTOConfig> | undefined = undefined;
+  let etypes: Map<string, EnumConfig> | undefined = undefined;
 
   for (const [key, attr] of Object.entries(schemacfg.properties ?? {})) {
     let type: JavaType;
@@ -186,6 +188,29 @@ export const transformSchemaDTOConfig = async function(
         }
       }
 
+    } else if (attr.objectType === PACKAGE_NS.enum) {
+      if (etypes === undefined) {
+        etypes = await getEnumTypes(config.module ?? DIRECTORIES.SHARED, basePath);
+      }
+
+      const et = etypes.get(type.name);
+
+      if (!et) {
+        etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
+        const etype = etypes.get(type.name);
+        if(!etype) {
+          typeNotFound = true;
+        }
+      }
+
+      if(!typeNotFound) {
+        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+          type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
+        }
+      }
+
     } else {
       const jtOpt = GENERIC_TYPES.get(type.name)
       if (jtOpt) {
@@ -221,6 +246,7 @@ export const transformSchemaDTOConfig = async function(
 
   // normalize the name of the DTO
   ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {
     throw errors;

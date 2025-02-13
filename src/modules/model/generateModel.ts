@@ -37,11 +37,11 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     const primaryKeyTemplate = await renderPrimaryKey(context);
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
-  } 
+  }
+
+  await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
   await saveModelConfig(context.resourceConfig, context.basePath);
-
-  await saveToFile(template, modelOutputPath);
 
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
@@ -76,11 +76,8 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
     // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
-  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    return await renderTemplate(TEMPLATES.DDD_LITE_MODEL, context);
-  } else {
-    return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
-  }
+  return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
+
 };
 
 const renderPrimaryKey = async (context: RenderContext<ModelConfig>) => {

@@ -1,4 +1,12 @@
-import { ApiConfig, DTOConfig, JavaType, ModelConfig, RenderContext, TypeMetadata } from '../../interfaces/types';
+import {
+  ApiConfig,
+  DTOConfig,
+  EnumConfig,
+  JavaType,
+  ModelConfig,
+  RenderContext,
+  TypeMetadata,
+} from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
   DIRECTORIES,
@@ -19,12 +27,13 @@ import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
 import { normalizeName } from './saveDTOConfig';
 import { capitalize } from '../../utils/capitalizeStrings';
+import { getEnumTypes } from '../enum/helpers';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
   const template = await _renderDTO(context);
 
-  await saveToFile(template, modelOutputPath);
+  await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 };
 
 /**
@@ -96,6 +105,7 @@ export const transformDTOConfig = async function (
 
   let mtypes: Map<string, ModelConfig> | undefined = undefined;
   let dtypes: Map<string, DTOConfig> | undefined = undefined;
+  let etypes: Map<string, EnumConfig> | undefined = undefined;
 
   for (const attr of ncfg.attributes) {
     let type: JavaType;
@@ -147,6 +157,29 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
+        }
+      }
+
+    } else if (attr.objectType === PACKAGE_NS.enum) {
+      if (etypes === undefined) {
+        etypes = await getEnumTypes(config.module ?? DIRECTORIES.SHARED, basePath);
+      }
+
+      const et = etypes.get(type.name);
+
+      if (!et) {
+        etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
+        const etype = etypes.get(type.name);
+        if(!etype) {
+          typeNotFound = true;
+        }
+      }
+
+      if(!typeNotFound) {
+        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+          type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
 

@@ -15,6 +15,10 @@ import {
   RELATIONSHIP_TYPES,
 } from '../utils/constants';
 
+interface IdentifiableElement {
+  id?: string
+}
+
 export interface TypeMetadata {
   name: string;
   primitive: boolean;
@@ -36,11 +40,12 @@ export interface BaseApiConfig {
   projectStructureStyle: ProjectStructureStyle;
   name?: string;
   enableObservability: boolean;
+  enableEntityRevision: boolean;
   igrpCoreVersion: string;
 }
 
 
-export interface ModelConfig {
+export interface ModelConfig extends IdentifiableElement {
   type: 'model';
   name: string;
   tableName: string;
@@ -50,6 +55,7 @@ export interface ModelConfig {
   primaryKey?: PrimaryKey[];
   crud?: boolean;
   audit?: boolean;
+  revision?: boolean;
   module?: string;
 }
 
@@ -87,7 +93,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java';
+  objectType: 'dto' | 'model' | 'java' | 'enum';
   required: boolean;
   before?: boolean,
   after?: boolean,
@@ -103,7 +109,7 @@ export interface JavaAttribute {
   xmlAttributeName?: string;
 }
 
-export interface DTOBaseConfig {
+export interface DTOBaseConfig extends IdentifiableElement {
   type: ObjectTypes;
   name: string;
   module?: string;
@@ -137,10 +143,10 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java';
+  objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface DTOBaseConfig {
+export interface DTOBaseConfig extends IdentifiableElement {
   type: ObjectTypes;
   name: string;
 }
@@ -167,7 +173,8 @@ export interface Attribute {
   generationType?: GenerationType;
   defaultValue?: string;
   relation?: Relation;
-  objectType?: 'dto' | 'model' | 'java';
+  skipFieldRevision?: boolean;
+  objectType?: 'dto' | 'model' | 'java' | 'enum';
 }
 
 export interface Relation {
@@ -198,7 +205,7 @@ export interface Table {
   inverseJoinColumns: string;
 }
 
-export interface ControllerConfig {
+export interface ControllerConfig extends IdentifiableElement {
   type: 'controller';
   name: string;
   basePath: string;
@@ -248,7 +255,7 @@ export interface ISelectPermissions {
   value: string;
 }
 
-export interface EnumConfig {
+export interface EnumConfig extends IdentifiableElement {
   type: 'enum';
   name: string;
   module?: string;
@@ -272,6 +279,7 @@ export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;
   baseConfig: ApiConfig;
+  baseVersion?: string;
   fullPath: string;
   mathAttributes?: string[];
   dateTimeAttributes?: string[];
@@ -304,7 +312,7 @@ export interface PropertySchemaField extends SchemaField{
   default?: any;
 }
 
-export interface BaseBody {
+export interface BaseBody extends IdentifiableElement {
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
   };
@@ -331,6 +339,29 @@ export interface DeleteConfig {
   name: string,
   module?: string,
   type: ConfigTypes
+}
+
+export interface SerializationConfig {
+  name: string,
+  module?: string,
+  type: 'dto' | 'model' | 'response',
+  template: 'classic' | 'record'
+}
+
+export interface JsonConfig extends SerializationConfig {
+  json: string
+}
+
+export interface SqlConfig extends SerializationConfig {
+  sql: string
+}
+
+export interface XmlConfig extends SerializationConfig {
+  xml: string
+}
+
+export interface DdlConfig extends SerializationConfig {
+  ddl: string;
 }
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
