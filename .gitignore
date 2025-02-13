@@ -21,6 +21,9 @@ bower_components/
 # Environment variables
 .env
 
+# NPM registry
+.npmrc
+
 # Build directories
 dist/
 build/
