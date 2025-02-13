@@ -11,7 +11,7 @@ build_package:
     - npm-publish
   before_script:
     # Configure .npmrc to use the NOSi Nexus Sonatype credentials
-    - echo "Publishing version $VERSION to sonatype.nosi.cv"
+    - echo "Publishing version to sonatype.nosi.cv"
     - echo "@igrp:registry=https://sonatype.nosi.cv/repository/igrp/" >> ~/.npmrc
     - echo "//sonatype.nosi.cv/repository/igrp/:username=${SONATYPE_USERNAME}" >> ~/.npmrc
     - echo "//sonatype.nosi.cv/repository/igrp/:_password=${SONATYPE_PASSWORD}" >> ~/.npmrc
