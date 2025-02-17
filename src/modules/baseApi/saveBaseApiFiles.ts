@@ -9,14 +9,13 @@ import {
   OBSERVABILITY_BINARY_FILES,
   TEMPLATE_DIR,
   OBSERVABILITY_YAML_CONFIG_FILES,
-  PROJECT_STRUCTURE_STYLE, CONFIG_BINARY_FILES, PARTIALS_DIR,
+  PROJECT_STRUCTURE_STYLE,
 } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
 import fs from 'fs-extra';
-import Handlebars from 'handlebars';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -46,9 +45,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
     const configPath = path.join(sharedPath, 'config');
     const securityPath = path.join(sharedPath, 'security');
-    const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
-    const commandPath = path.join(applicationPath, DIRECTORIES.COMMANDS);
-    const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);
     const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
     const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
     const exceptionsPath = path.join(domainPath, DIRECTORIES.EXCEPTIONS);
@@ -269,13 +265,13 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         await saveToFile(template, outputPath, false);
       }),
     );
-    await Promise.all(
+    /*await Promise.all(
       CONFIG_BINARY_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
         const templatePath = path.join(TEMPLATE_DIR, file.template);
         const binaryContent = await fs.readFile(templatePath);
         await saveBinaryToFile(binaryContent, outputPath, false);
       })
-    );
+    );*/
   }
 };

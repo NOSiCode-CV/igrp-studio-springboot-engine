@@ -357,9 +357,9 @@ export const TEMPLATES = {
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
-  { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_EDITOR_CONFIG, output: '.editorconfig' },
@@ -369,14 +369,14 @@ export const CONFIG_FILES = [
 ];
 
 export const CONFIG_BINARY_FILES = [
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
+  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
 ]
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
-  { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
@@ -393,7 +393,7 @@ export const OBSERVABILITY_YAML_CONFIG_FILES = [
 
 export const OBSERVABILITY_BINARY_FILES = [
   { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' },
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
+  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
 ]
 
 export const COMMON_FILES = {
