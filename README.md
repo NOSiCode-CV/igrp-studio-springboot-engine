@@ -42,7 +42,7 @@ The author with your name and your organization.
 
 ```json
 {
-  "name": "@igrp/spring-engine",
+  "name": "@igrp/igrp-studio-springboot-engine",
   "version": "0.0.1-<YOUR_NAME_WITHOUT_SPACES>",
   "description": "Spring API Creation Engine",
   "main": "dist/index.cjs.js",
@@ -108,7 +108,7 @@ If everything succeed you can now run this command:
 
 #### Install the package:
 
-```yarn add @igrp/spring-engine@latest --registry=https://sonatype.nosi.cv/repository/igrp/```
+```yarn add @igrp/igrp-studio-springboot-engine@latest --registry=https://sonatype.nosi.cv/repository/igrp/```
 
 #### You can use this package to:
 
@@ -120,8 +120,8 @@ If everything succeed you can now run this command:
 ```
 
 ```typescript
-import { newApi } from "@igrp/spring-engine"
-import { ApiConfig } from "@igrp/spring-engine/dist/interfaces/types";
+import { newApi } from "@igrp/igrp-studio-springboot-engine"
+import { ApiConfig } from "@igrp/igrp-studio-springboot-engine/dist/interfaces/types";
 
 const baseConfig: ApiConfig = {
   type: 'springboot',
@@ -155,8 +155,8 @@ const createApi = async () => {
 ```
 
 ```typescript
-import { addModel } from '@igrp/spring-engine';
-import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { addModel } from '@igrp/igrp-studio-springboot-engine';
+import { ModelConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 //Model with simple primary key
 const config: ModelConfig = {
@@ -292,8 +292,8 @@ The function will update the model configuration file by adding the `relation` t
 @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
 ```
 ```ts
-import { addModel } from '@igrp/spring-engine';
-import { ModelConfig } from "@igrp/spring-engine/dist/interfaces/types";
+import { addModel } from '@igrp/igrp-studio-springboot-engine';
+import { ModelConfig } from "@igrp/igrp-studio-springboot-engine/dist/interfaces/types";
 
 const config: ModelConfig = {
   type: 'model',
@@ -337,8 +337,8 @@ const addOrderRelationship = async () => {
 ```
 
 ```ts
-import { deleteElement } from '@igrp/spring-engine';
-import { DeleteConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { deleteElement } from '@igrp/igrp-studio-springboot-engine';
+import { DeleteConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 const config: DeleteConfig = {
   name: 'Teste',
@@ -464,8 +464,8 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
 ```
 
 ```ts
-import { addController } from '@igrp/spring-engine';
-import { ControllerConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { addController } from '@igrp/igrp-studio-springboot-engine';
+import { ControllerConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 const controllerConfig: ControllerConfig = const config: ControllerConfig = {
   type: 'controller',

@@ -30,10 +30,10 @@ publish_to_public_npm:
     # Configure .npmrc to use the NPM Token for npmjs.org
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
     # Set the version dynamically based on the package version from Nexus
-    - VERSION=$(npm show @igrp/spring-engine@latest version --registry=https://sonatype.nosi.cv/repository/igrp/)
+    - VERSION=$(npm show @igrp/igrp-studio-springboot-engine@latest version --registry=https://sonatype.nosi.cv/repository/igrp/)
     - echo "Fetched version $VERSION from private Nexus"
     # Pack the latest version from Nexus
-    - npm pack @igrp/spring-engine@$VERSION --registry=https://sonatype.nosi.cv/repository/igrp/
+    - npm pack @igrp/igrp-studio-springboot-engine@$VERSION --registry=https://sonatype.nosi.cv/repository/igrp/
   script:
     # Publish the fetched package to npmjs.org
     - echo "Publishing version $VERSION to npmjs.org"
