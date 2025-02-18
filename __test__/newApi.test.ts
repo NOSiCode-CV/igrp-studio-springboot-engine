@@ -2,7 +2,7 @@
 import { newApi } from '../src';
 import { BaseApiConfig } from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from 'outputDirPath';
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 const domainApiConfig: BaseApiConfig = {
   type: 'springboot',

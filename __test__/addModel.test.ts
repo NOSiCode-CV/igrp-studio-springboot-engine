@@ -154,7 +154,7 @@ describe('Model generator', () => {
             "type": "Level",
             "objectType": "enum",
             "name": "userLevelNew",
-            "length": 255,
+            "length": 500,
             "nullable": false,
             "unique": true,
             "skipFieldRevision": true
@@ -178,7 +178,7 @@ describe('Model generator', () => {
           {
             "type": "string",
             "name": "password",
-            "length": 255,
+            "length": 25,
             "nullable": false,
             "skipFieldRevision": true
           },

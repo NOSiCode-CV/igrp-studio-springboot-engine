@@ -605,6 +605,11 @@ Handlebars.registerHelper('and', function (...args) {
   return args.every(Boolean); // Check if all arguments are truthy
 });
 
+
+Handlebars.registerHelper('ne', function (a: any, b: any) {
+  return a !== b;
+});
+
 Handlebars.registerHelper('formatAttribute', function (value) {
   // TODO : 09-12-2024 - 16:55 - handle non-string values
 
