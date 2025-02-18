@@ -19,7 +19,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
 {{{resolve-imports resourceConfig baseConfig}}}
 
 {{#if resourceConfig.revision~}}import org.hibernate.envers.Audited;{{~/if}}
-import cv.igrp.stereotype.IgrpEntity;
+import cv.igrp.framework.stereotype.IgrpEntity;
 import jakarta.persistence.*;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
