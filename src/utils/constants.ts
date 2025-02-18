@@ -243,7 +243,6 @@ export const TEMPLATES = {
   CONFIG_MVNW: 'config/mvnw',
   CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
-  CONFIG_POM_XML_OBSERVABILITY: 'config/pom.xml-observability.hbs',
   CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
