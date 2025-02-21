@@ -626,8 +626,8 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
     },
     basePath: { 
       type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The basePath attribute can only contain alphanumeric characters without spaces or special characters.'
+      pattern: PATTERNS.PATH_SLASH_VALIDATION_PATTERN,
+      errorMessage: 'The basePath attribute can only contain alphanumeric characters and slash, without spaces or other special characters.'
     },
     actions: { 
       type: 'array',
