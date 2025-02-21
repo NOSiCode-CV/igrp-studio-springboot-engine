@@ -16,7 +16,7 @@ import {
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { extractTypeFromList, getPackageNameFromConfig, validateAnnotations } from './helpers';
+import { extractTypeFromList, getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
@@ -228,17 +228,19 @@ Handlebars.registerHelper(
           }
         }
       if (action.responses)
-        for (const response of Object.values(action.responses)) {
-          const className = capitalize(normalizeName(response.name, 'dto')) + "DTO"
-          if (extractTypeFromList(className)) {
-            const type = extractTypeFromList(className);
-            if (domainDriven === true)
+        for (const singleBody of Object.values(action.responses)) {
+          const type = ((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.objectType)? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type?.replace(/dto$/i, '') + "DTO")
+            : (isResponseCollection((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type))? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.items?.type?.replace(/dto$/i, '') + "DTO")
+              : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")
+              || undefined;
+          if(!type) return;
+          if (domainDriven === true)
               imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
             else imports.push(`import ${group}.${packageName}.dto.${type};`);
-          }
         }
-      imports.push(`import java.util.List;`);
     }
+
+    imports.push(`import java.util.List;`);
 
     return [...new Set(imports)].join('\n');
   },
