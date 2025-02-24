@@ -55,7 +55,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
     minLength: {
       type: "number",
       nullable: true,
-      errorMessage: 'The max length must be a number.'
+      errorMessage: 'The min length must be a number.'
     },
     regex: {
       type: "string",
