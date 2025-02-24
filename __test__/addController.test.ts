@@ -5,6 +5,7 @@ import { ControllerConfig } from '../src/interfaces/types';
 import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR } from './outputDirPath';
 
 const domainControllerConfig: ControllerConfig = {
+  id: "avtjtb5d2g",
   type: "controller",
   name: "Animals",
   basePath: "animals",
@@ -223,6 +224,7 @@ const domainControllerConfig: ControllerConfig = {
 };
 
 const technicalControllerConfig: ControllerConfig = {
+  id: "3pnq9b5m1e",
   type: "controller",
   name: "Users",
   basePath: "users",

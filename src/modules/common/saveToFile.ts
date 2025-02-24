@@ -62,7 +62,7 @@ export const saveToFile = async (content: string, outputPath: string, override: 
       const dtos = await loadDTOConfigs(module ?? DIRECTORIES.SHARED, basePath);
       const dto = dtos.find(it => it.id === id);
       if(dto) {
-        const sourcePath = join(getDirectoryPath(outputPath), dto.name.concat(extension));
+        const sourcePath = join(getDirectoryPath(outputPath), dto.name.replace(/dto$/i, '').concat('DTO', extension));
         if(sourcePath != outputPath)
           await fs.remove(join(getDirectoryPath(sourcePath), dto.name.replace(/dto$/i, '').concat('DTO', extension)));
       }
@@ -82,6 +82,34 @@ export const saveToFile = async (content: string, outputPath: string, override: 
         if(sourcePath != outputPath)
           await fs.remove(join(getDirectoryPath(sourcePath), response.name.concat(extension)));
       }
+    } if(type === DIRECTORIES.CONTROLLER || type === DIRECTORIES.CONFIG_CONTROLLER) {
+      const controllers = await loadControllerConfigs(module ?? DIRECTORIES.SHARED, basePath);
+      const controller = controllers.find((it) => it.id === id);
+      if (controller) {
+        console.log("Found controller by ID")
+        let sourcePath;
+        if(extension === EXTENSIONS.JSON)
+          sourcePath = join(getDirectoryPath(outputPath), controller.name.replace(/controller$/i, '').concat('Controller', extension));
+        else {
+          if (outputPath.includes('infrastructure'))
+            sourcePath = join(getDirectoryPath(outputPath), controller.name.replace(/controller$/i, '').concat('Controller', extension));
+          else
+            sourcePath = join(
+              getDirectoryPath(getDirectoryPath(outputPath)),
+              controller.name.toLowerCase(),
+            );
+        }
+
+        console.log("Src path ", sourcePath)
+        console.log("Out path", outputPath)
+        console.log("Dir path", getDirectoryPath(outputPath))
+
+        if(sourcePath != outputPath && sourcePath != getDirectoryPath(outputPath)) {
+          await fs.remove(sourcePath);
+        }
+
+      }
+
     }
 
   }
