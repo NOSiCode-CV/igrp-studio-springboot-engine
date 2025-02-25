@@ -116,11 +116,11 @@ export const transformSchemaDTOConfig = async function(
         dtypes = await getDTOTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
       }
 
-      const dt = dtypes.get(attr.type!);
+      const dt = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.type!);
+        const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
         if(!dtype) {
             typeNotFound = true;
         }
