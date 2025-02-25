@@ -9,6 +9,14 @@ import {
 
 export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent): void => {
   if (actions) {
+
+    const duplicates = findDuplicateActions(actions)
+    if (duplicates.length > 0) {
+      throw new Error(
+        `The endpoint has the following duplicated action names: ${[...new Set(duplicates)].join(', ')}.`
+      );
+    }
+
     actions.forEach((action) => {
       const { requestParams, pathVariables } = action;
   
@@ -95,6 +103,20 @@ const findDuplicates = (arr: RequestParams[] | PathVariables[] | Attribute[] | J
     nameCount[e.name] = (nameCount[e.name] || 0) + 1;
     if (nameCount[e.name] === 2) {
       duplicates.push(e.name);
+    }
+  });
+
+  return duplicates;
+};
+
+const findDuplicateActions = (arr: ControllerAction[]): string[] => {
+  const nameCount: Record<string, number> = {};
+  const duplicates: string[] = [];
+
+  arr.forEach((e) => {
+    nameCount[e.actionName] = (nameCount[e.actionName] || 0) + 1;
+    if (nameCount[e.actionName] === 2) {
+      duplicates.push(e.actionName);
     }
   });
 
