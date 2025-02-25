@@ -4,7 +4,7 @@ import {
   PathVariables,
   Attribute,
   JavaAttribute,
-  EnumValue, SchemaContent,
+  EnumValue, SchemaContent, Body,
 } from '../../interfaces/types';
 
 export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent): void => {
@@ -18,7 +18,7 @@ export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[
     }
 
     actions.forEach((action) => {
-      const { requestParams, pathVariables } = action;
+      const { requestParams, pathVariables, responses } = action;
   
       if (requestParams) {
         const duplicates = findDuplicates(requestParams);
@@ -34,6 +34,15 @@ export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[
         if (duplicates.length > 0) {
           throw new Error(
             `Action '${action.actionName}' has the following duplicated names in pathVariables: ${[...new Set(duplicates)].join(', ')}.`
+          );
+        }
+      }
+
+      if (responses) {
+        const duplicates = findDuplicateResponses(responses);
+        if (duplicates.length > 0) {
+          throw new Error(
+            `Action '${action.actionName}' has the following duplicated names in responses: ${[...new Set(duplicates)].join(', ')}.`
           );
         }
       }
@@ -122,3 +131,19 @@ const findDuplicateActions = (arr: ControllerAction[]): string[] => {
 
   return duplicates;
 };
+
+const findDuplicateResponses = (arr: { [statusCode: string]: Body; }): string[] => {
+  const nameCount: Record<string, number> = {};
+  const duplicates: string[] = [];
+
+  Object.values(arr).forEach((e) => {
+    if(!e.name) return
+    nameCount[e.name] = (nameCount[e.name] || 0) + 1;
+    if (nameCount[e.name] === 2) {
+      duplicates.push(e.name);
+    }
+  });
+
+  return duplicates;
+};
+
