@@ -142,11 +142,11 @@ export const transformDTOConfig = async function (
         dtypes = await getDTOTypes(config.module ?? DIRECTORIES.SHARED, basePath);
       }
 
-      const dt = dtypes.get(type.name);
+      const dt = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(type.name);
+        const dtype = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
         if(!dtype) {
             typeNotFound = true;
         }

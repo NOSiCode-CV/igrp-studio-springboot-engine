@@ -95,7 +95,7 @@ describe('DTO generator', () => {
             "required": false
           },
           {
-            "type": "OwnerDTO",
+            "type": "Owner",
             "objectType": "dto",
             "name": "owner",
             "required": true
@@ -177,7 +177,7 @@ describe('DTO generator', () => {
             "required": true
           },
           {
-            "type": "UserDTO",
+            "type": "User",
             "objectType": "dto",
             "name": "user",
             "required": true
