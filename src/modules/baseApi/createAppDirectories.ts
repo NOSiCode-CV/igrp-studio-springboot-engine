@@ -43,7 +43,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
       //path.join(igrpSharedPath, DIRECTORIES.ENUM),
@@ -97,7 +97,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
       //path.join(igrpSharedPath, DIRECTORIES.ENUM),
