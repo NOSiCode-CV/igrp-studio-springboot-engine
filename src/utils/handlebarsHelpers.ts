@@ -425,7 +425,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       return;
     } else if (attr.objectType === 'enum') {
       if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`);
+        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`);
       else
         imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
       return;
