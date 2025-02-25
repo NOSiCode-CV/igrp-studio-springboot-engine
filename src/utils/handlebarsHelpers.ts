@@ -476,7 +476,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   if (!t1.type) return t1.type;
 
-  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type;
+  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + "DTO" : t1.type);
 
   let rtype: string;
   switch (t1.collectionType) {
