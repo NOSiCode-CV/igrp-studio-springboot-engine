@@ -419,9 +419,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       return;
     } else if (attr.objectType === 'dto') {
       if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${attr.type};`);
+        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
       else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${attr.type};`);
+        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
       return;
     } else if (attr.objectType === 'enum') {
       if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
