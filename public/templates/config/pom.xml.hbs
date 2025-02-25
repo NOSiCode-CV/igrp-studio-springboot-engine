@@ -42,7 +42,9 @@
 		{{> security-maven-dependencies}}
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
+  {{#if baseConfig.enableObservability}}
 		{{> observability-maven-dependencies}}
+  {{/if}}
 		{{> igrp-maven-dependencies}}
 	</dependencies>
 	<build>
