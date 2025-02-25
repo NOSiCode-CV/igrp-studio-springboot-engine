@@ -4,9 +4,8 @@ import { TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import {
-  getDDDAggregateElementsOutputDir,
   getDDDCommandHandlerOutputDir,
-  getDDDCommandOutputDir, getDDDEventHandlerOutputDir, getDDDQueryHandlerOutputDir,
+  getDDDEventHandlerOutputDir, getDDDQueryHandlerOutputDir,
 } from '../../utils/helpers';
 
 const COMMAND_HANDLER_SUFFIX = 'CommandHandler.java';

@@ -1,7 +1,7 @@
-import { ApiConfig, DeleteConfig, ModuleConfig } from '../interfaces/types';
+import { DeleteConfig } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
-import { CONFIG_TYPES, DATABASE_TYPES, PATTERNS } from '../utils/constants';
+import { CONFIG_TYPES, PATTERNS } from '../utils/constants';
 
 
 const deleteSchema: JSONSchemaType<DeleteConfig> = {

@@ -20,7 +20,7 @@ const CONTROLLER_SUFFIX = 'Controller.java';
  * @param context
  */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
-  // normalize the name of the DTO
+
   context.resourceConfig.name = normalizeControllerName(context.resourceConfig.name);
 
   const controllerOutputPath = getControllerPath(context);

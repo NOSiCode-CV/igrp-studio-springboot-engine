@@ -15,7 +15,7 @@ import {
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
 } from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {

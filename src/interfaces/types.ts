@@ -4,7 +4,6 @@ import {
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
   HTTP_METHOD_TYPES,
-  MIME_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
   STRUCT_TYPES,
@@ -155,12 +154,6 @@ export interface DTOConfig extends DTOBaseConfig {
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
-
-export interface Icontroller {
-  type: 'icontroller';
-  name: string;
-}
-
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
@@ -198,11 +191,6 @@ export interface Crud {
 export interface IModelPermission {
   method: DisabledMethods;
   permissions: string[]
-}
-export interface Table {
-  name: string;
-  joinColumns: string;
-  inverseJoinColumns: string;
 }
 
 export interface ControllerConfig extends IdentifiableElement {

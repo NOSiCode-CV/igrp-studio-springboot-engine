@@ -957,14 +957,6 @@ export interface UniqueConstraint {
 - **UniqueConstraint**: Defines a uniqueness constraint on specified columns in a model.
 
 ```ts
-export interface Icontroller {
-  type: 'icontroller';
-  name: string;
-}
-```
-- **Icontroller**: Represents a controller interface configuration.
-
-```ts
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 ```
 - **PrimaryKey**: Represents the primary key of a model, inheriting type, name, and length properties from `Attribute`.

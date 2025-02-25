@@ -4,7 +4,7 @@ import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import {
   getDDDAggregateRepositoryImplOutputDir,
   getDDDAggregateRepositoryOutputDir,
-  getDDDModelOutputDir, getDDDRepositoryImplOutputDir,
+  getDDDRepositoryImplOutputDir,
   getDDDRepositoryOutputDir,
   getModelOutputDir,
 } from '../../utils/helpers';

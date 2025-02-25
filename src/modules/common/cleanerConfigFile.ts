@@ -1,5 +1,4 @@
 import {
-  ApiConfig,
   ModelConfig,
   ControllerConfig,
   DTOConfig,
