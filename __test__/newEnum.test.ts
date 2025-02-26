@@ -8,7 +8,7 @@ const domainEnumConfig : EnumConfig = {
   id: 'bipojm4zvl',
   type: 'enum',
   name: "Level",
-  module: "core",
+  module: "shared",
   values: [
     { name: "HIGH", attributes: ["1", "High"] },
     { name: "LOW", attributes: ["0", "Low"] }

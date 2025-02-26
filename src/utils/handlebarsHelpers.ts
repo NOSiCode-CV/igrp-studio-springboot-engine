@@ -421,7 +421,7 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
-Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any, basePath: string) {
+Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
 
   if (!config) return null;
   if (!baseConfig) return null;
@@ -460,6 +460,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     } else if (attr.objectType === 'enum') {
       if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
         const etypes = cache["enumImports"];
+
         const et = etypes.get(attr.type);
         if(et)
           imports.add(
@@ -476,9 +477,10 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
-    if (genType?.java.primitive) return null;
+    if (genType?.java.primitive) null; // must be null and not return null!
+
     const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
-    if (type.name == '') return null;
+    if (type.name == '') null; // must be null and not return null!
 
     if(type.namespace) {
       imports.add(`import ${type.namespace}.${type.name};`);

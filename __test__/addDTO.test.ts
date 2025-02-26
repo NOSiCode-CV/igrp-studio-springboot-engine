@@ -91,13 +91,19 @@ describe('DTO generator', () => {
           {
             "type": "boolean",
             "objectType": "java",
-            "name": "vaccinated",
+            "name": "vaccine",
             "required": false
           },
           {
             "type": "Owner",
             "objectType": "dto",
             "name": "owner",
+            "required": true
+          },
+          {
+            "type": "Level",
+            "objectType": "enum",
+            "name": "level",
             "required": true
           }
         ]

@@ -1,7 +1,7 @@
 {{> package-java }}
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.application.command.Command;
-{{{resolve-imports resourceConfig baseConfig basePath}}}
+{{{resolve-imports resourceConfig baseConfig}}}
 
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
