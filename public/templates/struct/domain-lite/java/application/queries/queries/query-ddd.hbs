@@ -3,7 +3,9 @@
 import cv.igrp.framework.core.domain.Query;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-{{> lombok-java-imports}}
+{{#if resourceConfig.attributes.length}}
+  {{> lombok-java-imports}}
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
 {{#if resourceConfig.attributes.length}}
