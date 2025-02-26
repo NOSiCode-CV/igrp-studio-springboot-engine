@@ -8,7 +8,9 @@ import jakarta.validation.constraints.*;
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{> lombok-java-annotations}}
+{{#if resourceConfig.content.length}}
+  {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}

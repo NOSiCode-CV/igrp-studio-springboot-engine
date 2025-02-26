@@ -6,7 +6,9 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.ValueObj
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{> lombok-java-annotations}}
+{{#if resourceConfig.attributes.length}}
+  {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
