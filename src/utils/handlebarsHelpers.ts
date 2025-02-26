@@ -1,26 +1,28 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute, Body,
+  Attribute,
+  Body,
   ControllerAction,
   DTOConfig,
   HttpHeader,
   JavaAttribute,
   JavaType,
   ModelConfig,
-  Relation, SchemaContent,
+  Relation,
+  SchemaContent,
 } from '../interfaces/types';
 import {
   DIRECTORIES,
-  GENERIC_TYPES, PACKAGES, PROJECT_STRUCTURE_STYLE,
+  GENERIC_TYPES,
+  PACKAGES,
+  PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { extractTypeFromList, getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
+import { getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
-import { getDTOTypes } from '../modules/dto/helpers';
-import { getEnumTypes } from '../modules/enum/helpers';
 import { cache } from '../modules/common/renderTemplate';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
@@ -82,7 +84,7 @@ Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
 });
 
 Handlebars.registerHelper('fullCamelCaseAndPluralize', (str: string) => {
-  if(!str) return '';
+  if (!str) return '';
 
   const lowerStr = str
     .toLowerCase()
@@ -187,7 +189,7 @@ Handlebars.registerHelper(
 });*/
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
-    return capitalizeResponse(responses);
+  return capitalizeResponse(responses);
 });
 
 Handlebars.registerHelper(
@@ -205,7 +207,7 @@ Handlebars.registerHelper(
 
     for (const action of actions) {
       if (action.requestBody)
-        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request")) {
+        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + 'Request')) {
           const schema = (
             action.requestBody.content['application/json'] ??
             action.requestBody.content['multipart/form-data']
@@ -232,14 +234,32 @@ Handlebars.registerHelper(
         }
       if (action.responses)
         for (const singleBody of Object.values(action.responses)) {
-          const type = ((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.objectType)? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type?.replace(/dto$/i, '') + "DTO")
-            : (isResponseCollection((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type))? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.items?.type?.replace(/dto$/i, '') + "DTO")
-              : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")
-              || undefined;
-          if(!type) return;
+          const type = (
+            singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
+          )?.schema.objectType
+            ? capitalize(
+                (
+                  singleBody?.content['application/json'] ??
+                  singleBody?.content['multipart/form-data']
+                )?.schema.type?.replace(/dto$/i, '') + 'DTO',
+              )
+            : isResponseCollection(
+                  (
+                    singleBody?.content['application/json'] ??
+                    singleBody?.content['multipart/form-data']
+                  )?.schema.type,
+                )
+              ? capitalize(
+                  (
+                    singleBody?.content['application/json'] ??
+                    singleBody?.content['multipart/form-data']
+                  )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
+                )
+              : capitalize(singleBody?.name.replace(/dto$/i, '') + 'DTO') || undefined;
+          if (!type) return;
           if (domainDriven === true)
-              imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
-            else imports.push(`import ${group}.${packageName}.dto.${type};`);
+            imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
+          else imports.push(`import ${group}.${packageName}.dto.${type};`);
         }
     }
 
@@ -274,18 +294,18 @@ Handlebars.registerHelper('resolve-annotations', function (attribute) {
 
   // String-specific validations
   if (attribute.type === 'string') {
-    if(attribute.minLength !== undefined)
+    if (attribute.minLength !== undefined)
       annotations.push(
         `@Size(${[
-          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters."`
+          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters."`,
         ]
           .filter(Boolean)
           .join(', ')})`,
       );
-    if(attribute.maxLength !== undefined)
+    if (attribute.maxLength !== undefined)
       annotations.push(
         `@Size(${[
-          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters."`
+          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters."`,
         ]
           .filter(Boolean)
           .join(', ')})`,
@@ -423,7 +443,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       continue;
     } else if (attr.objectType === 'dto') {
       if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-        
+
         const dtypes = cache["dtoImports"];
 
         const dt = dtypes.get(normalizeName(attr.type, 'dto') + "DTO");
@@ -432,7 +452,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
           imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
         else
           imports.add(`import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
-      
+
       }
       else
         imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
@@ -456,9 +476,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
-    if (genType?.java.primitive) null;
+    if (genType?.java.primitive) return null;
     const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
-    if (type.name == '') null;
+    if (type.name == '') return null;
 
     if(type.namespace) {
       imports.add(`import ${type.namespace}.${type.name};`);
@@ -478,21 +498,23 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
   }
 
-  config.attributes.filter((it: JavaAttribute) => it.collectionType).forEach((attr: JavaAttribute) => {
-    switch (attr.collectionType) {
-      case 'list':
-        imports.add(`import java.util.List;`);
-        break;
-      case 'map':
-        imports.add(`import java.util.Map;`);
-        break;
-      case 'set':
-        imports.add(`import java.util.Set;`);
-        break;
-      default:
-      // Optionally handle unknown collection types
-    }
-  })
+  config.attributes
+    .filter((it: JavaAttribute) => it.collectionType)
+    .forEach((attr: JavaAttribute) => {
+      switch (attr.collectionType) {
+        case 'list':
+          imports.add(`import java.util.List;`);
+          break;
+        case 'map':
+          imports.add(`import java.util.Map;`);
+          break;
+        case 'set':
+          imports.add(`import java.util.Set;`);
+          break;
+        default:
+        // Optionally handle unknown collection types
+      }
+    });
 
   return Array.from(imports).sort().join('\n');
 });
@@ -500,7 +522,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   if (!t1.type) return t1.type;
 
-  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + "DTO" : t1.type);
+  const attributeType =
+    GENERIC_TYPES.get(t1.type)?.java.name ??
+    (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + 'DTO' : t1.type);
 
   let rtype: string;
   switch (t1.collectionType) {
@@ -522,10 +546,13 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
   const imports = new Set();
 
-  config.attributes.filter(that => that.relation).map(it => it.relation!).forEach((relation: Relation) => {
-    if (relation.type !== 'ManyToOne' && relation.type !== 'OneToOne')
-      imports.add('import java.util.List;');
-  });
+  config.attributes
+    .filter((that) => that.relation)
+    .map((it) => it.relation!)
+    .forEach((relation: Relation) => {
+      if (relation.type !== 'ManyToOne' && relation.type !== 'OneToOne')
+        imports.add('import java.util.List;');
+    });
 
   config.attributes.forEach((attr: Attribute) => {
     if (attr.type === 'String' && attr.nullable === false)
@@ -631,7 +658,6 @@ Handlebars.registerHelper('and', function (...args) {
   return args.every(Boolean); // Check if all arguments are truthy
 });
 
-
 Handlebars.registerHelper('ne', function (a: any, b: any) {
   return a !== b;
 });
@@ -681,41 +707,37 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
   if (str == '?') return '?';
-  return capitalize(str).replace(/dto$/i, "") + "DTO";
+  return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
 
-Handlebars.registerHelper('containsFormData', (content:  { [p: string]: SchemaContent }): boolean => {
-  if (!content) return false;
-  return !!content["multipart/form-data"];
-});
+Handlebars.registerHelper(
+  'containsFormData',
+  (content: { [p: string]: SchemaContent }): boolean => {
+    if (!content) return false;
+    return !!content['multipart/form-data'];
+  },
+);
 
-Handlebars.registerHelper('isRefSchema', (content:  { [p: string]: SchemaContent }): boolean => {
+Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
   if (!content) return false;
-  const schema = content["application/json"] ?? content["multipart/form-data"];
+  const schema = content['application/json'] ?? content['multipart/form-data'];
   return !!schema.schema.objectType;
 });
 
-Handlebars.registerHelper('resolve-body', (content:  { [p: string]: SchemaContent }): string => {
+Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
   if (!content) return '';
-  const schema = content["application/json"] ?? content["multipart/form-data"];
+  const schema = content['application/json'] ?? content['multipart/form-data'];
   return capitalize(schema.schema.type);
 });
 
 function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
-  if(statusCode === "200")
-    return actionName + "Response"
-  if(statusCode === "201")
-    return actionName + "CreatedResponse"
-  if(statusCode === "400")
-    return actionName + "BadResponse"
-  if(statusCode === "500")
-    return actionName + "ErrorResponse"
-  if(statusCode === "401")
-    return actionName + "UnauthorizedResponse"
-  if(statusCode === "403")
-    return actionName + "ForbiddenResponse"
-  else
-    return actionName + statusCode + "Response"
+  if (statusCode === '200') return actionName + 'Response';
+  if (statusCode === '201') return actionName + 'CreatedResponse';
+  if (statusCode === '400') return actionName + 'BadResponse';
+  if (statusCode === '500') return actionName + 'ErrorResponse';
+  if (statusCode === '401') return actionName + 'UnauthorizedResponse';
+  if (statusCode === '403') return actionName + 'ForbiddenResponse';
+  else return actionName + statusCode + 'Response';
 }
 
 export { Handlebars };

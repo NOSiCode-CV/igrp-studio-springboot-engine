@@ -5,7 +5,6 @@ import {
   JavaType,
   ModelConfig,
   RenderContext,
-  TypeMetadata,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {

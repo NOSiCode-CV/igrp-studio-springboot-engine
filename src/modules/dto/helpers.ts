@@ -1,6 +1,5 @@
-import { ApiConfig, DTOConfig, JavaAttribute, ObjectTypes } from '../../interfaces/types';
-import { PACKAGES } from "../../utils/constants";
-import { getPackageNameFromConfig, loadConfig, loadDTOConfig, loadDTOConfigs } from '../../utils/helpers';
+import { DTOConfig, JavaAttribute, ObjectTypes } from '../../interfaces/types';
+import { loadDTOConfig, loadDTOConfigs } from '../../utils/helpers';
 import { normalizeName } from './saveDTOConfig';
 
 export const getDTOTypes = async function (module:string, basePath: string): Promise<Map<string, DTOConfig>> {

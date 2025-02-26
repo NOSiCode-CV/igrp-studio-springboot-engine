@@ -6,8 +6,7 @@ import { getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containing all the basic API information.
- * @param output - Output path where directories are created
+ * @param context - API base configuration file containing all the basic API information.
  */
 export const createTestDirectories = async (context: RenderContext) => {
   const directories = getDirectoriesToCreate(context.baseConfig, context.basePath);
@@ -21,7 +20,6 @@ export const createTestDirectories = async (context: RenderContext) => {
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
-
   const { group, packageName } = config;
 
   const testPath = path.join(basePath, getTestPath(group, packageName));
@@ -34,10 +32,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
 
-  if(config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-
-    const paths = [
-
+  if (config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    return [
       path.join(basePath, DIRECTORIES.RESOURCES),
 
       sharedPath,
@@ -68,31 +64,20 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
-
     ];
-
-    return paths
-
-  } else {
-
-    const paths = [
-      path.join(basePath, DIRECTORIES.RESOURCES),
-
-      path.join(testPath, DIRECTORIES.MODELS),
-      path.join(testPath, DIRECTORIES.SERVICES),
-      path.join(testPath, DIRECTORIES.CONTROLLERS),
-      path.join(testPath, DIRECTORIES.AUDIT_CONFIG),
-      path.join(testPath, DIRECTORIES.SECURITY),
-
-      path.join(testPath, DIRECTORIES.REPOSITORIES),
-      path.join(testPath, DIRECTORIES.SERVICES),
-
-    ];
-
-    return paths
-
   }
+  return [
+    path.join(basePath, DIRECTORIES.RESOURCES),
 
+    path.join(testPath, DIRECTORIES.MODELS),
+    path.join(testPath, DIRECTORIES.SERVICES),
+    path.join(testPath, DIRECTORIES.CONTROLLERS),
+    path.join(testPath, DIRECTORIES.AUDIT_CONFIG),
+    path.join(testPath, DIRECTORIES.SECURITY),
+
+    path.join(testPath, DIRECTORIES.REPOSITORIES),
+    path.join(testPath, DIRECTORIES.SERVICES),
+  ];
 };
 
 /**

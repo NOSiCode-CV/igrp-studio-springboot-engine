@@ -1,9 +1,9 @@
 import path from 'path';
 import { ControllerConfig, RenderContext } from '../../interfaces/types';
-import { ERROR_MESSAGE, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
+import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getControllerDir, getDDDRepositoryOutputDir, getDDDServiceDir } from '../../utils/helpers';
+import { getControllerDir, getDDDServiceDir } from '../../utils/helpers';
 
 const ICONTROLLER_PREFIX = 'I';
 const ICONTROLLER_SUFFIX = 'Service.java';

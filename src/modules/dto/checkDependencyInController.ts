@@ -1,6 +1,5 @@
 import { DeleteConfig, DTOBaseConfig, RenderContext } from '../../interfaces/types';
 import { getControllerTypes } from "../controller/getControllerTypes";
-import { getDTOTypes } from "./helpers";
 import { DIRECTORIES } from '../../utils/constants';
 import { capitalize } from '../../utils/capitalizeStrings';
 

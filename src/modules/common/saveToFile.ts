@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PACKAGES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { dirname, join } from 'path';
 import {
   getDirectoryPath,
@@ -8,7 +8,6 @@ import {
   loadEnumConfigs,
   loadModelConfigs, loadResponseConfigs,
 } from '../../utils/helpers';
-import { closeSync, openSync } from 'node:fs';
 
 /**
  * Saves the rendered template into the specified file. It will create the dir if it does not exist.
