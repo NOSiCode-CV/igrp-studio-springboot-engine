@@ -3,7 +3,7 @@
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.DataObject;
 
 {{> lombok-java-imports}}
-{{{resolve-imports resourceConfig baseConfig}}}
+{{{resolve-imports resourceConfig baseConfig basePath}}}
 
 {{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}

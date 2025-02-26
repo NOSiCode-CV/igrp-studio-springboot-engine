@@ -1,8 +1,12 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { Handlebars } from '../../utils/handlebarsHelpers';
-import { ERROR_MESSAGE, TEMPLATE_DIR, TEMPLATES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATE_DIR, TEMPLATES } from '../../utils/constants';
 import { loadPartials } from '../../utils/helpers';
+import { getDTOTypes } from '../dto/helpers';
+import { getEnumTypes } from '../enum/helpers';
+
+export const cache: Record<string, any> = {};
 
 /**
  * Generates content from a template and a context.
@@ -24,8 +28,16 @@ export const renderTemplate = async (templateName: string, context: any) => {
 
   if(templateName === TEMPLATES.APPLICATION_RESOURCES_BANNER) {
 
-    context.baseVersion = "0.3.0-alpha-5.0.0";
+    context.baseVersion = "0.0.1-alpha";
 
+  }
+
+  if(OBJECT_TYPES.includes(context.resourceConfig.type)) {
+    cache["dtoImports"] = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
+  }
+
+  if(context.resourceConfig.type === 'enum') {
+    cache["enumImports"] = await getEnumTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   }
 
   const templatePath = path.join(TEMPLATE_DIR, templateName);

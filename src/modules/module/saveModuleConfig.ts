@@ -11,8 +11,9 @@ import { renderTemplate } from '../common/renderTemplate';
 
 export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, basePath: string) => {
 
-  const baseApiFiles = generateBaseModuleFiles(context);
-  await saveBaseApiFiles(baseApiFiles, context);
+  // No need to save any file when creating a module yet
+  //const baseApiFiles = generateBaseModuleFiles(context);
+  //await saveBaseApiFiles(baseApiFiles, context);
 
   const baseApiFileOutputPah = path.join(
     basePath,

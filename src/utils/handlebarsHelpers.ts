@@ -19,6 +19,9 @@ import {
 import { extractTypeFromList, getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
+import { getDTOTypes } from '../modules/dto/helpers';
+import { getEnumTypes } from '../modules/enum/helpers';
+import { cache } from '../modules/common/renderTemplate';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -398,7 +401,7 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
-Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
+Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any, basePath: string) {
 
   if (!config) return null;
   if (!baseConfig) return null;
@@ -409,32 +412,53 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   const api = baseConfig
 
   const imports = new Set();
-  config.attributes.forEach((attr: JavaAttribute) => {
+  for (const attr of config.attributes) {
 
     if(attr.objectType === 'model') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`);
-      else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
-      return;
+      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        imports.add(
+          `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`,
+        );
+      else imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
+      continue;
     } else if (attr.objectType === 'dto') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
+      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        
+        const dtypes = cache["dtoImports"];
+
+        const dt = dtypes.get(normalizeName(attr.type, 'dto') + "DTO");
+
+        if(dt)
+          imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
+        else
+          imports.add(`import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
+      
+      }
       else
         imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
-      return;
+      continue;
     } else if (attr.objectType === 'enum') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`);
+      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        const etypes = cache["enumImports"];
+        const et = etypes.get(attr.type);
+        if(et)
+          imports.add(
+            `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
+          );
+        else
+          imports.add(
+            `import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
+          );
+      }
       else
         imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
-      return;
+      continue;
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
-    if (genType?.java.primitive) return null;
+    if (genType?.java.primitive) null;
     const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
-    if (type.name == '') return null;
+    if (type.name == '') null;
 
     if(type.namespace) {
       imports.add(`import ${type.namespace}.${type.name};`);
@@ -444,7 +468,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       imports.add(`import org.hibernate.annotations.JdbcType;`);
       imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
     }
-  });
+  }
 
   if (config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).length > 0) {
     imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');

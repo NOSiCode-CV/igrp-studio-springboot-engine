@@ -3,10 +3,9 @@
 import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{> lombok-java-imports}}
 
-{{{resolve-imports resourceConfig baseConfig}}}
+{{{resolve-imports resourceConfig baseConfig basePath}}}
 
 {{> lombok-java-annotations}}
 

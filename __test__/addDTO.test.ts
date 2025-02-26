@@ -20,7 +20,7 @@ describe('DTO generator', () => {
       {
         "id": "ab3de9fghj",
         "type": "dto",
-        "module": "core",
+        "module": "shared",
         "name": "Owner",
         "template": "record",
         "attributes": [

@@ -16,7 +16,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
   {{/if}}
 {{~/if}}
 
-{{{resolve-imports resourceConfig baseConfig}}}
+{{{resolve-imports resourceConfig baseConfig basePath}}}
 
 {{#if resourceConfig.revision~}}import org.hibernate.envers.Audited;{{~/if}}
 import cv.igrp.framework.stereotype.IgrpEntity;

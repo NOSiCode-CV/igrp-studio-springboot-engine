@@ -3,10 +3,8 @@
 import cv.igrp.framework.core.domain.Query;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 {{> lombok-java-imports}}
-{{{resolve-imports resourceConfig baseConfig}}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+{{{resolve-imports resourceConfig baseConfig basePath}}}
 
 {{> lombok-java-annotations}}
 {{#each resourceConfig.annotations}}
