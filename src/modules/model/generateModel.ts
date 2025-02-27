@@ -143,7 +143,7 @@ const renderColumnWithDefault = (attribute: Attribute) => {
   validateColumnDefault(attribute);
 
   if (attribute.defaultValue) {
-    return `@ColumnDefault(${attribute.defaultValue})`;
+    return `@ColumnDefault('${attribute.defaultValue}')`;
   }
 
   return ''; // Caso não tenha valor padrão, não retorna a anotação

@@ -77,10 +77,10 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
 
   @NotBlank(message = "{{this.name}} is mandatory"){{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
   private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   {{#if (eq this.type "file")}}
   @Lob
   @JdbcType(BinaryJdbcType.class)
