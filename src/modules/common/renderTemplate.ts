@@ -32,7 +32,7 @@ export const renderTemplate = async (templateName: string, context: any) => {
 
   }
 
-  if(OBJECT_TYPES.includes(context.resourceConfig.type) || context.resourceConfig.type === 'model') {
+  if(OBJECT_TYPES.includes(context.resourceConfig?.type) || context.resourceConfig?.type === 'model') {
     cache["dtoImports"] = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
     cache["enumImports"] = await getEnumTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   }

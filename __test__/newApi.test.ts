@@ -14,7 +14,7 @@ const domainApiConfig: BaseApiConfig = {
   projectStructureStyle: 'domain',
   enableObservability: true,
   enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-SNAPSHOT"
+  igrpCoreVersion: "0.0.1-alpha"
 };
 
 const technicalApiConfig: BaseApiConfig = {
@@ -27,7 +27,7 @@ const technicalApiConfig: BaseApiConfig = {
   projectStructureStyle: 'technical',
   enableObservability: false,
   enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-SNAPSHOT"
+  igrpCoreVersion: "0.0.1-alpha"
 };
 
 beforeAll(async () => {
