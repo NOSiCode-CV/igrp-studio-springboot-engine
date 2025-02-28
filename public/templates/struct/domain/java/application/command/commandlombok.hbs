@@ -2,7 +2,9 @@
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.application.command.Command;
 
-{{> lombok-java-imports}}
+{{#if resourceConfig.attributes.length}}
+  {{> lombok-java-imports}}
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 {{#if resourceConfig.attributes.length}}
 {{> lombok-java-annotations}}

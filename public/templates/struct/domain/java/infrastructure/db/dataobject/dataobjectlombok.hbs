@@ -2,7 +2,9 @@
 
 import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.DataObject;
 
-{{> lombok-java-imports}}
+{{#if resourceConfig.attributes.length}}
+  {{> lombok-java-imports}}
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
 {{#if resourceConfig.attributes.length}}

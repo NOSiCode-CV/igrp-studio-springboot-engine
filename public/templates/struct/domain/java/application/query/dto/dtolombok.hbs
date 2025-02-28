@@ -1,6 +1,8 @@
 package {{baseConfig.group}}.{{baseConfig.packageName}}.application.query.dto.{{toLowerCase resourceConfig.aggregate}};
 
-{{> lombok-java-imports}}
+{{#if resourceConfig.attributes.length}}
+  {{> lombok-java-imports}}
+{{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
