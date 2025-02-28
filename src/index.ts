@@ -56,7 +56,7 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalize, capitalizeResponse } from './utils/capitalizeStrings';
+import { capitalize, capitalizeResponse, processJavaClassName } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
@@ -345,7 +345,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   checkPrimaryKeys(config);
 
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name);
+  config.name = processJavaClassName(config.name);
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,

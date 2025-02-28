@@ -9,6 +9,13 @@ export const capitalize = (str: string): string =>
     .map(singleCapitalize)
     .join('');
 
+export const processJavaClassName = (str: string): string =>
+  str
+    .toLowerCase()
+    .split(/[-_,.]/)
+    .map(singleCapitalize)
+    .join('');
+
 export const capitalizeResponse = (responses?: { [p: string]: Body }): string => {
   if (!responses) return '?'; // Return empty string if responses is undefined
 
