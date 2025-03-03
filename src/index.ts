@@ -83,6 +83,7 @@ import { serializeData } from './modules/serialization/serializeData';
 import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateTestServiceInmpl } from './modules/test/generateTestService';
 import { generateTestHandlers } from './modules/test/generateTestHandlers';
+import { processTableName } from './modules/model/helpers';
 
 /**
  * Main Function that creates the base api
@@ -346,6 +347,7 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
 
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = processJavaClassName(config.name);
+  config.tableName = processTableName(config.tableName, baseConfig.database);
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
