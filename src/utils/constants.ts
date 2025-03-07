@@ -1182,7 +1182,7 @@ export const SCHEMA_TYPES = [
   'integer',
   'boolean',
   'object',
-  'customize',
+  'Reference other Object',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
