@@ -1,21 +1,21 @@
 import {
+  CONFIG_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_COLLECTION_TYPES,
+  GENERIC_MODEL_ATTRIBUTE_TYPES,
+  HTTP_HEADER_TYPES,
   HTTP_METHOD_TYPES,
   OBJECT_TYPES,
   PARAMS_TYPES,
-  STRUCT_TYPES,
-  GENERIC_COLLECTION_TYPES,
-  HTTP_HEADER_TYPES,
-  CONFIG_TYPES,
-  GENERIC_MODEL_ATTRIBUTE_TYPES,
   RELATIONSHIP_TYPES,
+  STRUCT_TYPES,
 } from '../utils/constants';
 
 interface IdentifiableElement {
-  id?: string
+  id?: string;
 }
 
 export interface TypeMetadata {
@@ -43,7 +43,6 @@ export interface BaseApiConfig {
   igrpCoreVersion: string;
 }
 
-
 export interface ModelConfig extends IdentifiableElement {
   type: 'model';
   name: string;
@@ -61,9 +60,8 @@ export interface ModelConfig extends IdentifiableElement {
 export interface EntityIndex {
   name: string;
   columns: string[];
-  unique: boolean
+  unique: boolean;
 }
-
 
 export interface ModuleConfig {
   type: 'module';
@@ -81,7 +79,7 @@ export interface IEndpoint {
   type: string;
   resource: string; // indicates the model name or controller name
   method: HttpMethod | DisabledMethods;
-  path: string
+  path: string;
 }
 
 export interface JavaType {
@@ -94,12 +92,12 @@ export interface JavaAttribute {
   type: string | AttributeType;
   objectType: 'dto' | 'model' | 'java' | 'enum';
   required: boolean;
-  before?: boolean,
-  after?: boolean,
-  positive?: boolean,
-  minLength?: number,
-  maxLength?: number,
-  regex?: string,
+  before?: boolean;
+  after?: boolean;
+  positive?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  regex?: string;
   collectionType?: CollectionType;
   isEmail?: boolean;
   isUrl?: boolean;
@@ -154,6 +152,7 @@ export interface DTOConfig extends DTOBaseConfig {
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
 }
+
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
@@ -172,7 +171,7 @@ export interface Attribute {
 
 export interface Relation {
   type: RelationshipTypes;
-  cardinality: 'twoWay' | 'oneWay'
+  cardinality: 'twoWay' | 'oneWay';
   entity: string;
   fieldName?: string;
   mappedBy?: string;
@@ -190,7 +189,7 @@ export interface Crud {
 
 export interface IModelPermission {
   method: DisabledMethods;
-  permissions: string[]
+  permissions: string[];
 }
 
 export interface ControllerConfig extends IdentifiableElement {
@@ -221,14 +220,14 @@ export interface MultipartFile {
   type: ParamsTypes;
   name: string;
   value?: string;
-  isRequired: boolean
+  isRequired: boolean;
 }
 
 export interface RequestParams {
   type: ParamsTypes;
   name: string;
   value?: string;
-  isRequired: boolean
+  isRequired: boolean;
 }
 
 export interface PathVariables {
@@ -276,7 +275,7 @@ export type RenderContext<T = undefined> = {
 
 export interface SchemaField {
   type: string;
-  objectType?: string,
+  objectType?: string;
   required?: boolean;
   identifier?: boolean;
   description?: string;
@@ -287,11 +286,11 @@ export interface SchemaField {
 }
 
 export interface SchemaEnum {
-  name?: string,
-  values?: string[]
+  name?: string;
+  values?: string[];
 }
 
-export interface PropertySchemaField extends SchemaField{
+export interface PropertySchemaField extends SchemaField {
   minimum?: number;
   maximum?: number;
   pattern?: string;
@@ -306,17 +305,18 @@ export interface BaseBody extends IdentifiableElement {
   };
 }
 
-export interface Body extends BaseBody{
+export interface Body extends BaseBody {
   description?: string;
   name: string;
   module?: string;
+  collectionType?: string;
 }
 
 export interface RequestConfig extends Body {}
 
 export interface ResponseConfig extends Body {
-  statusCode: string,
-  template: 'classic' | 'record'
+  statusCode: string;
+  template: 'classic' | 'record';
 }
 
 export interface SchemaContent {
@@ -324,28 +324,28 @@ export interface SchemaContent {
 }
 
 export interface DeleteConfig {
-  name: string,
-  module?: string,
-  type: ConfigTypes
+  name: string;
+  module?: string;
+  type: ConfigTypes;
 }
 
 export interface SerializationConfig {
-  name: string,
-  module?: string,
-  type: 'dto' | 'model' | 'response',
-  template: 'classic' | 'record'
+  name: string;
+  module?: string;
+  type: 'dto' | 'model' | 'response';
+  template: 'classic' | 'record';
 }
 
 export interface JsonConfig extends SerializationConfig {
-  json: string
+  json: string;
 }
 
 export interface SqlConfig extends SerializationConfig {
-  sql: string
+  sql: string;
 }
 
 export interface XmlConfig extends SerializationConfig {
-  xml: string
+  xml: string;
 }
 
 export interface DdlConfig extends SerializationConfig {
