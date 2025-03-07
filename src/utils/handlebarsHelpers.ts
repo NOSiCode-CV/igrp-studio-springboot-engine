@@ -232,11 +232,21 @@ Handlebars.registerHelper(
               );
           }
         }
+
       if (action.responses)
         for (const singleBody of Object.values(action.responses)) {
-          const type = (
+          const objType = (
             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
-          )?.schema.objectType
+          )?.schema.type;
+
+          console.log(`------>>>>>>>>>>>> ${objType}`);
+
+          if (objType === 'object')
+            imports.push(
+              `import ${group}.${packageName}.${singleBody.module}.application.dto.${singleBody.name}DTO;`,
+            );
+
+          const type = objType
             ? capitalize(
                 (
                   singleBody?.content['application/json'] ??
@@ -256,10 +266,12 @@ Handlebars.registerHelper(
                   )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
                 )
               : capitalize(singleBody?.name.replace(/dto$/i, '') + 'DTO') || undefined;
+
+          console.log(`--------------------------------- ${type}`);
+
           if (!type) return;
-          if (domainDriven === true)
-            imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
-          else imports.push(`import ${group}.${packageName}.dto.${type};`);
+
+          if (domainDriven === false) imports.push(`import ${group}.${packageName}.dto.${type};`);
         }
     }
 
@@ -385,12 +397,10 @@ Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
   }
 
   // Extract only the meaningful parts of the path for the Java package
-  const packagePath = relativePath
+  return relativePath
     .split('/')
     .filter((segment) => !['src', 'main', 'test', 'java'].includes(segment)) // Exclude common directory names
     .join('.');
-
-  return packagePath;
 });
 
 Handlebars.registerHelper(
@@ -422,19 +432,17 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
 });
 
 Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
-
   if (!config) return null;
   if (!baseConfig) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
-  const api = baseConfig
+  const api = baseConfig;
 
   const imports = new Set();
   for (const attr of config.attributes) {
-
-    if(attr.objectType === 'model') {
+    if (attr.objectType === 'model') {
       if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         imports.add(
           `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`,
@@ -442,27 +450,30 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       else imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
       continue;
     } else if (attr.objectType === 'dto') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        const dtypes = cache['dtoImports'];
 
-        const dtypes = cache["dtoImports"];
+        const dt = dtypes.get(normalizeName(attr.type, 'dto') + 'DTO');
 
-        const dt = dtypes.get(normalizeName(attr.type, 'dto') + "DTO");
-
-        if(dt)
-          imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
+        if (dt)
+          imports.add(
+            `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+          );
         else
-          imports.add(`import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`);
-
-      }
-      else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + "DTO"};`);
+          imports.add(
+            `import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+          );
+      } else
+        imports.add(
+          `import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+        );
       continue;
     } else if (attr.objectType === 'enum') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-        const etypes = cache["enumImports"];
+      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        const etypes = cache['enumImports'];
 
         const et = etypes.get(attr.type);
-        if(et)
+        if (et)
           imports.add(
             `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
           );
@@ -470,8 +481,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
           imports.add(
             `import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
           );
-      }
-      else
+      } else
         imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
       continue;
     }
@@ -482,11 +492,11 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
     if (type.name == '') null; // must be null and not return null!
 
-    if(type.namespace) {
+    if (type.namespace) {
       imports.add(`import ${type.namespace}.${type.name};`);
     }
 
-    if(attr.type == 'file' || attr.type == 'binary') {
+    if (attr.type == 'file' || attr.type == 'binary') {
       imports.add(`import org.hibernate.annotations.JdbcType;`);
       imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
     }
@@ -731,15 +741,5 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   const schema = content['application/json'] ?? content['multipart/form-data'];
   return capitalize(schema.schema.type);
 });
-
-function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
-  if (statusCode === '200') return actionName + 'Response';
-  if (statusCode === '201') return actionName + 'CreatedResponse';
-  if (statusCode === '400') return actionName + 'BadResponse';
-  if (statusCode === '500') return actionName + 'ErrorResponse';
-  if (statusCode === '401') return actionName + 'UnauthorizedResponse';
-  if (statusCode === '403') return actionName + 'ForbiddenResponse';
-  else return actionName + statusCode + 'Response';
-}
 
 export { Handlebars };
