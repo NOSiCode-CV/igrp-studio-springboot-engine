@@ -239,12 +239,14 @@ Handlebars.registerHelper(
             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
           )?.schema.type;
 
-          if (objType === 'object'){
+          if (domainDriven) {
+           if (objType === 'object'){
             const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
             const capitalizedResponseName = capitalize(singleBody.name);
             imports.push(
               `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
             );
+           }
           }
 
           const type = objType
