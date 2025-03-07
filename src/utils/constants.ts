@@ -1182,7 +1182,6 @@ export const SCHEMA_TYPES = [
   'integer',
   'boolean',
   'object',
-  'number',
   'customize',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
