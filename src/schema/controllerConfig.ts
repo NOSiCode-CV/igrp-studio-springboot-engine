@@ -322,6 +322,11 @@ const bodySchema: JSONSchemaType<Body> = {
       nullable: true,
       errorMessage: "The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field, if provided, must be a string.",
+    },
     content: {
       type: "object",
       required: [],

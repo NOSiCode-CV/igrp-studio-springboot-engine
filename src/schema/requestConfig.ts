@@ -23,6 +23,11 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
       nullable: true,
       errorMessage: "The 'description' field, if provided, must be a string.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field, if provided, must be a string.",
+    },
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
