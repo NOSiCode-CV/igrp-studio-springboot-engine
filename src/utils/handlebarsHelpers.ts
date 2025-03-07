@@ -239,8 +239,6 @@ Handlebars.registerHelper(
             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
           )?.schema.type;
 
-          console.log(`------>>>>>>>>>>>> ${objType}`);
-
           if (objType === 'object'){
             const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
             const capitalizedResponseName = capitalize(singleBody.name);
@@ -269,8 +267,6 @@ Handlebars.registerHelper(
                   )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
                 )
               : capitalize(singleBody?.name.replace(/dto$/i, '') + 'DTO') || undefined;
-
-          console.log(`--------------------------------- ${type}`);
 
           if (!type) return;
 
