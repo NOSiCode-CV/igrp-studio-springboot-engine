@@ -241,10 +241,13 @@ Handlebars.registerHelper(
 
           console.log(`------>>>>>>>>>>>> ${objType}`);
 
-          if (objType === 'object')
+          if (objType === 'object'){
+            const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
+            const capitalizedResponseName = capitalize(singleBody.name);
             imports.push(
-              `import ${group}.${packageName}.${singleBody.module}.application.dto.${singleBody.name}DTO;`,
+              `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
             );
+          }
 
           const type = objType
             ? capitalize(
