@@ -4,13 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-{{#if resourceConfig.content.length}}
+{{#if resourceConfig.content}}
   {{> lombok-java-imports}}
 {{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{#if resourceConfig.content.length}}
+{{#if resourceConfig.content}}
   {{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}
