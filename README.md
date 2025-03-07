@@ -425,35 +425,6 @@ const createDTO = async () => {
 * when ns=dto it will check if that dto exist in json config
 * when ns=java it will check if that java class exists on the java allowed list 
 */
-// JAVA LIST
-
-export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
-  'boolean': { name: 'boolean', primitive: true },
-  'short': { name: 'short', primitive: true },
-  'char': { name: 'char', primitive: true },
-  'int': { name: 'int', primitive: true },
-  'long': { name: 'long', primitive: true },
-  'float': { name: 'float', primitive: true },
-  'double': { name: 'double', primitive: true },
-  'Boolean': { name: 'Boolean', primitive: false },
-  'Short': { name: 'Short', primitive: false },
-  'Integer': { name: 'Integer', primitive: false },
-  'Long': { name: 'Long', primitive: false },
-  'Double': { name: 'Double', primitive: false },
-  'String': { name: 'String', primitive: false },
-  'Character': { name: 'Character', primitive: false },
-  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
-  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
-  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
-  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
-  'ZoneDateTime': { name: 'ZoneDateTime', primitive: false, namespace: 'java.time' },
-  'OffsetDateTime': { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
-  'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
-  'List': { name: 'List', primitive: false, namespace: 'java.util', },
-  'Object': { name: 'Object', primitive: false },
-}));
-```
 
 - Add new controller - This function creates a controller based on the provided configuration and integrates it into the specified API base path.
   It also generates the corresponding service interface for the controller actions defined.
