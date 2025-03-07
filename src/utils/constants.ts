@@ -1178,17 +1178,12 @@ export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] 
 //export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
 
 export const SCHEMA_TYPES = [
-  'Reference other schemas',
   'string',
   'integer',
   'boolean',
-  'array',
   'object',
   'number',
-  'null',
-  'any',
-  'Schema Composition',
-  'Customize',
+  'customize',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
 export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
