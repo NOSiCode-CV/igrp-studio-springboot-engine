@@ -720,6 +720,16 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (str == '?') return '?';
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
+Handlebars.registerHelper('processResponseType', (type: string) => {
+
+  let primitiveTypes: string[] = ["integer", "boolean", "string"];
+
+  if (primitiveTypes.includes(type)) {
+    return capitalize(type);
+  } else {
+    return capitalize(type) + 'DTO';
+  }
+});
 
 Handlebars.registerHelper(
   'containsFormData',

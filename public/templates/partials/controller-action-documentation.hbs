@@ -13,7 +13,7 @@
                   {{#if (eq this.schema.type "object")}}
                   implementation = {{normalizeDto ../this.name}}.class,
                   {{else}}
-                  implementation = {{normalizeDto this.schema.type}}.class,
+                  implementation = {{processResponseType this.schema.type}}.class,
                   {{/if}}
                   {{#if this.schema.type}}
                   type = {{#if this.schema.objectType}}"{{normalizeDto this.schema.type}}"{{else}}"{{this.schema.type}}"{{/if}}{{/if}}{{#if this.schema.description}},
