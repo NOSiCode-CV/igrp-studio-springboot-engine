@@ -36,18 +36,22 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
   const baseConfig = context.baseConfig
   const basePath = context.basePath
 
-  for(const action of context.resourceConfig.actions) {
+  for (const action of context.resourceConfig.actions) {
 
-    if(!action.responses || !Object.keys(action.responses)) continue
+    if (!action.responses || !Object.keys(action.responses)) continue
 
     for (const [status, response] of Object.entries(action.responses)) {
 
       // If it's a reference attribute that means do not need to generate the DTO
-      if (
+      /*if (
         (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema
           .objectType
       )
+        continue;*/
+      const schema = (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema;
+      if (schema?.objectType || schema?.type !== 'object') {
         continue;
+      }
       if (status == '204') continue;
 
       response.name = capitalize(response.name ?? '');
@@ -78,7 +82,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
       const statusCode = parseInt(status, 10);
 
-      if(statusCode >= 400 && statusCode <= 599) {
+      if (statusCode >= 400 && statusCode <= 599) {
 
         const exceptionContext: RenderContext<ExceptionConfig> = {
           baseConfig: context.baseConfig,
@@ -113,7 +117,7 @@ export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
   }
   let tn;
 
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     tn = TEMPLATES.DDD_RESPONSE_DTO[context.resourceConfig.template];
   else
     tn = TEMPLATES.DOMAIN_RESPONSE[context.resourceConfig.template];
@@ -124,7 +128,7 @@ export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
   return await renderTemplate(tn, context);
 };
 
-export const transformSchemaDTOConfig = async function(
+export const transformSchemaDTOConfig = async function (
   module: string,
   config: Body,
   api: ApiConfig,
@@ -158,7 +162,7 @@ export const transformSchemaDTOConfig = async function(
       }
       const mt = mtypes.get(attr.type!);
       if (mt) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
@@ -176,13 +180,13 @@ export const transformSchemaDTOConfig = async function(
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
         const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
-        if(!dtype) {
+        if (!dtype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
@@ -199,13 +203,13 @@ export const transformSchemaDTOConfig = async function(
       if (!et) {
         etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
         const etype = etypes.get(type.name);
-        if(!etype) {
+        if (!etype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
@@ -234,7 +238,7 @@ export const transformSchemaDTOConfig = async function(
     ncfg.attributes.push({
       name: key,
       type: attr.type!,
-      objectType: (attr.objectType != 'dto' && attr.objectType != 'model')? 'java' : attr.objectType,
+      objectType: (attr.objectType != 'dto' && attr.objectType != 'model') ? 'java' : attr.objectType,
       required: attr.required ?? false,
       minLength: attr.minimum,
       maxLength: attr.maximum,
