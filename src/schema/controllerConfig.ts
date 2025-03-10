@@ -323,7 +323,7 @@ const bodySchema: JSONSchemaType<Body> = {
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: false,
+      nullable: true,
       errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     module: {
@@ -348,7 +348,7 @@ const bodySchema: JSONSchemaType<Body> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["content", "name"],
+  required: ["content"],
   additionalProperties: false
 };
 

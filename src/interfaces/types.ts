@@ -308,7 +308,7 @@ export interface BaseBody extends IdentifiableElement {
 
 export interface Body extends BaseBody {
   description?: string;
-  name: string;
+  name?: string;
   module?: string;
 }
 

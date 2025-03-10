@@ -80,7 +80,7 @@ export const transformSchemaDTOConfig = async function(
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'response',
-    name: capitalize(bodyCfg.name),
+    name: capitalize(bodyCfg.name ?? ''),
     template: 'classic',
     module: bodyCfg.module,
     attributes: []
@@ -191,7 +191,7 @@ export const transformSchemaDTOConfig = async function(
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.name = normalizeName(bodyCfg.name ?? '', 'dto')
   ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {

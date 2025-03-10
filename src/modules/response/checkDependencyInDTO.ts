@@ -5,7 +5,9 @@ import { DIRECTORIES } from '../../utils/constants';
 export const checkDependencyInDTO = async function(context: RenderContext<ResponseConfig>) {
   const types = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const cfg = context.resourceConfig;
-  types.delete(cfg.name);
+  if (cfg.name != null) {
+    types.delete(cfg.name);
+  }
   const errors: Array<{message: string}> = [];
   for(const t of types.values()) {
     t.attributes.map(attr => {

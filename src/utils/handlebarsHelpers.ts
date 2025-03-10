@@ -241,7 +241,7 @@ Handlebars.registerHelper(
 
           if (domainDriven && objType === 'object') {
             const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
-            const capitalizedResponseName = capitalize(singleBody.name);
+            const capitalizedResponseName = capitalize(singleBody.name ?? '');
             imports.push(
               `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
             );
@@ -266,7 +266,7 @@ Handlebars.registerHelper(
                     singleBody?.content['multipart/form-data']
                   )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
                 )
-              : capitalize(singleBody?.name.replace(/dto$/i, '') + 'DTO') || undefined;
+              : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || undefined;
 
           if (!type) return;
 

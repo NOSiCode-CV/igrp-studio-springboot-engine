@@ -43,7 +43,7 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
           )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
         )
-      : capitalize(singleBody?.name.replace(/dto$/i, '') + 'DTO') || '?';
+      : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || '?';
 
   return isResponseCollection(
     (singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema

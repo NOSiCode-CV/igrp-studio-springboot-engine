@@ -541,7 +541,8 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
-  config.name = capitalize(config.name);
+  config.name = capitalize(config.name ?? '');
+
   const baseConfig = await getBaseApiConfig(basePath);
 
   const context: RenderContext<ResponseConfig> = {

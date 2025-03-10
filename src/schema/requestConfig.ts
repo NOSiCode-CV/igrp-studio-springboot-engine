@@ -31,7 +31,7 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: false,
+      nullable: true,
       errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     template: {
@@ -66,7 +66,7 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["content", "name"],
+  required: ["content"],
   additionalProperties: false
 };
 

@@ -43,10 +43,14 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
     for (const [status, response] of Object.entries(action.responses)) {
 
       // If it's a reference attribute that means do not need to generate the DTO
-      if((response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema.objectType) continue;
-      if(status == "204") continue;
+      if (
+        (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema
+          .objectType
+      )
+        continue;
+      if (status == '204') continue;
 
-      response.name = capitalize(response.name)
+      response.name = capitalize(response.name ?? '');
 
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: baseConfig,
@@ -131,7 +135,7 @@ export const transformSchemaDTOConfig = async function(
 
   const ncfg: DTOConfig = {
     type: 'response',
-    name: bodyCfg.name,
+    name: bodyCfg.name ?? '',
     template: 'classic',
     module: bodyCfg.module,
     attributes: []
@@ -242,7 +246,7 @@ export const transformSchemaDTOConfig = async function(
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.name = normalizeName(bodyCfg.name ?? '', 'dto')
   ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {
