@@ -10,16 +10,10 @@
               {{#each this.content}}
               mediaType = "{{@key}}",
               schema = @Schema(
-                  {{#if this.schema.objectType}}
-                  implementation = {{normalizeDto this.schema.type}}.class,
-                  {{else}}
-                  {{#if (eq this.schema.type 'array')}}
-                  implementation = {{normalizeDto this.schema.items.type}}.class,
-                  {{else}}
-                  {{#if ../this.name}}
+                  {{#if (eq this.schema.type "object")}}
                   implementation = {{normalizeDto ../this.name}}.class,
-                  {{/if}}
-                  {{/if}}
+                  {{else}}
+                  implementation = {{normalizeDto this.schema.type}}.class,
                   {{/if}}
                   {{#if this.schema.type}}
                   type = {{#if this.schema.objectType}}"{{normalizeDto this.schema.type}}"{{else}}"{{this.schema.type}}"{{/if}}{{/if}}{{#if this.schema.description}},
