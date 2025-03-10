@@ -146,6 +146,11 @@ const schemaField: JSONSchemaType<SchemaField> = {
       },
       errorMessage: "The 'properties' field must be an object with PropertySchemaField values.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field when provided must be one of [none, collection, map, pageable]",
+    },
   },
   required: ["type"],
   additionalProperties: false,
@@ -273,6 +278,11 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       },
       errorMessage: "The 'properties' field must be an object with SchemaField values.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field when provided must be one of [none, collection, map, pageable]",
+    },
   },
   required: ['type'],
   additionalProperties: false,
@@ -321,11 +331,6 @@ const bodySchema: JSONSchemaType<Body> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
       errorMessage: "The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.",
-    },
-    collectionType: {
-      type: "string",
-      nullable: true,
-      errorMessage: "The 'collectionType' field, if provided, must be a string.",
     },
     content: {
       type: "object",

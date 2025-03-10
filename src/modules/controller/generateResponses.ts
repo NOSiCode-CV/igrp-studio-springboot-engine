@@ -33,6 +33,9 @@ import { getEnumTypes } from '../enum/helpers';
 
 export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
+  const baseConfig = context.baseConfig
+  const basePath = context.basePath
+
   for(const action of context.resourceConfig.actions) {
 
     if(!action.responses || !Object.keys(action.responses)) continue
@@ -43,11 +46,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       if((response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema.objectType) continue;
       if(status == "204") continue;
 
-      // Capitalize the response name
       response.name = capitalize(response.name)
-
-      const baseConfig = context.baseConfig
-      const basePath = context.basePath
 
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: baseConfig,
@@ -72,8 +71,6 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       const template = await _renderDTO(responseContext);
 
       await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
-
-      // await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
 
       const statusCode = parseInt(status, 10);
 

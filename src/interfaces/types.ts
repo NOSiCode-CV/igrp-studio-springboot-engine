@@ -283,6 +283,7 @@ export interface SchemaField {
   deprecated?: boolean;
   items?: SchemaField; // For array types
   properties?: { [key: string]: PropertySchemaField }; // For object types
+  collectionType?: 'none' | 'collection' | 'map' | 'pageable';
 }
 
 export interface SchemaEnum {
@@ -309,7 +310,6 @@ export interface Body extends BaseBody {
   description?: string;
   name: string;
   module?: string;
-  collectionType?: string;
 }
 
 export interface RequestConfig extends Body {}
