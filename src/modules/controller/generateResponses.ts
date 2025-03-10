@@ -42,17 +42,12 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
     for (const [status, response] of Object.entries(action.responses)) {
 
-      // If it's a reference attribute that means do not need to generate the DTO
-      /*if (
-        (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema
-          .objectType
-      )
-        continue;*/
+      if (status == '204') continue;
+
       const schema = (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema;
-      if (schema?.objectType || schema?.type !== 'object') {
+      if (schema?.objectType == 'dto' || schema?.type !== 'object') {
         continue;
       }
-      if (status == '204') continue;
 
       response.name = capitalize(response.name ?? '');
 
