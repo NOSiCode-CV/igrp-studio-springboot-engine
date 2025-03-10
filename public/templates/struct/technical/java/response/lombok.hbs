@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 {{{resolve-imports resourceConfig baseConfig}}}
 
 {{#if resourceConfig.content.length}}
-  {{> lombok-java-annotations}}
+{{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}

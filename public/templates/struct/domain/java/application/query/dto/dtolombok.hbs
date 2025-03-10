@@ -7,7 +7,7 @@ package {{baseConfig.group}}.{{baseConfig.packageName}}.application.query.dto.{{
 {{{resolve-imports resourceConfig baseConfig}}}
 
 {{#if resourceConfig.attributes.length}}
-  {{> lombok-java-annotations}}
+{{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
