@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.0.1-alpha.16",
+  "version": "0.0.1-alpha.18",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/NOSiCode-CV/igrp-studio-springboot-engine.git"
+    "url": "git+https://github.com/NOSiCode-CV/igrp-studio-springboot-engine.git"
   },
   "keywords": [
     "Spring",
