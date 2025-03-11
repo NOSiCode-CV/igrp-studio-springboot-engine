@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-@Tag(name = "{{capitalize resourceConfig.name}}", description = "Controller for handling {{resourceConfig.name}}")
+@Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-injection}}

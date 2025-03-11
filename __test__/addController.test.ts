@@ -9,6 +9,7 @@ const domainControllerConfig: ControllerConfig = {
   type: "controller",
   name: "Animals",
   basePath: "animals",
+  description: "Controller for managing animals",
   actions: [
     {
       actionName: "getAnimalById",
@@ -228,6 +229,7 @@ const technicalControllerConfig: ControllerConfig = {
   type: "controller",
   name: "Users",
   basePath: "users",
+  description: "Controller for managing users",
   actions: [
     {
       actionName: "getUserById",

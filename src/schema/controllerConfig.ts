@@ -639,6 +639,11 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       pattern: PATTERNS.PATH_SLASH_VALIDATION_PATTERN,
       errorMessage: 'The basePath attribute can only contain alphanumeric characters and slash, without spaces or other special characters.'
     },
+    description: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The description attribute must be a valid string'
+    },
     actions: { 
       type: 'array',
       items: controllerActionSchema,
@@ -663,19 +668,6 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
     additionalProperties: 'No additional properties are allowed in the controller schema.'
   }
 };
-
-export const debugSchema = (data: ControllerConfig) => {
-  const valid = validateController(data);
-  if (!valid) {
-    validateController.errors!.forEach(error => {
-      console.log(`Error at ${error.instancePath}: ${error.message}`);
-      console.log(`Schema path: ${error.schemaPath}`);
-    });
-  } else {
-    console.log("Valid schema");
-  }
-
-}
 
 export const validateController: ValidateFunction<ControllerConfig> =
   ajvInstance.compile<ControllerConfig>(controllerSchema);

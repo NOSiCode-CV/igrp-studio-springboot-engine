@@ -198,6 +198,7 @@ export interface ControllerConfig extends IdentifiableElement {
   basePath: string;
   actions: ControllerAction[];
   module?: string;
+  description?: string;
 }
 
 export interface ControllerAction {

@@ -1,6 +1,4 @@
 import { Body } from '../interfaces/types';
-import { isResponseCollection } from './helpers';
-import { type } from 'node:os';
 
 const singleCapitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
