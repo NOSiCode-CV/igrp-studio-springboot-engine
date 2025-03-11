@@ -249,23 +249,23 @@ Handlebars.registerHelper(
 
           const type = objType
             ? capitalize(
+              (
+                singleBody?.content['application/json'] ??
+                singleBody?.content['multipart/form-data']
+              )?.schema.type?.replace(/dto$/i, '') + 'DTO',
+            )
+            : isResponseCollection(
+              (
+                singleBody?.content['application/json'] ??
+                singleBody?.content['multipart/form-data']
+              )?.schema.type,
+            )
+              ? capitalize(
                 (
                   singleBody?.content['application/json'] ??
                   singleBody?.content['multipart/form-data']
-                )?.schema.type?.replace(/dto$/i, '') + 'DTO',
+                )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
               )
-            : isResponseCollection(
-                  (
-                    singleBody?.content['application/json'] ??
-                    singleBody?.content['multipart/form-data']
-                  )?.schema.type,
-                )
-              ? capitalize(
-                  (
-                    singleBody?.content['application/json'] ??
-                    singleBody?.content['multipart/form-data']
-                  )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
-                )
               : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || undefined;
 
           if (!type) return;
@@ -715,11 +715,19 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
 
-Handlebars.registerHelper('normalizeDto', (str: string) => {
+/*Handlebars.registerHelper('normalizeDto', (str: string) => {
+  console.log('antes: ', str);
   if (!str) return '';
   if (str == '?') return '?';
+  console.log('depois: ', capitalize(str).replace(/dto$/i, '') + 'DTO');
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
+
+});*/
+
+Handlebars.registerHelper('normalizeDto', (str: string) => {
+  return new Handlebars.SafeString(str);
 });
+
 Handlebars.registerHelper('processResponseType', (type: string) => {
 
   let primitiveTypes: string[] = ["integer", "boolean", "string"];
