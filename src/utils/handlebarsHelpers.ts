@@ -715,18 +715,18 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
 
-/*Handlebars.registerHelper('normalizeDto', (str: string) => {
-  console.log('antes: ', str);
+Handlebars.registerHelper('normalizeDto', (str: string) => {
+  //console.log('antes: ', str);
   if (!str) return '';
   if (str == '?') return '?';
-  console.log('depois: ', capitalize(str).replace(/dto$/i, '') + 'DTO');
+  //console.log('depois: ', capitalize(str).replace(/dto$/i, '') + 'DTO');
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 
-});*/
-
-Handlebars.registerHelper('normalizeDto', (str: string) => {
-  return new Handlebars.SafeString(str);
 });
+
+/*Handlebars.registerHelper('normalizeDto', (str: string) => {
+  return new Handlebars.SafeString(str);
+});*/
 
 Handlebars.registerHelper('processResponseType', (type: string) => {
 
