@@ -27,11 +27,26 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
 
   if (!schema) return '?';
 
-  const getTypeName = (type: string | undefined): string =>
+  const formatTypeName = (type: string | undefined): string =>
     capitalize(type?.replace(/dto$/i, '') + 'DTO');
 
-  const processResponseCollection = (type: string): string => {
-    switch (type) {
+  let resolvedType: string;
+
+  if (schema.type === 'object') {
+    resolvedType = formatTypeName(singleBody?.name);
+  } else {
+
+    let primitiveTypes: string[] = ["integer", "boolean", "string"];
+
+    if (primitiveTypes.includes(schema.type)) {
+      resolvedType = capitalize(schema.type);
+    } else {
+      resolvedType = formatTypeName(schema.type);
+    }
+  }
+
+  const wrapCollectionType = (type: string, collectionType: string): string => {
+    switch (collectionType) {
       case 'collection':
         return `Collection<${type}>`
       case 'map':
@@ -42,20 +57,7 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     return type;
   }
 
-  let response: string;
+  const responseCollectionType: string = schema.collectionType ?? 'none';
 
-  if (schema.type === 'object') {
-    response = getTypeName(singleBody?.name);
-  } else {
-
-    let primitiveTypes: string[] = ["integer", "boolean", "string"];
-
-    if (primitiveTypes.includes(schema.type)) {
-      response = capitalize(schema.type);
-    } else {
-      response = getTypeName(schema.type);
-    }
-  }
-
-  return processResponseCollection(response);
+  return wrapCollectionType(resolvedType, responseCollectionType);
 };
