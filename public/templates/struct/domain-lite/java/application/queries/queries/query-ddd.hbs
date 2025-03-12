@@ -3,6 +3,8 @@
 import cv.igrp.framework.core.domain.Query;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
+import org.springframework.data.domain.Pageable;
+
 {{#if resourceConfig.attributes.length}}
 {{> lombok-java-imports}}
 {{/if}}
@@ -17,15 +19,21 @@ import jakarta.validation.constraints.*;
 public class {{resourceConfig.name}}Query implements Query {
 
 {{#each resourceConfig.attributes}}
-  {{#each this.annotations}}
-  @{{this.annotation}}
-  {{/each}}
-  {{#if (and (eq (resolve-type this) "Object") (eq this.name "none"))}}
-    {{!-- Skip attribute if type is "Object" and name is "none" --}}
-  {{else}}
-  {{{resolve-annotations this}}}
-  private {{{resolve-type this}}} {{this.name}};
-  {{/if}}
+{{#each this.annotations}}
+@{{this.annotation}}
 {{/each}}
+{{#if (and (eq (resolve-type this) "Object") (eq this.name "none"))}}
+{{!-- Skip attribute if type is "Object" and name is "none" --}}
+{{else}}
+{{{resolve-annotations this}}}
+private {{{resolve-type this}}} {{this.name}};
+{{/if}}
+{{/each}}
+
+
+{{#if (addPropPageable resourceConfig)}}
+private Pageable pageable;
+{{/if}}
+
 
 }

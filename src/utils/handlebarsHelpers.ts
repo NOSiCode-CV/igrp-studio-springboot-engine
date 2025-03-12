@@ -759,4 +759,49 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   return capitalize(schema.schema.type);
 });
 
+
+
+Handlebars.registerHelper('isPageable', function (responses?: { [p: string]: any }): boolean {
+  //console.log("Objeto responseeeeeeeeeeeeee:", responses);
+  let isPageable = false;
+
+  if (!responses || Object.keys(responses).length !== 1) return false;
+
+  const singleBody = responses[Object.keys(responses)[0]];
+  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
+  const schema = content?.schema;
+
+  if (!schema) return false;
+  const responseCollectionType: string = schema.collectionType
+
+  if (responseCollectionType === 'pageable')
+    isPageable = true;
+
+  return isPageable;;
+});
+
+Handlebars.registerHelper('addPropPageable', function (context): boolean {
+  //console.log("contexto:", context);
+  let isPageable = false;
+
+  const response = context?.response;
+  const type = context?.type;
+
+  //console.log("response:: ", response);
+
+  const isPageType = (str: string): boolean => {
+    const regex = /^Page<.*>$/;
+    return regex.test(str);
+  };
+
+  if (isPageType(response) && type === 'query') {
+    isPageable = true;
+  }
+
+  return isPageable;;
+});
+
+
+
+
 export { Handlebars };
