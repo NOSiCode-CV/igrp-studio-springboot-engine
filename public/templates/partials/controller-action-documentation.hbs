@@ -16,9 +16,9 @@
                   implementation = {{processResponseType this.schema.type}}.class,
                   {{/if}}
                   {{#if (eq this.schema.type "object")}}
-                  type = {{normalizeDto ../this.name}},
+                  type = "{{normalizeDto ../this.name}}",
                   {{else}}
-                  type = {{processResponseType this.schema.type}}.class,
+                  type = "{{processResponseType this.schema.type}}",
                   {{/if}}
                   {{#if this.schema.type}}
                   description = "{{this.schema.description}}"{{/if}}{{#if this.schema.example}},
