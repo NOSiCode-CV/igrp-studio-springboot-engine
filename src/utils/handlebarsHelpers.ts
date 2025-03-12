@@ -257,7 +257,7 @@ Handlebars.registerHelper(
 
           // Determine the DTO type string to import.
           let type;
-          if (schemaType) {
+          if (schemaType !== 'object') {
             type = capitalize(schemaType.replace(/dto$/i, '') + 'DTO');
           } else if (isResponseCollection(schemaType)) {
             type = capitalize(schema.items?.type.replace(/dto$/i, '') + 'DTO');
