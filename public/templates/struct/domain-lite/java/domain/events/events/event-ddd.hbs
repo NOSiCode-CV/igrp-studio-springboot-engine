@@ -1,6 +1,6 @@
 {{> package-java }}
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}

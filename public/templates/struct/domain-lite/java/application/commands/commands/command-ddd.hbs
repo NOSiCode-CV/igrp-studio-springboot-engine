@@ -3,7 +3,7 @@
 import cv.igrp.framework.core.domain.Command;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
