@@ -5,12 +5,12 @@ import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.domain.Pageable;
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}

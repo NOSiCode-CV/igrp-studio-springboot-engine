@@ -2,13 +2,13 @@
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.DomainEntity;
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}

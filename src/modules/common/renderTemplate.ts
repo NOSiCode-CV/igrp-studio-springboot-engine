@@ -33,7 +33,7 @@ export const renderTemplate = async (templateName: string, context: any) => {
 
   if(OBJECT_TYPES.includes(context.resourceConfig?.type) || context.resourceConfig?.type === 'model') {
     const sharedDTOImports = await getDTOTypes(DIRECTORIES.SHARED, context.basePath);
-    const customDTOImports = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
+    const customDTOImports = await getDTOTypes(context.resourceConfig.module, context.basePath);
     cache["dtoImports"] = new Map([...sharedDTOImports, ...customDTOImports]);
     cache["enumImports"] = await getEnumTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   }
