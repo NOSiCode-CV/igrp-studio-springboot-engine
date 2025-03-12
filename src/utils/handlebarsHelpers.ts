@@ -728,13 +728,27 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   return new Handlebars.SafeString(str);
 });*/
 
-Handlebars.registerHelper('processResponseType', (type: string) => {
+Handlebars.registerHelper('processImplementation', (type: string) => {
 
   let primitiveTypes: string[] = ["integer", "boolean", "string"];
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);
-  } else if (type == 'object') return 'object';
+  } else if (type == 'object')
+    return 'object';
+  else {
+    return capitalize(type) + 'DTO';
+  }
+});
+
+Handlebars.registerHelper('processType', (type: string, objType?: string) => {
+
+  let primitiveTypes: string[] = ["integer", "boolean", "string"];
+
+  if (primitiveTypes.includes(type)) {
+    return capitalize(type);
+  } else if (type === 'object' && (!objType || objType.trim() === ''))
+    return 'object';
   else {
     return capitalize(type) + 'DTO';
   }
