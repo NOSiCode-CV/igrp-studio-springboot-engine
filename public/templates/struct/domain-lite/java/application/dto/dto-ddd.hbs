@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{#if resourceConfig.attributes.length}}
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
 {{/if}}
 
