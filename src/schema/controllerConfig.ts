@@ -641,7 +641,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
     },
     description: {
       type: 'string',
-      nullable: true,
+      nullable: false,
       errorMessage: 'The description attribute must be a valid string'
     },
     actions: { 
