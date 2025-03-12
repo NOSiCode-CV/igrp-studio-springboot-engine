@@ -124,6 +124,7 @@ Handlebars.registerHelper('not', function (conditional: any) {
 });
 
 Handlebars.registerHelper('keyType', function (config: ModelConfig) {
+
   if (config.primaryKey) {
     return `${config.name}PrimaryKey`;
   }
@@ -138,20 +139,6 @@ Handlebars.registerHelper('keyType', function (config: ModelConfig) {
 Handlebars.registerHelper('like', function (value, substring) {
   return value && value.includes(substring);
 });
-
-/*Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
-  const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
-  if (primaryKeyAttr.type === 'int') {
-    return 'Integer';
-  } else if (primaryKeyAttr.type === 'long') {
-    return 'Long';
-  } else {
-    return primaryKeyAttr.type;
-  }
-});*/
 
 Handlebars.registerHelper('keyType', function (config: DTOConfig) {
   if (!config) {
@@ -184,10 +171,6 @@ Handlebars.registerHelper(
   },
 );
 
-/*Handlebars.registerHelper('keyType', function (resourceConfig) {
-    return resourceConfig.keyType || 'DefaultType';
-});*/
-
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
 });
@@ -213,7 +196,7 @@ Handlebars.registerHelper(
             action.requestBody.content['multipart/form-data']
           ).schema;
           if (schema.objectType) {
-            if (domainDriven === true)
+            if (domainDriven)
               imports.push(
                 `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
               );
@@ -222,7 +205,7 @@ Handlebars.registerHelper(
                 `import ${group}.${packageName}.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
               );
           } else {
-            if (domainDriven === true)
+            if (domainDriven)
               imports.push(
                 `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
               );
@@ -273,47 +256,6 @@ Handlebars.registerHelper(
           }
 
         }
-
-
-      /* if (action.responses)
-         for (const singleBody of Object.values(action.responses)) {
-           const objType = (
-             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
-           )?.schema.type;
- 
-           if (domainDriven && objType === 'object') {
-             const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
-             const capitalizedResponseName = capitalize(singleBody.name ?? '');
-             imports.push(
-               `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
-             );
-           } 
- 
-           const type = objType
-             ? capitalize(
-               (
-                 singleBody?.content['application/json'] ??
-                 singleBody?.content['multipart/form-data']
-               )?.schema.type?.replace(/dto$/i, '') + 'DTO',
-             )
-             : isResponseCollection(
-               (
-                 singleBody?.content['application/json'] ??
-                 singleBody?.content['multipart/form-data']
-               )?.schema.type,
-             )
-               ? capitalize(
-                 (
-                   singleBody?.content['application/json'] ??
-                   singleBody?.content['multipart/form-data']
-                 )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
-               )
-               : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || undefined;
- 
-           if (!type) return;
- 
-           if (domainDriven === false) imports.push(`import ${group}.${packageName}.dto.${type};`);
-         }*/
     }
 
     imports.push(`import java.util.List;`);
@@ -480,50 +422,59 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!Array.isArray(config.attributes)) return null;
 
   const api = baseConfig;
+  const isDDDStyle = api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
+  const dtypes = cache['dtoImports'];
   const imports = new Set();
+
+  const packageNameFromConfig = getPackageNameFromConfig(api);
+
   for (const attr of config.attributes) {
+
     if (attr.objectType === 'model') {
-      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (isDDDStyle)
         imports.add(
-          `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`,
+          `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`,
         );
-      else imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
+      else imports.add(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attr.type};`);
       continue;
     } else if (attr.objectType === 'dto') {
-      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-        const dtypes = cache['dtoImports'];
 
-        const dt = dtypes.get(normalizeName(attr.type, 'dto') + 'DTO');
+      let normalizedDtoName = normalizeName(attr.type, 'dto');
+      console.log(normalizedDtoName)
+
+      if (isDDDStyle) {
+
+        const dt = dtypes.get(normalizedDtoName + 'DTO');
 
         if (dt)
           imports.add(
-            `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+            `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
           );
         else
           imports.add(
-            `import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+            `import ${packageNameFromConfig}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
           );
       } else
         imports.add(
-          `import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${normalizeName(attr.type, 'dto') + 'DTO'};`,
+          `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
         );
       continue;
     } else if (attr.objectType === 'enum') {
-      if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+      if (isDDDStyle) {
         const etypes = cache['enumImports'];
 
         const et = etypes.get(attr.type);
         if (et)
           imports.add(
-            `import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
+            `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
           );
         else
           imports.add(
-            `import ${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
+            `import ${packageNameFromConfig}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
           );
       } else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
+        imports.add(`import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${attr.type};`);
       continue;
     }
 
@@ -747,12 +698,12 @@ Handlebars.registerHelper('sanitizeHeaderName', function (headerName: string) {
     .replace(/-./g, (match) => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
 });
 
-Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[], options) {
+Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[]) {
   // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
   return headers.some((header) => header.header !== 'Accept' && header.header !== 'Content-Type');
 });
 
-Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader[], options) {
+Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader[]) {
   // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
@@ -763,10 +714,6 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 
 });
-
-/*Handlebars.registerHelper('normalizeDto', (str: string) => {
-  return new Handlebars.SafeString(str);
-});*/
 
 Handlebars.registerHelper('processImplementation', (type: string) => {
 
@@ -833,17 +780,15 @@ Handlebars.registerHelper('isPageable', function (responses?: { [p: string]: any
   if (responseCollectionType === 'pageable')
     isPageable = true;
 
-  return isPageable;;
+  return isPageable;
 });
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
-  //console.log("contexto:", context);
+
   let isPageable = false;
 
   const response = context?.response;
   const type = context?.type;
-
-  //console.log("response:: ", response);
 
   const isPageType = (str: string): boolean => {
     const regex = /^Page<.*>$/;
@@ -854,10 +799,7 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
     isPageable = true;
   }
 
-  return isPageable;;
+  return isPageable;
 });
-
-
-
 
 export { Handlebars };

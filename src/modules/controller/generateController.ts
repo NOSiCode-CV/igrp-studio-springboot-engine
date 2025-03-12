@@ -1,12 +1,10 @@
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getDTOTypes } from '../dto/helpers';
-import { ControllerAction, ControllerConfig, RenderContext } from '../../interfaces/types';
+import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
   PROJECT_STRUCTURE_STYLE,
-  SCHEMA_TYPES,
   TEMPLATES,
 } from '../../utils/constants';
 import { normalizeControllerName, saveControllerConfig } from './saveControllerConfig';
@@ -26,10 +24,6 @@ export const generateController = async (context: RenderContext<ControllerConfig
   const controllerOutputPath = getControllerPath(context);
 
   const controller = await renderController(context);
-  const allTypes = await getDtos(context);
-
-  checkAcceptsAndRequestBody(context.resourceConfig.actions);
-  await verifyResponseAndRequestBodyTypes(context.resourceConfig.actions, allTypes);
 
   await saveToFile(controller, controllerOutputPath, true, DIRECTORIES.CONTROLLER, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
@@ -58,42 +52,3 @@ const getControllerPath = (context: RenderContext<ControllerConfig>) => {
   }
 };
 
-const getDtos = async (context: RenderContext<ControllerConfig>) => {
-  let dtos = [];
-  const typesDTOs = await getDTOTypes(
-    context.resourceConfig.module ?? DIRECTORIES.SHARED,
-    context.basePath,
-  );
-  for (const dto of typesDTOs.values()) {
-    dtos.push(dto.name);
-  }
-  return [...SCHEMA_TYPES, ...dtos, ...dtos.map((dto) => `List<${dto}>`)];
-};
-
-const verifyResponseAndRequestBodyTypes = async (actions: ControllerAction[], types: string[]) => {
-  const bodyTypes = types.filter(
-    (type) => !type.startsWith('List<') && !['String', 'Integer', 'Boolean'].includes(type),
-  );
-
-  /*for (const action of actions) {
-    if (action.requestBody) 
-      if (!bodyTypes.includes(action.requestBody) )
-        throw `Request Body '${action.requestBody}' in action '${action.actionName}' is not valid'.`
-    
-    const responseType = extractTypeFromList(action.response)
-    if (responseType)
-      if (!types.includes(responseType)){
-        throw `The response type '${responseType}' in action '${action.actionName}' is not valid`
-      }
-  }*/
-};
-
-const checkAcceptsAndRequestBody = (actions: ControllerAction[]) => {
-  /*const method = ['POST', 'PUT', 'PATCH'];
-  actions.map((action) => {
-    if (method.includes(action.method) && !action.requestBody)
-      throw ERROR_MESSAGE.REQUEST_BODY_REQUIRED;
-
-    if (method.includes(action.method) && !action.accepts) throw ERROR_MESSAGE.ACCEPTS_REQUIRED;
-  });*/
-};
