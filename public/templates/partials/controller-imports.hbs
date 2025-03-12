@@ -13,6 +13,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.application.dto.*;
 
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module true}}
 {{else}}
