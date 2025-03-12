@@ -13,6 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.Map;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
 resourceConfig.name}}.I{{resourceConfig.name}}Service;
@@ -24,7 +28,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.na
 
 {{#each resourceConfig.actions}}
 @Override
-public ResponseEntity<{{resolveResponse this.responses}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema
+public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema
   this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName
   "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and
   pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}},

@@ -10,6 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.Map;
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
 resourceConfig.name}}.I{{resourceConfig.name}}Service;
@@ -38,7 +42,7 @@ void test{{capitalize actionName}}() {
 // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
 
 // When
-// ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase
+// ResponseEntity<{{{resolveResponse this.responses}}}> response = {{toCamelCase
     ../resourceConfig.name}}Service.{{actionName}}(...);
 
     // Then
