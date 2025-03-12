@@ -716,10 +716,8 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 });
 
 Handlebars.registerHelper('normalizeDto', (str: string) => {
-  //console.log('antes: ', str);
   if (!str) return '';
   if (str == '?') return '?';
-  //console.log('depois: ', capitalize(str).replace(/dto$/i, '') + 'DTO');
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 
 });
@@ -757,7 +755,8 @@ Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent 
 Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
   if (!content) return '';
   const schema = content['application/json'] ?? content['multipart/form-data'];
-  return capitalize(schema.schema.type);
+  console.log("dto: " + capitalize(schema.schema.type) + 'DTO');
+  return capitalize(schema.schema.type) + 'DTO';
 });
 
 
