@@ -234,44 +234,86 @@ Handlebars.registerHelper(
         }
 
       if (action.responses)
-        for (const singleBody of Object.values(action.responses)) {
-          const objType = (
-            singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
-          )?.schema.type;
+        for (const response of Object.values(action.responses)) {
+          // Get the content for either application/json or multipart/form-data
+          const content = response?.content['application/json'] || response?.content['multipart/form-data'];
+          if (!content) continue;
 
-          if (domainDriven && objType === 'object') {
-            const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
-            const capitalizedResponseName = capitalize(singleBody.name ?? '');
+          // Extract the schema and its properties
+          const { schema } = content;
+          const schemaType = schema?.type;
+          const objectType = schema?.objectType; // New: to check for dto type
+
+          if (!objectType && schemaType !== 'object') continue;
+
+          // If domain-driven and the schema type is 'object', import from the module-specific directory.
+          if (domainDriven && schemaType === 'object') {
+            const moduleResponse = response?.module || DIRECTORIES.SHARED;
+            const responseName = capitalize(response.name || '');
             imports.push(
-              `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
+              `import ${group}.${packageName}.${moduleResponse}.application.dto.${responseName}DTO;`
             );
           }
 
-          const type = objType
-            ? capitalize(
-              (
-                singleBody?.content['application/json'] ??
-                singleBody?.content['multipart/form-data']
-              )?.schema.type?.replace(/dto$/i, '') + 'DTO',
-            )
-            : isResponseCollection(
-              (
-                singleBody?.content['application/json'] ??
-                singleBody?.content['multipart/form-data']
-              )?.schema.type,
-            )
-              ? capitalize(
-                (
-                  singleBody?.content['application/json'] ??
-                  singleBody?.content['multipart/form-data']
-                )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
-              )
-              : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || undefined;
+          // Determine the DTO type string to import.
+          let type;
+          if (schemaType) {
+            type = capitalize(schemaType.replace(/dto$/i, '') + 'DTO');
+          } else if (isResponseCollection(schemaType)) {
+            type = capitalize(schema.items?.type.replace(/dto$/i, '') + 'DTO');
+          } else {
+            type = capitalize((response.name || '').replace(/dto$/i, '') + 'DTO');
+          }
 
-          if (!type) return;
+          if (!type) continue;
 
-          if (domainDriven === false) imports.push(`import ${group}.${packageName}.dto.${type};`);
+          // If the objectType is "dto", import using the dto directory.
+          if (!domainDriven) {
+            imports.push(`import ${group}.${packageName}.dto.${type};`);
+          }
+
         }
+
+
+      /* if (action.responses)
+         for (const singleBody of Object.values(action.responses)) {
+           const objType = (
+             singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data']
+           )?.schema.type;
+ 
+           if (domainDriven && objType === 'object') {
+             const moduleResponse = singleBody?.module ?? DIRECTORIES.SHARED;
+             const capitalizedResponseName = capitalize(singleBody.name ?? '');
+             imports.push(
+               `import ${group}.${packageName}.${moduleResponse}.application.dto.${capitalizedResponseName}DTO;`,
+             );
+           } 
+ 
+           const type = objType
+             ? capitalize(
+               (
+                 singleBody?.content['application/json'] ??
+                 singleBody?.content['multipart/form-data']
+               )?.schema.type?.replace(/dto$/i, '') + 'DTO',
+             )
+             : isResponseCollection(
+               (
+                 singleBody?.content['application/json'] ??
+                 singleBody?.content['multipart/form-data']
+               )?.schema.type,
+             )
+               ? capitalize(
+                 (
+                   singleBody?.content['application/json'] ??
+                   singleBody?.content['multipart/form-data']
+                 )?.schema.items?.type?.replace(/dto$/i, '') + 'DTO',
+               )
+               : capitalize(singleBody?.name?.replace(/dto$/i, '') + 'DTO') || undefined;
+ 
+           if (!type) return;
+ 
+           if (domainDriven === false) imports.push(`import ${group}.${packageName}.dto.${type};`);
+         }*/
     }
 
     imports.push(`import java.util.List;`);

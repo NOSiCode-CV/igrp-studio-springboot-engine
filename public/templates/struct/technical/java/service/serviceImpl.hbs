@@ -1,32 +1,38 @@
 {{> package-java }}
 
 /*
- * Implementation class for I{{resourceConfig.name}}Service.
- * 
- * This class is generated once and serves as a placeholder for the business logic 
- * of the {{resourceConfig.name}} service. Any custom implementations or modifications added here 
- * will not be overridden by future code generations.
- *
- */
+* Implementation class for I{{resourceConfig.name}}Service.
+*
+* This class is generated once and serves as a placeholder for the business logic
+* of the {{resourceConfig.name}} service. Any custom implementations or modifications added here
+* will not be overridden by future code generations.
+*
+*/
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
+resourceConfig.name}}.I{{resourceConfig.name}}Service;
 
 @Service
 public class {{resourceConfig.name}}Service implements I{{resourceConfig.name}}Service {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
+private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
 
-  {{#each resourceConfig.actions}}
-  @Override
-  public ResponseEntity<{{resolveResponse this.responses}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
-    // TODO: implement this method
-    return null;
+{{#each resourceConfig.actions}}
+@Override
+public ResponseEntity<{{resolveResponse this.responses}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema
+  this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName
+  "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and
+  pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}},
+  {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}}
+  {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
+  // TODO: implement this method
+  return null;
   }
 
   {{/each}}
-}
+  }
