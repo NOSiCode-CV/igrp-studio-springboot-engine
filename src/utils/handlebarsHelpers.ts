@@ -734,7 +734,8 @@ Handlebars.registerHelper('processResponseType', (type: string) => {
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);
-  } else {
+  } else if (type == 'object') return 'object';
+  else {
     return capitalize(type) + 'DTO';
   }
 });
