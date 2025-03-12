@@ -16,14 +16,14 @@
                   implementation = {{processResponseType this.schema.type}}.class,
                   {{/if}}
                   {{#if (eq this.schema.objectType "dto")}}
-                  type = "object",
+                  type = "object"
                   {{else}}
-                  type = "{{processResponseType this.schema.type}}",
+                  type = "{{processResponseType this.schema.type}}"
                   {{/if}}
-                  {{#if this.schema.description}}description = "{{this.schema.description}}"{{/if}}
-                  {{#if this.schema.example}},example = "{{this.schema.example}}"
-                  {{/if}}{{#if this.schema.required}},required = true{{/if}}
-                  {{#if this.deprecated}},deprecated = true{{/if}}
+                  {{#if this.schema.description}}~,description = "{{this.schema.description}}"{{/if}}
+                  {{#if this.schema.example}}~,example = "{{this.schema.example}}"
+                  {{/if}}{{#if this.schema.required}}~,required = true{{/if}}
+                  {{#if this.deprecated}}~,deprecated = true{{/if}}
               )
               {{/each}}
           )
