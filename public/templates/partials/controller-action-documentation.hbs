@@ -13,12 +13,12 @@
                   {{#if (eq this.schema.type "object")}}
                   implementation = {{normalizeDto ../this.name}}.class,
                   {{else}}
-                  implementation = {{processResponseType this.schema.type}}.class,
+                  implementation = {{processImplementation this.schema.type}}.class,
                   {{/if}}
                   {{#if (eq this.schema.objectType "dto")}}
                   type = "object"
                   {{else}}
-                  type = "{{processResponseType this.schema.type}}"
+                  type = "{{processType this.schema.type this.schema.objectType}}"
                   {{/if}}
                   {{#if this.schema.description}}~,description = "{{this.schema.description}}"{{/if}}
                   {{#if this.schema.example}}~,example = "{{this.schema.example}}"
