@@ -4,9 +4,9 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.rest.core.annotation.RestResource;
 {{#if resourceConfig.crud}}
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 {{/if}}
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
 {{import-uuid resourceConfig}}
