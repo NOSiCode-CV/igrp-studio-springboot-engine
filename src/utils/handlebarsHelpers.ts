@@ -424,9 +424,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!Array.isArray(config.attributes)) return null;
 
   const api = baseConfig;
+
   const isDDDStyle = api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
-  const dtypes = cache['dtoImports'];
   const imports = new Set();
 
   const packageNameFromConfig = getPackageNameFromConfig(api);
@@ -436,7 +436,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     if (attr.objectType === 'model') {
       if (isDDDStyle)
         imports.add(
-          `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`,
+          `import ${packageNameFromConfig}.${attr.module}.domain.${PACKAGES.MODELS}.${attr.type};`,
         );
       else imports.add(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attr.type};`);
       continue;
@@ -446,16 +446,8 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       console.log(normalizedDtoName)
 
       if (isDDDStyle) {
-
-        const dt = dtypes.get(normalizedDtoName + 'DTO');
-
-        if (dt)
           imports.add(
-            `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
-          );
-        else
-          imports.add(
-            `import ${packageNameFromConfig}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
+            `import ${packageNameFromConfig}.${attr.module}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
           );
       } else
         imports.add(
@@ -464,16 +456,8 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       continue;
     } else if (attr.objectType === 'enum') {
       if (isDDDStyle) {
-        const etypes = cache['enumImports'];
-
-        const et = etypes.get(attr.type);
-        if (et)
           imports.add(
-            `import ${packageNameFromConfig}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
-          );
-        else
-          imports.add(
-            `import ${packageNameFromConfig}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
+            `import ${packageNameFromConfig}.${attr.module}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
           );
       } else
         imports.add(`import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${attr.type};`);
