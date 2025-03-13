@@ -60,15 +60,15 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
     let modelPath;
 
     if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-      modelPath = path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}.${EXTENSIONS.JAVA}`);
+      modelPath = path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     } else {
       modelPath = getModelOutputDir(context);
     }
 
-    const modelConfigPath = getModelConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath);
-
     if (await fs.pathExists(modelPath)) await fs.rm(modelPath, { recursive: true });
     else throw ERROR_MESSAGE.MODEL_FILE_CONFIG_NOT_FOUNT;
+
+    const modelConfigPath = getModelConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath);
 
     if (await fs.pathExists(modelConfigPath)) await fs.rm(modelConfigPath, { recursive: true });
     else throw ERROR_MESSAGE.MODEL_FILE_CONFIG_NOT_FOUNT;
