@@ -196,14 +196,16 @@ Handlebars.registerHelper(
             action.requestBody.content['multipart/form-data']
           ).schema;
           if (schema.objectType) {
-            if (domainDriven)
-              imports.push(
+            if (domainDriven) {
+              // TODO: Implementar lógica para imports dinamicos dependendo do module.
+              /*imports.push(
                 `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
-              );
-            else
+              );*/
+            } else {
               imports.push(
                 `import ${group}.${packageName}.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
               );
+            }
           } else {
             if (domainDriven)
               imports.push(
@@ -257,7 +259,7 @@ Handlebars.registerHelper(
 
         }
     }
-
+    console.log("imports: " + imports);
     imports.push(`import java.util.List;`);
 
     return [...new Set(imports)].join('\n');
