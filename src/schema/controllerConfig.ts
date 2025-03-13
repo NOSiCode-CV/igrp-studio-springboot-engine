@@ -90,6 +90,11 @@ const schemaField: JSONSchemaType<SchemaField> = {
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
     },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
+    },
     objectType: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
@@ -189,6 +194,11 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       type: 'string',
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
     },
     objectType: {
       type: 'string',
