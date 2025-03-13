@@ -676,7 +676,7 @@ Handlebars.registerHelper('processDocumentationType', (type: string, objType?: s
 
   let primitiveTypes: string[] = ["integer", "boolean", "string"];
 
-  if(objType == 'dto')
+  if(objType === 'dto')
     return 'object';
 
   if (primitiveTypes.includes(type)) {
