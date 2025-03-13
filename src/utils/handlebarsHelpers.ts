@@ -672,9 +672,12 @@ Handlebars.registerHelper('processImplementation', (type: string) => {
   }
 });
 
-Handlebars.registerHelper('processType', (type: string, objType?: string) => {
+Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
 
   let primitiveTypes: string[] = ["integer", "boolean", "string"];
+
+  if(objType == 'dto')
+    return 'object';
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);

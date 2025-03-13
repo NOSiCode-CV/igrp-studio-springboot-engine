@@ -15,11 +15,7 @@
                   {{else}}
                   implementation = {{processImplementation this.schema.type}}.class,
                   {{/if}}
-                  {{#if (eq this.schema.objectType "dto")}}
-                  type = "object"
-                  {{else}}
-                  type = "{{processType this.schema.type this.schema.objectType}}"
-                  {{/if}}
+                  type = "{{processDocumentationType this.schema.type this.schema.objectType}}"
                   {{#if this.schema.description}}~,description = "{{this.schema.description}}"{{/if}}
                   {{#if this.schema.example}}~,example = "{{this.schema.example}}"
                   {{/if}}{{#if this.schema.required}}~,required = true{{/if}}
