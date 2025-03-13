@@ -988,85 +988,72 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      const config: DTOConfig | null =
-        (act?.requestBody?.content['application/json']?.schema.objectType ??
-        act?.requestBody?.content['multipart/form-data']?.schema.objectType)
-          ? await requestDtoConfig(module, context, act)
-          : null;
+      let requestBodyAttributes: JavaAttribute[]
+
+        if(
+        act?.requestBody?.content['application/json']?.schema.objectType ??
+        act?.requestBody?.content['multipart/form-data']?.schema.objectType
+        ) {
+          const reqDtoConfig = (await requestDtoConfig(module, context, act))
+          requestBodyAttributes = [
+            {
+              name: reqDtoConfig.name.toLowerCase(),
+              type: reqDtoConfig.name,
+              objectType: 'dto',
+              module: module,
+              required: false,
+            }
+          ];
+        } else {
+          requestBodyAttributes = requestConfig? [
+            {
+              name: requestConfig.resourceConfig.name.toLowerCase(),
+              type: requestConfig.resourceConfig.name,
+              objectType: 'dto',
+              module: module,
+              required: false,
+            }
+          ] : []
+        }
+
+      const modelAttribute: JavaAttribute[] = act?.modelAttribute
+        ? [
+          {
+            name: act.modelAttribute.toLowerCase(),
+            type: act.modelAttribute,
+            objectType: 'dto',
+            required: false,
+          },
+        ]
+        : [];
+
+      const pathVariables = act?.pathVariables
+        ? act.pathVariables.map((e) => ({
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      const requestParams = act?.requestParams
+        ? act.requestParams.map((e) => ({
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...pathVariables, ...requestParams];
+
       await addDTO(
         {
           type: act.method === 'GET' ? 'query' : 'command',
           name: act.actionName,
           template: 'classic',
           module: module,
-          attributes:
-            (act?.requestBody?.content['application/json'] ??
-            act?.requestBody?.content['multipart/form-data'])
-              ? (act?.requestBody?.content['application/json']?.schema.objectType ??
-                act?.requestBody?.content['multipart/form-data']?.schema.objectType)
-                ? config!.attributes
-                : requestConfig?.resourceConfig.attributes
-              : ((act?.modelAttribute
-                  ? [
-                      {
-                        name: act.modelAttribute.toLowerCase(),
-                        type: act.modelAttribute,
-                        objectType: 'dto',
-                        required: false,
-                      },
-                    ]
-                  : []
-                ).concat(
-                  act?.pathVariables
-                    ? act.pathVariables
-                        .map((e) => ({
-                          name: e.name,
-                          type: e.type,
-                          objectType: 'java',
-                          required: true,
-                        }))
-                        .concat(
-                          act?.requestParams
-                            ? act.requestParams.map((e) => ({
-                                name: e.name,
-                                type: e.type,
-                                objectType: 'java',
-                                required: true,
-                              }))
-                            : [],
-                        )
-                    : act?.requestParams
-                      ? act.requestParams
-                          .map((e) => ({
-                            name: e.name,
-                            type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                            objectType: 'java',
-                            required: true,
-                          }))
-                          .concat(
-                            act?.pathVariables
-                              ? act.pathVariables.map((e) => ({
-                                  name: e.name,
-                                  type: e.type as
-                                    | 'long'
-                                    | 'string'
-                                    | 'integer'
-                                    | 'boolean'
-                                    | 'object',
-                                  objectType: 'java',
-                                  required: true,
-                                }))
-                              : [
-                                  {
-                                    name: 'none',
-                                    type: 'object',
-                                    objectType: 'java',
-                                    required: false,
-                                  },
-                                ],
-                          )
-                      : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-                ) as JavaAttribute[]),
+          attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
           response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,

@@ -41,35 +41,43 @@ value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/
 {{> controller-action-documentation action=this}}
 {{> controller-action-definition baseConfig=../baseConfig}}
 {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
-{{#if (eq method "GET")}}
-{{#if (or requestParams pathVariables)}}final var query = new {{capitalize actionName}}Query({{#if
-modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if (and modelAttribute pathVariables)}}, {{else}}{{#if (and
-modelAttribute requestParams)}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if
-@last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each
-requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}} {{#if (isPageable
-responses)}},pageable{{/if}});{{else}}
-final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}});
-{{/if}}
+  {{#if (eq method "GET")}}
+    final var query = new {{capitalize actionName}}Query(
+    {{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}
+    {{#if modelAttribute}}{{#if pathVariables}}, {{/if}}{{/if}}
+    {{#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+    {{#if pathVariables}}{{#if requestParams}}, {{/if}}{{/if}}
+    {{#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+    {{#if requestBody}}, {{toCamelCase actionName}}Request{{/if}}
+    {{#if (isPageable responses)}}, pageable{{/if}}
+    );
+
+    return queryBus.handle(query);
+  {{else}}
+    final var command = new {{capitalize actionName}}Command(
+    {{#if requestBody}}{{toCamelCase actionName}}Request{{/if}}
+    {{#if requestBody}}{{#if modelAttribute}}, {{/if}}{{/if}}
+    {{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}
+    {{#if modelAttribute}}{{#if pathVariables}}, {{/if}}{{/if}}
+    {{#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+    {{#if pathVariables}}{{#if requestParams}}, {{/if}}{{/if}}
+    {{#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+    );
+
+    return commandBus.send(command);
+  {{/if}}
 {{else}}
-{{#if requestBody}}{{else if (or requestParams pathVariables)}}final var command = new {{capitalize
-actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}},
-{{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}},
-{{/if}}{{/each}});{{else}}
-final var command = new {{capitalize actionName}}Command();
-{{/if}}
+  return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
+  {{#if requestBody}}{{toCamelCase actionName}}Request{{/if}}
+  {{#if requestBody}}{{#if modelAttribute}}, {{/if}}{{/if}}
+  {{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}
+  {{#if modelAttribute}}{{#if pathVariables}}, {{/if}}{{/if}}
+  {{#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+  {{#if pathVariables}}{{#if requestParams}}, {{/if}}{{/if}}
+  {{#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+  );
 {{/if}}
 
-{{#if (eq method "GET")}}return queryBus.handle({{#if requestBody}}{{toCamelCase actionName}}Request{{else if
-requestParams}}query{{else}}query{{/if}});{{else}}return commandBus.send({{#if requestBody}}{{toCamelCase
-actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
-
-{{else}}
-return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase
-actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}},
-{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if
-pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-
-{{/if}}
 }
 
 {{/each}}
