@@ -25,7 +25,6 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
 import { normalizeName } from './saveDTOConfig';
-import { capitalize } from '../../utils/capitalizeStrings';
 import { getEnumTypes } from '../enum/helpers';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
