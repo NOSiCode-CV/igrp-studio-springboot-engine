@@ -10,7 +10,7 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
     modelAttribute}}{{/if}}{{#if (and modelAttribute requestParams)}}, {{else}}{{#if (and pathVariables
     modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}}, {{else}}{{/if}}{{/if}}{{/if}}{{#if
     requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute{{else}}@Valid @RequestBody{{/if}}
-    {{#ifNot (eq method "GET")}}{{capitalize actionName}}Command {{toCamelCase actionName}}Command{{else}}{{normalizeDto
+    {{#ifNot (eq method "GET")}}{{capitalize actionName}}Request {{toCamelCase actionName}}Request{{else}}{{normalizeDto
     (concat this.actionName "Request")}} {{toCamelCase actionName}}Request{{/ifNot}}{{/if}}{{#if (and requestBody
     requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{else}}{{/if}}{{/if}}{{#each
     requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if}}{{#if
