@@ -13,7 +13,7 @@ import {
   SchemaContent,
 } from '../interfaces/types';
 import {
-  DIRECTORIES,
+  DIRECTORIES, GENERIC_IMPORTS,
   GENERIC_TYPES,
   PACKAGES,
   PROJECT_STRUCTURE_STYLE,
@@ -423,90 +423,48 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
-  const api = baseConfig;
-
-  const isDDDStyle = api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const isDDDStyle = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
   const imports = new Set();
 
-  const packageNameFromConfig = getPackageNameFromConfig(api);
+  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
   for (const attr of config.attributes) {
 
-    if (attr.objectType === 'model') {
-      if (isDDDStyle)
-        imports.add(
-          `import ${packageNameFromConfig}.${attr.module}.domain.${PACKAGES.MODELS}.${attr.type};`,
-        );
-      else imports.add(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attr.type};`);
-      continue;
-    } else if (attr.objectType === 'dto') {
+    const objectImports = GENERIC_IMPORTS(packageNameFromConfig,
+      attr.type, attr.module).get(attr.objectType)
 
-      let normalizedDtoName = normalizeName(attr.type, 'dto');
-      console.log(normalizedDtoName)
-
-      if (isDDDStyle) {
-          imports.add(
-            `import ${packageNameFromConfig}.${attr.module}.application.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
-          );
-      } else
-        imports.add(
-          `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizedDtoName + 'DTO'};`,
-        );
-      continue;
-    } else if (attr.objectType === 'enum') {
-      if (isDDDStyle) {
-          imports.add(
-            `import ${packageNameFromConfig}.${attr.module}.application.${PACKAGES.CONSTANTS}.${attr.type};`,
-          );
-      } else
-        imports.add(`import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${attr.type};`);
+    if(objectImports) {
+      imports.add(isDDDStyle? objectImports.java.domain : objectImports.java.technical)
       continue;
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
-    if (genType?.java.primitive) null; // must be null and not return null!
 
-    const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
-    if (type.name == '') null; // must be null and not return null!
-
-    if (type.namespace) {
-      imports.add(`import ${type.namespace}.${type.name};`);
+    if (genType?.java.namespace) {
+      imports.add(`import ${genType?.java.namespace}.${genType?.java.name};`);
     }
 
-    if (attr.type == 'file' || attr.type == 'binary') {
-      imports.add(`import org.hibernate.annotations.JdbcType;`);
-      imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
-    }
+    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type).get(attr.type);
+
+    if(specialAttributeImports) imports.add(specialAttributeImports.java.technical);
+
   }
 
-  if (config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).length > 0) {
-    imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');
-  }
+  if (config.attributes.find((it: JavaAttribute) => it.jsonAttributeName))
+    imports.add(GENERIC_IMPORTS(packageNameFromConfig, 'jsonProperty').get('jsonProperty')?.java.technical);
 
-  if (config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
-    imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
-  }
+  if (config.attributes.find((it: JavaAttribute) => it.xmlAttributeName))
+    imports.add(GENERIC_IMPORTS(packageNameFromConfig, 'xmlProperty').get('xmlProperty')?.java.technical);
 
-  config.attributes
+  // Import Collection Types
+  imports.add(config.attributes
     .filter((it: JavaAttribute) => it.collectionType)
-    .forEach((attr: JavaAttribute) => {
-      switch (attr.collectionType) {
-        case 'list':
-          imports.add(`import java.util.List;`);
-          break;
-        case 'map':
-          imports.add(`import java.util.Map;`);
-          break;
-        case 'set':
-          imports.add(`import java.util.Set;`);
-          break;
-        default:
-        // Optionally handle unknown collection types
-      }
-    });
+    .map((attr: JavaAttribute) => GENERIC_IMPORTS(
+      packageNameFromConfig, attr.collectionType!)
+    .get(attr.collectionType!)?.java.technical));
 
-  return Array.from(imports).sort().join('\n');
+  return Array.from(imports).filter((e) => e).sort().join('\n');
 });
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {

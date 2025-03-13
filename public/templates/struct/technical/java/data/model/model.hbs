@@ -95,7 +95,7 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
   @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}
   @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
   private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') }}
-  @OneToMany(mappedBy = "{{this.mappedBy}}")
+  @OneToMany(mappedBy = "{{this.relation.mappedBy}}")
   private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') }}
   @ManyToOne{{#if this.name}}
   @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}

@@ -1,5 +1,6 @@
 import path from 'path';
-import { TypeMetadata } from '../interfaces/types';
+import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
+import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 /* Use the definition below if it's the local environment and unit tests execution */
 //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
@@ -709,6 +710,106 @@ export const GENERIC_TYPES: Map<
     },
   }),
 );
+
+export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, module?: string): Map<
+  string,
+  { java: ImportTypeMetadata; dotnet: ImportTypeMetadata; python: ImportTypeMetadata; kotlin: ImportTypeMetadata }
+> => new Map(
+  Object.entries({
+    model: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.domain.${PACKAGES.MODELS}.${type};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${type};`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    dto: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    enum: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.CONSTANTS}.${type};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${type};`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    file: {
+      java: {
+        domain: `import org.hibernate.annotations.JdbcType;`,
+        technical: `import org.hibernate.annotations.JdbcType;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    binary: {
+      java: {
+        domain: `import org.hibernate.annotations.JdbcType;`,
+        technical: `import org.hibernate.annotations.JdbcType;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    list: {
+      java: {
+        domain: `import java.util.List;`,
+        technical: `import java.util.List;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    map: {
+      java: {
+        domain: `import java.util.Map;`,
+        technical: `import java.util.Map;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    set: {
+      java: {
+        domain: `import java.util.Set;`,
+        technical: `import java.util.Set;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    jsonProperty: {
+      java: {
+        domain: 'import com.fasterxml.jackson.annotation.JsonProperty;',
+        technical: 'import com.fasterxml.jackson.annotation.JsonProperty;'
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    xmlProperty: {
+      java: {
+        domain: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
+        technical: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;'
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+
+  }),
+);
+
 
 export const TYPESCRIPT_TYPES: Map<
   string,

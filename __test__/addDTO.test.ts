@@ -97,12 +97,14 @@ describe('DTO generator', () => {
           {
             "type": "Owner",
             "objectType": "dto",
+            "module": "shared",
             "name": "owner",
             "required": true
           },
           {
             "type": "Level",
             "objectType": "enum",
+            "module": "core",
             "name": "level",
             "required": true
           }

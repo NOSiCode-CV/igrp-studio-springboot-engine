@@ -60,7 +60,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
     let modelPath;
 
     if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-      modelPath = getDDDModelOutputDir(context);
+      modelPath = path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}.${EXTENSIONS.JAVA}`);
     } else {
       modelPath = getModelOutputDir(context);
     }

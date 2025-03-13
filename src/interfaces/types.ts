@@ -24,6 +24,11 @@ export interface TypeMetadata {
   namespace?: string;
 }
 
+export interface ImportTypeMetadata {
+  technical?: string;
+  domain?: string;
+}
+
 export interface ApiConfig extends BaseApiConfig {
   packageName: string;
 }
@@ -104,6 +109,7 @@ export interface JavaAttribute {
   primaryKey?: boolean;
   jsonAttributeName?: string;
   xmlAttributeName?: string;
+  module?: string;
 }
 
 export interface DTOBaseConfig extends IdentifiableElement {
@@ -164,6 +170,7 @@ export interface Attribute {
   primaryKey?: boolean;
   generationType?: GenerationType;
   defaultValue?: string;
+  module?: string;
   relation?: Relation;
   skipFieldRevision?: boolean;
   objectType?: 'dto' | 'model' | 'java' | 'enum';
