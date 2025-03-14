@@ -48,7 +48,7 @@ import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
-import { saveDTOConfig } from './modules/dto/saveDTOConfig';
+import { normalizeName, saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
@@ -998,9 +998,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           requestBodyAttributes = [
             {
               name: reqDtoConfig.name.toLowerCase(),
-              type: reqDtoConfig.name,
+              type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
               objectType: 'dto',
-              module: module,
+              module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
               required: false,
             }
           ];
@@ -1008,9 +1008,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
           requestBodyAttributes = requestConfig? [
             {
               name: requestConfig.resourceConfig.name.toLowerCase(),
-              type: requestConfig.resourceConfig.name,
+              type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
               objectType: 'dto',
-              module: module,
+              module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
               required: false,
             }
           ] : []
@@ -1019,10 +1019,11 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
         ? [
           {
-            name: act.modelAttribute.toLowerCase(),
-            type: act.modelAttribute,
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
             objectType: 'dto',
             required: false,
+            module: act.modelAttribute.module
           },
         ]
         : [];

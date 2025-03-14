@@ -78,6 +78,17 @@ const domainControllerConfig: ControllerConfig = {
         content: {
           "application/json": {
             schema: {
+              type: "Owner",
+              objectType: "dto",
+            }
+          }
+        }
+      },
+      /*requestBody: {
+        id: 'l5MTlX7-eN',
+        content: {
+          "application/json": {
+            schema: {
               type: "object",
               properties: {
                 name: {
@@ -100,6 +111,34 @@ const domainControllerConfig: ControllerConfig = {
             },
           },
         },
+      },*/
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'param1',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param2',
+          isRequired: false
+        },
+      ],
+      requestParams: [
+        {
+          type: 'string',
+          name: 'param3',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param4',
+          isRequired: false
+        },
+      ],
+      modelAttribute: {
+        name: "Animal",
+        module: "core"
       },
       responses: {
         "201": {
@@ -290,6 +329,33 @@ const technicalControllerConfig: ControllerConfig = {
             },
           },
         },
+      },
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'param1',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param2',
+          isRequired: false
+        },
+      ],
+      requestParams: [
+        {
+          type: 'string',
+          name: 'param3',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param4',
+          isRequired: false
+        },
+      ],
+      modelAttribute: {
+        name: 'TestResponseIsolated2'
       },
       responses: {
         "201": {

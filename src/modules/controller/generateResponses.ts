@@ -166,9 +166,8 @@ export const transformSchemaDTOConfig = async function (
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
-      if (dtypes === undefined) {
-        dtypes = await getDTOTypes(module ?? DIRECTORIES.SHARED, basePath);
-      }
+
+      dtypes = await getDTOTypes(attr.module ?? module ?? DIRECTORIES.SHARED, basePath);
 
       const dt = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
 

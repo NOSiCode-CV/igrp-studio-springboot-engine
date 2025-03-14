@@ -34,12 +34,17 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     resolvedType = formatTypeName(singleBody?.name);
   } else {
 
-    let primitiveTypes: string[] = ["integer", "boolean", "string"];
-
-    if (primitiveTypes.includes(schema.type)) {
-      resolvedType = capitalize(schema.type);
+    if(schema.objectType) {
+      resolvedType = formatTypeName(schema.type)
     } else {
-      resolvedType = formatTypeName(schema.type);
+
+      let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+
+      if (primitiveTypes.includes(schema.type)) {
+        resolvedType = capitalize(schema.type);
+      } else {
+        resolvedType = formatTypeName(schema.type);
+      }
     }
   }
 

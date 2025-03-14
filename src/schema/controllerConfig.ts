@@ -12,7 +12,7 @@ import {
   Body,
   ControllerAction,
   ControllerConfig,
-  HttpHeader, PropertySchemaField, Relation,
+  HttpHeader, ModelAttribute, PropertySchemaField, Relation,
   RequestParams,
   SchemaContent, SchemaEnum,
   SchemaField,
@@ -537,6 +537,31 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
+const modelAttributeSchema: JSONSchemaType<ModelAttribute> = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The model attribute name can only contain characters without spaces or special characters.',
+    },
+    module: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
+  },
+  required: ["name"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      name: 'The attribute name is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the attribute schema.'
+  }
+}
+
 const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   type: 'object',
   properties: {
@@ -557,10 +582,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage: `Method type can only be one of ${HTTP_METHOD_TYPES}.`,
     },
     modelAttribute: {
-      type: 'string',
-      pattern: PATTERNS.RELATIONS_PATTERN,
+      type: "object",
       nullable: true,
-      errorMessage: 'The modelAttribute can only contain characters without spaces or special characters.',
+      oneOf: [
+        modelAttributeSchema
+      ],
+      errorMessage: 'The model attribute, if provided, must be a valid model attribute definition.'
     },
     requestParams: {
       type: 'array',

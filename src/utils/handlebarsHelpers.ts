@@ -218,6 +218,19 @@ Handlebars.registerHelper(
           }
         }
 
+      if(action.modelAttribute) {
+        if (domainDriven) {
+          // TODO: Implementar lógica para imports dinamicos dependendo do module.
+          /*imports.push(
+            `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
+          );*/
+        } else {
+          imports.push(
+            `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.modelAttribute.name, 'dto')) + 'DTO'};`,
+          );
+        }
+      }
+
       if (action.responses)
         for (const response of Object.values(action.responses)) {
           // Get the content for either application/json or multipart/form-data
@@ -705,8 +718,7 @@ Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent 
 Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
   if (!content) return '';
   const schema = content['application/json'] ?? content['multipart/form-data'];
-  console.log("dto: " + capitalize(schema.schema.type) + 'DTO');
-  return capitalize(schema.schema.type) + 'DTO';
+  return normalizeName(capitalize(schema.schema.type), 'dto') + 'DTO';
 });
 
 

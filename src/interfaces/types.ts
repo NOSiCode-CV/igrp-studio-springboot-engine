@@ -214,7 +214,7 @@ export interface ControllerAction {
   actionName: string;
   method: HttpMethod;
   headers?: HttpHeader[];
-  modelAttribute?: string;
+  modelAttribute?: ModelAttribute;
   requestParams?: RequestParams[];
   requestBody?: BaseBody;
   responses?: {
@@ -222,6 +222,11 @@ export interface ControllerAction {
   };
   pathVariables?: PathVariables[];
   multipartFiles?: MultipartFile[];
+}
+
+export interface ModelAttribute {
+  name: string,
+  module?: string
 }
 
 export interface MultipartFile {
