@@ -681,7 +681,7 @@ Handlebars.registerHelper('processImplementation', (type: string) => {
   } else if (type == 'object')
     return 'object';
   else {
-    return capitalize(type) + 'DTO';
+    return normalizeName(type, 'dto') + 'DTO';
   }
 });
 
