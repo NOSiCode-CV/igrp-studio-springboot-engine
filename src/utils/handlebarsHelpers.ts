@@ -697,7 +697,7 @@ Handlebars.registerHelper('processDocumentationType', (type: string, objType?: s
   } else if (type === 'object' && (!objType || objType.trim() === ''))
     return 'object';
   else {
-    return capitalize(type) + 'DTO';
+    return normalizeName(type, 'dto') + 'DTO';
   }
 });
 

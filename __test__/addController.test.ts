@@ -288,11 +288,9 @@ const technicalControllerConfig: ControllerConfig = {
           content: {
             "application/json": {
               schema: {
-                type: "array",
-                items: {
-                  type: "UserDTO",
-                  objectType: "dto",
-                },
+                type: "UserDTO",
+                objectType: "dto",
+                collectionType: 'collection'
               },
             },
           },
