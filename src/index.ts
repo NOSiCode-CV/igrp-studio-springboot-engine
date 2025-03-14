@@ -1046,7 +1046,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         }))
         : [];
 
-      const attributes = [...requestBodyAttributes, ...modelAttribute, ...pathVariables, ...requestParams];
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables];
 
       await addDTO(
         {
