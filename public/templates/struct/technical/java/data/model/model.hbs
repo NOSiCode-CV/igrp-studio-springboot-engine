@@ -92,8 +92,8 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
   private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
-  @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}
-  @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
+  @OneToOne(fetch = FetchType.LAZY{{#if this.relation.mappedBy}},mappedBy="{{this.relation.mappedBy}}"{{/if}}){{#if this.name}}
+  @JoinColumn(name = "{{toLowerCase this.name}}", unique = true{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
   private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.relation.mappedBy}}")
   private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') }}
