@@ -375,10 +375,6 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
-export const CONFIG_BINARY_FILES = [
-  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
-];
-
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
@@ -1003,6 +999,8 @@ export const CRUD_DISABLED_OPTIONS = [
 ] as const;
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
+
+export const FETCH_TYPE = ['lazy', 'eager'] as const;
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 
