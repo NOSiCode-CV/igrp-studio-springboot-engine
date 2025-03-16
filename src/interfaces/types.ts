@@ -56,6 +56,7 @@ export interface ModelConfig extends IdentifiableElement {
   uniqueConstraints?: UniqueConstraint[];
   indexes?: EntityIndex[];
   primaryKey?: PrimaryKey[];
+  relationReference?: RelationReference[];
   crud?: boolean;
   audit?: boolean;
   revision?: boolean;
@@ -178,6 +179,7 @@ export interface Attribute {
 
 export interface Relation {
   type: RelationshipTypes;
+  fetchType: 'lazy' | 'eager';
   cardinality: 'twoWay' | 'oneWay';
   entity: string;
   fieldName?: string;
@@ -186,6 +188,15 @@ export interface Relation {
   joinTable?: string;
   inverseJoinColumn?: string;
 }
+
+export interface RelationReference {
+  type: RelationshipTypes;
+  fetchType: 'lazy' | 'eager';
+  entity: string;
+  fieldName?: string;
+  mappedBy?: string;
+}
+
 
 export interface Crud {
   enabled: boolean;
