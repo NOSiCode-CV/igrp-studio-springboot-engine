@@ -2,6 +2,7 @@ import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types'
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import {
+  FETCH_TYPE,
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
   PATTERNS,
@@ -15,6 +16,12 @@ const relationSchema: JSONSchemaType<Relation> = {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      nullable: false,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
     entity: {
       type: "string",

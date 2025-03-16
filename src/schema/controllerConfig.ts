@@ -3,7 +3,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  HTTP_HEADER_TYPES, SCHEMA_TYPES, RELATIONSHIP_TYPES,
+  HTTP_HEADER_TYPES, SCHEMA_TYPES, RELATIONSHIP_TYPES, FETCH_TYPE,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
@@ -25,6 +25,12 @@ const relationSchema: JSONSchemaType<Relation> = {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      nullable: false,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
     entity: {
       type: "string",

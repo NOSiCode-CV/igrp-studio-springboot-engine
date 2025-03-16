@@ -8,14 +8,14 @@ import {
   PrimaryKey,
   UniqueConstraint,
   IModelPermission,
-  EntityIndex, AttributeType,
+  EntityIndex, AttributeType, RelationReference,
 } from '../interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_ATTRIBUTE_TYPES, FETCH_TYPE,
 } from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {
@@ -32,6 +32,11 @@ const relationSchema: JSONSchemaType<Relation> = {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
     entity: {
       type: "string",
@@ -82,6 +87,46 @@ const relationSchema: JSONSchemaType<Relation> = {
       entity: 'The entity is required and cannot be empty.'
     },
     additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
+};
+
+const relationReferenceSchema: JSONSchemaType<RelationReference> = {
+  type: "object",
+  properties: {
+    type: {
+      type: "string",
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      nullable: false,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
+    },
+    entity: {
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    fieldName: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The fieldName field, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
+    },
+    mappedBy: {
+      type: "string",
+      nullable: true
+    },
+  },
+  required: ["type", "entity"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      type: 'The attribute type is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the reference relation schema.'
   }
 };
 
@@ -351,6 +396,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       nullable: true,
       items: uniqueConstraintSchema,
       errorMessage: 'The uniqueConstraints must be an array of valid unique constraint definitions.'
+    },
+    relationReference: {
+      type: "array",
+      nullable: true,
+      items: relationReferenceSchema,
+      errorMessage: 'The relation Reference must be an array of valid relation Reference definitions.'
     },
     indexes: {
       type: "array",
