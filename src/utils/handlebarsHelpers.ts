@@ -15,7 +15,6 @@ import {
 import {
   DIRECTORIES, GENERIC_IMPORTS,
   GENERIC_TYPES,
-  PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
@@ -23,7 +22,6 @@ import {
 import { getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
-import { cache } from '../modules/common/renderTemplate';
 
 Handlebars.registerHelper('capitalize', (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -505,6 +503,7 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 });
 
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
+
   const imports = new Set();
 
   config.attributes
@@ -759,6 +758,53 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
   }
 
   return isPageable;
+});
+
+Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig) {
+  const imports: string[] = [];
+  imports.push(`import cv.igrp.framework.stereotype.IgrpEntity;`);
+  imports.push(`import jakarta.persistence.*;`);
+  imports.push(`import lombok.*;`);
+
+  if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
+
+  modelConfig.attributes.forEach((attribute) => {
+    if (
+      attribute.type === 'LocalTime' ||
+      attribute.type === 'LocalDate' ||
+      attribute.type === 'LocalDateTime' ||
+      attribute.type === 'ZoneDateTime' ||
+      attribute.type === 'OffsetDateTime' ||
+      attribute.type === 'Instant'
+    ) {
+      imports.push(`import java.time.${attribute.type}`);
+    }
+
+    if (attribute.type === 'BigInteger' || attribute.type === 'BigDecimal')
+      imports.push(`import java.math.${attribute.type}`);
+
+    if (attribute.nullable === false && !attribute.primaryKey) {
+      if (attribute.type === 'String')
+        imports.push('import jakarta.validation.constraints.NotBlank;');
+      else imports.push('import jakarta.validation.constraints.NotNull;');
+    }
+
+    if (attribute.type === 'UUID') imports.push('import java.util.UUID;');
+
+    if (attribute.skipFieldRevision) imports.push('import org.hibernate.envers.NotAudited;');
+
+    if (attribute.defaultValue) imports.push('import org.hibernate.annotations.ColumnDefault;');
+
+    if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany')
+      imports.push('import java.util.List;');
+  });
+
+  modelConfig.relationReference?.forEach((rel) => {
+    if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne')
+      imports.push('import java.util.List;');
+  });
+
+  return [...new Set(imports)].join('\n');
 });
 
 export { Handlebars };

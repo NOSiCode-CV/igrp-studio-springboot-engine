@@ -59,7 +59,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 const renderModel = async (context: RenderContext<ModelConfig>) => {
 
   context.dateTimeAttributes = dateTimeUniqueAttributes(context.resourceConfig.attributes)
-
   context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
 
   if (context.resourceConfig.attributes.length === 0) {

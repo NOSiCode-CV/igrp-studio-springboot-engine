@@ -87,6 +87,14 @@ describe('Model generator', () => {
             nullable: false,
           },
           {
+            type: 'string',
+            name: 'name',
+            primaryKey: false,
+            defaultValue: 'ASD',
+            length: 255,
+            nullable: false,
+          },
+          {
             type: 'relation',
             name: 'destino',
             relation: {
