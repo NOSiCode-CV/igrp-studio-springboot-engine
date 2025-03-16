@@ -8,7 +8,8 @@ import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceCo
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.relation.entity}}.{{capitalizeEntity this.relation.entity}};
     {{/if}}
   {{/if}}
-{{/each}}{{#if resourceConfig.audit~}}
+{{/each}}
+{{#if resourceConfig.audit~}}
   {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
   {{else}}
@@ -28,6 +29,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.util.List;
 {{#each dateTimeAttributes}}
 import java.time.{{this}};
 {{/each}}
