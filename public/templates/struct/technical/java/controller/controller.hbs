@@ -8,65 +8,65 @@
 @Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
-  {{>controller-injection}}
+{{>controller-injection}}
 
-  {{>controller-constructor}}
+{{>controller-constructor}}
 
-  {{#each resourceConfig.actions}}
-  @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}}
-    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if
-    (containsContentHeader headers)}}, {{/if}}{{/if}}
-    {{#if headers}}
-    {{#each headers}}
-    {{#if (or (eq this.header "Accept") (eq this.header "Content-Type"))}}
-    {{!-- This is for consumes and produces --}}
-    {{mapHeaderToOption this}} = "{{this.value}}"{{#if @last}}{{else}}, {{/if}}
-    {{/if}}
-    {{/each}}
-    {{/if}}
-  )
-  {{> controller-action-documentation action=this}}
-  {{> controller-action-definition baseConfig=../baseConfig}}
-  {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
-  {{#if (eq method "GET")}}
-      final var query = new {{capitalize actionName}}Query(
-      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
-      {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
-      {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
-      {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
-      {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-      {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
-      {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-      {{~#if (isPageable responses)}}, pageable{{/if~}}
-      );
-
-      return queryBus.handle(query);
-  {{else}}
-      final var command = new {{capitalize actionName}}Command(
-      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
-      {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
-      {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
-      {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
-      {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-      {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
-      {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-      );
-
-      return commandBus.send(command);
-  {{/if}}
-{{else}}
-    return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
-    {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
-    {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
-    {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
-    {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
-    {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-    {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
-    {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-    );
+{{#each resourceConfig.actions}}
+@{{ toTitleCase method}}Mapping({{#if path}}
+value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}}
+value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if
+(containsContentHeader headers)}}, {{/if}}{{/if}}
+{{#if headers}}
+{{#each headers}}
+{{#if (or (eq this.header "Accept") (eq this.header "Content-Type"))}}
+{{!-- This is for consumes and produces --}}
+{{mapHeaderToOption this}} = "{{this.value}}"{{#if @last}}{{else}}, {{/if}}
 {{/if}}
-  }
+{{/each}}
+{{/if}}
+)
+{{> controller-action-documentation action=this}}
+{{> controller-action-definition baseConfig=../baseConfig}}
+{{#if (eq ../baseConfig.projectStructureStyle "domain")}}
+{{#if (eq method "GET")}}
+final var query = new {{capitalize actionName}}Query(
+{{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+{{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+{{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+{{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+{{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+{{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{~#if (isPageable responses)}}
+{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}});
+
+return queryBus.handle(query);
+{{else}}
+final var command = new {{capitalize actionName}}Command(
+{{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+{{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+{{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+{{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+{{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+{{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+);
+
+return commandBus.send(command);
+{{/if}}
+{{else}}
+return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
+{{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+{{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+{{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+{{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+{{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+{{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+);
+{{/if}}
+}
 
 {{/each}}
 }

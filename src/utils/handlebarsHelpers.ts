@@ -216,7 +216,7 @@ Handlebars.registerHelper(
           }
         }
 
-      if(action.modelAttribute) {
+      if (action.modelAttribute) {
         if (domainDriven) {
           // TODO: Implementar lógica para imports dinamicos dependendo do module.
           /*imports.push(
@@ -445,8 +445,8 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     const objectImports = GENERIC_IMPORTS(packageNameFromConfig,
       attr.type, attr.module).get(attr.objectType)
 
-    if(objectImports) {
-      imports.add(isDDDStyle? objectImports.java.domain : objectImports.java.technical)
+    if (objectImports) {
+      imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical)
       continue;
     }
 
@@ -458,7 +458,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 
     const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type).get(attr.type);
 
-    if(specialAttributeImports) imports.add(specialAttributeImports.java.technical);
+    if (specialAttributeImports) imports.add(specialAttributeImports.java.technical);
 
   }
 
@@ -473,7 +473,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     .filter((it: JavaAttribute) => it.collectionType)
     .map((attr: JavaAttribute) => GENERIC_IMPORTS(
       packageNameFromConfig, attr.collectionType!)
-    .get(attr.collectionType!)?.java.technical));
+      .get(attr.collectionType!)?.java.technical));
 
   return Array.from(imports).filter((e) => e).sort().join('\n');
 });
@@ -570,9 +570,21 @@ Handlebars.registerHelper('breakEach', function (context, options) {
   return result;
 });
 
-Handlebars.registerHelper('or', function (a, b) {
+/*.registerHelper('or', function (a, b) {
   return a || b;
+});*/
+
+Handlebars.registerHelper('or', function (...args) {
+  const options = args.pop(); // Remove o último argumento (objeto de opções do Handlebars)
+
+  // Verifica se algum dos argumentos é verdadeiro
+  const result = args.some(Boolean);
+
+  return result;
+
 });
+
+
 
 Handlebars.registerHelper('filterCommandActions', function (array: ControllerAction[], options) {
   if (!array || !Array.isArray(array)) {
@@ -688,7 +700,7 @@ Handlebars.registerHelper('processDocumentationType', (type: string, objType?: s
 
   let primitiveTypes: string[] = ["integer", "boolean", "string"];
 
-  if(objType === 'dto')
+  if (objType === 'dto')
     return 'object';
 
   if (primitiveTypes.includes(type)) {
