@@ -70,6 +70,34 @@ const domainControllerConfig: ControllerConfig = {
       },
     },
     {
+      actionName: "getAllAnimals",
+      path: "get-all-animals",
+      method: "GET",
+      pathVariables: [
+        {
+          type: "string",
+          name: "id",
+          isRequired: true,
+        },
+      ],
+      responses: {
+        "200": {
+          id: 'uVl1MViEeK',
+          module: "core",
+          name: "AnimalResponse",
+          content: {
+            "application/json": {
+              schema: {
+                type: "AnimalDTO",
+                collectionType: "pageable",
+                objectType: "dto",
+              },
+            },
+          },
+        },
+      },
+    },
+    {
       actionName: "createAnimal",
       path: "create-animal",
       method: "POST",
