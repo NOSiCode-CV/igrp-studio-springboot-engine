@@ -298,6 +298,24 @@ const technicalControllerConfig: ControllerConfig = {
       },
     },
     {
+      actionName:"getAllUsers",
+      path:"all",
+      method:"GET",
+      responses: {
+        "200": {
+          description: "Get all users from the database",
+          content: {
+            "application/json": {
+              schema: {
+                type: "User",
+                collectionType: "pageable"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       actionName: "createUser",
       path: "create-user",
       method: "POST",

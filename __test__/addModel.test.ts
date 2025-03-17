@@ -155,7 +155,7 @@ describe('Model generator', () => {
           {
             "type": "Level",
             "objectType": "enum",
-            "name": "userLevelNew",
+            "name": "user_level_new",
             "length": 500,
             "nullable": false,
             "unique": true,
