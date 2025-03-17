@@ -153,7 +153,9 @@ export const ERROR_MESSAGE = {
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
   DTO_FILE_CONFIG_NOT_FOUNT: 'DTO file configuration not found',
+  ENUM_FILE_CONFIG_NOT_FOUNT: 'ENUM configuration file not found',
   DTO_FILE_NOT_FOUND: 'DTO file not found',
+  ENUM_FILE_NOT_FOUND: 'ENUM file not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
   TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
   CONFLICTING_PRIMARY_KEY_TYPES:

@@ -3,10 +3,10 @@ import {
   getControllerConfigPath,
   getControllerDir,
   getDDDControllerDir,
-  getDDDDtoOutputDir,
+  getDDDDtoOutputDir, getDDDEnumOutputDir,
   getDDDModelOutputDir,
   getDTOConfigPath,
-  getDtoOutputDir, getModelConfigPath, getModelOutputDir, getResponseConfigPath,
+  getDtoOutputDir, getEnumConfigPath, getEnumOutputDir, getModelConfigPath, getModelOutputDir, getResponseConfigPath,
 } from '../../utils/helpers';
 import { DeleteConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
@@ -31,7 +31,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
     context.resourceConfig.name = normalizeName(context.resourceConfig.name, context.resourceConfig.type)
 
-    const dtoPath = getDtoFilePath(context);
+    const dtoPath = getFilePath(context);
     const dtoConfigPath = getDTOConfigPath(
       context.resourceConfig.type,
       context.resourceConfig.module ?? DIRECTORIES.SHARED,
@@ -48,7 +48,18 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
   }
 
   if(context.resourceConfig.type === 'enum') {
-    // TODO: not implemented
+
+    const enumPath = getFilePath(context);
+    const enumConfigPath = getEnumConfigPath(
+      context.resourceConfig.module ?? DIRECTORIES.SHARED,
+      context.resourceConfig.name
+    );
+
+    if (await fs.pathExists(enumPath)) await fs.rm(enumPath, { recursive: true });
+    else throw ERROR_MESSAGE.ENUM_FILE_NOT_FOUND;
+
+    if (await fs.pathExists(enumConfigPath)) await fs.rm(enumConfigPath, { recursive: true });
+    else throw ERROR_MESSAGE.ENUM_FILE_CONFIG_NOT_FOUNT;
   }
 
   if(context.resourceConfig.type === 'module') {
@@ -115,7 +126,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
     if (await fs.pathExists(configPath)) await fs.rm(configPath, { recursive: true });
     else throw ERROR_MESSAGE.DTO_FILE_CONFIG_NOT_FOUNT;
 
-    const dtoPath = getDtoFilePath(context);
+    const dtoPath = getFilePath(context);
 
     if (await fs.pathExists(dtoPath)) await fs.rm(dtoPath, { recursive: true });
     else throw ERROR_MESSAGE.DTO_FILE_NOT_FOUND;
@@ -124,7 +135,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
 };
 
-const getDtoFilePath = (context: RenderContext<DeleteConfig>) => {
+const getFilePath = (context: RenderContext<DeleteConfig>) => {
   switch (context.resourceConfig.type) {
     case "dto" :
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
@@ -141,6 +152,11 @@ const getDtoFilePath = (context: RenderContext<DeleteConfig>) => {
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+    case "enum" :
+      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        return path.join(getDDDEnumOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      else
+        return path.join(getEnumOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     default:
       if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
