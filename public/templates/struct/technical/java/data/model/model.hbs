@@ -105,6 +105,7 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
    @ManyToMany(mappedBy = "{{this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}})
    private List<{{this.entity}}> {{this.fieldName}};
   {{/if}}
-{{~/each~}}
+
+{{/each}}
 
 }
