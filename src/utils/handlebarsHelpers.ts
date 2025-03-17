@@ -767,6 +767,8 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
   imports.push(`import jakarta.persistence.*;`);
   imports.push(`import lombok.*;`);
 
+  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
+
   if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
 
   modelConfig.attributes.forEach((attribute) => {
@@ -804,9 +806,10 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
 
     if(attribute.relation?.entity) {
       if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`)
+        if(modelConfig.module !== attribute.relation.module)
+          imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`)
       else
-        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
+        imports.push(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
     }
 
   });
