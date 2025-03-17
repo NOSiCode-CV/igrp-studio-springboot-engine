@@ -44,11 +44,12 @@ Handlebars.registerHelper('concat', (str1: string, str2: string) => {
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
   if (!str) return '';
 
-  return str
-    .toLowerCase()
+  const noSnake = (str
     .split('_')
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
+    .join(''))
+
+  return noSnake.charAt(0).toLowerCase() + noSnake.slice(1);
 });
 
 Handlebars.registerHelper('toTitleCase', (str: string) => {

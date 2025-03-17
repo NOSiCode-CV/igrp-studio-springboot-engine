@@ -27,14 +27,14 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
       }
     ){{#unless @last}},{{/unless}}
   {{/each}}
-  }{{/if}}
+  }{{/if~}}
 {{#if resourceConfig.indexes}},
   indexes = {
   {{#each resourceConfig.indexes}}
     @Index(name = "{{toLowerCase this.name}}", columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"{{#if this.unique}}, unique = true{{/if}}){{#unless @last}},{{/unless}}
   {{/each}}
   }
-{{/if}})
+{{/if~}})
 public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
 
    {{#if resourceConfig.primaryKey}}
@@ -47,8 +47,8 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
     @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
     private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
 
-    @NotBlank(message = "{{this.name}} is mandatory"){{else}}
-    @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+    @NotBlank(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{else}}
+    @NotNull(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
     @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
     @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
     private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
