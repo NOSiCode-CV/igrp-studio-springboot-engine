@@ -6,13 +6,16 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
   {{this.isRequired}}) String {{sanitizeHeaderName this.value}}{{#if @last}}{{else}}, {{/if~}}{{/ifNot}}{{/each}}{{#if
   (containsCustomHeader headers)}}{{#if (and headers modelAttribute)}}, {{else}}{{#if (and headers requestParams)}},
   {{else}}{{#if (and pathVariables headers)}}, {{else}}{{#if (and requestBody headers)}},
-  {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{#if modelAttribute}}@ModelAttribute {{normalizeDto modelAttribute.name}} {{toCamelCase
+  {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{#if modelAttribute}}@ModelAttribute {{normalizeDto
+  modelAttribute.name}} {{toCamelCase
   modelAttribute.name}}{{/if~}}{{#if (and modelAttribute requestParams)}}, {{else}}{{#if (and pathVariables
   modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}}, {{else}}{{/if~}}{{/if~}}{{/if~}}
-  {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute{{else}}@Valid @RequestBody{{/if}} {{#if (isRefSchema
+  {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute{{else}}@Valid @RequestBody{{/if}}
+  {{#if (isRefSchema
   this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat
   this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}
-  {{#if (and requestBody requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{else}}{{/if~}}{{/if~}}{{#each
+  {{#if (and requestBody requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}},
+  {{else}}{{/if~}}{{/if~}}{{#each
   requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{~#if
   (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}},
   {{/if~}}{{/each}}{{#if (and pathVariables requestParams)}}, {{/if~}}{{#each pathVariables}}@PathVariable({{#if
@@ -21,29 +24,41 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
   multipartFiles)}}, {{else}}{{#if (and requestParams multipartFiles)}}, {{else}}{{#if (and requestBody
   multipartFiles)}}, {{else}}{{#if (and modelAttribute multipartFiles)}}, {{else}}{{#if (and headers
   multipartFiles)}}, {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{#each multipartFiles}}@RequestPart("{{this.name}}")
-  MultipartFile {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables headers )}},{{/if~}}Pageable pageable{{/if~}}
-)
-{
-    {{else}}
-public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}}(
-  {{#if headers}}{{#each headers}}{{#ifNot (or (eq this.header "Accept") (eq this.header "Content-Type"))}}@RequestHeader({{~#ifNot (eq
-  this.header "Custom-Header")}}value = "{{this.header}}"{{else}}value = "{{this.value}}"{{/ifNot~}}, required ={{this.isRequired}}) String {{sanitizeHeaderName this.value}}{{#if @last}}{{else}},
-  {{/if~}}{{/ifNot}}{{/each}}{{#if (containsCustomHeader headers)}}{{#if (and headers modelAttribute)}},
-  {{else}}{{#if (and headers requestParams)}}, {{else}}{{#if (and pathVariables headers)}}, {{else}}{{~#if (and
-  requestBody headers)}}, {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
-  {{#if modelAttribute}}@ModelAttribute {{normalizeDto modelAttribute.name}} {{toCamelCase modelAttribute.name}}{{/if~}}{{~#if (and modelAttribute requestParams)}},
-  {{else}}{{#if (and pathVariables modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}},
-  {{/if~}}{{/if~}}{{/if~}}
-  {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute{{else}}@Valid @RequestBody{{/if}} {{#if (isRefSchema
-  this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat
-  this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{~#if (and requestBody
-  requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{/if~}}{{/if~}}
-  {{#each requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{#if (and pathVariables requestParams)}}, {{/if~}}
-  {{#each pathVariables}}@PathVariable({{#if (this.value)}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}},{{/if~}}{{/each}}{{#if (and pathVariables multipartFiles)}}, {{else}}
-  {{~#if (and requestParams multipartFiles)}}, {{else}}{{#if (and requestBody multipartFiles)}}, {{else}}{{~#if (and modelAttribute multipartFiles)}}, {{else}}{{#if (and headers multipartFiles)}},
-  {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
-  {{#each multipartFiles}}@RequestPart("{{this.name}}") MultipartFile {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}
-  {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables headers )}},{{/if~}}Pageable pageable{{/if~}}
-)
-{
-{{/if~}}
+  MultipartFile {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{~#if (isPageable responses)}}{{#if (or
+  requestBody modelAttribute requestParams pathVariables headers )}},{{/if~}}Pageable pageable{{/if~}}
+  )
+  {
+  {{else}}
+  public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}}(
+    {{#if headers}}{{#each headers}}{{#ifNot (or (eq this.header "Accept") (eq this.header
+    "Content-Type"))}}@RequestHeader({{~#ifNot (eq
+    this.header "Custom-Header")}}value = "{{this.header}}"{{else}}value = "{{this.value}}"{{/ifNot~}}, required
+    ={{this.isRequired}}) String {{sanitizeHeaderName this.value}}{{#if @last}}{{else}},
+    {{/if~}}{{/ifNot}}{{/each}}{{#if (containsCustomHeader headers)}}{{#if (and headers modelAttribute)}},
+    {{else}}{{#if (and headers requestParams)}}, {{else}}{{#if (and pathVariables headers)}}, {{else}}{{~#if (and
+    requestBody headers)}}, {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
+    {{#if modelAttribute}}@ModelAttribute {{normalizeDto modelAttribute.name}} {{toCamelCase
+    modelAttribute.name}}{{/if~}}{{~#if (and modelAttribute requestParams)}},
+    {{else}}{{#if (and pathVariables modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}},
+    {{/if~}}{{/if~}}{{/if~}}
+    {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute{{else}}@Valid @RequestBody{{/if}}
+    {{#if (isRefSchema
+    this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat
+    this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{~#if (and requestBody
+    requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{/if~}}{{/if~}}
+    {{#each requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value =
+    "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}}
+    {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{#if (and pathVariables requestParams)}}, {{/if~}}
+    {{#each pathVariables}}@PathVariable({{#if (this.value)}}value = "{{this.value}}"{{else}}value =
+    "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}}
+    {{this.name}}{{#if @last}}{{else}},{{/if~}}{{/each}}{{#if (and pathVariables multipartFiles)}}, {{else}}
+    {{~#if (and requestParams multipartFiles)}}, {{else}}{{#if (and requestBody multipartFiles)}}, {{else}}{{~#if (and
+    modelAttribute multipartFiles)}}, {{else}}{{#if (and headers multipartFiles)}},
+    {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
+    {{#each multipartFiles}}@RequestPart("{{this.name}}") MultipartFile {{this.name}}{{#if @last}}{{else}},
+    {{/if~}}{{/each}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables headers
+    )}},{{/if~}}Pageable pageable{{/if~}}
+    )
+    {
+    {{/if~}}
