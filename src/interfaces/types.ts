@@ -184,6 +184,7 @@ export interface Relation {
   entity: string;
   fieldName?: string;
   mappedBy?: string;
+  module?: string;
   referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;

@@ -1,7 +1,8 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute,
+  ApiConfig,
+  Attribute, BaseApiConfig,
   Body,
   ControllerAction,
   DTOConfig,
@@ -14,7 +15,7 @@ import {
 } from '../interfaces/types';
 import {
   DIRECTORIES, GENERIC_IMPORTS,
-  GENERIC_TYPES,
+  GENERIC_TYPES, PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
@@ -772,36 +773,39 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
   return isPageable;
 });
 
-Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig) {
+Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig, baseConfig: ApiConfig) {
   const imports: string[] = [];
   imports.push(`import cv.igrp.framework.stereotype.IgrpEntity;`);
   imports.push(`import jakarta.persistence.*;`);
   imports.push(`import lombok.*;`);
 
+  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
+
   if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
 
   modelConfig.attributes.forEach((attribute) => {
+
+    const type = GENERIC_TYPES.get(attribute.type)?.java.name
+
     if (
-      attribute.type === 'LocalTime' ||
-      attribute.type === 'LocalDate' ||
-      attribute.type === 'LocalDateTime' ||
-      attribute.type === 'ZoneDateTime' ||
-      attribute.type === 'OffsetDateTime' ||
-      attribute.type === 'Instant'
+      type === 'LocalTime' ||
+      type === 'LocalDate' ||
+      type === 'LocalDateTime' ||
+      type === 'ZoneDateTime' ||
+      type === 'OffsetDateTime' ||
+      type === 'Instant'
     ) {
-      imports.push(`import java.time.${attribute.type}`);
+      imports.push(`import java.time.${type};`);
     }
 
-    if (attribute.type === 'BigInteger' || attribute.type === 'BigDecimal')
-      imports.push(`import java.math.${attribute.type}`);
+    if (type === 'BigInteger' || type === 'BigDecimal') imports.push(`import java.math.${type};`);
 
     if (attribute.nullable === false && !attribute.primaryKey) {
-      if (attribute.type === 'String')
-        imports.push('import jakarta.validation.constraints.NotBlank;');
+      if (type === 'String') imports.push('import jakarta.validation.constraints.NotBlank;');
       else imports.push('import jakarta.validation.constraints.NotNull;');
     }
 
-    if (attribute.type === 'UUID') imports.push('import java.util.UUID;');
+    if (type === 'UUID') imports.push('import java.util.UUID;');
 
     if (attribute.skipFieldRevision) imports.push('import org.hibernate.envers.NotAudited;');
 
@@ -809,6 +813,15 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
 
     if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany')
       imports.push('import java.util.List;');
+
+    if(attribute.relation?.entity) {
+      if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        if (modelConfig.module !== attribute.relation.module)
+          imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`);
+      } else
+        imports.push(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
+    }
+
   });
 
   modelConfig.relationReference?.forEach((rel) => {

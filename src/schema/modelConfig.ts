@@ -25,7 +25,7 @@ const genericAttributeSchema: JSONSchemaType<AttributeType> = {
   errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
 }
 
-const relationSchema: JSONSchemaType<Relation> = {
+export const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
     type: {
@@ -77,7 +77,12 @@ const relationSchema: JSONSchemaType<Relation> = {
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
-    }
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
+    },
   },
   required: ["type", "entity"],
   additionalProperties: false,
@@ -440,4 +445,3 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
 };
 
 export const validateModelConfig: ValidateFunction<ModelConfig> = ajvInstance.compile<ModelConfig>(modelConfigSchema);
-export const validateCrud: ValidateFunction<Crud> = ajvInstance.compile<Crud>(crudSchema)

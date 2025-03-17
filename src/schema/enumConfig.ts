@@ -1,79 +1,12 @@
-import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types';
+import { Attribute, EnumConfig, EnumValue } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import {
-  FETCH_TYPE,
   GENERATION_TYPES,
   GENERIC_ATTRIBUTE_TYPES,
   PATTERNS,
-  RELATIONSHIP_TYPES,
 } from '../utils/constants';
-
-const relationSchema: JSONSchemaType<Relation> = {
-  type: "object",
-  properties: {
-    type: {
-      type: "string",
-      enum: RELATIONSHIP_TYPES,
-      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
-    },
-    fetchType: {
-      type: "string",
-      enum: FETCH_TYPE,
-      nullable: false,
-      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
-    },
-    entity: {
-      type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
-      errorMessage: 'The entity name is required and cannot be empty.'
-    },
-    fieldName: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.PARAMS_VALIDATION,
-      errorMessage: 'The fieldName field, if provided, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
-    },
-    mappedBy: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
-    },
-    referencedColumnName: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
-    },
-    cardinality: {
-      type: 'string',
-      enum: ['oneWay', 'twoWay'],
-      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
-    },
-    joinTable: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
-    },
-    inverseJoinColumn: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
-    }
-  },
-  required: ["type", "entity"],
-  additionalProperties: false,
-  errorMessage: {
-    required: {
-      relationType: 'The relationType is required and cannot be empty.',
-      entity: 'The entity is required and cannot be empty.'
-    },
-    additionalProperties: 'No additional properties are allowed in the relation schema.'
-  }
-};
+import { relationSchema } from './modelConfig';
 
 const valueSchema: JSONSchemaType<EnumValue> = {
   type: "object",

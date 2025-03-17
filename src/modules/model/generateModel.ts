@@ -21,7 +21,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
   if (errosUniqueConstraints.length > 0) {
-    throw new Error(`Erros de uniqueConstraints encontrados:\n${errosUniqueConstraints.join('\n')}`);
+    throw new Error(`Unique constraint errors found:\n${errosUniqueConstraints.join('\n')}`);
   }
 
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {

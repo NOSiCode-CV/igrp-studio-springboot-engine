@@ -30,7 +30,7 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       type: "string",
       pattern: "^[a-zA-Z0-9._-]+$",
       errorMessage: {
-        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
+        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters without spaces or special characters."
       }
     },
 

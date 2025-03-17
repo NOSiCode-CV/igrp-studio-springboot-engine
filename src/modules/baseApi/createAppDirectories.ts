@@ -10,7 +10,7 @@ import { getMainPath, getTestPath } from '../../utils/helpers';
  */
 export const createAppDirectories = async (context: RenderContext) => {
   const directories = getDirectoriesToCreate(context.baseConfig, context.basePath);
-  saveAppDirectories(directories);
+  await saveAppDirectories(directories);
 };
 
 /**
