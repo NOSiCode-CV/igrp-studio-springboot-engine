@@ -242,6 +242,10 @@ Handlebars.registerHelper(
           const schemaType = schema?.type;
           const objectType = schema?.objectType; // New: to check for dto type
 
+          if(schema.collectionType === 'pageable') {
+            imports.push(`import org.springframework.data.domain.Page;`)
+          }
+
           if (!objectType && schemaType !== 'object') continue;
 
           // If domain-driven and the schema type is 'object', import from the module-specific directory.
@@ -274,6 +278,7 @@ Handlebars.registerHelper(
     }
     console.log("imports: " + imports);
     imports.push(`import java.util.List;`);
+    imports.push(`import java.util.Collection;`);
 
     return [...new Set(imports)].join('\n');
   },

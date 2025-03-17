@@ -25,8 +25,8 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
   multipartFiles)}}, {{else}}{{#if (and modelAttribute multipartFiles)}}, {{else}}{{#if (and headers
   multipartFiles)}}, {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}{{#each multipartFiles}}@RequestPart("{{this.name}}")
   MultipartFile {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{~#if (isPageable responses)}}{{#if (or
-  requestBody modelAttribute requestParams pathVariables)}},{{/if~}}Pageable
-  pageable{{/if~}})
+  requestBody modelAttribute requestParams pathVariables headers )}},{{/if~}}Pageable pageable{{/if~}}
+  )
   {
   {{else}}
   public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}}(
@@ -55,9 +55,10 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
     {{~#if (and requestParams multipartFiles)}}, {{else}}{{#if (and requestBody multipartFiles)}}, {{else}}{{~#if (and
     modelAttribute multipartFiles)}}, {{else}}{{#if (and headers multipartFiles)}},
     {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
-    {{#each multipartFiles}}@RequestPart("{{this.name}}") MultipartFile {{this.name}}{{#if
-    @last}}{{else}},{{/if~}}{{/each~}}
-    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if~}}Pageable
-    pageable{{/if~}})
+    {{#each multipartFiles}}@RequestPart("{{this.name}}") MultipartFile {{this.name}}{{#if @last}}{{else}},
+    {{/if~}}{{/each}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables headers
+    )}},{{/if~}}Pageable pageable{{/if~}}
+    )
     {
     {{/if~}}
