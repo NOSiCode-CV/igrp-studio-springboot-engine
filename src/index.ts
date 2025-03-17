@@ -62,7 +62,7 @@ import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
 import { generateHandlers } from './modules/handlers/generateHandlers';
-import { getMainPath, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
+import { getMainPath, isPageable, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
 import { saveModuleConfig } from './modules/module/saveModuleConfig';
 import { createModuleDirectory } from './modules/module/createModuleDirectory';
@@ -1046,7 +1046,22 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
         }))
         : [];
 
-      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables];
+      let pageable: any[] = []
+
+      if(act.responses) {
+        if(isPageable(act.responses))
+          pageable = [
+            {
+              name: 'pageable',
+              type: 'pageable',
+              objectType: 'java',
+              required: true,
+            }
+          ]
+
+      }
+
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable];
 
       await addDTO(
         {

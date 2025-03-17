@@ -20,7 +20,7 @@ import {
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { getPackageNameFromConfig, isResponseCollection, validateAnnotations } from './helpers';
+import { getPackageNameFromConfig, isPageable, isResponseCollection, validateAnnotations } from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
@@ -744,24 +744,7 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
 
 
 
-Handlebars.registerHelper('isPageable', function (responses?: { [p: string]: any }): boolean {
-  //console.log("Objeto responseeeeeeeeeeeeee:", responses);
-  let isPageable = false;
-
-  if (!responses || Object.keys(responses).length !== 1) return false;
-
-  const singleBody = responses[Object.keys(responses)[0]];
-  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
-  const schema = content?.schema;
-
-  if (!schema) return false;
-  const responseCollectionType: string = schema.collectionType
-
-  if (responseCollectionType === 'pageable')
-    isPageable = true;
-
-  return isPageable;
-});
+Handlebars.registerHelper('isPageable', isPageable);
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
 
