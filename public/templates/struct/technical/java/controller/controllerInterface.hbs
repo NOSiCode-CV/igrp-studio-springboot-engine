@@ -11,6 +11,8 @@ public interface I{{resourceConfig.name}}Service {
   "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if~}}{{~#if requestBody}}{{~#if (or modelAttribute pathVariables requestParams)}}, {{/if~}}{{/if~}}
   {{~#if modelAttribute}}{{normalizeDto modelAttribute.name}} {{toCamelCase modelAttribute.name}}{{/if~}}{{~#if modelAttribute}}{{~#if (or pathVariables requestParams)}}, {{/if~}}{{/if~}}
   {{~#if requestParams}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}},
-  {{/if~}}{{/each}}{{/if~}}{{~#if requestParams}}{{~#if pathVariables}}, {{/if~}}{{/if~}}{{~#if pathVariables}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}}, {{/if~}}{{/each}}{{/if~}});
+  {{/if~}}{{/each}}{{/if~}}{{~#if requestParams}}{{~#if pathVariables}}, {{/if~}}{{/if~}}{{~#if pathVariables}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}}, {{/if~}}{{/each}}{{/if~}}
+  {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}Pageable pageable{{/if~}}
+  );
   {{/each}}
 }

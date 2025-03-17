@@ -22,18 +22,19 @@ resourceConfig.name}}.I{{resourceConfig.name}}Service;
 @Service
 public class {{resourceConfig.name}}Service implements I{{resourceConfig.name}}Service {
 
-private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger({{resourceConfig.name}}Service.class);
 
-{{#each resourceConfig.actions}}
-@Override
-public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema
-  this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName
-  "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and
-  pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}},
-  {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}}
-  {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
-  // TODO: implement this method
-  return null;
+  {{#each resourceConfig.actions}}
+  @Override
+  public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{~#if requestBody}}{{~#if (isRefSchema this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if~}}
+    {{~#if requestBody}}{{~#if (or modelAttribute pathVariables requestParams)}}, {{/if~}}{{/if~}}
+    {{~#if modelAttribute}}{{normalizeDto modelAttribute.name}} {{toCamelCase modelAttribute.name}}{{/if~}}{{~#if modelAttribute}}{{~#if (or pathVariables requestParams)}}, {{/if~}}{{/if~}}
+    {{~#if requestParams}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}},
+    {{/if~}}{{/each}}{{/if~}}{{~#if requestParams}}{{~#if pathVariables}}, {{/if~}}{{/if~}}{{~#if pathVariables}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}}, {{/if~}}{{/each}}{{/if~}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}Pageable pageable{{/if~}}
+  ) {
+    // TODO: implement this method
+     return null;
   }
 
   {{/each}}

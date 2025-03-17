@@ -38,7 +38,7 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
-      {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}});
+      {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
       return queryBus.handle(query);
@@ -51,6 +51,7 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+      {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
       return commandBus.send(command);
@@ -64,6 +65,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
     {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
     {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
 {{/if}}
   }
