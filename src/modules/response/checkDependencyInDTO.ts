@@ -13,11 +13,7 @@ export const checkDependencyInDTO = async function(context: RenderContext<Respon
     t.attributes.map(attr => {
       if (attr.objectType === 'dto') {
         let type: JavaType;
-        if (typeof attr.type === 'string') {
-          type = { name: attr.type };
-        } else {
-          type = attr.type;
-        }
+        type = { name: attr.type };
 
         if (type.name === cfg.name) {
           errors.push({message: `'dto.${cfg.name}' is being used in 'dto.${t.name}' on attribute line '${attr.name}'.`});

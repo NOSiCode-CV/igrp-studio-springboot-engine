@@ -1,4 +1,4 @@
-import { Attribute, EnumConfig, EnumValue, Relation } from '../interfaces/types';
+import { Attribute, EnumConfig, EnumValue } from '../interfaces/types';
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import {
