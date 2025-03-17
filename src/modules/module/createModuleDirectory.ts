@@ -10,7 +10,7 @@ import { getMainPath, normalizePackageName } from '../../utils/helpers';
  */
 export const createModuleDirectory = async (context: RenderContext<ModuleConfig>) => {
   const directories = getDirectoriesToCreate(context);
-  saveModuleDirectory(directories);
+  await saveModuleDirectory(directories);
 };
 
 /**
