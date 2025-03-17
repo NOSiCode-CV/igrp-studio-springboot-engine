@@ -769,27 +769,30 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
   if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
 
   modelConfig.attributes.forEach((attribute) => {
+
+    const type = GENERIC_TYPES.get(attribute.type)?.java.name
+
     if (
-      attribute.type === 'LocalTime' ||
-      attribute.type === 'LocalDate' ||
-      attribute.type === 'LocalDateTime' ||
-      attribute.type === 'ZoneDateTime' ||
-      attribute.type === 'OffsetDateTime' ||
-      attribute.type === 'Instant'
+      type === 'LocalTime' ||
+      type === 'LocalDate' ||
+      type === 'LocalDateTime' ||
+      type === 'ZoneDateTime' ||
+      type === 'OffsetDateTime' ||
+      type === 'Instant'
     ) {
-      imports.push(`import java.time.${attribute.type}`);
+      imports.push(`import java.time.${type};`);
     }
 
-    if (attribute.type === 'BigInteger' || attribute.type === 'BigDecimal')
-      imports.push(`import java.math.${attribute.type}`);
+    if (type === 'BigInteger' || type === 'BigDecimal')
+      imports.push(`import java.math.${type};`);
 
     if (attribute.nullable === false && !attribute.primaryKey) {
-      if (attribute.type === 'String')
+      if (type === 'String')
         imports.push('import jakarta.validation.constraints.NotBlank;');
       else imports.push('import jakarta.validation.constraints.NotNull;');
     }
 
-    if (attribute.type === 'UUID') imports.push('import java.util.UUID;');
+    if (type === 'UUID') imports.push('import java.util.UUID;');
 
     if (attribute.skipFieldRevision) imports.push('import org.hibernate.envers.NotAudited;');
 
