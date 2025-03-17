@@ -1,0 +1,13 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+
+public interface {{resourceConfig.name}}AggregateDomainRepository {
+
+   {{#if (keyType resourceConfig)}}
+   {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
+   {{/if}}
+
+   void save({{resourceConfig.name}}AggregateRoot aggregate);
+
+}

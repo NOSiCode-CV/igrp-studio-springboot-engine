@@ -1,0 +1,19 @@
+{{> package-java }}
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
+{{#if resourceConfig.crud}}import org.springframework.data.rest.core.annotation.RepositoryRestResource;{{/if}}
+{{~#if resourceConfig.revision}}import org.springframework.data.repository.history.RevisionRepository;{{/if}}
+{{#if resourceConfig.crud.disabledMethods}}{{else~}}import java.util.Optional;{{~/if}}
+{{~import-uuid resourceConfig}}
+
+@Repository
+{{#if resourceConfig.crud}}@RepositoryRestResource(path = "{{toCamelCase resourceConfig.name}}"){{/if}}
+public interface {{resourceConfig.name}}Repository extends
+    JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>,
+    JpaSpecificationExecutor<{{resourceConfig.name}}>{{#if resourceConfig.revision}},{{~/if}}
+    {{#if resourceConfig.revision~}}RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
+{
+
+}

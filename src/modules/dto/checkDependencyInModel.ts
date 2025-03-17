@@ -1,10 +1,11 @@
 import { DTOBaseConfig, RenderContext, JavaType } from "../../interfaces/types";
 import { getModelTypes } from "../model/helpers";
 import { getDTOTypes } from "./helpers";
+import { DIRECTORIES } from '../../utils/constants';
 
 export const checkDependencyInModel = async function(context: RenderContext<DTOBaseConfig>) {
-  const dtoTypes = await getDTOTypes(context.basePath);  
-  const modelTypes = await getModelTypes(context.basePath);  
+  const dtoTypes = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
+  const modelTypes = await getModelTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   const cfg = context.resourceConfig;  
   dtoTypes.delete(cfg.name);  
 
@@ -13,7 +14,7 @@ export const checkDependencyInModel = async function(context: RenderContext<DTOB
   for (const dto of dtoTypes.values()) {
     dto.attributes.map(attr => {
       
-      if (attr.ns === 'model') {
+      if (attr.objectType === 'model') {
         let type: JavaType;
         if (typeof attr.type === 'string') {
           type = { name: attr.type };

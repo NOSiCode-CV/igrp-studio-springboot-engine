@@ -1,0 +1,10 @@
+{{#if (eq baseConfig.database "Postgresql")}}
+postgres-data-14:
+  driver: local
+{{else if (eq baseConfig.database "MySQL")}}
+mysql-data-8:
+  driver: local
+{{else if (eq baseConfig.database "Oracle")}}
+oracle-data-21:
+  driver: local
+{{/if}}

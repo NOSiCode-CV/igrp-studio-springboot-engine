@@ -1,0 +1,41 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{resourceConfig.name}};
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Component;
+
+@Component
+public interface I{{resourceConfig.name}}Repository {
+
+  /**
+  * Save or update a {{resourceConfig.name}}.
+  *
+  * @param {{toLowerCase resourceConfig.name}} is the object to be saved
+  * @return the {{resourceConfig.name}} object that was saved
+  */
+  {{resourceConfig.name}} save({{resourceConfig.name}} {{toLowerCase resourceConfig.name}});
+
+  /**
+  * Fetch a {{resourceConfig.name}} by its ID.
+  *
+  * @param id the {{resourceConfig.name}}'s ID
+  * @return an Optional {{resourceConfig.name}}, if found
+  */
+  Optional<{{resourceConfig.name}}> findById({{keyType resourceConfig}} id);
+
+  /**
+  * Fetch all the {{resourceConfig.name}} objects.
+  *
+  * @return all {{resourceConfig.name}} objects
+  */
+  List<{{resourceConfig.name}}> findAll();
+
+  /**
+  * Deletes a {{resourceConfig.name}} by its ID
+  *
+  * @param id the {{resourceConfig.name}}'s ID
+  */
+  void deleteById({{keyType resourceConfig}} id);
+
+}

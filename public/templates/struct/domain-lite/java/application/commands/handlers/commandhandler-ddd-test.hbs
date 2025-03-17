@@ -1,0 +1,45 @@
+{{> package-java }}
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+
+@ExtendWith(MockitoExtension.class)
+public class {{capitalize resourceConfig.name}}CommandHandlerTest {
+
+@InjectMocks
+private {{capitalize resourceConfig.name}}CommandHandler {{toCamelCase resourceConfig.name}}CommandHandler;
+
+@BeforeEach
+void setUp() {
+// TODO: initialize mock dependencies if needed
+}
+
+@Test
+void testHandle() {
+// TODO: Implement unit test for handle method
+// Example:
+// Given
+// {{capitalize resourceConfig.name}}Command command = new {{capitalize resourceConfig.name}}Command(...);
+//
+// When
+// ResponseEntity<{{{resourceConfig.response}}}> response = {{toCamelCase
+    resourceConfig.name}}CommandHandler.handle(command);
+    //
+    // Then
+    // assertNotNull(response);
+    // assertEquals(..., response.getBody());
+    }
+    }

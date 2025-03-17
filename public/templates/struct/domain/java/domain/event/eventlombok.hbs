@@ -1,0 +1,26 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.event.Event;
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-imports}}
+{{/if}}
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-annotations}}
+{{/if}}
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public class {{resourceConfig.name}}Event implements Event {
+
+    {{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    private {{{resolve-type this}}} {{this.name}};
+
+    {{/each}}
+}

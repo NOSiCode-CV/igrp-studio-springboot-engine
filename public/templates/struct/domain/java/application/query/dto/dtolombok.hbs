@@ -1,0 +1,24 @@
+package {{baseConfig.group}}.{{baseConfig.packageName}}.application.query.dto.{{toLowerCase resourceConfig.aggregate}};
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-imports}}
+{{/if}}
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-annotations}}
+{{/if}}
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+public class {{resourceConfig.name}}DTO {
+
+  {{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+      @{{this.annotation}}
+    {{/each}}
+    private {{{resolve-type this}}} {{this.name}};
+  {{/each}}
+
+}

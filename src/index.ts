@@ -1,68 +1,117 @@
-import { DTOBaseConfig, DTOConfig, ISelectPermissions, ModelConfig, PermissionConfig } from './interfaces/types';
-import { 
-  ATTRIBUTE_TYPES, CRUD_DISABLED_OPTIONS, 
-  DATABASE_TYPES, ERROR_MESSAGE, GENERATION_TYPES, HTTP_METHOD_TYPES, 
-  MIME_TYPES, PARAMS_TYPES, RELATIONSHIP_TYPES, RESPONSE_TYPES 
+import {
+  ApiConfig,
+  BaseApiConfig,
+  ControllerAction,
+  ControllerConfig,
+  DdlConfig,
+  DeleteConfig,
+  DTOConfig,
+  EnumConfig,
+  HandlerConfig,
+  JavaAttribute,
+  JsonConfig,
+  ModelConfig,
+  ModuleConfig,
+  PermissionConfig,
+  RenderContext,
+  ResponseConfig,
+  SqlConfig,
+  XmlConfig,
+} from './interfaces/types';
+import {
+  CRUD_DISABLED_OPTIONS,
+  DATABASE_TYPES,
+  DIRECTORIES,
+  ERROR_MESSAGE,
+  GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_COLLECTION_TYPES,
+  GENERIC_MODEL_ATTRIBUTE_TYPES,
+  HTTP_HEADER_TYPES,
+  HTTP_METHOD_TYPES,
+  MIME_TYPES,
+  PARAMS_TYPES,
+  PROJECT_STRUCTURE_STYLE,
+  RELATIONSHIP_TYPES,
+  SCHEMA_TYPES,
 } from './utils/constants';
-import { apiValidation } from './schema/apiConfig';
+import { apiValidation } from './schema/baseApiConfig';
+import path from 'path';
 import { validateModelConfig } from './schema/modelConfig';
-import { checkIfDirectoryIsEmpty } from './utils/checkFiles';
+import { checkIfDirectoryExists, checkIfDirectoryIsEmpty } from './utils/checkFiles';
 import { generateModel } from './modules/model/generateModel';
 import { validateController } from './schema/controllerConfig';
-import { deleteModelConfig } from './modules/model/deleteModel';
-import { saveModelConfig } from './modules/model/saveModelConfig';
 import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
 import { getBaseApiConfig } from './modules/common/getBaseApiConfig';
-import { generateRepository } from './modules/model/generateRepository';
+import { generateRepository, generateRepositoryImpl } from './modules/model/generateRepository';
 import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
-import { deleteControllerConfig } from './modules/controller/deleteController';
-import { ApiConfig, ControllerConfig, RenderContext } from './interfaces/types';
-import { saveControllerConfig } from './modules/controller/saveControllerConfig';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
-import { saveDTOConfig } from './modules/dto/saveDTOConfig';
+import { normalizeName, saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
-import { deleteDTOConfig } from './modules/dto/deleteDTO';
-import { validateDeleteDTOConfig, validateDTOConfig } from './schema/dtoConfig';
+import { validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
 import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalize } from './utils/capitalizeStrings';
+import { capitalize, capitalizeResponse, processJavaClassName } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
-import { upperCaseResponse } from './modules/common/upperCaseActionResponse';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
-import { loadPermissionConfigs } from './utils/helpers';
+import { generateHandlers } from './modules/handlers/generateHandlers';
+import { getMainPath, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
+import { saveModuleConfig } from './modules/module/saveModuleConfig';
+import { createModuleDirectory } from './modules/module/createModuleDirectory';
+import { moduleValidation } from './schema/moduleConfig';
+import { createTestDirectories } from './modules/baseApi/createTestDirectories';
+import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFiles';
+import { enumValidation } from './schema/enumConfig';
+import { generateEnum } from './modules/enum/generateEnum';
+import { generateRequest } from './modules/controller/generateRequest';
+import { generateResponses } from './modules/controller/generateResponses';
+import { validateResponse } from './schema/requestConfig';
+import { saveResponseConfig } from './modules/response/saveResponseConfig';
+import { generateSingleResponse } from './modules/response/generateSingleResponse';
+import { deleteValidation } from './schema/deleteConfig';
+import { deleteElementConfig } from './modules/delete/deleteElementConfig';
+import { serializationValidation } from './schema/serializationConfig';
+import { serializeData } from './modules/serialization/serializeData';
+import { saveEnumConfig } from './modules/enum/saveEnumConfig';
+import { generateTestServiceInmpl } from './modules/test/generateTestService';
+import { generateTestHandlers } from './modules/test/generateTestHandlers';
+import { processTableName } from './modules/model/helpers';
 
 /**
  * Main Function that creates the base api
- * 
+ *
  * This function initializes and sets up the base structure for an API based on the provided configuration.
- * 
- * @param {ApiConfig} config - The configuration object containing all the basic API information.
+ *
+ * @param {BaseApiConfig} dirty - The configuration object containing all the basic API information.
  * @param {string} basePath - The output path where the API will be created. This path must be empty.
- * @throws Will throw an error if the API configuration is invalid or if the specified directory is not empty.
- * 
+ * @throws {Error} Will throw an error if the API configuration is invalid or if the specified directory is not empty.
+ *
  * @example
  * Example usage:
  * import { newApi } from "spring-engine";
  * import { ApiConfig } from "spring-engine/dist/interfaces/types";
- * 
- * const config: Apiconfig = {
- *    type: 'baseApi'
- *    apiName: 'my_api' //Names with hyphens or spaces are not accepted.
- *    group: 'example'
- *    artifact: 'demo'
- *    database: 'MySQL' //you can choose between MySQL and PostgreSQL
- *    description: 'your project descripcion' //optional field
+ *
+ * const config: ApiConfig = {
+ *    type: 'springboot',
+ *    apiName: 'my_api', // Names with hyphens or spaces are not accepted.
+ *    group: 'cv.example',
+ *    artifact: 'demo',
+ *    database: 'MySQL', // You can choose between MySQL, Oracle and PostgreSQL
+ *    description: 'your project description', // Optional field
+ *    projectStructureStyle: 'technical', // You can choose between technical and domain
+ *    enableObservability: true,
+ *    igrpCoreVersion: '0.0.1-20250115.133643-3'
  * }
  * const basePath: 'C://your_path'; The path must be empty
- * 
+ *
  * const createApi = async () => {
  *    try {
  *      await newApi(config, basePath)
@@ -71,14 +120,30 @@ import { getAllPermissions } from './modules/permission/getPermissions';
  *      console.log(error)
  *    }
  * }
- * 
+ *
  */
-export const newApi = async (dirty: ApiConfig, basePath: string) => {
-  const config = cleaner(dirty)
-  const valid = apiValidation(config);
+export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
+  const baseConfig = cleaner(dirty);
 
-  if (!valid && apiValidation.errors) 
-    throw apiValidation.errors;
+  const valid = apiValidation(baseConfig);
+
+  if (!valid && apiValidation.errors) throw apiValidation.errors;
+
+  const config: ApiConfig = {
+    type: baseConfig.type,
+    apiName: baseConfig.apiName,
+    group: baseConfig.group,
+    artifact: baseConfig.artifact,
+    packageName: normalizePackageName(baseConfig.artifact),
+    database: baseConfig.database,
+    description: baseConfig.description,
+    package: baseConfig.package,
+    projectStructureStyle: baseConfig.projectStructureStyle,
+    name: baseConfig.name,
+    enableObservability: baseConfig.enableObservability,
+    enableEntityRevision: baseConfig.enableEntityRevision,
+    igrpCoreVersion: baseConfig.igrpCoreVersion,
+  };
 
   if (!basePath) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
@@ -94,11 +159,13 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
     resourceConfig: undefined, // On base API, there is no specific config.
     basePath,
     baseConfig: config,
+    fullPath: basePath,
   };
   /**
    * Creates the folder structure needed for the API.
    */
   await createAppDirectories(context);
+  await createTestDirectories(context);
 
   /**
    * With the base config sent to the newAPI, this function should create the following:
@@ -107,361 +174,550 @@ export const newApi = async (dirty: ApiConfig, basePath: string) => {
    *  - Application bootstrapping files ([API_NAME]Application.java)
    */
   await saveFileConfig(context);
-
+  await saveBaseTestApiFileConfig(context);
 };
 
 /**
-* Generates and saves a model to the API.
-* This function creates a model based on the provided configuration and saves it to the specified API base path.
-* It also generates the associated CRUD operations if enabled in the configuration.
-*
-* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
-* @param {string} basePath - Application base path where the model will be saved and generated to the API.
-* 
-* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
-* @throws {Error} Will throw an error if the base path is not provided.
-* 
-* @example
-* // Example usage:
-* import { addModel } from "spring-engine";
-* import { ModelConfig } from "spring-engine/dist/interfaces/types";
-* const config: ModelConfig = {
-*   type: 'model',
-*   name: 'User',
-*   attributes: [
-*     { type: 'String', name: 'email', unique: true, notNull: true, required: true },
-*     { type: 'String', name: 'password', notNull: true, required: true },
-*   ],
-*   crud: {
-*     enabled: true,
-*     path: '/users',
-*     disabledMethods: ['DELETE']
-*   },
-*   relations: []
-* };
-* const basePath = 'C://your_project_path';
-* 
-* const createModel = async () => {
-*   try {
-*     await addModel(config, basePath);
-*   } catch (error) {
-*     console.error(error);
-*   }
-* };
-*/
+ * Main Function that creates the module
+ *
+ * This function creates a module based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {ModuleConfig} dirty - The configuration object containing all the basic module information.
+ * @param {string} basePath - The output path where the module will be created
+ * @throws {Error} Will throw an error if the module configuration is invalid.
+ *
+ * @example
+ * Example usage:
+ * import { addModule } from "spring-engine";
+ * import { ModuleConfig } from "spring-engine/dist/interfaces/types";
+ *
+ * const config: ModuleConfig = {
+ *   type: 'module',
+ *   name: 'external',
+ * };
+ *
+ * const basePath: 'C://your_path';
+ *
+ * const createModule = async () => {
+ *    try {
+ *      await addModule(config, basePath)
+ *    }
+ *    catch(error) {
+ *      console.log(error)
+ *    }
+ * }
+ *
+ */
+export const addModule = async (dirty: ModuleConfig, basePath: string) => {
+  const config = cleaner(dirty);
+  const valid = moduleValidation(config);
+
+  if (!valid && moduleValidation.errors) throw moduleValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<ModuleConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig: baseConfig,
+    fullPath: getMainPath(baseConfig.group, baseConfig.packageName),
+  };
+
+  if (
+    await checkIfDirectoryExists(
+      path.join(
+        context.basePath,
+        getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+        context.resourceConfig.name,
+      ),
+    )
+  ) {
+    throw ERROR_MESSAGE.MODULE_CREATED_ALREADY;
+  }
+
+  await createModuleDirectory(context);
+
+  await saveModuleConfig(context, basePath);
+};
+
+/**
+ * Generates and saves a model to the API.
+ * This function creates a model based on the provided configuration and saves it to the specified API base path.
+ * It also generates the associated CRUD operations if enabled in the configuration.
+ *
+ * @param {ModelConfig} dirty - Model configuration object, which includes the name and other details of the model.
+ * @param {string} basePath - Application base path where the model will be saved and generated to the API.
+ *
+ * @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * import { addModel } from "spring-engine";
+ * import { ModelConfig } from "spring-engine/dist/interfaces/types";
+ * const config: ModelConfig = {
+ *    type: 'model',
+ *    name: 'User',
+ *    tableName: 'user',
+ *    attributes: [
+ *      {
+ *        type: 'integer',
+ *        name: 'id',
+ *        primaryKey: true,
+ *        generationType: 'IDENTITY',
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'username',
+ *        length: 255,
+ *        nullable: false,
+ *        unique: true
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'email',
+ *        length: 255,
+ *        nullable: false,
+ *        unique: true
+ *      },
+ *      {
+ *        type: 'string',
+ *        name: 'password',
+ *        length: 255,
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'file',
+ *        name: 'document',
+ *        nullable: false
+ *      },
+ *      {
+ *        type: 'boolean',
+ *        name: 'active',
+ *        nullable: false,
+ *        defaultValue: true
+ *      }
+ *    ],
+ *    crud: true,
+ *    audit: true
+ *  };
+ * const basePath = 'C://your_project_path';
+ *
+ * const createModel = async () => {
+ *   try {
+ *     await addModel(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ */
 export const addModel = async (dirty: ModelConfig, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   /**
- * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
- */
-  const config:ModelConfig = cleaner(dirty)
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: ModelConfig = cleaner(dirty);
 
-  if(dirty.crud) {
-    config.crud = dirty.crud
+  if (dirty.crud) {
+    config.crud = dirty.crud;
   }
-  dirty.uniqueConstraints? config.uniqueConstraints = dirty.uniqueConstraints: ''
-  dirty.indexes? config.indexes = dirty.indexes: ''
-  
-  // this function check is the request params in actions have duplicateds names
+
+  dirty.uniqueConstraints ? (config.uniqueConstraints = dirty.uniqueConstraints) : '';
+  dirty.indexes ? (config.indexes = dirty.indexes) : '';
+
+  // this function check is the request params in actions have duplicated names
   checkDuplicated(config.attributes, [], []);
-  
-  const valid = validateModelConfig(config); 
+
+  const valid = validateModelConfig(config);
 
   if (!valid && validateModelConfig.errors) {
-    throw validateModelConfig.errors
+    throw validateModelConfig.errors;
   }
 
   /**
    * check if the correct primary key was selected
    */
-  checkPrimaryKeys(config)
+  checkPrimaryKeys(config);
 
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name)
+  config.name = processJavaClassName(config.name);
+  config.tableName = processTableName(config.tableName, baseConfig.database);
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath,
   };
 
   await generateModel(context);
 
-  if (config.crud?.enabled) {
-    await generateRepository(context);
+  await generateRepository(context);
+
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    await generateRepositoryImpl(context);
   }
-
 };
 
 /**
- * Adds CRUD operations to an existing model.
+ * Generates and saves a DTO to the API.
+ * This function creates a DTO based on the provided configuration and saves it to the specified API base path.
  *
- * This function allows you to add CRUD (Create, Read, Update, Delete) functionality to a model. 
- * The CRUD can be added either when the model is initially created or by calling this function later.
- * The CRUD configuration is defined in the `crud` property of the `ModelConfig` object.
+ * @param {DTOConfig} dirty - DTO configuration object, which includes the name and other details of the DTO.
+ * @param {string} basePath - Application base path where the DTO will be saved and generated to the API.
  *
- * @param {ModelConfig} config - The model configuration object, including the model name and CRUD details.
- * @param {string} basePath - The base path of the application where the model and its CRUD operations will be generated and saved.
- *
- * @throws {Error} Throws an error if the model configuration is invalid or if the base path is not provided.
- *
- * @example
- * // Example usage:
- * const config: ModelConfig = {
- *   type: 'model',
- *   name: 'Product', // The name should be 'Product', not 'ProductModel'.
- *   attributes: [
- *     { type: 'String', name: 'name', required: true, notNull: true },
- *     { type: 'Integer', name: 'price', notNull: true }
- *   ],
- *   crud: {
- *     enabled: true,
- *     path: '/products',
- *     disabledMethods: ['DELETE'] // Example of disabling the DELETE method
- *   }
- * };
- * 
- * const basePath = 'C://your_project_path';
- * 
- * const addProductCrud = async () => {
- *   try {
- *     await addCrud(config, basePath);
- *     console.log('CRUD operations for Product have been successfully added.');
- *   } catch (error) {
- *     console.error('Error adding CRUD operations:', error);
- *   }
- * };
- */
-export const addCrud = async (config: ModelConfig, basePath: string) => {
-  await addModel(config, basePath);
-};
-
-/**
- * Adds a relationship between the specified models.
- *
- * This function modifies the configuration of an existing model to include a new relationship. 
- * The relationship is defined in the `relations` property of the `ModelConfig` object.
- * All models involved in the relationship should already be created. 
- * The function will update the model configuration file by adding the relation parameter and then call the `addModel` function to apply the changes.
- *
- * @param {ModelConfig} config - The model configuration object, including the relationship details.
- * @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
- *
- * @throws {Error} Throws an error if the model configuration is invalid or if the base path is not provided.
- *
- * @example
- * // Example usage:
- * const config: ModelConfig = {
- *   type: 'model',
- *   name: 'Order', // The name should be 'Order', not 'OrderModel'.
- *   attributes: [
- *     { type: 'number', name: 'id', primary: true, unique: true, notNull: true },
- *     { type: 'string', name: 'description', notNull: true }
- *   ],
- *   relations: [
- *     {
- *       relationType: 'ManyToOne',
- *       entity: 'Customer', // Relating 'Order' with 'Customer'
- *       joinColumn: 'customer_id'
- *     }
- *   ]
- * };
- * 
- * const applicationBasePath = 'C://your_project_path';
- * 
- * const addOrderRelationship = async () => {
- *   try {
- *     await addRelationship(config, applicationBasePath);
- *     console.log('Relationship between Order and Customer has been successfully added.');
- *   } catch (error) {
- *     console.error('Error adding relationship:', error);
- *   }
- * };
- * 
- * addOrderRelationship();
- */
-export const addRelationship = async (config: ModelConfig, basePath: string) => {
-  await addModel(config, basePath);
-
-};
-
-/**
- * Deletes a model and its associated repository from the API.
- *
- * This function removes a model configuration and its related repository files based on the provided configuration.
- * It ensures that the model is properly deleted from the specified API base path.
- *
- * @param {ModelConfig} config - The model configuration object, which primarily includes the type and name of the model to be deleted.
- * @param {string} basePath - The base path of the application where the model and repository are located.
- *
- * @throws {Error} Will throw an error if the model configuration is invalid.
+ * @throws {Error} Will throw an error if the DTO configuration is invalid or the DTO name is missing.
  * @throws {Error} Will throw an error if the base path is not provided.
  *
  * @example
  * // Example usage:
- * const config: ModelConfig = {
- *   type: 'model',
+ * import { addDTO } from "spring-engine";
+ * import { DTOConfig } from "spring-engine/dist/interfaces/types";
+ * const config: DTOConfig = {
+ *   type: 'dto',
  *   name: 'User',
- *   attributes: [],
- *   crud: {},
- *   relations: []
+ *   template: 'classic',
+ *   attributes: [
+ *     {
+ *       type: 'string',
+ *       objectType: 'java',
+ *       name: 'username',
+ *       required: true
+ *     },
+ *     {
+ *       type: 'string',
+ *       objectType: 'java',
+ *       name: 'email',
+ *       required: true,
+ *       isEmail: true
+ *     },
+ *     {
+ *       type: 'string',
+ *       objectType: 'java',
+ *       name: 'password',
+ *       required: true,
+ *       regex: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$'
+ *     },
+ *     {
+ *       type: 'string',
+ *       objectType: 'java',
+ *       name: 'roles',
+ *       required: false,
+ *       collectionType: 'list'
+ *     },
+ *     {
+ *       type: 'date',
+ *       objectType: 'java',
+ *       name: 'lastLogin',
+ *       required: false
+ *     }
+ *   ]
  * };
  * const basePath = 'C://your_project_path';
- * 
- * const removeModel = async () => {
+ *
+ * const createDTO = async () => {
  *   try {
- *     await deleteModel(config, basePath);
+ *     await addDTO(config, basePath);
  *   } catch (error) {
  *     console.error(error);
  *   }
  * };
- * 
  */
-export const deleteModel = async (config: ModelConfig, basePath: string) => {
-  const valid = validateModelConfig(config);
-
-  if (!valid && validateModelConfig.errors) {
-    throw validateModelConfig.errors
-  }
-
-  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-
-  const baseConfig = await getBaseApiConfig(basePath);
-
-  config.name = capitalize(config.name)
-
-  const context: RenderContext<ModelConfig> = {
-    resourceConfig: config,
-    basePath,
-    baseConfig,
-  };
-
-  await deleteModelConfig(context)
-
-}
-
-/**
-* Generates and saves a model to the API.
-* This function creates a model based on the provided configuration and saves it to the specified API base path.
-* It also generates the associated CRUD operations if enabled in the configuration.
-*
-* @param {ModelConfig} config - Model configuration object, which includes the name and other details of the model.
-* @param {string} basePath - Application base path where the model will be saved and generated to the API.
-* 
-* @throws {Error} Will throw an error if the model configuration is invalid or the model name is missing.
-* @throws {Error} Will throw an error if the base path is not provided.
-* 
-* @example
-* // Example usage:
-* import { addDTO } from "spring-engine";
-* import { DTOConfig } from "spring-engine/dist/interfaces/types";
-* const config: DTOConfig = {
-*   type: 'dto',
-*   name: 'User',
-*   attributes: [
-*     { type: 'String', ns: 'java', name: 't0'},
-*     { type: { name: 'DTO1' }, ns: 'dto', name: 't1'},
-*     { type: { name: 'CTO1' }, ns: 'dto', name: 't2'},
-*     { type: { name: 'TPessoa' }, ns: 'model', name: 't21'},
-* 
-*     { type: { name: 'List', generics:[{name: 'Integer', ns: 'java'}]}, ns: 'java', name: 't3'},
-*     { type: { name: 'List', generics:[{name: 'BigDecimal', ns: 'java'}]}, ns: 'java', name: 't4'},
-*   ]
-* };
-* const basePath = 'C://your_project_path';
-* 
-* const createDTO = async () => {
-*   try {
-*     await addDTO(config, basePath);
-*   } catch (error) {
-*     console.error(error);
-*   }
-* };
-*/
-export const addDTO = async (dirty: DTOConfig, basePath: string) => {
+export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
-  const config:DTOConfig = cleaner(dirty)
+  const config: DTOConfig = cleaner(dirty);
 
   // this function check is the request params in actions have duplicateds names
-  checkDuplicated([], [], config.attributes)
+  checkDuplicated([], [], config.attributes);
 
   const valid = validateDTOConfig(config);
 
   if (!valid && validateDTOConfig.errors) {
-    throw validateDTOConfig.errors
+    throw validateDTOConfig.errors;
   }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
-  config.name = capitalize(config.name)
+  config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
-
-  await saveDTOConfig(config, basePath);
 
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
     baseConfig,
+    fullPath: basePath,
   };
 
   await generateDTO(context);
+
+  if (config.type === 'dto') await saveDTOConfig(config, basePath);
+
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    if (
+      context.resourceConfig.type === 'command' ||
+      context.resourceConfig.type === 'event' ||
+      context.resourceConfig.type === 'query'
+    ) {
+      await generateHandlers(context);
+      await generateTestHandlers(context);
+    }
+  }
 };
 
 /**
- * Deletes a dto from the API.
+ * Generates and saves a response to the API.
+ * This function creates a response based on the provided configuration and saves it to the specified API base path.
  *
- * This function removes a dto configuration based on the provided configuration.
- * It ensures that the dto is properly deleted from the specified API base path.
+ * @param {ResponseConfig} dirty - Response configuration object, which includes the name and other details of the response.
+ * @param {string} basePath - Application base path where the response will be saved and generated to the API.
  *
- * @param {DTOBaseConfig} config - The dto configuration object, which primarily includes the type and name of the model to be deleted.
- * @param {string} basePath - The base path of the application where the dto and repository are located.
- *
- * @throws {Error} Will throw an error if the dto configuration is invalid.
+ * @throws {Error} Will throw an error if the response configuration is invalid or the response name is missing.
  * @throws {Error} Will throw an error if the base path is not provided.
- * @throws {Error} Will throw an error the DTO is beeing used in other json configuration.
+ *
  * @example
  * // Example usage:
- * import { deleteDTO } from "spring-engine";
- * import { DTOBaseConfig } from "spring-engine/dist/interfaces/types";
-import { checkDuplicated } from './modules/controller/checkDuplicates';
-import { validatePermission } from './schema/permissionConfig';
- * const config: DTOBaseConfig = {
- *   type: 'dto',
- *   name: 'User'
+ * import { addResponse } from "spring-engine";
+ * import { ResponseConfig } from "spring-engine/dist/interfaces/types";
+ * const config: ResponseConfig = {
+ *   template: 'record',
+ *   statusCode: '200',
+ *   module: 'core',
+ *   name: 'NewResponse',
+ *   description: 'OK',
+ *   content: {
+ *     'application/json': {
+ *       schema: {
+ *         type: 'object',
+ *         properties: {
+ *           newField1: {
+ *             type: 'string',
+ *             description: 'New field 1',
+ *             example: 'newValue1',
+ *             default: 'newValue'
+ *           }
+ *         }
+ *       }
+ *     }
+ *   }
  * };
  * const basePath = 'C://your_project_path';
- * 
- * const removeDTO = async () => {
+ *
+ * const createResponse = async () => {
  *   try {
- *     await deleteDTO(config, basePath);
+ *     await addResponse(config, basePath);
  *   } catch (error) {
  *     console.error(error);
  *   }
  * };
- * 
  */
-export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
-  const valid = validateDeleteDTOConfig(config);
+export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: ResponseConfig = cleaner(dirty);
 
-  if (!valid && validateDeleteDTOConfig.errors) {
-    throw validateDeleteDTOConfig.errors
+  // this function check is the request params in actions have duplicated names
+  checkDuplicated(
+    [],
+    [],
+    [],
+    [],
+    config.content['application/json'] ?? config.content['multipart/form-data'],
+  );
+
+  const valid = validateResponse(config);
+
+  if (!valid && validateResponse.errors) {
+    throw validateResponse.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  config.name = capitalize(config.name ?? '');
+
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<ResponseConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  await generateSingleResponse(context);
+
+  await saveResponseConfig(config, basePath);
+};
+
+/**
+ * Generates and saves an enumerated class to the API.
+ * This function creates an enum based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {EnumConfig} config - Enum configuration object, which includes the values and other details of the enum.
+ * @param {string} basePath - Application base path where the enum will be saved and generated to the API.
+ *
+ * @throws {Error} Will throw an error if the enum configuration is invalid or the enum name is missing.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ *
+ * @example
+ * // Example usage:
+ * import { addEnum } from "spring-engine";
+ * import { EnumConfig } from "spring-engine/dist/interfaces/types";
+ * const levelConfig: EnumConfig = {
+ *   type: 'enum',
+ *   name: 'Level',
+ *   module: 'core',
+ *   values: [
+ *     { name: 'HIGH', attributes: ['1', 'High'] },
+ *     { name: 'LOW', attributes: ['0', 'Low'] }
+ *   ],
+ *   attributes: [{ name: 'code', type: 'string' }, { name: 'description', type: 'string' }]
+ * };
+ * const basePath = 'C://your_project_path';
+ *
+ * const createEnum = async () => {
+ *   try {
+ *     await addEnum(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ */
+export const addEnum = async (config: EnumConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  //const config: EnumConfig = cleaner(dirty);
+
+  // this function check is the values or attributes have duplicated names
+  checkDuplicated(config.attributes, [], [], config.values);
+
+  const valid = enumValidation(config);
+
+  if (!valid && enumValidation.errors) {
+    throw enumValidation.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  config.name = capitalize(config.name);
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  const context: RenderContext<EnumConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  await generateEnum(context);
+
+  // [22-01-2025] No need to save enum config; [04-02-2025] Enum config is necessary for attribute setting
+  await saveEnumConfig(config, basePath);
+};
+
+/**
+ * Deletes an element from the API.
+ *
+ * This function removes an element configuration and its files based on the provided configuration.
+ * It ensures that the element is properly deleted from the specified API base path.
+ *
+ * @param {DeleteConfig} config - The deletion configuration object, which primarily includes the type, module (if present) and name of the element to be deleted.
+ * @param {string} basePath - The base path of the application where the element and repository are located.
+ *
+ * @throws {Error} Will throw an error if the deletion configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ * @throws {Error} Will throw an error the element is being used in other JSON configuration.
+ * @example
+ * // Example usage:
+ * import { deleteElement } from "spring-engine";
+ * import { DeleteConfig } from "spring-engine/dist/interfaces/types";
+
+ * const config: DeleteConfig = {
+ *   name: 'MyDTO',
+ *   type: 'dto',
+ *   module: 'core'
+ * };
+ * const basePath = 'C://your_project_path';
+ *
+ * const removeElement = async () => {
+ *   try {
+ *     await deleteElement(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ *
+ */
+export const deleteElement = async (config: DeleteConfig, basePath: string) => {
+  const valid = deleteValidation(config);
+
+  if (!valid && deleteValidation.errors) {
+    throw deleteValidation.errors;
   }
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name)
-  
-  const context: RenderContext<DTOBaseConfig> = {
+  config.name = capitalize(config.name);
+
+  const context: RenderContext<DeleteConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath,
   };
 
-  await deleteDTOConfig(context, false);
+  await deleteElementConfig(context, false);
+};
+
+/**
+ * Loads the DTO configuration for a given module and action.
+ *
+ * This function attempts to retrieve the DTO configuration based on the provided module name,
+ * controller context, and action. If the module-specific configuration is not found, it falls
+ * back to the shared configuration.
+ *
+ * @param {string} module - The name of the module for which the DTO configuration is requested.
+ * @param {RenderContext<ControllerConfig>} context - The rendering context containing base path details.
+ * @param {ControllerAction} act - The controller action, used to determine the request body schema type.
+ * @returns {Promise<DTOConfig>} A promise resolving to the DTO configuration.
+ */
+async function requestDtoConfig(
+  module: string,
+  context: RenderContext<ControllerConfig>,
+  act: ControllerAction,
+): Promise<DTOConfig> {
+  try {
+    return await loadDTOConfig(
+      'dto',
+      path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
+      capitalize(
+        act?.requestBody?.content['application/json']?.schema.type ??
+          act?.requestBody?.content['multipart/form-data'].schema.type ??
+          '',
+      ).replace(/dto$/i, ''),
+    );
+  } catch (e) {
+    module = DIRECTORIES.SHARED;
+    return await loadDTOConfig(
+      'dto',
+      path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
+      capitalize(
+        act?.requestBody?.content['application/json']?.schema.type ??
+          act?.requestBody?.content['multipart/form-data'].schema.type ??
+          '',
+      ).replace(/dto$/i, ''),
+    );
+  }
 }
 
 /**
@@ -470,7 +726,7 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
  * This function creates a controller based on the provided configuration and integrates it into the specified API base path.
  * It also generates the corresponding service interface for the controller actions defined.
  *
- * @param {ControllerConfig} config - The controller configuration object, including the controller name, base path, and actions.
+ * @param {ControllerConfig} dirty - The controller configuration object, including the controller name, base path, and actions.
  * @param {string} basePath - The base path of the application where the controller will be generated and saved.
  *
  * @throws {Error} Throws an error if the controller configuration is invalid or if the base path is not provided.
@@ -479,29 +735,208 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
  * // Example usage:
  * const config: ControllerConfig = {
  *   type: 'controller',
- *   name: 'User', //The name should be 'User', not 'UserController'.
- *   basePath: '/users',
+ *   name: 'User',
+ *   basePath: 'users',
  *   actions: [
  *     {
- *       name: 'getUser',
- *       path: '/user',
+ *       actionName: 'getUserById',
+ *       path: 'get-user',
  *       method: 'GET',
- *       pathParams: [
- *         { type: 'string', name: 'id' }
+ *       pathVariables: [
+ *         {
+ *           type: 'string',
+ *           name: 'id',
+ *           isRequired: true
+ *         },
  *       ],
- *       response: 'User'
+ *       responses: {
+ *         '200': {
+ *           name: 'UserResponse',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   id: {
+ *                     type: 'string',
+ *                     description: 'Unique ID of the user',
+ *                   },
+ *                   username: {
+ *                     type: 'string',
+ *                     description: 'Username of the user',
+ *                   },
+ *                   email: {
+ *                     type: 'string',
+ *                     description: 'Email address of the user',
+ *                   },
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *         '404': {
+ *           name: 'UserNotFound',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   message: {
+ *                     type: 'string',
+ *                     description: 'Error message indicating user not found',
+ *                   },
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *       },
  *     },
  *     {
- *       name: 'createUser',
- *       path: '/user',
+ *       actionName: 'createUser',
+ *       path: 'create-user',
  *       method: 'POST',
- *       response: 'User'
- *     }
- *   ]
+ *       requestBody: {
+ *         content: {
+ *           'application/json': {
+ *             schema: {
+ *               type: 'object',
+ *               properties: {
+ *                 username: {
+ *                   type: 'string',
+ *                   description: 'Username of the new user',
+ *                   required: true
+ *                 },
+ *                 email: {
+ *                   type: 'string',
+ *                   description: 'Email address of the new user',
+ *                   required: true
+ *                 },
+ *                 password: {
+ *                   type: 'string',
+ *                   description: 'Password for the new user',
+ *                   required: true
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *       },
+ *       responses: {
+ *         '201': {
+ *           name: 'UserCreatedResponse',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   id: {
+ *                     type: 'string',
+ *                     description: 'Unique ID of the created user',
+ *                   },
+ *                   username: {
+ *                     type: 'string',
+ *                     description: 'Username of the created user',
+ *                   },
+ *                   email: {
+ *                     type: 'string',
+ *                     description: 'Email of the created user',
+ *                   },
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *       },
+ *     },
+ *     {
+ *       actionName: 'updateUser',
+ *       path: 'update-user',
+ *       method: 'PUT',
+ *       requestBody: {
+ *         content: {
+ *           'application/json': {
+ *             schema: {
+ *               type: 'UserDTO',
+ *               objectType: 'dto'
+ *             },
+ *           },
+ *         },
+ *       },
+ *       responses: {
+ *         '201': {
+ *           name: 'UserUpdatedResponse',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   username: {
+ *                     type: 'string',
+ *                     description: 'Username of the updated user',
+ *                   },
+ *                   email: {
+ *                     type: 'string',
+ *                     description: 'Email of the updated user',
+ *                   },
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *       },
+ *     },
+ *     {
+ *       actionName: 'deleteUser',
+ *       path: 'delete-user',
+ *       method: 'DELETE',
+ *       pathVariables: [
+ *         {
+ *           type: 'string',
+ *           name: 'id',
+ *           isRequired: true,
+ *         },
+ *       ],
+ *       responses: {
+ *         '200': {
+ *           name: 'UserDeleted',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   deleted: {
+ *                     type: 'boolean',
+ *                     description: 'Boolean value to confirm the deletion',
+ *                   },
+ *                 },
+ *               },
+ *             }
+ *           },
+ *         },
+ *         '404': {
+ *           name: 'UserNotFound',
+ *           content: {
+ *             'application/json': {
+ *               schema: {
+ *                 type: 'object',
+ *                 properties: {
+ *                   message: {
+ *                     type: 'string',
+ *                     description: 'Error message indicating user not found',
+ *                   },
+ *                 },
+ *               },
+ *             },
+ *           },
+ *         },
+ *       },
+ *     },
+ *   ],
  * };
- * 
+ *
  * const applicationBasePath = 'C://your_project_path';
- * 
+ *
  * const generateUserController = async () => {
  *   try {
  *     await addController(config, applicationBasePath);
@@ -510,132 +945,157 @@ export const deleteDTO = async (config: DTOBaseConfig, basePath: string) => {
  *     console.error('Error generating UserController:', error);
  *   }
  * };
- * 
+ *
  */
 export const addController = async (dirty: ControllerConfig, basePath: string) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
- 
-  const config = cleaner(dirty)
-  
-  config.actions = dirty.actions
-  
+  const config: ControllerConfig = cleaner(dirty);
+
   // this function check is the request params in actions have duplicateds names
-  checkDuplicated([], config.actions, [])
+  checkDuplicated([], config.actions, []);
 
-  
-  config.actions = upperCaseResponse(config.actions)
+  //config.actions = upperCaseResponse(config.actions);
 
   const isConfigValid = validateController(config);
-  
+
   if (!isConfigValid && validateController.errors) {
-    throw validateController.errors
+    throw validateController.errors;
   }
-  
+
   if (!basePath) {
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
-  
+
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name)
+  config.name = capitalize(config.name);
 
   const context: RenderContext<ControllerConfig> = {
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath,
   };
-  
-  await generateController(context);
-  await generateServiceInterface(context);
-  await generateServiceInmpl(context);
 
+  await generateController(context);
+
+  const requestConfig = await generateRequest(context);
+
+  await generateResponses(context);
+
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
+
+    for (const act of config.actions) {
+      let requestBodyAttributes: JavaAttribute[]
+
+        if(
+        act?.requestBody?.content['application/json']?.schema.objectType ??
+        act?.requestBody?.content['multipart/form-data']?.schema.objectType
+        ) {
+          const reqDtoConfig = (await requestDtoConfig(module, context, act))
+          requestBodyAttributes = [
+            {
+              name: reqDtoConfig.name.toLowerCase(),
+              type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
+              objectType: 'dto',
+              module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
+              required: false,
+            }
+          ];
+        } else {
+          requestBodyAttributes = requestConfig? [
+            {
+              name: requestConfig.resourceConfig.name.toLowerCase(),
+              type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
+              objectType: 'dto',
+              module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
+              required: false,
+            }
+          ] : []
+        }
+
+      const modelAttribute: JavaAttribute[] = act?.modelAttribute
+        ? [
+          {
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            required: false,
+            module: act.modelAttribute.module
+          },
+        ]
+        : [];
+
+      const pathVariables = act?.pathVariables
+        ? act.pathVariables.map((e) => ({
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      const requestParams = act?.requestParams
+        ? act.requestParams.map((e) => ({
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables];
+
+      await addDTO(
+        {
+          type: act.method === 'GET' ? 'query' : 'command',
+          name: act.actionName,
+          template: 'classic',
+          module: module,
+          attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
+          response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
+        } as HandlerConfig,
+        context.basePath,
+      );
+    }
+  } else {
+    await generateServiceInterface(context);
+    await generateServiceInmpl(context);
+    await generateTestServiceInmpl(context);
+  }
 };
 
 /**
- * 
- * @param config 
- * @param basePath 
- */
-export const updateController = async (config: ControllerConfig, basePath: string) => {
-  const isConfigValid = validateController(config);
-  
-  if (!isConfigValid && validateController.errors) {
-    throw validateController.errors
-  }
-  
-  if (!basePath) {
-    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-  }
-  
-  const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name)
-
-  await saveControllerConfig(config, basePath);
-  
-  const context: RenderContext<ControllerConfig> = {
-    resourceConfig: config,
-    basePath,
-    baseConfig,
-  };
-  
-  await generateController(context);
-  await generateServiceInterface(context);
-};
-
-/**
- * 
- * @param config 
- * @param basePath 
- */
-export const deleteController = async (config: ControllerConfig, basePath: string) => {
-  const valid = validateController(config);
-  
-  if (!valid && validateModelConfig.errors) throw validateController.errors
- 
-  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-
-  const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name)
-
-  const context: RenderContext<ControllerConfig> = {
-    resourceConfig: config,
-    basePath,
-    baseConfig,
-  };
-
-  await deleteControllerConfig(context)
-}
-
-/**
- * 
- * @param config 
- * @param basePath 
+ *
+ * @param config
+ * @param basePath
  */
 export const addPermission = async (config: PermissionConfig, basePath: string) => {
   const valid = validatePermission(config);
-  if (!valid && validatePermission.errors) throw validatePermission.errors
+  if (!valid && validatePermission.errors) throw validatePermission.errors;
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
-  await savePermission(config, basePath)
-}
+  await savePermission(config, basePath);
+};
 
 /**
- * 
- * @param basePath 
+ *
+ * @param basePath
  * @returns the permissions select options to be used in the IGRP Studio frontend
  */
 export const getPermissions = async (basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
-  return await getAllPermissions(basePath)
-}
+  return await getAllPermissions(basePath);
+};
 
-export const deletePermission = async(config: PermissionConfig, basePath: string)=> {
+export const deletePermission = async (config: PermissionConfig, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   const valid = validatePermission(config);
-  if (!valid && validatePermission.errors) throw validatePermission.errors
+  if (!valid && validatePermission.errors) throw validatePermission.errors;
 
   const baseConfig = await getBaseApiConfig(basePath);
 
@@ -643,44 +1103,118 @@ export const deletePermission = async(config: PermissionConfig, basePath: string
     resourceConfig: config,
     basePath,
     baseConfig,
+    fullPath: basePath,
   };
 
-  await deletePerm(context)
-}
+  await deletePerm(context);
+};
 
 /**
- * 
- * @param basePath 
- * @returns 
+ * Main Function that creates the module
+ *
+ * This function creates a module based on the provided configuration and saves it to the specified API base path.
+ *
+ * @param {SerializationConfig} dirty - The configuration object containing all the basic module information.
+ * @param {string} basePath - The output path where the module will be created
+ * @throws {Error} Will throw an error if the module configuration is invalid.
+ *
+ * @example
+ * Example usage:
+ * import { addModule } from "spring-engine";
+ * import { ModuleConfig } from "spring-engine/dist/interfaces/types";
+ *
+ * const config: ModuleConfig = {
+ *   type: 'module',
+ *   name: 'external',
+ * };
+ *
+ * const basePath: 'C://your_path';
+ *
+ * const createModule = async () => {
+ *    try {
+ *      await addModule(config, basePath)
+ *    }
+ *    catch(error) {
+ *      console.log(error)
+ *    }
+ * }
+ *
  */
-export const engineTypes = async (basePath: string) =>{
+export const serializeElement = async (
+  dirty: JsonConfig | XmlConfig | SqlConfig | DdlConfig,
+  basePath: string,
+) => {
+  const config = cleaner(dirty);
+  const valid = serializationValidation(config);
+
+  if (!valid && serializationValidation.errors) throw serializationValidation.errors;
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  const data = await serializeData(config);
+
+  if (!data)
+    throw Error(
+      'Invalid data configuration. Supported serializations are JSON, XML and SQL commands',
+    );
+
+  switch (config.type) {
+    case 'dto':
+      await addDTO(data as DTOConfig, basePath);
+      break;
+    case 'model':
+      await addModel(data as ModelConfig, basePath);
+      break;
+    case 'response':
+      await addResponse(data as ResponseConfig, basePath);
+      break;
+    default:
+      throw Error(
+        "Invalid type for serialization configuration. Supported types are 'dto', 'model' and 'response'",
+      );
+  }
+};
+
+/**
+ *
+ * @param module
+ * @param basePath
+ * @returns
+ */
+export const engineTypes = async (module: string, basePath: string) => {
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
   let dtos = [];
-  const typesDTOs = await getDTOTypes(basePath);
-  
+  const typesDTOs = await getDTOTypes(module, basePath);
+
   for (const dto of typesDTOs.values()) {
-    dtos.push(dto.name)
+    dtos.push(`${dto.name}DTO`);
   }
-  const responseTypes = [...RESPONSE_TYPES, ...dtos, ...dtos.map(dto=> `List<${dto}>`)]
+  const schemaTypes = [...SCHEMA_TYPES];
 
-  let bodyTypes = ["Object", ...dtos]
+  const bodyDtos = [...dtos, ...dtos.map((dto) => `List<${dto}>`)];
 
-  let paramsTypes = [...PARAMS_TYPES, ...dtos]
+  let bodyRequests = ['Object', ...dtos];
 
-  const allTypes = [
-    {MYME_TYPES: MIME_TYPES},
-    {BODY_REQUEST: bodyTypes},
-    {PARAMS_TYPES : paramsTypes},
-    {METHODS: HTTP_METHOD_TYPES},
-    {REQUEST_PARAMS: PARAMS_TYPES},
-    {DATABASE_TYPES: DATABASE_TYPES},
-    {RESPONSE_TYPES : responseTypes},
-    {ATTRIBUTE_TYPES : ATTRIBUTE_TYPES},
-    {RELATIONSHIP_TYPES: RELATIONSHIP_TYPES},
-    {CRUD_DISABLED_OPTIONS:CRUD_DISABLED_OPTIONS},
-    {GENERATION_TYPES: GENERATION_TYPES.filter(gt => gt !== '')},
-  ]
+  let paramsTypes = [...PARAMS_TYPES, ...dtos];
 
-  return allTypes 
-}
+  return [
+    { MYME_TYPES: MIME_TYPES },
+    { BODY_REQUEST: bodyRequests },
+    { PARAMS_TYPES: paramsTypes },
+    { METHODS: HTTP_METHOD_TYPES },
+    { REQUEST_PARAMS: PARAMS_TYPES },
+    { DATABASE_TYPES: DATABASE_TYPES },
+    { SCHEMA_TYPES: schemaTypes },
+    { DTO_SCHEMAS: bodyDtos },
+    { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
+    { MODEL_ATTRIBUTE_TYPES: GENERIC_MODEL_ATTRIBUTE_TYPES },
+    { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
+    { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
+    { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },
+    { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },
+    { GENERATION_TYPES: GENERATION_TYPES.filter((gt) => gt !== '') },
+  ];
+};

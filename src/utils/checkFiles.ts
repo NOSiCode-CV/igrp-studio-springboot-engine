@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
-import { ApiConfig, ModelConfig, ControllerConfig } from '../interfaces/types';
+import { ApiConfig, ControllerConfig, ModelConfig } from '../interfaces/types';
 
 export const isApiConfig = (
   config: ApiConfig | ModelConfig | ControllerConfig,
-): config is ApiConfig => config?.type === 'baseApi';
+): config is ApiConfig => config?.type === 'springboot';
 
 export const isModelConfig = (
   config: ApiConfig | ModelConfig | ControllerConfig,
@@ -17,3 +17,7 @@ export const isFile = async (filePath: string) => (await fs.stat(filePath)).isFi
 
 export const checkIfDirectoryIsEmpty = async (directoryPath: string) =>
   (await fs.readdir(directoryPath)).length === 0;
+
+export const checkIfDirectoryExists = async (directoryPath: string): Promise<boolean> => {
+  return fs.existsSync(directoryPath);
+};

@@ -1,0 +1,34 @@
+{{> package-java }}
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events.events.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events.handlers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class {{capitalize resourceConfig.name}}EventHandlerTest {
+
+    @InjectMocks
+    private {{capitalize resourceConfig.name}}EventHandler {{toCamelCase resourceConfig.name}}EventHandler;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    @BeforeEach
+    void setUp() {
+        // TODO: Initialize mock dependencies if needed
+    }
+
+    @Test
+    void testHandle{{capitalize resourceConfig.name}}Event() {
+        // TODO: Implement the test case for handling {{capitalize resourceConfig.name}}Event
+    }
+}

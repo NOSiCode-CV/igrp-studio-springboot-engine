@@ -1,0 +1,20 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.events.events.{{resourceConfig.name}}Event;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{resourceConfig.name}}EventHandler {
+
+   public {{resourceConfig.name}}EventHandler() {
+
+   }
+
+   @EventListener
+   public void handle({{resourceConfig.name}}Event event) {
+      // TODO: Implement the event handling logic here
+   }
+
+}

@@ -8,9 +8,9 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
   type: 'object',
   properties: {
     type: { 
-      type: "string", 
-      const: "baseApi",
-      errorMessage: "The 'type' attribute must have the value 'baseApi'."  
+      type: "string",
+      const: "springboot",
+      errorMessage: "The 'type' attribute must have the value 'springboot'."  
     },
     apiName: { 
       type: "string",
@@ -26,13 +26,14 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
         pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
       }
     },
-    artifact: { 
+    artifact: {
       type: "string",
-      pattern: "^[a-zA-Z0-9._]+$",
+      pattern: "^[a-zA-Z0-9._-]+$",
       errorMessage: {
         pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
       }
     },
+
     database: { 
       type: "string", 
       enum: DATABASE_TYPES,
@@ -54,9 +55,29 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     name: {
       type: "string",
       nullable: true
+    },
+    packageName: {
+      type: "string",
+      nullable: false
+    },
+    projectStructureStyle: {
+      type: "string",
+      nullable: false
+    },
+    enableObservability: {
+      type: "boolean",
+      nullable: false
+    },
+    enableEntityRevision: {
+      type: "boolean",
+      nullable: false
+    },
+    igrpCoreVersion: {
+      type: "string",
+      nullable: false
     }
   },
-  required: ["type", "apiName", "group", "artifact", "database"],
+  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -64,7 +85,10 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       apiName: "The 'apiName' attribute is required and cannot be left blank.",
       group: "The 'group' attribute is required and must be provided.",
       artifact: "The 'artifact' attribute is required and cannot be empty.",
-      database: "The 'database' attribute is required and must specify a valid database type."
+      packageName: "The 'packageName' attribute is required and cannot be empty.",
+      database: "The 'database' attribute is required and must specify a valid database type.",
+      projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
+      enableObservability: "The 'enableObservability' attribute is required and must specify a valid database type."
     },
     additionalProperties: "Extra attributes are not allowed in the API configuration."
   }

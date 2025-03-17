@@ -1,0 +1,23 @@
+{{> package-java }}
+
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq this.method "GET")}}
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{capitalize this.actionName}}Command;
+  {{/ifNot}}
+{{/each}}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public interface I{{capitalize resourceConfig.name}}CommandService {
+
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq this.method "GET")}}
+    ResponseEntity<{{resolveResponse this.responses}}> {{toCamelCase this.actionName}}({{capitalize this.actionName}}Command command);
+  {{/ifNot}}
+{{/each}}
+
+}

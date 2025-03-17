@@ -1,0 +1,110 @@
+{{> package-java }}
+
+{{#if resourceConfig.audit~}}
+  {{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
+  {{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
+  {{/if}}
+{{~/if}}
+{{model-imports-helper resourceConfig}}
+
+{{#if resourceConfig.revision~}}@Audited{{~else~}}{{/if}}
+@Getter
+@Setter
+@ToString
+@IgrpEntity
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "{{resourceConfig.tableName}}"{{#if resourceConfig.uniqueConstraints}},
+  uniqueConstraints = {
+  {{#each resourceConfig.uniqueConstraints}}
+    @UniqueConstraint(
+      name = "{{toLowerCase this.name}}",
+      columnNames = {
+        {{#each this.columns}}"{{toLowerCase this}}"{{#unless @last}},{{/unless}}{{/each}}
+      }
+    ){{#unless @last}},{{/unless}}
+  {{/each}}
+  }{{/if}}
+{{#if resourceConfig.indexes}},
+  indexes = {
+  {{#each resourceConfig.indexes}}
+    @Index(name = "{{toLowerCase this.name}}", columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"{{#if this.unique}}, unique = true{{/if}}){{#unless @last}},{{/unless}}
+  {{/each}}
+  }
+{{/if}})
+public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
+
+   {{#if resourceConfig.primaryKey}}
+    @EmbeddedId
+    private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{~#each resourceConfig.attributes~}}
+    {{#if (and this.skipFieldRevision this.primaryKey)}}@NotAudited{{/if~}}
+    {{#if this.primaryKey}}
+    @Id
+    @GeneratedValue(strategy = GenerationType.{{this.generationType}})
+    @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
+    private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+
+    @NotBlank(message = "{{this.name}} is mandatory"){{else}}
+    @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+    @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+    private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
+    @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
+  {{#if (eq this.type "file")}}
+    @Lob
+    @JdbcType(BinaryJdbcType.class)
+  {{/if}}
+  {{#if (eq this.objectType "enum")}}
+    @Enumerated(EnumType.STRING)
+  {{/if}}
+  {{~#ifNot (eq this.type "relation")~}}
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
+    private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{~/ifNot~}}{{/if}}{{/if}}
+
+  {{#if relation}}{{~#if (eq this.relation.type 'OneToOne') ~}}
+    @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.mappedBy}},mappedBy="{{this.relation.mappedBy}}"{{/if}}){{#if this.name}}
+    @JoinColumn(name = "{{toLowerCase this.name}}", unique = true{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
+    private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') ~}}
+    @OneToMany(mappedBy = "{{this.relation.mappedBy}}", fetch = FetchType.{{toUpperCase this.relation.fetchType}})
+    private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') ~}}
+    @ManyToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}){{#if this.name}}
+    @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
+    private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#ifNot this.relation.mappedBy}}
+    @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}){{#if this.relation.joinTable}}
+    @JoinTable(
+            name = "{{this.relation.joinTable}}"{{#if this.name}},
+            joinColumns = @JoinColumn(name = "{{toLowerCase this.name}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
+            inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
+    ){{/if}}
+    private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
+    @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}",fetch = FetchType.{{toUpperCase this.relation.fetchType}})
+    private List<{{capitalizeEntity this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+  {{~/ifNot~}}
+  {{/if}}
+  {{/if}}
+  {{~/each~}}
+
+{{~#each resourceConfig.relationReference ~}}
+  {{#if (eq this.type 'OneToOne') }}
+   @OneToOne(mappedBy = "{{this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}})
+   private {{this.entity}} {{ toLowerCase this.fieldName}};
+  {{/if}}
+  {{#if (eq this.type 'OneToMany') }}
+   @ManyToOne(fetch = FetchType.{{toUpperCase fetchType}})
+   @JoinColumn(name = "{{this.fieldName}}")
+   private {{this.entity}} {{this.fieldName}};
+  {{/if}}
+  {{#if (eq this.type 'ManyToOne') }}
+   @OneToMany(mappedBy = "{{this.mappedBy}}")
+   private List<{{this.entity}}> {{this.fieldName}};
+  {{/if}}
+  {{#if (eq this.type 'ManyToMany') }}
+   @ManyToMany(mappedBy = "{{this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}})
+   private List<{{this.entity}}> {{this.fieldName}};
+  {{/if}}
+{{~/each~}}
+
+}

@@ -1,0 +1,39 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class {{capitalize resourceConfig.name}}QueryServiceImpl implements {{resourceConfig.name}}QueryService {
+
+{{#each resourceConfig.actions}}
+  {{#if (eq method "GET")}}
+    private final {{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler;
+  {{/if}}
+{{/each}}
+
+    public {{capitalize resourceConfig.name}}QueryServiceImpl(
+        {{#filterQueryActions resourceConfig.actions}}{{capitalize actionName}}QueryHandler {{toCamelCase actionName}}QueryHandler{{/filterQueryActions}}
+    ) {
+    {{#each resourceConfig.actions}}
+      {{#if (eq method "GET")}}
+        this.{{toCamelCase actionName}}QueryHandler = {{toCamelCase actionName}}QueryHandler;
+      {{/if}}
+    {{/each}}
+    }
+
+{{#each resourceConfig.actions}}
+  {{#if (eq this.method "GET")}}
+    @Override
+    public ResponseEntity<{{resolveResponse this.responses}}> {{toCamelCase this.actionName}}({{capitalize this.actionName}}Query query) {
+        return {{toCamelCase this.actionName}}QueryHandler.handle(query);
+    }
+
+  {{/if}}
+{{/each}}
+}

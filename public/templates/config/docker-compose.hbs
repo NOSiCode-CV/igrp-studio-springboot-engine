@@ -1,0 +1,55 @@
+name: '{{toLowerCase baseConfig.name}}-api-service'
+
+networks:
+  default:
+    name: {{toLowerCase baseConfig.name}}
+    external: false
+
+services:
+  {{#if baseConfig.enableObservability}}
+  {{> observability-docker-services }}
+  {{/if}}
+
+  {{#if (eq baseConfig.database "Postgresql")}}
+  {{> postgres-docker-service }}
+  {{else if (eq baseConfig.database "MySQL")}}
+  {{> mysql-docker-service }}
+  {{else if (eq baseConfig.database "Oracle")}}
+  {{> oracle-docker-service }}
+  {{/if}}
+
+  {{toLowerCase baseConfig.name}}-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{toLowerCase baseConfig.name}}-service
+    env_file:
+      - .env
+    depends_on:
+      - {{#if (eq baseConfig.database "Postgresql")}}postgres{{else if (eq baseConfig.database "MySQL")}}mysql{{else if (eq baseConfig.database "Oracle")}}oracle{{/if}}
+    environment:
+      - SERVER_PORT=${SERVICE_PORT}
+      - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
+      - SPRING_ACTIVE_PROFILE=${SERVICE_PROFILE}
+      {{> database-docker-env }}
+      {{#if baseConfig.enableObservability}}
+      {{> observability-docker-env }}
+      {{/if}}
+      - ENABLE_SWAGGER=${ENABLE_SWAGGER}
+    ports:
+      - ${SERVICE_PORT}:${SERVICE_PORT}
+    #restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    {{#if baseConfig.enableObservability}}
+    labels:
+      logging: "promtail"
+    {{/if}}
+
+volumes:
+  {{#if baseConfig.enableObservability}}
+  {{> observability-docker-volumes }}
+  {{/if}}
+  {{> database-docker-volumes }}

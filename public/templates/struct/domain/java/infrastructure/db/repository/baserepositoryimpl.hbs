@@ -1,0 +1,9 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}}.{{resourceConfig.name}}Entity;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.repository.BaseRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface {{resourceConfig.name}}Repository extends BaseRepository<{{resourceConfig.name}}Entity, {{keyType resourceConfig}}> {
+}

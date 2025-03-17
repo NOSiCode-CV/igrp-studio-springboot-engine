@@ -11,7 +11,10 @@
 # Exclude test files and directories
 /tests
 /__tests__
+/__test__
+/.idea
 /test
+/generatedTest
 /spec
 /*.test.js
 /*.spec.js

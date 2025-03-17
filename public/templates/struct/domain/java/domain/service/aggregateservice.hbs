@@ -1,0 +1,34 @@
+{{> package-java }}
+
+{{#each resourceConfig.actions}}
+  {{#ifNot (eq this.method "GET")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.application.command.{{this.actionName}}Command;
+  {{/ifNot}}
+{{/each}}
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.aggregate.{{resourceConfig.name}}AggregateRoot;
+import {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}};
+import {{baseConfig.group}}.{{baseConfig.artifact}}.domain.repositories.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateDomainRepository;
+import org.springframework.stereotype.Service;
+import javax.transaction.Transactional;
+
+@Service
+public class {{resourceConfig.name}}AggregateService {
+
+   private final {{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository;
+
+   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository) {
+      this.{{toCamelCase resourceConfig.name}}AggregateRootRepository = {{toCamelCase resourceConfig.name}}AggregateRootRepository;
+   }
+
+   {{#each resourceConfig.actions}}
+     {{#ifNot (eq this.method "GET")}}
+   @Transactional
+   public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
+      {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
+      aggregate.handle(cmd);
+      {{toCamelCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
+   }
+     {{/ifNot}}
+   {{/each}}
+}

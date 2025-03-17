@@ -1,0 +1,12 @@
+oracle:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      ORACLE_DATABASE: ${ORACLE_DATABASE}
+      ORACLE_USER: ${ORACLE_USER}
+    ports:
+      - ${ORACLE_EXTERNAL_PORT}:${ORACLE_INTERNAL_PORT}
+    volumes:
+      - oracle-data-21:/opt/oracle/oradata
+    restart: unless-stopped

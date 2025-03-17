@@ -2,7 +2,10 @@
 node_modules/
 
 # Tests
-__test__
+#__test__
+generatedEnvironment/
+demoDomain/
+demoTechnical/
 
 # Logs
 logs
@@ -19,6 +22,9 @@ bower_components/
 
 # Environment variables
 .env
+
+# NPM registry
+.npmrc
 
 # Build directories
 dist/

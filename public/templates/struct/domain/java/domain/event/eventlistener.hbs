@@ -1,0 +1,14 @@
+{{> package-java }}
+
+import org.springframework.scheduling.annotation.Async;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@org.springframework.context.event.EventListener
+@Async
+public @interface EventListener {}

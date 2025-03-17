@@ -1,0 +1,86 @@
+{{> package-java }}
+
+{{#if resourceConfig.relations}}
+{{#each resourceConfig.relations}}
+import {{../baseConfig.group}}.{{../baseConfig.artifact}}.infrastructure.db.entity.{{toLowerCase resourceConfig.aggregate}}.{{this.entity}};
+{{/each}}{{/if}}{{#if resourceConfig.audit}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.config.AuditEntity;{{/if}}
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+{{#each dateTimeAttributes}}
+import java.time.{{this}};
+{{/each}}
+{{#each mathAttributes}}
+import java.math.{{this}};
+{{/each}}
+{{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
+{{model-imports resourceConfig}}
+
+@Getter
+@Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "{{resourceConfig.tableName}}"{{#if (or resourceConfig.uniqueConstraints resourceConfig.indexes)}},{{/if}}
+{{#if resourceConfig.uniqueConstraints}}
+    uniqueConstraints = {
+        {{#each resourceConfig.uniqueConstraints}}
+        @UniqueConstraint(
+            name = "{{toLowerCase this.name}}",
+            columnNames = {
+                {{#each this.columns}}"{{toLowerCase this}}"{{#unless @last}},{{/unless}}{{/each}}
+            }
+        ){{#unless @last}},{{/unless}}
+        {{/each}}
+    }{{#if resourceConfig.indexes}},{{/if}}
+{{/if}}
+{{#if resourceConfig.indexes}}
+    indexes = {
+        {{#each resourceConfig.indexes}}
+        @Index(
+            name = "{{toLowerCase this.name}}",
+            columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"
+        ){{#unless @last}},{{/unless}}
+        {{/each}}
+    }
+{{/if}})
+public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.name}}, {{keyType resourceConfig}}> {
+
+  {{#each resourceConfig.attributes}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+  @NotBlank(message = "{{this.name}} is mandatory")
+  {{else}}
+  @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+  private String {{toCamelCase this.name}};{{else}}{{#if this.defaultValue}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
+  private {{this.type}} {{toCamelCase this.name}};{{/if}}
+  {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}
+  @OneToOne{{#if this.mappedBy}}(mappedBy="{{this.mappedBy}}"){{/if}}{{#if this.joinColumn}}
+  @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
+  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
+  @OneToMany(mappedBy = "{{this.mappedBy}}")
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  {{else if (eq this.relationType 'ManyToOne') }}
+  @ManyToOne{{#if this.joinColumn}}
+  @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}
+  private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'ManyToMany') }}{{#ifNot this.mappedBy}}
+  @ManyToMany{{#if this.joinTable}}
+  @JoinTable(
+    name = "{{this.joinTable}}"{{#if this.joinColumn}},
+    joinColumns = @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}{{#if this.inverseJoinColumn}},
+    inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.inverseJoinColumn}}"){{/if}}
+  ){{/if}}
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};{{else}}
+  @ManyToMany(mappedBy = "{{toLowerCase this.mappedBy}}")
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  {{/ifNot}}
+  {{/if}}
+  {{/each}}
+  {{/if}}
+}

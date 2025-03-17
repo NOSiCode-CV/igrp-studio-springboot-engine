@@ -1,0 +1,16 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.command.Command;
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public record {{capitalize resourceConfig.name}}Command (
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+) implements Command {}

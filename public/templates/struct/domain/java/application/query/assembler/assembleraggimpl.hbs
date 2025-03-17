@@ -1,0 +1,19 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.query.dto.{{resourceConfig.name}}AggregateDTO;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.{{toLowerCase resourceConfig.name}}.{{resourceConfig.name}}AggregateRoot;
+import org.springframework.stereotype.Component;
+
+@Component
+public class {{resourceConfig.name}}AggregateAssembler implements Assembler<{{resourceConfig.name}}AggregateRoot, {{resourceConfig.name}}AggregateDTO> {
+
+   @Override
+   public {{resourceConfig.name}}AggregateDTO apply({{resourceConfig.name}}AggregateRoot t) {
+      // Replace the constructor with the actual implementation as needed.
+      // Example:
+      return new {{resourceConfig.name}}AggregateDTO(
+         // Map the fields here
+      );
+   }
+
+}

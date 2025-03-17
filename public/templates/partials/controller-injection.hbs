@@ -1,0 +1,7 @@
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+private final CommandBus commandBus;
+private final QueryBus queryBus;
+{{else}}
+private final I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
+{{/if}}

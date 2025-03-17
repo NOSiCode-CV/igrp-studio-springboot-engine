@@ -1,0 +1,15 @@
+{{> package-java }}
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public record {{capitalize resourceConfig.name}}Query (
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+){}

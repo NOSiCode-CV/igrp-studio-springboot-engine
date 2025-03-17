@@ -1,0 +1,25 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.artifact}}.infrastructure.db.dataobject.DataObject;
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-imports}}
+{{/if}}
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-annotations}}
+{{/if}}
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+public class {{resourceConfig.name}}DO extends DataObject<{{keyType resourceConfig}}> {
+
+  {{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+      @{{this.annotation}}
+    {{/each}}
+    private {{{resolve-type this}}} {{this.name}};
+  {{/each}}
+
+}
