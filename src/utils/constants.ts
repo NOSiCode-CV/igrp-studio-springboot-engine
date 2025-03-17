@@ -675,6 +675,12 @@ export const GENERIC_TYPES: Map<
       python: { name: 'list', primitive: false },
       kotlin: { name: 'List', primitive: false },
     },
+    pageable: {
+      java: { name: 'Pageable', primitive: false, namespace: 'org.springframework.data.domain' },
+      dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'list', primitive: false },
+      kotlin: { name: 'List', primitive: false },
+    },
     set: {
       java: { name: 'Set', primitive: false, namespace: 'java.util' },
       dotnet: { name: 'HashSet', primitive: false, namespace: 'System.Collections.Generic' },
@@ -743,8 +749,14 @@ export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, mod
     },
     file: {
       java: {
-        domain: `import org.hibernate.annotations.JdbcType;`,
-        technical: `import org.hibernate.annotations.JdbcType;`
+        domain:
+          `import org.hibernate.annotations.JdbcType;`
+          + '\n' +
+          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`,
+        technical:
+          `import org.hibernate.annotations.JdbcType;`
+          + '\n' +
+          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`
       },
       dotnet: {  },
       python: {  },
@@ -763,6 +775,15 @@ export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, mod
       java: {
         domain: `import java.util.List;`,
         technical: `import java.util.List;`
+      },
+      dotnet: {  },
+      python: {  },
+      kotlin: {  },
+    },
+    pageable: {
+      java: {
+        domain: `import org.springframework.data.domain.Pageable;`,
+        technical: `import org.springframework.data.domain.Pageable;`
       },
       dotnet: {  },
       python: {  },
