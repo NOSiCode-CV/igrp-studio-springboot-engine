@@ -206,5 +206,3 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
 };
 
 export const validateDTOConfig: ValidateFunction<DTOConfig> = ajvInstance.compile<DTOConfig>(dtoConfigSchema);
-
-export const validateDeleteDTOConfig: ValidateFunction<DTOBaseConfig> = ajvInstance.compile<DTOBaseConfig>(deletedDTOConfigSchema);

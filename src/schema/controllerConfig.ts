@@ -18,7 +18,7 @@ import {
   SchemaField,
 } from '../interfaces/types';
 
-const relationSchema: JSONSchemaType<Relation> = {
+export const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
     type: {

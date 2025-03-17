@@ -440,4 +440,3 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
 };
 
 export const validateModelConfig: ValidateFunction<ModelConfig> = ajvInstance.compile<ModelConfig>(modelConfigSchema);
-export const validateCrud: ValidateFunction<Crud> = ajvInstance.compile<Crud>(crudSchema)
