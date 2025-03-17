@@ -44,11 +44,12 @@ Handlebars.registerHelper('concat', (str1: string, str2: string) => {
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
   if (!str) return '';
 
-  return str
-    .toLowerCase()
+  const noSnake = (str
     .split('_')
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
+    .join(''))
+
+  return noSnake.charAt(0).toLowerCase() + noSnake.slice(1);
 });
 
 Handlebars.registerHelper('toTitleCase', (str: string) => {
@@ -783,6 +784,8 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
 
   const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
+  const isDDDStyle = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+
   if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
 
   modelConfig.attributes.forEach((attribute) => {
@@ -817,12 +820,26 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
       imports.push('import java.util.List;');
 
     if(attribute.relation?.entity) {
-      if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+      if(isDDDStyle) {
         if (modelConfig.module !== attribute.relation.module)
           imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`);
       } else
         imports.push(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
     }
+
+    if(attribute.objectType) {
+      const objectImports = GENERIC_IMPORTS(packageNameFromConfig,
+        attribute.type, attribute.module).get(attribute.objectType)
+
+      if (objectImports) {
+        imports.push((isDDDStyle ? objectImports.java.domain : objectImports.java.technical) ?? '')
+        return;
+      }
+    }
+
+    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attribute.type).get(attribute.type);
+
+    if (specialAttributeImports?.java.technical) imports.push(specialAttributeImports.java.technical);
 
   });
 
