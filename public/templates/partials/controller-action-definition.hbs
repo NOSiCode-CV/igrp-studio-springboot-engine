@@ -56,8 +56,8 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
     modelAttribute multipartFiles)}}, {{else}}{{#if (and headers multipartFiles)}},
     {{/if~}}{{/if~}}{{/if~}}{{/if~}}{{/if~}}
     {{#each multipartFiles}}@RequestPart("{{this.name}}") MultipartFile {{this.name}}{{#if
-    @last}}{{else}},{{/if~}}{{/each}}
-    {{~#if (isPageable responses)}}, Pageable pageable{{/if~}}
-    )
+    @last}}{{else}},{{/if~}}{{/each~}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if~}}Pageable
+    pageable{{/if~}})
     {
     {{/if~}}

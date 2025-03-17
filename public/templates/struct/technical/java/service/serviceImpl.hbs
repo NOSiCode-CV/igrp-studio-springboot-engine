@@ -8,7 +8,8 @@
 * will not be overridden by future code generations.
 *
 */
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,9 @@ public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{#if
   "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and
   pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}},
   {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}}
-  {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
+  {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}} {{~#if (isPageable responses)}}{{#if (or requestBody
+  modelAttribute requestParams pathVariables)}},{{/if~}}Pageable
+  pageable{{/if~}}){
   // TODO: implement this method
   return null;
   }
