@@ -544,7 +544,9 @@ Handlebars.registerHelper('cleanStr', function (str) {
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {
   const textTypes = [
     'String',
+    'string',
     'Text',
+    'text',
     'VARCHAR',
     'CHAR',
     'TEXT',
