@@ -1,7 +1,8 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute,
+  ApiConfig,
+  Attribute, BaseApiConfig,
   Body,
   ControllerAction,
   DTOConfig,
@@ -14,7 +15,7 @@ import {
 } from '../interfaces/types';
 import {
   DIRECTORIES, GENERIC_IMPORTS,
-  GENERIC_TYPES,
+  GENERIC_TYPES, PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
@@ -760,7 +761,7 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
   return isPageable;
 });
 
-Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig) {
+Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig, baseConfig: ApiConfig) {
   const imports: string[] = [];
   imports.push(`import cv.igrp.framework.stereotype.IgrpEntity;`);
   imports.push(`import jakarta.persistence.*;`);
@@ -800,6 +801,14 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
 
     if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany')
       imports.push('import java.util.List;');
+
+    if(attribute.relation?.entity) {
+      if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${modelConfig.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attribute.relation.entity};`)
+      else
+        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${attribute.relation.entity};`)
+    }
+
   });
 
   modelConfig.relationReference?.forEach((rel) => {

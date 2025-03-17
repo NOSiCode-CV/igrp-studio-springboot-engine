@@ -7,7 +7,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
   {{/if}}
 {{~/if}}
-{{model-imports-helper resourceConfig}}
+{{model-imports-helper resourceConfig baseConfig}}
 
 {{#if resourceConfig.revision~}}@Audited{{~else~}}{{/if}}
 @Getter
