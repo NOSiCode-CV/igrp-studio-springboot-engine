@@ -36,7 +36,7 @@ const permissionSchema:JSONSchemaType<PermissionConfig> = {
     name: {
       type:"string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The permission name can not includ space or hyphen'
+      errorMessage: 'The permission name can not include space or hyphen'
     },
     description: {
       type: 'string'
@@ -51,8 +51,8 @@ const permissionSchema:JSONSchemaType<PermissionConfig> = {
   errorMessage: {
     required: {
       type: 'The type is required and must be "permission".',
-      name: 'The permission name can not includ space or hyphen',
-      endpoints: 'The endpoints arrayis required and can be empty.'
+      name: 'The permission name can not include space or hyphen',
+      endpoints: 'The endpoints array is required and can be empty.'
     },
     additionalProperties: 'No additional properties are allowed in the permission configuration schema.'
   }
