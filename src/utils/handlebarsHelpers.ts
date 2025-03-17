@@ -786,12 +786,10 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
       imports.push(`import java.time.${type};`);
     }
 
-    if (type === 'BigInteger' || type === 'BigDecimal')
-      imports.push(`import java.math.${type};`);
+    if (type === 'BigInteger' || type === 'BigDecimal') imports.push(`import java.math.${type};`);
 
     if (attribute.nullable === false && !attribute.primaryKey) {
-      if (type === 'String')
-        imports.push('import jakarta.validation.constraints.NotBlank;');
+      if (type === 'String') imports.push('import jakarta.validation.constraints.NotBlank;');
       else imports.push('import jakarta.validation.constraints.NotNull;');
     }
 
@@ -805,10 +803,10 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
       imports.push('import java.util.List;');
 
     if(attribute.relation?.entity) {
-      if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        if(modelConfig.module !== attribute.relation.module)
-          imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`)
-      else
+      if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+        if (modelConfig.module !== attribute.relation.module)
+          imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`);
+      } else
         imports.push(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
     }
 
