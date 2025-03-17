@@ -6,7 +6,7 @@ import {
   GENERIC_ATTRIBUTE_TYPES,
   PATTERNS,
 } from '../utils/constants';
-import { relationSchema } from './controllerConfig';
+import { relationSchema } from './modelConfig';
 
 const valueSchema: JSONSchemaType<EnumValue> = {
   type: "object",

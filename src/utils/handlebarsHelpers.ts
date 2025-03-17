@@ -804,9 +804,9 @@ Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelCo
 
     if(attribute.relation?.entity) {
       if(baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${modelConfig.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attribute.relation.entity};`)
+        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`)
       else
-        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${attribute.relation.entity};`)
+        imports.push(`import ${getPackageNameFromConfig(baseConfig)}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
     }
 
   });
