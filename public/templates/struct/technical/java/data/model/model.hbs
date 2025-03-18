@@ -90,20 +90,20 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
 {{~#each resourceConfig.relationReference ~}}
   {{#if (eq this.type 'OneToOne') }}
    @OneToOne(mappedBy = "{{capitalize this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}})
-   private {{this.entity}} {{ toLowerCase this.fieldName}};
+   private {{this.entity}} {{capitalize this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'OneToMany') }}
    @ManyToOne(fetch = FetchType.{{toUpperCase fetchType}})
    @JoinColumn(name = "{{this.fieldName}}")
-   private {{this.entity}} {{this.fieldName}};
+   private {{this.entity}} {{capitalize this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'ManyToOne') }}
    @OneToMany(mappedBy = "{{capitalize this.mappedBy}}")
-   private List<{{this.entity}}> {{this.fieldName}};
+   private List<{{this.entity}}> {{capitalize this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'ManyToMany') }}
    @ManyToMany(mappedBy = "{{capitalize this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}})
-   private List<{{this.entity}}> {{this.fieldName}};
+   private List<{{this.entity}}> {{capitalize this.fieldName}};
   {{/if}}
 
 {{/each}}
