@@ -1,4 +1,5 @@
 {{> package-java }}
+
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.{{normalizeDto resourceConfig.body}};
 {{#ifNot (eq resourceConfig.module "Shared")}}
@@ -9,6 +10,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.
 import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{normalizeDto resourceConfig.body}};
 {{/if}}
 
+@SuppressWarnings({"unchecked", "unused"})
 public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException {
 
     public {{capitalize resourceConfig.name}}Exception(IgrpProblem<{{normalizeDto resourceConfig.body}}> problem) {
