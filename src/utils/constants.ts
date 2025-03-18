@@ -3,12 +3,12 @@ import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 /* Use the definition below if it's the local environment and unit tests execution */
-//export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-//export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
 
 /* Use the definition below if it's the production environment and publishing execution */
-export const TEMPLATE_DIR = path.join(__dirname, './templates');
-export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+//export const TEMPLATE_DIR = path.join(__dirname, './templates');
+//export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -537,7 +537,7 @@ const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type 
 
 export const GENERIC_MODEL_ATTRIBUTE_TYPES = [...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'];
 
-export const GENERIC_COLLECTION_TYPES = ['none','collection', 'map', 'pageable'];
+export const GENERIC_COLLECTION_TYPES = ['none', 'collection', 'map', 'pageable'];
 
 export const GENERIC_TYPES: Map<
   string,
@@ -725,27 +725,27 @@ export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, mod
         domain: `import ${packageNameFromConfig}.${module}.domain.${PACKAGES.MODELS}.${type};`,
         technical: `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${type};`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     dto: {
       java: {
         domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
         technical: `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     enum: {
       java: {
         domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.CONSTANTS}.${type};`,
         technical: `import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${type};`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     file: {
       java: {
@@ -758,72 +758,81 @@ export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, mod
           + '\n' +
           `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     binary: {
       java: {
         domain: `import org.hibernate.annotations.JdbcType;`,
         technical: `import org.hibernate.annotations.JdbcType;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     list: {
       java: {
         domain: `import java.util.List;`,
         technical: `import java.util.List;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    collection: {
+      java: {
+        domain: `import java.util.Collection;`,
+        technical: `import java.util.Collection;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     pageable: {
       java: {
         domain: `import org.springframework.data.domain.Pageable;`,
         technical: `import org.springframework.data.domain.Pageable;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     map: {
       java: {
         domain: `import java.util.Map;`,
         technical: `import java.util.Map;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     set: {
       java: {
         domain: `import java.util.Set;`,
         technical: `import java.util.Set;`
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     jsonProperty: {
       java: {
         domain: 'import com.fasterxml.jackson.annotation.JsonProperty;',
         technical: 'import com.fasterxml.jackson.annotation.JsonProperty;'
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
     xmlProperty: {
       java: {
         domain: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
         technical: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;'
       },
-      dotnet: {  },
-      python: {  },
-      kotlin: {  },
+      dotnet: {},
+      python: {},
+      kotlin: {},
     },
 
   }),
