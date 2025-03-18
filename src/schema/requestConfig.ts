@@ -18,6 +18,11 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    type: {
+      type: "string",
+      const: "response",
+      errorMessage: 'The type must be "response".'
+    },
     description: {
       type: "string",
       nullable: true,

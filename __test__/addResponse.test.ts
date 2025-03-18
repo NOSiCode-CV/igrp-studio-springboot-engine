@@ -6,6 +6,7 @@ import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
 const domainResponseConfig: ResponseConfig = {
   id: "u1obufwcjf",
+  type: "response",
   template: "record",
   statusCode: "200",
   module: "core",
@@ -30,6 +31,7 @@ const domainResponseConfig: ResponseConfig = {
 
 const technicalResponseConfig: ResponseConfig = {
   id: "3igib0o5fe",
+  type: "response",
   template: "record",
   statusCode: "200",
   name: "TestResponseIsolated2",
