@@ -21,34 +21,34 @@ resourceConfig.name}}.I{{resourceConfig.name}}Service;
 @ExtendWith(MockitoExtension.class)
 public class {{resourceConfig.name}}ServiceTest {
 
-@InjectMocks
-private {{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
+    @InjectMocks
+    private {{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
 
-@Mock
-private I{{resourceConfig.name}}Service i{{resourceConfig.name}}Service;
+    @Mock
+    private I{{resourceConfig.name}}Service i{{resourceConfig.name}}Service;
 
-@BeforeEach
-void setUp() {
-// TODO: initialize mock dependencies if needed
+    @BeforeEach
+    void setUp() {
+      // TODO: initialize mock dependencies if needed
+    }
+
+    {{#each resourceConfig.actions}}
+    @Test
+    void test{{capitalize actionName}}() {
+      // TODO: Implement unit test for {{actionName}}
+      // Example:
+      // Given
+      // {{resolveResponse this.responses}} expectedResponse = ...;
+      // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
+
+      // When
+      // ResponseEntity<{{{resolveResponse this.responses}}}> response = {{toCamelCase
+          ../resourceConfig.name}}Service.{{actionName}}(...);
+
+        // Then
+        // assertNotNull(response);
+        // assertEquals(expectedResponse, response.getBody());
+    }
+
+  {{/each}}
 }
-
-{{#each resourceConfig.actions}}
-@Test
-void test{{capitalize actionName}}() {
-// TODO: Implement unit test for {{actionName}}
-// Example:
-// Given
-// {{resolveResponse this.responses}} expectedResponse = ...;
-// when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
-
-// When
-// ResponseEntity<{{{resolveResponse this.responses}}}> response = {{toCamelCase
-    ../resourceConfig.name}}Service.{{actionName}}(...);
-
-    // Then
-    // assertNotNull(response);
-    // assertEquals(expectedResponse, response.getBody());
-    }
-
-    {{/each}}
-    }
