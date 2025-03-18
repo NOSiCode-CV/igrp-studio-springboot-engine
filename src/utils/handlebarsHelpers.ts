@@ -41,6 +41,7 @@ import {
 import { json } from '../helper/jsonHelper';
 import { ifEquals, ifNot, not } from '../helper/logicalHelper';
 import { keyTypeModel } from '../helper/modelHelper';
+import { keyTypeDTO } from '../helper/dtoHelper';
 
 // String
 Handlebars.registerHelper('capitalize',capitalize);
@@ -59,7 +60,7 @@ Handlebars.registerHelper('cleanStr', function (str) {
 // JSON
 Handlebars.registerHelper('json', json);
 
-//LOGICAL
+// LOGICAL
 Handlebars.registerHelper('ifNot',ifNot);
 Handlebars.registerHelper('not',not);
 Handlebars.registerHelper('ifEquals',ifEquals);
@@ -67,25 +68,8 @@ Handlebars.registerHelper('ifEquals',ifEquals);
 // MODEL
 Handlebars.registerHelper('keyType',keyTypeModel);
 
-//DTO
-Handlebars.registerHelper('keyType', function (config: DTOConfig) {
-  if (!config) {
-    return null;
-  }
-  if (!config.attributes) {
-    return null;
-  }
-  const primaryKeyAttr = config.attributes?.find((p) => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
-
-  const result: JavaType | string = {
-    name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? '',
-    namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,
-  };
-  return result.name;
-});
+// DTO
+Handlebars.registerHelper('keyType', keyTypeDTO);
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
@@ -193,7 +177,6 @@ Handlebars.registerHelper(
           }
         }
     }
-    console.log('imports: ' + imports);
     imports.push(`import java.util.List;`);
     imports.push(`import java.util.Collection;`);
 
