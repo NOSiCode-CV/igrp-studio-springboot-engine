@@ -109,6 +109,11 @@ const relationReferenceSchema: JSONSchemaType<RelationReference> = {
       nullable: false,
       errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: `The module must be a valid string.`
+    },
     entity: {
       type: "string",
       pattern: PATTERNS.NO_SPACE_AND_HYPHEN,

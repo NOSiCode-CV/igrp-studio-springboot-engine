@@ -193,6 +193,7 @@ export interface Relation {
 export interface RelationReference {
   type: RelationshipTypes;
   fetchType: 'lazy' | 'eager';
+  module?: string;
   entity: string;
   fieldName?: string;
   mappedBy?: string;

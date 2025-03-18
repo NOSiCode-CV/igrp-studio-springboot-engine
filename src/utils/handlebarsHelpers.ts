@@ -855,6 +855,15 @@ Handlebars.registerHelper(
     modelConfig.relationReference?.forEach((rel) => {
       if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne')
         imports.push('import java.util.List;');
+      if (isDDDStyle) {
+        if (modelConfig.module !== rel.module)
+          imports.push(
+            `import ${packageNameFromConfig}.${rel.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(rel.entity)};`,
+          );
+      } else
+        imports.push(
+          `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${rel.entity.toLowerCase()}.${capitalize(rel.entity)};`,
+        );
     });
 
     return [...new Set(imports)].join('\n');
