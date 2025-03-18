@@ -32,7 +32,7 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     resolvedType = formatTypeName(singleBody?.name);
   } else {
 
-    if(schema.objectType) {
+    if (schema.objectType) {
       resolvedType = formatTypeName(schema.type)
     } else {
 
@@ -46,19 +46,20 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     }
   }
 
-  const wrapCollectionType = (type: string, collectionType: string): string => {
-    switch (collectionType) {
-      case 'collection':
-        return `Collection<${type}>`
-      case 'map':
-        return `Map<?, ${type}>`
-      case 'pageable':
-        return `Page<${type}>`
-    }
-    return type;
-  }
-
   const responseCollectionType: string = schema.collectionType ?? 'none';
 
   return wrapCollectionType(resolvedType, responseCollectionType);
 };
+
+export function wrapCollectionType(type: string, collectionType: string): string {
+  switch (collectionType) {
+    case 'collection':
+      return `Collection<${type}>`;
+    case 'map':
+      return `Map<?, ${type}>`;
+    case 'pageable':
+      return `Page<${type}>`;
+    default:
+      return type;
+  }
+}
