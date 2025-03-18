@@ -155,6 +155,7 @@ const mapJsonToResponseConfig = (jsonData: any, config: JsonConfig): ResponseCon
 
   return {
     id: generateElementId(),
+    type: 'response',
     name: config.name,
     statusCode: '200',
     template: config.template,
@@ -272,6 +273,7 @@ const mapSqlToResponseConfig = (sqlData: { columns: string[]; table: string }, c
 
   return {
     id: generateElementId(),
+    type: 'response',
     name: config.name,
     statusCode: '200',
     template: config.template,
@@ -361,6 +363,7 @@ const mapXmlToResponseConfig = (xmlData: any, config: XmlConfig): ResponseConfig
 
   return {
     id: generateElementId(),
+    type: 'response',
     name: config.name,
     statusCode: '200',
     template: config.template,

@@ -342,6 +342,7 @@ export interface Body extends BaseBody {
 export interface RequestConfig extends Body {}
 
 export interface ResponseConfig extends Body {
+  type: 'response'
   statusCode: string;
   template: 'classic' | 'record';
 }
