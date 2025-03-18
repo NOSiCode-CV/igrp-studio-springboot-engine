@@ -11,7 +11,7 @@ import {
   OBSERVABILITY_YAML_CONFIG_FILES,
   PROJECT_STRUCTURE_STYLE,
 } from '../../utils/constants';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveBinaryToFile, saveToFile } from '../common/saveToFile';

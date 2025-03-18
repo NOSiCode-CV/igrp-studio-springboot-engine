@@ -3,7 +3,7 @@ import { RenderContext } from '../../interfaces/types';
 import {
   TEMPLATES,
 } from '../../utils/constants';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { renderTemplate } from '../common/renderTemplate';
 import { getTestPath } from '../../utils/helpers';
 import { saveToFile } from '../common/saveToFile';

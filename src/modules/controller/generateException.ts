@@ -7,7 +7,7 @@ import {
   getDDDExceptionDir,
   getExceptionDir,
 } from '../../utils/helpers';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 
 const EXCEPTION_SUFFIX = 'Exception.java';
 

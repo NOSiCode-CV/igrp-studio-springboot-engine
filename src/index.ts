@@ -56,7 +56,7 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalize, capitalizeResponse, processJavaClassName } from './utils/capitalizeStrings';
+import { capitalizeResponse } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
@@ -84,6 +84,7 @@ import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateTestServiceInmpl } from './modules/test/generateTestService';
 import { generateTestHandlers } from './modules/test/generateTestHandlers';
 import { processTableName } from './modules/model/helpers';
+import { capitalize } from './helper/stringHelper';
 
 /**
  * Main Function that creates the base api

@@ -28,24 +28,17 @@ import {
   isResponseCollection,
   validateAnnotations,
 } from './helpers';
-import { capitalize, capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
+import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
+import { capitalize, concat, toCamelCase } from '../helper/stringHelper';
 
-Handlebars.registerHelper('capitalize', (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-});
+// String
+Handlebars.registerHelper('capitalize',capitalize);
+Handlebars.registerHelper('toCamelCase',toCamelCase);
+Handlebars.registerHelper('concat', concat);
 
 Handlebars.registerHelper('capitalizeEntity', (str: string) => {
   return capitalize(str);
-});
-
-Handlebars.registerHelper('toCamelCase', (str: string) => {
-  if (!str) return '';
-  return str.charAt(0).toLowerCase() + str.slice(1);
-});
-
-Handlebars.registerHelper('concat', (str1: string, str2: string) => {
-  return str1 + str2;
 });
 
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {

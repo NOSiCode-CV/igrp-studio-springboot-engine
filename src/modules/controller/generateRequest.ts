@@ -25,7 +25,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getEnumTypes } from '../enum/helpers';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {

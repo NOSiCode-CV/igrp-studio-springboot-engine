@@ -25,7 +25,7 @@ import {
 } from '../../utils/helpers';
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
