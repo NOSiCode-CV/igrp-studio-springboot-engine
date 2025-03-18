@@ -448,6 +448,9 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
+  console.log('config:: ', config);
+
+
   const isDDDStyle =
     baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
@@ -513,19 +516,18 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
     (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + 'DTO' : t1.type);
 
   let rtype: string;
+
   switch (t1.collectionType) {
-    case 'list':
-      rtype = `List<${capitalize(attributeType)}>`;
-      break;
-    case 'set':
-      rtype = `Set<${capitalize(attributeType)}>`;
-      break;
+    case 'collection':
+      return `Collection<${attributeType}>`
     case 'map':
-      rtype = `Map<Object, ${capitalize(attributeType)}>`; // TODO: handle the key type
-      break;
+      return `Map<?, ${attributeType}>`
+    case 'pageable':
+      return `Page<${attributeType}>`
     default:
-      rtype = attributeType; // Default type if no collection type matches
+      rtype = attributeType;
   }
+
   return rtype;
 });
 
