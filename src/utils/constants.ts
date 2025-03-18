@@ -3,12 +3,12 @@ import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 /* Use the definition below if it's the local environment and unit tests execution */
-export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
-export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
+//export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
+//export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
 
 /* Use the definition below if it's the production environment and publishing execution */
-//export const TEMPLATE_DIR = path.join(__dirname, './templates');
-//export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+export const TEMPLATE_DIR = path.join(__dirname, './templates');
+export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
