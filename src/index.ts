@@ -62,7 +62,7 @@ import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
 import { generateHandlers } from './modules/handlers/generateHandlers';
-import { getMainPath, isPageable, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
+import { getMainPath, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
 import { getAllPermissions } from './modules/permission/getPermissions';
 import { saveModuleConfig } from './modules/module/saveModuleConfig';
 import { createModuleDirectory } from './modules/module/createModuleDirectory';
@@ -85,6 +85,7 @@ import { generateTestServiceInmpl } from './modules/test/generateTestService';
 import { generateTestHandlers } from './modules/test/generateTestHandlers';
 import { processTableName } from './modules/model/helpers';
 import { capitalize } from './helper/stringHelper';
+import { isPageable } from './helper/logicalHelper';
 
 /**
  * Main Function that creates the base api
@@ -702,8 +703,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   } catch (e) {
@@ -713,8 +714,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   }
@@ -990,31 +991,31 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     for (const act of config.actions) {
       let requestBodyAttributes: JavaAttribute[]
 
-        if(
+      if (
         act?.requestBody?.content['application/json']?.schema.objectType ??
         act?.requestBody?.content['multipart/form-data']?.schema.objectType
-        ) {
-          const reqDtoConfig = (await requestDtoConfig(module, context, act))
-          requestBodyAttributes = [
-            {
-              name: reqDtoConfig.name.toLowerCase(),
-              type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
-              objectType: 'dto',
-              module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
-              required: false,
-            }
-          ];
-        } else {
-          requestBodyAttributes = requestConfig? [
-            {
-              name: requestConfig.resourceConfig.name.toLowerCase(),
-              type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
-              objectType: 'dto',
-              module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
-              required: false,
-            }
-          ] : []
-        }
+      ) {
+        const reqDtoConfig = (await requestDtoConfig(module, context, act))
+        requestBodyAttributes = [
+          {
+            name: reqDtoConfig.name.toLowerCase(),
+            type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
+            required: false,
+          }
+        ];
+      } else {
+        requestBodyAttributes = requestConfig ? [
+          {
+            name: requestConfig.resourceConfig.name.toLowerCase(),
+            type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
+            required: false,
+          }
+        ] : []
+      }
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
         ? [
@@ -1048,8 +1049,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
 
       let pageable: any[] = []
 
-      if(act.responses) {
-        if(isPageable(act.responses))
+      if (act.responses) {
+        if (isPageable(act.responses))
           pageable = [
             {
               name: 'pageable',
