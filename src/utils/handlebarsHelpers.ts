@@ -22,7 +22,7 @@ import { getPackageNameFromConfig, isResponseCollection } from './helpers';
 import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 import {
-  capitalize,
+  capitalize, capitalizeJavaStyle,
   concat,
   fullCamelCaseAndPluralize,
   lowercaseAndPluralize, sanitizeHeaderName,
@@ -40,6 +40,7 @@ import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
+Handlebars.registerHelper('capitalizeJavaStyle', capitalizeJavaStyle);
 Handlebars.registerHelper('toCamelCase', toCamelCase);
 Handlebars.registerHelper('concat', concat);
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', toFullCamelCaseFromSnakeCase);
