@@ -27,8 +27,7 @@ public record {{capitalize resourceConfig.name}}DTO(
           pattern = "{{this.pattern}}"{{/if}}{{#if this.required}},
           required = true{{/if}}{{#if this.format}},
           format = "{{this.format}}"{{/if}}{{#if this.default}},
-          defaultValue = "{{this.default}}"
-          {{/if}}
+          defaultValue = "{{this.default}}"{{/if}}
       )
       {{{resolve-type this}}} {{@key}}{{#if @last}}{{else}}, {{/if}}
     {{/each}}

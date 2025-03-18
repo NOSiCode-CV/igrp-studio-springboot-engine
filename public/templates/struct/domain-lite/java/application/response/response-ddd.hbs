@@ -38,8 +38,7 @@ public class {{resourceConfig.name}}DTO {
           pattern = "{{this.pattern}}"{{/if}}{{#if this.required}},
           required = true{{/if}}{{#if this.format}},
           format = "{{this.format}}"{{/if}}{{#if this.default}},
-          defaultValue = "{{this.default}}"
-          {{/if}}
+          defaultValue = "{{this.default}}"{{/if}}
       )
       private {{{resolve-type this}}} {{@key}};
       {{/each}}
