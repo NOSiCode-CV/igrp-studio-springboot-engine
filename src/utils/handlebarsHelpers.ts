@@ -2,7 +2,7 @@ import * as Handlebars from 'handlebars';
 
 import {
   ApiConfig,
-  Attribute, BaseApiConfig,
+  Attribute,
   Body,
   ControllerAction,
   DTOConfig,
@@ -14,13 +14,20 @@ import {
   SchemaContent,
 } from '../interfaces/types';
 import {
-  DIRECTORIES, GENERIC_IMPORTS,
-  GENERIC_TYPES, PACKAGES,
+  DIRECTORIES,
+  GENERIC_IMPORTS,
+  GENERIC_TYPES,
+  PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { getPackageNameFromConfig, isPageable, isResponseCollection, validateAnnotations } from './helpers';
+import {
+  getPackageNameFromConfig,
+  isPageable,
+  isResponseCollection,
+  validateAnnotations,
+} from './helpers';
 import { capitalize, capitalizeResponse } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
@@ -44,10 +51,10 @@ Handlebars.registerHelper('concat', (str1: string, str2: string) => {
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
   if (!str) return '';
 
-  const noSnake = (str
+  const noSnake = str
     .split('_')
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join(''))
+    .join('');
 
   return noSnake.charAt(0).toLowerCase() + noSnake.slice(1);
 });
@@ -124,7 +131,6 @@ Handlebars.registerHelper('not', function (conditional: any) {
 });
 
 Handlebars.registerHelper('keyType', function (config: ModelConfig) {
-
   if (config.primaryKey) {
     return `${config.name}PrimaryKey`;
   }
@@ -234,7 +240,8 @@ Handlebars.registerHelper(
       if (action.responses)
         for (const response of Object.values(action.responses)) {
           // Get the content for either application/json or multipart/form-data
-          const content = response?.content['application/json'] || response?.content['multipart/form-data'];
+          const content =
+            response?.content['application/json'] || response?.content['multipart/form-data'];
           if (!content) continue;
 
           // Extract the schema and its properties
@@ -242,9 +249,9 @@ Handlebars.registerHelper(
           const schemaType = schema?.type;
           const objectType = schema?.objectType; // New: to check for dto type
 
-          if(schema.collectionType === 'pageable') {
-            imports.push(`import org.springframework.data.domain.Page;`)
-            imports.push(`import org.springframework.data.domain.Pageable;`)
+          if (schema.collectionType === 'pageable') {
+            imports.push(`import org.springframework.data.domain.Page;`);
+            imports.push(`import org.springframework.data.domain.Pageable;`);
           }
 
           if (!objectType && schemaType !== 'object') continue;
@@ -254,7 +261,7 @@ Handlebars.registerHelper(
             const moduleResponse = response?.module || DIRECTORIES.SHARED;
             const responseName = capitalize(response.name || '');
             imports.push(
-              `import ${group}.${packageName}.${moduleResponse}.application.dto.${responseName}DTO;`
+              `import ${group}.${packageName}.${moduleResponse}.application.dto.${responseName}DTO;`,
             );
           }
 
@@ -274,10 +281,9 @@ Handlebars.registerHelper(
           if (!domainDriven) {
             imports.push(`import ${group}.${packageName}.dto.${type};`);
           }
-
         }
     }
-    console.log("imports: " + imports);
+    console.log('imports: ' + imports);
     imports.push(`import java.util.List;`);
     imports.push(`import java.util.Collection;`);
 
@@ -442,19 +448,20 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
-  const isDDDStyle = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const isDDDStyle =
+    baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
   const imports = new Set();
 
   const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
   for (const attr of config.attributes) {
-
-    const objectImports = GENERIC_IMPORTS(packageNameFromConfig,
-      attr.type, attr.module).get(attr.objectType)
+    const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module).get(
+      attr.objectType,
+    );
 
     if (objectImports) {
-      imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical)
+      imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
       continue;
     }
 
@@ -464,26 +471,38 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       imports.add(`import ${genType?.java.namespace}.${genType?.java.name};`);
     }
 
-    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type).get(attr.type);
+    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type).get(
+      attr.type,
+    );
 
     if (specialAttributeImports) imports.add(specialAttributeImports.java.technical);
-
   }
 
   if (config.attributes.find((it: JavaAttribute) => it.jsonAttributeName))
-    imports.add(GENERIC_IMPORTS(packageNameFromConfig, 'jsonProperty').get('jsonProperty')?.java.technical);
+    imports.add(
+      GENERIC_IMPORTS(packageNameFromConfig, 'jsonProperty').get('jsonProperty')?.java.technical,
+    );
 
   if (config.attributes.find((it: JavaAttribute) => it.xmlAttributeName))
-    imports.add(GENERIC_IMPORTS(packageNameFromConfig, 'xmlProperty').get('xmlProperty')?.java.technical);
+    imports.add(
+      GENERIC_IMPORTS(packageNameFromConfig, 'xmlProperty').get('xmlProperty')?.java.technical,
+    );
 
   // Import Collection Types
-  imports.add(config.attributes
-    .filter((it: JavaAttribute) => it.collectionType)
-    .map((attr: JavaAttribute) => GENERIC_IMPORTS(
-      packageNameFromConfig, attr.collectionType!)
-      .get(attr.collectionType!)?.java.technical));
+  imports.add(
+    config.attributes
+      .filter((it: JavaAttribute) => it.collectionType)
+      .map(
+        (attr: JavaAttribute) =>
+          GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)
+            ?.java.technical,
+      ),
+  );
 
-  return Array.from(imports).filter((e) => e).sort().join('\n');
+  return Array.from(imports)
+    .filter((e) => e)
+    .sort()
+    .join('\n');
 });
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
@@ -511,7 +530,6 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 });
 
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
-
   const imports = new Set();
 
   config.attributes
@@ -588,13 +606,8 @@ Handlebars.registerHelper('or', function (...args) {
   const options = args.pop(); // Remove o último argumento (objeto de opções do Handlebars)
 
   // Verifica se algum dos argumentos é verdadeiro
-  const result = args.some(Boolean);
-
-  return result;
-
+  return args.some(Boolean);
 });
-
-
 
 Handlebars.registerHelper('filterCommandActions', function (array: ControllerAction[], options) {
   if (!array || !Array.isArray(array)) {
@@ -690,33 +703,27 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
   if (str == '?') return '?';
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
-
 });
 
 Handlebars.registerHelper('processImplementation', (type: string) => {
-
-  let primitiveTypes: string[] = ["integer", "boolean", "string"];
+  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);
-  } else if (type == 'object')
-    return 'object';
+  } else if (type == 'object') return 'object';
   else {
     return normalizeName(type, 'dto') + 'DTO';
   }
 });
 
 Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
+  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
 
-  let primitiveTypes: string[] = ["integer", "boolean", "string"];
-
-  if (objType === 'dto')
-    return 'object';
+  if (objType === 'dto') return 'object';
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);
-  } else if (type === 'object' && (!objType || objType.trim() === ''))
-    return 'object';
+  } else if (type === 'object' && (!objType || objType.trim() === '')) return 'object';
   else {
     return normalizeName(type, 'dto') + 'DTO';
   }
@@ -742,12 +749,9 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   return normalizeName(capitalize(schema.schema.type), 'dto') + 'DTO';
 });
 
-
-
 Handlebars.registerHelper('isPageable', isPageable);
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
-
   let isPageable = false;
 
   const response = context?.response;
@@ -765,79 +769,93 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
   return isPageable;
 });
 
-Handlebars.registerHelper('model-imports-helper', function (modelConfig: ModelConfig, baseConfig: ApiConfig) {
-  const imports: string[] = [];
-  imports.push(`import cv.igrp.framework.stereotype.IgrpEntity;`);
-  imports.push(`import jakarta.persistence.*;`);
-  imports.push(`import lombok.*;`);
+Handlebars.registerHelper(
+  'model-imports-helper',
+  function (modelConfig: ModelConfig, baseConfig: ApiConfig) {
+    const imports: string[] = [];
+    imports.push(`import cv.igrp.framework.stereotype.IgrpEntity;`);
+    imports.push(`import jakarta.persistence.*;`);
+    imports.push(`import lombok.*;`);
 
-  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
+    const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
-  const isDDDStyle = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+    const isDDDStyle =
+      baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
-  if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
+    if (modelConfig.revision === true) imports.push(`import org.hibernate.envers.Audited;`);
 
-  modelConfig.attributes.forEach((attribute) => {
+    modelConfig.attributes.forEach((attribute) => {
+      const type = GENERIC_TYPES.get(attribute.type)?.java.name;
 
-    const type = GENERIC_TYPES.get(attribute.type)?.java.name
-
-    if (
-      type === 'LocalTime' ||
-      type === 'LocalDate' ||
-      type === 'LocalDateTime' ||
-      type === 'ZoneDateTime' ||
-      type === 'OffsetDateTime' ||
-      type === 'Instant'
-    ) {
-      imports.push(`import java.time.${type};`);
-    }
-
-    if (type === 'BigInteger' || type === 'BigDecimal') imports.push(`import java.math.${type};`);
-
-    if (attribute.nullable === false && !attribute.primaryKey) {
-      if (type === 'String') imports.push('import jakarta.validation.constraints.NotBlank;');
-      else imports.push('import jakarta.validation.constraints.NotNull;');
-    }
-
-    if (type === 'UUID') imports.push('import java.util.UUID;');
-
-    if (attribute.skipFieldRevision) imports.push('import org.hibernate.envers.NotAudited;');
-
-    if (attribute.defaultValue) imports.push('import org.hibernate.annotations.ColumnDefault;');
-
-    if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany')
-      imports.push('import java.util.List;');
-
-    if(attribute.relation?.entity) {
-      if(isDDDStyle) {
-        if (modelConfig.module !== attribute.relation.module)
-          imports.push(`import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`);
-      } else
-        imports.push(`import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`)
-    }
-
-    if(attribute.objectType) {
-      const objectImports = GENERIC_IMPORTS(packageNameFromConfig,
-        attribute.type, attribute.module).get(attribute.objectType)
-
-      if (objectImports) {
-        imports.push((isDDDStyle ? objectImports.java.domain : objectImports.java.technical) ?? '')
-        return;
+      if (
+        type === 'LocalTime' ||
+        type === 'LocalDate' ||
+        type === 'LocalDateTime' ||
+        type === 'ZoneDateTime' ||
+        type === 'OffsetDateTime' ||
+        type === 'Instant'
+      ) {
+        imports.push(`import java.time.${type};`);
       }
-    }
 
-    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attribute.type).get(attribute.type);
+      if (type === 'BigInteger' || type === 'BigDecimal') imports.push(`import java.math.${type};`);
 
-    if (specialAttributeImports?.java.technical) imports.push(specialAttributeImports.java.technical);
+      if (attribute.nullable === false && !attribute.primaryKey) {
+        if (type === 'String') imports.push('import jakarta.validation.constraints.NotBlank;');
+        else imports.push('import jakarta.validation.constraints.NotNull;');
+      }
 
-  });
+      if (type === 'UUID') imports.push('import java.util.UUID;');
 
-  modelConfig.relationReference?.forEach((rel) => {
-    if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne')
-      imports.push('import java.util.List;');
-  });
+      if (attribute.skipFieldRevision) imports.push('import org.hibernate.envers.NotAudited;');
 
-  return [...new Set(imports)].join('\n');
-});
+      if (attribute.defaultValue) imports.push('import org.hibernate.annotations.ColumnDefault;');
+
+      if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany')
+        imports.push('import java.util.List;');
+
+      if (attribute.relation?.entity) {
+        if (isDDDStyle) {
+          if (modelConfig.module !== attribute.relation.module)
+            imports.push(
+              `import ${packageNameFromConfig}.${attribute.relation.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${capitalize(attribute.relation.entity)};`,
+            );
+        } else
+          imports.push(
+            `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${attribute.relation.entity.toLowerCase()}.${capitalize(attribute.relation.entity)};`,
+          );
+      }
+
+      if (attribute.objectType) {
+        const objectImports = GENERIC_IMPORTS(
+          packageNameFromConfig,
+          attribute.type,
+          attribute.module,
+        ).get(attribute.objectType);
+
+        if (objectImports) {
+          imports.push(
+            (isDDDStyle ? objectImports.java.domain : objectImports.java.technical) ?? '',
+          );
+          return;
+        }
+      }
+
+      const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attribute.type).get(
+        attribute.type,
+      );
+
+      if (specialAttributeImports?.java.technical)
+        imports.push(specialAttributeImports.java.technical);
+    });
+
+    modelConfig.relationReference?.forEach((rel) => {
+      if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne')
+        imports.push('import java.util.List;');
+    });
+
+    return [...new Set(imports)].join('\n');
+  },
+);
 
 export { Handlebars };

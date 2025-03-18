@@ -9,9 +9,7 @@ export const capitalize = (str: string): string =>
     .join('');
 
 export const processJavaClassName = (str: string): string =>
-  str
-    .toLowerCase()
-    .split(/[-_,.]/)
+  str.split(/[-_,.]/)
     .map(singleCapitalize)
     .join('');
 

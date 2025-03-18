@@ -3,7 +3,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  HTTP_HEADER_TYPES, SCHEMA_TYPES, RELATIONSHIP_TYPES, FETCH_TYPE,
+  HTTP_HEADER_TYPES, SCHEMA_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
@@ -12,8 +12,7 @@ import {
   Body,
   ControllerAction,
   ControllerConfig,
-  HttpHeader, ModelAttribute, PropertySchemaField, Relation,
-  RequestParams,
+  HttpHeader, ModelAttribute, PropertySchemaField, RequestParams,
   SchemaContent, SchemaEnum,
   SchemaField,
 } from '../interfaces/types';

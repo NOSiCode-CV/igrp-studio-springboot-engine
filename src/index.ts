@@ -346,7 +346,6 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   checkPrimaryKeys(config);
 
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = processJavaClassName(config.name);
   config.tableName = processTableName(config.tableName, baseConfig.database);
 
   const context: RenderContext<ModelConfig> = {
