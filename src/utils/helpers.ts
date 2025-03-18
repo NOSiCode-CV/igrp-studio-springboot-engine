@@ -100,8 +100,9 @@ export const getResponseConfigPath = (module: string, response: string, output: 
     `${response}${EXTENSIONS.JSON}`,
   );
 
-export const getEnumConfigPath = (module: string, enumerated: string) =>
+export const getEnumConfigPath = (basePath: string, module: string, enumerated: string) =>
   path.join(
+    basePath,
     replaceTemplate(DIRECTORIES.CONFIG_ENUM, { module }),
     `${enumerated}${EXTENSIONS.JSON}`,
   );

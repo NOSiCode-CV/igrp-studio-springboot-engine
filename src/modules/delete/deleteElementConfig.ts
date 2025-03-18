@@ -51,6 +51,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
     const enumPath = getFilePath(context);
     const enumConfigPath = getEnumConfigPath(
+      context.basePath,
       context.resourceConfig.module ?? DIRECTORIES.SHARED,
       context.resourceConfig.name
     );
