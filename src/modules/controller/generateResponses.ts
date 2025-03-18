@@ -64,7 +64,7 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       };
 
       const responseContext: RenderContext<ResponseConfig> = {
-        resourceConfig: { ...response, statusCode: status, template: 'classic' },
+        resourceConfig: { ...response, statusCode: status, template: 'classic', type: 'response' },
         basePath,
         baseConfig,
         fullPath: basePath,
