@@ -18,37 +18,37 @@ import {
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import {
-  getPackageNameFromConfig,
-  isPageable,
-  isResponseCollection,
-} from './helpers';
+import { getPackageNameFromConfig, isResponseCollection } from './helpers';
 import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 import {
   capitalize,
-  concat, fullCamelCaseAndPluralize, lowercaseAndPluralize,
+  concat,
+  fullCamelCaseAndPluralize,
+  lowercaseAndPluralize, sanitizeHeaderName,
   toCamelCase,
   toFullCamelCaseFromSnakeCase,
   toLowerCase,
-  toTitleCase, toUpperCase,
+  toTitleCase,
+  toUpperCase,
 } from '../helper/stringHelper';
 import { json } from '../helper/jsonHelper';
-import { ifEquals, ifNot, not } from '../helper/logicalHelper';
+import { ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
 import { keyTypeModel, modelImport } from '../helper/modelHelper';
 import { keyTypeDTO } from '../helper/dtoHelper';
 import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
 
 // String
-Handlebars.registerHelper('capitalize',capitalize);
-Handlebars.registerHelper('toCamelCase',toCamelCase);
+Handlebars.registerHelper('capitalize', capitalize);
+Handlebars.registerHelper('toCamelCase', toCamelCase);
 Handlebars.registerHelper('concat', concat);
-Handlebars.registerHelper('toFullCamelCaseFromSnakeCase',toFullCamelCaseFromSnakeCase);
+Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', toFullCamelCaseFromSnakeCase);
 Handlebars.registerHelper('toTitleCase', toTitleCase);
 Handlebars.registerHelper('toLowerCase', toLowerCase);
 Handlebars.registerHelper('toUpperCase', toUpperCase);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
+Handlebars.registerHelper('sanitizeHeaderName',sanitizeHeaderName);
 Handlebars.registerHelper('cleanStr', function (str) {
   return new Handlebars.SafeString(str);
 });
@@ -57,19 +57,22 @@ Handlebars.registerHelper('cleanStr', function (str) {
 Handlebars.registerHelper('json', json);
 
 // LOGICAL
-Handlebars.registerHelper('ifNot',ifNot);
-Handlebars.registerHelper('not',not);
-Handlebars.registerHelper('ifEquals',ifEquals);
+Handlebars.registerHelper('ifNot', ifNot);
+Handlebars.registerHelper('not', not);
+Handlebars.registerHelper('ifEquals', ifEquals);
+Handlebars.registerHelper('ne', notEquals);
+Handlebars.registerHelper('isText-type', isText);
+Handlebars.registerHelper('isPageable', isPageable);
 
 // MODEL
-Handlebars.registerHelper('keyType',keyTypeModel);
-Handlebars.registerHelper('model-imports-helper',modelImport);
+Handlebars.registerHelper('keyType', keyTypeModel);
+Handlebars.registerHelper('model-imports-helper', modelImport);
 
 // DTO
 Handlebars.registerHelper('keyType', keyTypeDTO);
 
 // GENERAL
-Handlebars.registerHelper('resolve-package',resolvePackage);
+Handlebars.registerHelper('resolve-package', resolvePackage);
 Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
@@ -192,10 +195,6 @@ Handlebars.registerHelper(
   },
 );
 
-Handlebars.registerHelper('contains', function (str, substring) {
-  return str.includes(substring);
-});
-
 Handlebars.registerHelper('paramsFormat', function (str) {
   return `{${str}}`;
 });
@@ -221,7 +220,6 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!Array.isArray(config.attributes)) return null;
 
   console.log('config:: ', config);
-
 
   const isDDDStyle =
     baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
@@ -337,26 +335,6 @@ Handlebars.registerHelper('import-uuid', function (this: any, config: ModelConfi
   return Array.from(imports).sort().join('\n');
 });
 
-Handlebars.registerHelper('isText-type', function (this: any, type: any) {
-  const textTypes = [
-    'String',
-    'string',
-    'Text',
-    'text',
-    'VARCHAR',
-    'CHAR',
-    'TEXT',
-    'CLOB',
-    'LONGTEXT',
-    'MEDIUMTEXT',
-    'TINYTEXT',
-    'NVARCHAR',
-    'NCHAR',
-    'NCLOB',
-  ];
-  return textTypes.includes(type);
-});
-
 Handlebars.registerHelper('breakEach', function (context, options) {
   let result = '';
   for (let i = 0; i < context.length; i++) {
@@ -420,12 +398,8 @@ Handlebars.registerHelper('filterQueryActions', function (array: ControllerActio
 });
 
 Handlebars.registerHelper('and', function (...args) {
-  args.pop(); // Remove the last element, which is the Handlebars options object
-  return args.every(Boolean); // Check if all arguments are truthy
-});
-
-Handlebars.registerHelper('ne', function (a: any, b: any) {
-  return a !== b;
+  args.pop();
+  return args.every(Boolean);
 });
 
 Handlebars.registerHelper('formatAttribute', function (value) {
@@ -452,12 +426,6 @@ Handlebars.registerHelper('formatAttribute', function (value) {
 Handlebars.registerHelper('mapHeaderToOption', function (config: HttpHeader): string {
   // Check if the header exists in the map and return the corresponding option
   return REQUEST_MAPPING_OPTIONS[config.header] || null;
-});
-
-Handlebars.registerHelper('sanitizeHeaderName', function (headerName: string) {
-  return headerName
-    .toLowerCase() // Step 1: Convert all to lowercase
-    .replace(/-./g, (match) => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
 });
 
 Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[]) {
@@ -519,8 +487,6 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   const schema = content['application/json'] ?? content['multipart/form-data'];
   return normalizeName(capitalize(schema.schema.type), 'dto') + 'DTO';
 });
-
-Handlebars.registerHelper('isPageable', isPageable);
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
   let isPageable = false;

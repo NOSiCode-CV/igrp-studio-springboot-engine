@@ -79,3 +79,7 @@ export function fullCamelCaseAndPluralize(str: string): string {
 
   return lowerStr + 's';
 }
+
+export function sanitizeHeaderName(headerName: string): string {
+  return headerName.toLowerCase().replace(/-./g, (match) => match.charAt(1).toUpperCase());
+}
