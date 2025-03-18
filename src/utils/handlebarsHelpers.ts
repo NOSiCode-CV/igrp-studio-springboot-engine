@@ -40,6 +40,7 @@ import {
 } from '../helper/stringHelper';
 import { json } from '../helper/jsonHelper';
 import { ifEquals, ifNot, not } from '../helper/logicalHelper';
+import { keyTypeModel } from '../helper/modelHelper';
 
 // String
 Handlebars.registerHelper('capitalize',capitalize);
@@ -63,22 +64,10 @@ Handlebars.registerHelper('ifNot',ifNot);
 Handlebars.registerHelper('not',not);
 Handlebars.registerHelper('ifEquals',ifEquals);
 
-Handlebars.registerHelper('keyType', function (config: ModelConfig) {
-  if (config.primaryKey) {
-    return `${config.name}PrimaryKey`;
-  }
-  const primaryKeyAttr = config.attributes?.find((p) => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
+// MODEL
+Handlebars.registerHelper('keyType',keyTypeModel);
 
-  return GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name;
-});
-
-Handlebars.registerHelper('like', function (value, substring) {
-  return value && value.includes(substring);
-});
-
+//DTO
 Handlebars.registerHelper('keyType', function (config: DTOConfig) {
   if (!config) {
     return null;
