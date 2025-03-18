@@ -30,98 +30,38 @@ import {
 } from './helpers';
 import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
-import { capitalize, concat, toCamelCase } from '../helper/stringHelper';
+import {
+  capitalize,
+  concat, fullCamelCaseAndPluralize, lowercaseAndPluralize,
+  toCamelCase,
+  toFullCamelCaseFromSnakeCase,
+  toLowerCase,
+  toTitleCase, toUpperCase,
+} from '../helper/stringHelper';
+import { json } from '../helper/jsonHelper';
+import { ifEquals, ifNot, not } from '../helper/logicalHelper';
 
 // String
 Handlebars.registerHelper('capitalize',capitalize);
 Handlebars.registerHelper('toCamelCase',toCamelCase);
 Handlebars.registerHelper('concat', concat);
-
-Handlebars.registerHelper('capitalizeEntity', (str: string) => {
-  return capitalize(str);
+Handlebars.registerHelper('toFullCamelCaseFromSnakeCase',toFullCamelCaseFromSnakeCase);
+Handlebars.registerHelper('toTitleCase', toTitleCase);
+Handlebars.registerHelper('toLowerCase', toLowerCase);
+Handlebars.registerHelper('toUpperCase', toUpperCase);
+Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
+Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
+Handlebars.registerHelper('cleanStr', function (str) {
+  return new Handlebars.SafeString(str);
 });
 
-Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
-  if (!str) return '';
+// JSON
+Handlebars.registerHelper('json', json);
 
-  const noSnake = str
-    .split('_')
-    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
-
-  return noSnake.charAt(0).toLowerCase() + noSnake.slice(1);
-});
-
-Handlebars.registerHelper('toTitleCase', (str: string) => {
-  if (!str) return '';
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-});
-
-Handlebars.registerHelper('toLowerCase', (str: string) => {
-  return (str || '').toLowerCase();
-});
-
-Handlebars.registerHelper('toUpperCase', (str: string) => {
-  return (str || '').toUpperCase();
-});
-
-Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
-  const lowerStr = str.toLowerCase();
-
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
-});
-
-Handlebars.registerHelper('fullCamelCaseAndPluralize', (str: string) => {
-  if (!str) return '';
-
-  const lowerStr = str
-    .toLowerCase()
-    .split('_')
-    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
-
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
-});
-
-Handlebars.registerHelper('replace', (str: string) => {
-  return str.replace('.', '/');
-});
-
-Handlebars.registerHelper('json', function (context) {
-  return JSON.stringify(context);
-});
-
-Handlebars.registerHelper('ifNot', function (this: any, conditional: any, options: any) {
-  if (!conditional) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-});
-
-Handlebars.registerHelper('not', function (conditional: any) {
-  return !conditional;
-});
+//LOGICAL
+Handlebars.registerHelper('ifNot',ifNot);
+Handlebars.registerHelper('not',not);
+Handlebars.registerHelper('ifEquals',ifEquals);
 
 Handlebars.registerHelper('keyType', function (config: ModelConfig) {
   if (config.primaryKey) {
@@ -157,18 +97,6 @@ Handlebars.registerHelper('keyType', function (config: DTOConfig) {
   };
   return result.name;
 });
-
-Handlebars.registerHelper(
-  'ifEquals',
-  function (
-    this: unknown, // Specify the `this` type
-    arg1: any,
-    arg2: any,
-    options: Handlebars.HelperOptions,
-  ): string {
-    return arg1 === arg2 ? options.fn(this) : options.inverse(this);
-  },
-);
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
@@ -556,10 +484,6 @@ Handlebars.registerHelper('import-uuid', function (this: any, config: ModelConfi
   const uuid = config.attributes.find((attr) => attr.type.toLowerCase() === 'uuid');
   if (uuid) imports.add('import java.util.UUID;');
   return Array.from(imports).sort().join('\n');
-});
-
-Handlebars.registerHelper('cleanStr', function (str) {
-  return new Handlebars.SafeString(str);
 });
 
 Handlebars.registerHelper('isText-type', function (this: any, type: any) {

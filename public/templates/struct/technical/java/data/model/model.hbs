@@ -67,21 +67,21 @@ public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEn
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne')}}
     @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.mappedBy}},mappedBy="{{this.relation.mappedBy}}"{{/if}}){{#if this.name}}
     @JoinColumn(name = "{{toLowerCase this.name}}", unique = true{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
-    private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') ~}}
+    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') ~}}
     @OneToMany(mappedBy = "{{this.relation.mappedBy}}", fetch = FetchType.{{toUpperCase this.relation.fetchType}})
-    private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') ~}}
+    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') ~}}
     @ManyToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}){{#if this.name}}
     @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
-    private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#ifNot this.relation.mappedBy}}
+    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#ifNot this.relation.mappedBy}}
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}){{#if this.relation.joinTable}}
     @JoinTable(
             name = "{{this.relation.joinTable}}"{{#if this.name}},
             joinColumns = @JoinColumn(name = "{{toLowerCase this.name}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
             inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
     ){{/if}}
-    private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
+    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
     @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}",fetch = FetchType.{{toUpperCase this.relation.fetchType}})
-    private List<{{capitalizeEntity this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+    private List<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
   {{/ifNot~}}
   {{/if~}}
   {{/if~}}
