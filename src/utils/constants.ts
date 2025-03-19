@@ -693,6 +693,13 @@ export const GENERIC_TYPES: Map<
       python: { name: 'dict', primitive: false },
       kotlin: { name: 'Map', primitive: false },
     },
+    collection: {
+      java: { name: 'Collection', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'ICollection', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'list', primitive: false },
+      kotlin: { name: 'Collection', primitive: false },
+    },
+
     // Miscellaneous
     enum: {
       java: { name: 'Enum', primitive: false },

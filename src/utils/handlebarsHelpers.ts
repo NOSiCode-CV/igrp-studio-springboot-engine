@@ -8,6 +8,8 @@ import {
   JavaAttribute,
   ModelConfig,
   Relation,
+  RenderContext,
+  ResponseConfig,
   SchemaContent,
 } from '../interfaces/types';
 import {
@@ -37,6 +39,7 @@ import { ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/l
 import { keyTypeModel, modelImport } from '../helper/modelHelper';
 import { keyTypeDTO } from '../helper/dtoHelper';
 import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
+import { resolveImportReponse } from '../helper/responseHelper';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -49,10 +52,13 @@ Handlebars.registerHelper('toLowerCase', toLowerCase);
 Handlebars.registerHelper('toUpperCase', toUpperCase);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
-Handlebars.registerHelper('sanitizeHeaderName',sanitizeHeaderName);
+Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
 Handlebars.registerHelper('cleanStr', function (str) {
   return new Handlebars.SafeString(str);
 });
+
+
+
 
 // JSON
 Handlebars.registerHelper('json', json);
@@ -79,6 +85,66 @@ Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
 });
+
+
+//RESPONSE
+Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
+
+/*Handlebars.registerHelper('resolve-imports-response', function (resourceConfig: ResponseConfig, baseConfig: any) {
+
+  if (!resourceConfig || !resourceConfig.content) {
+    return null;
+  }
+
+  if (!baseConfig) return null;
+
+  const module = resourceConfig?.module
+
+  const content = resourceConfig.content['application/json'] || resourceConfig.content['multipart/form-data'];
+  //console.log("resolve import:: ", content);
+
+  const properties = content.schema?.properties;
+
+  if (!properties) {
+    return null;
+  }
+
+  const isDDDStyle =
+    baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+
+  const imports = new Set();
+
+  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
+
+  for (const [key, attr] of Object.entries(properties)) {
+    // faça algo com key e attr
+   
+
+    if (attr.collectionType) {
+      const genericImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type);
+      const collectionTypeImport = genericImports.get(attr.collectionType);
+      imports.add(collectionTypeImport?.java?.technical);
+    }
+
+    if (attr.objectType) {
+      const genericImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module);
+      const objectTypeImport = genericImports.get(attr.objectType);
+
+      imports.add(isDDDStyle ? objectTypeImport?.java?.domain : objectTypeImport?.java?.technical)
+      // console.log('objectTypeTypeImport: ', objectTypeImport);
+    
+    }
+
+  }
+
+  //console.log('imports:', imports);
+  return Array.from(imports)
+    .filter((e) => e)
+    .sort()
+    .join('\n');
+
+});*/
+
 
 Handlebars.registerHelper(
   'importsTypes',
@@ -213,14 +279,16 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
+
+
+
+
 Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
   if (!config) return null;
   if (!baseConfig) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
-
-  console.log('config:: ', config);
 
   const isDDDStyle =
     baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
@@ -268,9 +336,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       .filter((it: JavaAttribute) => it.collectionType)
       .map(
         (attr: JavaAttribute) =>
-          GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)
-            ?.java.technical,
-      ),
+          GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java.technical),
   );
 
   return Array.from(imports)
