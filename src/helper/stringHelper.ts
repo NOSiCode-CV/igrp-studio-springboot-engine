@@ -93,3 +93,7 @@ export function fullCamelCaseAndPluralize(str: string): string {
 export function sanitizeHeaderName(headerName: string): string {
   return headerName.toLowerCase().replace(/-./g, (match) => match.charAt(1).toUpperCase());
 }
+
+export function wrapInCurlyBraces(str: string): string {
+  return `{${str}}`;
+}

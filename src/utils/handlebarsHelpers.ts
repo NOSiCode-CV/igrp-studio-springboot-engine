@@ -30,13 +30,14 @@ import {
   toFullCamelCaseFromSnakeCase,
   toLowerCase,
   toTitleCase,
-  toUpperCase,
+  toUpperCase, wrapInCurlyBraces,
 } from '../helper/stringHelper';
 import { json } from '../helper/jsonHelper';
-import { ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
+import { equals, ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
 import { keyTypeModel, modelImport } from '../helper/modelHelper';
 import { keyTypeDTO } from '../helper/dtoHelper';
 import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
+import { resolvePathVariables } from '../helper/controllerHelper';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -50,6 +51,7 @@ Handlebars.registerHelper('toUpperCase', toUpperCase);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
 Handlebars.registerHelper('sanitizeHeaderName',sanitizeHeaderName);
+Handlebars.registerHelper('wrapInCurlyBraces', wrapInCurlyBraces);
 Handlebars.registerHelper('cleanStr', function (str) {
   return new Handlebars.SafeString(str);
 });
@@ -62,6 +64,7 @@ Handlebars.registerHelper('ifNot', ifNot);
 Handlebars.registerHelper('not', not);
 Handlebars.registerHelper('ifEquals', ifEquals);
 Handlebars.registerHelper('ne', notEquals);
+Handlebars.registerHelper('eq',equals);
 Handlebars.registerHelper('isText-type', isText);
 Handlebars.registerHelper('isPageable', isPageable);
 
@@ -71,6 +74,9 @@ Handlebars.registerHelper('model-imports-helper', modelImport);
 
 // DTO
 Handlebars.registerHelper('keyType', keyTypeDTO);
+
+// CONTROLLER
+Handlebars.registerHelper('resolve-mapping',resolvePathVariables);
 
 // GENERAL
 Handlebars.registerHelper('resolve-package', resolvePackage);
@@ -188,30 +194,6 @@ Handlebars.registerHelper(
     return [...new Set(imports)].join('\n');
   },
 );
-
-Handlebars.registerHelper(
-  'eq',
-  function (this: any, arg1: any, arg2: any, options: Handlebars.HelperOptions) {
-    return arg1 === arg2;
-  },
-);
-
-Handlebars.registerHelper('paramsFormat', function (str) {
-  return `{${str}}`;
-});
-
-Handlebars.registerHelper('resolve-mapping', function (this: any, action: ControllerAction) {
-  let pathVariable = '';
-  if (action.path) {
-    if (action.pathVariables) {
-      action.pathVariables.forEach((path) => {
-        pathVariable = pathVariable.concat(`=/{${path.name}}`);
-      });
-
-      return pathVariable;
-    }
-  }
-});
 
 Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
   if (!config) return null;
