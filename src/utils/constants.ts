@@ -176,6 +176,7 @@ export const TEMPLATES = {
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
+  DOMAIN_CRUD_SERVICE: 'struct/technical/java/service/serviceCrudImpl.hbs',
   DOMAIN_TEST_SERVICE: 'struct/technical/java/service/serviceImplTest.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
   DOMAIN_ENUM: 'struct/technical/java/constants/enum.hbs',

@@ -4,10 +4,10 @@ import {
   PathVariables,
   Attribute,
   JavaAttribute,
-  EnumValue, SchemaContent, Body,
+  EnumValue, SchemaContent, Body, CrudModel, CrudControllerConfig,
 } from '../../interfaces/types';
 
-export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent): void => {
+export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent, crudModels?: CrudModel[]): void => {
   if (actions) {
 
     const duplicates = findDuplicateActions(actions)
@@ -88,6 +88,15 @@ export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[
     }
   }
 
+  if(crudModels) {
+    const duplicates = findCrudDuplicates(crudModels)
+    if (duplicates.length > 0) {
+      throw new Error(
+        `The crud configuration has the following duplicated model names: ${[...new Set(duplicates)].join(', ')}.`
+      );
+    }
+  }
+
 };
 
 const findDuplicatesSchema = (arr: string[]) : string[] => {
@@ -147,3 +156,16 @@ const findDuplicateResponses = (arr: { [statusCode: string]: Body; }): string[] 
   return duplicates;
 };
 
+const findCrudDuplicates = (arr: CrudModel[]): string[] => {
+  const nameCount: Record<string, number> = {};
+  const duplicates: string[] = [];
+
+  arr.forEach((e) => {
+    nameCount[e.modelName] = (nameCount[e.modelName] || 0) + 1;
+    if (nameCount[e.modelName] === 2) {
+      duplicates.push(e.modelName);
+    }
+  });
+
+  return duplicates;
+};

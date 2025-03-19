@@ -2,7 +2,7 @@ import {
   ApiConfig,
   BaseApiConfig,
   ControllerAction,
-  ControllerConfig,
+  ControllerConfig, CrudControllerConfig,
   DdlConfig,
   DeleteConfig,
   DTOConfig,
@@ -86,6 +86,7 @@ import { generateTestHandlers } from './modules/test/generateTestHandlers';
 import { processTableName } from './modules/model/helpers';
 import { capitalize } from './helper/stringHelper';
 import { isPageable } from './helper/logicalHelper';
+import { generateCrudController } from './modules/crudController/generateCrudController';
 
 /**
  * Main Function that creates the base api
@@ -729,6 +730,7 @@ async function requestDtoConfig(
  *
  * @param {ControllerConfig} dirty - The controller configuration object, including the controller name, base path, and actions.
  * @param {string} basePath - The base path of the application where the controller will be generated and saved.
+ * @param {boolean} customImpl - The boolean to set if must generate an implementation service.
  *
  * @throws {Error} Throws an error if the controller configuration is invalid or if the base path is not provided.
  *
@@ -948,7 +950,7 @@ async function requestDtoConfig(
  * };
  *
  */
-export const addController = async (dirty: ControllerConfig, basePath: string) => {
+export const addController = async (dirty: ControllerConfig, basePath: string, customImpl?: boolean) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
@@ -1078,9 +1080,36 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     }
   } else {
     await generateServiceInterface(context);
-    await generateServiceInmpl(context);
+    if(!customImpl) await generateServiceInmpl(context);
     await generateTestServiceInmpl(context);
   }
+};
+
+export const addCrudController = async (dirty: CrudControllerConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: CrudControllerConfig = cleaner(dirty);
+
+  // this function check is the models and its fields have duplicateds names
+  checkDuplicated([], [], [], [], undefined, config.models);
+
+  //config.actions = upperCaseResponse(config.actions);
+
+  /*const isConfigValid = validateCrudController(config);
+
+  if (!isConfigValid && validateCrudController.errors) {
+    throw validateController.errors;
+  }*/
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  config.name = capitalize(config.name);
+
+  await generateCrudController(config, basePath);
+
 };
 
 /**
