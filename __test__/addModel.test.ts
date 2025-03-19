@@ -156,7 +156,6 @@ describe('Model generator', () => {
             "type": "Level",
             "objectType": "enum",
             "name": "userLevelNew",
-            "length": 500,
             "nullable": false,
             "unique": true,
             "skipFieldRevision": true
@@ -226,7 +225,6 @@ describe('Model generator', () => {
           {
             "type": "integer",
             "name": "phoneNumber",
-            "length": 7,
             "nullable": false,
             "unique": true
           },

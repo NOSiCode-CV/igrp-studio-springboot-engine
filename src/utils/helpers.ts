@@ -11,7 +11,7 @@ import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import {
   ApiConfig,
-  ControllerConfig,
+  ControllerConfig, CrudControllerConfig,
   DeleteConfig,
   DTOBaseConfig,
   DTOConfig,
@@ -434,7 +434,7 @@ export const getDDDExceptionDir = (context: RenderContext<ExceptionConfig>) =>
     DIRECTORIES.EXCEPTIONS,
   );
 
-export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
@@ -448,7 +448,7 @@ export const getTestServiceDir = (context: RenderContext<ControllerConfig | Mode
     DIRECTORIES.SERVICES,
   );
 
-export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
+export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),

@@ -289,6 +289,32 @@ export interface HttpHeader {
   isRequired: boolean;
 }
 
+export interface CrudModel {
+  modelName: string;
+  module?: string;
+  fields: Field[];
+}
+
+interface Field {
+  name: string
+}
+
+export interface CrudControllerConfig {
+  id: string;
+  type: 'crud-controller';
+  name: string;
+  basePath: string;
+  module?: string;
+  description: string;
+  models: CrudModel[];
+  methods: {
+    create?: boolean;
+    read?: boolean;
+    update?: boolean;
+    delete?: boolean;
+  };
+}
+
 export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;

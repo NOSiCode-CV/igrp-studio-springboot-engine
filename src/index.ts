@@ -2,7 +2,7 @@ import {
   ApiConfig,
   BaseApiConfig,
   ControllerAction,
-  ControllerConfig,
+  ControllerConfig, CrudControllerConfig,
   DdlConfig,
   DeleteConfig,
   DTOConfig,
