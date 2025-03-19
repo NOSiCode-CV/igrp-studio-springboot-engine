@@ -1,5 +1,5 @@
 import { getSpringDependencies } from '../src';
-import { SPRING_BOOT_VERSION } from '../src/utils/constants';
+import { SPRING_BOOT_VERSION } from '../src/helper/springInitializerHelper';
 
 describe('Spring initializer dependencies', () => {
   it('should print in console all dependencies from spring initializer for the version used in engine', async () => {

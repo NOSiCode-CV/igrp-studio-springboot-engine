@@ -2,8 +2,6 @@ import path from 'path';
 import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
-export const SPRING_BOOT_VERSION = '3.4.3'
-
 /* Use the definition below if it's the local environment and unit tests execution */
 //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
 //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');

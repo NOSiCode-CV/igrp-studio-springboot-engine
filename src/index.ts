@@ -33,7 +33,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  SCHEMA_TYPES, SPRING_BOOT_VERSION,
+  SCHEMA_TYPES,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -87,7 +87,7 @@ import { processTableName } from './modules/model/helpers';
 import { capitalize } from './helper/stringHelper';
 import { isPageable } from './helper/logicalHelper';
 import { generateCrudController } from './modules/crudController/generateCrudController';
-import { getSpringInitializerDependencies } from './helper/springInitializerHelper';
+import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/springInitializerHelper';
 import { Dependency } from './interfaces/springDependencyTypes';
 /**
  * Main Function that creates the base api
