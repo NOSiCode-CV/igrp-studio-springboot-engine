@@ -63,12 +63,16 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
         fullPath: basePath,
       };
 
+
+
       const responseContext: RenderContext<ResponseConfig> = {
         resourceConfig: { ...response, statusCode: status, template: 'classic', type: 'response' },
         basePath,
         baseConfig,
         fullPath: basePath,
       };
+
+      //console.log('resourceConfig:: ', responseContext.resourceConfig.content);
 
       const modelOutputPath = getDTOOutputPath(dtoContext, responseContext);
       const template = await _renderDTO(responseContext);
@@ -239,7 +243,8 @@ export const transformSchemaDTOConfig = async function (
       regex: attr.pattern,
       isEmail: attr.format === 'email',
       isUrl: attr.format === 'url',
-      primaryKey: attr.identifier ?? false
+      primaryKey: attr.identifier ?? false,
+      collectionType: attr.collectionType
     })
   }
 
