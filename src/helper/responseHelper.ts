@@ -4,10 +4,8 @@ import { getPackageNameFromConfig } from "../utils/helpers";
 
 
 
-export const resolveImportReponse = (
-    resourceConfig: ResponseConfig,
-    baseConfig: any
-): string | null => {
+export const resolveImportReponse = (resourceConfig: ResponseConfig, baseConfig: any): string | null => {
+
     if (!resourceConfig || !resourceConfig.content) {
         return null;
     }
@@ -38,7 +36,7 @@ export const resolveImportReponse = (
             const collectionTypeImport = genericImports.get(attr.collectionType);
             const technicalImport = collectionTypeImport?.java?.technical;
 
-            if (technicalImport !== undefined) {
+            if (technicalImport) {
                 imports.add(technicalImport);
             }
         }
@@ -51,7 +49,7 @@ export const resolveImportReponse = (
                 ? objectTypeImport?.java?.domain
                 : objectTypeImport?.java?.technical;
 
-            if (importValue !== undefined) {
+            if (importValue) {
                 imports.add(importValue);
             }
         }

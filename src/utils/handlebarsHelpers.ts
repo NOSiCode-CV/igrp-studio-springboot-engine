@@ -97,61 +97,6 @@ Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
 
-/*Handlebars.registerHelper('resolve-imports-response', function (resourceConfig: ResponseConfig, baseConfig: any) {
-
-  if (!resourceConfig || !resourceConfig.content) {
-    return null;
-  }
-
-  if (!baseConfig) return null;
-
-  const module = resourceConfig?.module
-
-  const content = resourceConfig.content['application/json'] || resourceConfig.content['multipart/form-data'];
-  //console.log("resolve import:: ", content);
-
-  const properties = content.schema?.properties;
-
-  if (!properties) {
-    return null;
-  }
-
-  const isDDDStyle =
-    baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
-
-  const imports = new Set();
-
-  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
-
-  for (const [key, attr] of Object.entries(properties)) {
-    // faça algo com key e attr
-   
-
-    if (attr.collectionType) {
-      const genericImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type);
-      const collectionTypeImport = genericImports.get(attr.collectionType);
-      imports.add(collectionTypeImport?.java?.technical);
-    }
-
-    if (attr.objectType) {
-      const genericImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module);
-      const objectTypeImport = genericImports.get(attr.objectType);
-
-      imports.add(isDDDStyle ? objectTypeImport?.java?.domain : objectTypeImport?.java?.technical)
-      // console.log('objectTypeTypeImport: ', objectTypeImport);
-    
-    }
-
-  }
-
-  //console.log('imports:', imports);
-  return Array.from(imports)
-    .filter((e) => e)
-    .sort()
-    .join('\n');
-
-});*/
-
 
 Handlebars.registerHelper(
   'importsTypes',
