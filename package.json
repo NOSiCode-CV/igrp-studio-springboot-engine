@@ -32,11 +32,12 @@
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
+    "axios": "^1.8.3",
+    "fast-xml-parser": "^4.3.2",
     "fs-extra": "^11.2.0",
     "sass": "^1.77.8",
     "source-map-loader": "^5.0.0",
-    "ts-loader": "^9.5.1",
-    "fast-xml-parser": "^4.3.2"
+    "ts-loader": "^9.5.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

@@ -33,7 +33,7 @@ import {
   PARAMS_TYPES,
   PROJECT_STRUCTURE_STYLE,
   RELATIONSHIP_TYPES,
-  SCHEMA_TYPES,
+  SCHEMA_TYPES, SPRING_BOOT_VERSION,
 } from './utils/constants';
 import { apiValidation } from './schema/baseApiConfig';
 import path from 'path';
@@ -86,6 +86,8 @@ import { generateTestHandlers } from './modules/test/generateTestHandlers';
 import { processTableName } from './modules/model/helpers';
 import { capitalize } from './helper/stringHelper';
 import { isPageable } from './helper/logicalHelper';
+import { getSpringInitializerDependencies } from './helper/springInitializerHelper';
+import { Dependency } from './interfaces/springDependencyTypes';
 
 /**
  * Main Function that creates the base api
@@ -145,6 +147,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,
+    springBootVersion: baseConfig.springBootVersion || SPRING_BOOT_VERSION,
   };
 
   if (!basePath) {
@@ -244,6 +247,27 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
   await createModuleDirectory(context);
 
   await saveModuleConfig(context, basePath);
+};
+
+/**
+ * Asynchronously retrieves and logs all Spring Initializer dependencies.
+ *
+ * This function calls the `getDependencies` function, which fetches the
+ * list of dependencies from the Spring Initializer API, and then logs
+ * the retrieved dependencies to the console.
+ *
+ * @async
+ * @function getSpringDependencies
+ * @returns {Promise<void>} - A promise that resolves when dependencies are fetched and logged.
+ *
+ * @example
+ * // Example usage:
+ * getSpringDependencies()
+ *   .then(() => console.log("Dependencies fetched successfully"))
+ *   .catch((error) => console.error("Error fetching dependencies", error));
+ */
+export const getSpringDependencies = async (): Promise<Dependency[]> => {
+  return await getSpringInitializerDependencies();
 };
 
 /**
