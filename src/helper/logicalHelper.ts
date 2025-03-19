@@ -15,6 +15,10 @@ export function ifEquals(
   return arg1 === arg2 ? options.fn(this) : options.inverse(this);
 }
 
+export function equals(a: any, b: any): any {
+  return a === b;
+}
+
 export function notEquals(a: any, b: any): any {
   return a !== b;
 }

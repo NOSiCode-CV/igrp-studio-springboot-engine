@@ -32,13 +32,14 @@ import {
   toFullCamelCaseFromSnakeCase,
   toLowerCase,
   toTitleCase,
-  toUpperCase,
+  toUpperCase, wrapInCurlyBraces,
 } from '../helper/stringHelper';
 import { json } from '../helper/jsonHelper';
-import { ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
+import { equals, ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
 import { keyTypeModel, modelImport } from '../helper/modelHelper';
 import { keyTypeDTO } from '../helper/dtoHelper';
 import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
+import { resolvePathVariables } from '../helper/controllerHelper';
 import { resolveImportReponse } from '../helper/responseHelper';
 
 // String
@@ -52,6 +53,8 @@ Handlebars.registerHelper('toLowerCase', toLowerCase);
 Handlebars.registerHelper('toUpperCase', toUpperCase);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
+Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
+Handlebars.registerHelper('wrapInCurlyBraces', wrapInCurlyBraces);
 Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
 Handlebars.registerHelper('cleanStr', function (str) {
   return new Handlebars.SafeString(str);
@@ -68,6 +71,7 @@ Handlebars.registerHelper('ifNot', ifNot);
 Handlebars.registerHelper('not', not);
 Handlebars.registerHelper('ifEquals', ifEquals);
 Handlebars.registerHelper('ne', notEquals);
+Handlebars.registerHelper('eq', equals);
 Handlebars.registerHelper('isText-type', isText);
 Handlebars.registerHelper('isPageable', isPageable);
 
@@ -77,6 +81,9 @@ Handlebars.registerHelper('model-imports-helper', modelImport);
 
 // DTO
 Handlebars.registerHelper('keyType', keyTypeDTO);
+
+// CONTROLLER
+Handlebars.registerHelper('resolve-mapping', resolvePathVariables);
 
 // GENERAL
 Handlebars.registerHelper('resolve-package', resolvePackage);
