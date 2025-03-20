@@ -46,6 +46,7 @@ export interface BaseApiConfig {
   enableObservability: boolean;
   enableEntityRevision: boolean;
   igrpCoreVersion: string;
+  springBootVersion?: string;
 }
 
 export interface ModelConfig extends IdentifiableElement {

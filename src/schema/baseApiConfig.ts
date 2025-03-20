@@ -71,6 +71,10 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
     igrpCoreVersion: {
       type: "string",
       nullable: false
+    },
+    springBootVersion: {
+      type: "string",
+      nullable: true
     }
   },
   required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision"],

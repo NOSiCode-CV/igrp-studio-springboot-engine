@@ -149,6 +149,7 @@ export const ERROR_MESSAGE = {
   INVALID_PERMISSION_CONFIG:
     'The provided Permission configuration is invalid. Please verify the model details and try again.',
   INVALID_OUTPUT_PATH: 'The provided output path is invalid or does not exist.',
+  FAILED_TO_GET_SPRING_DEPENDENCIES: 'Failed to fetch dependencies from Spring Initializr.',
   MODEL_REQUIRED:
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
