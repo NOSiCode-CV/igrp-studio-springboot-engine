@@ -169,6 +169,7 @@ Handlebars.registerHelper(
           if (schema.collectionType === 'pageable') {
             imports.push(`import org.springframework.data.domain.Page;`);
             imports.push(`import org.springframework.data.domain.Pageable;`);
+            imports.push(`import org.springdoc.core.annotations.ParameterObject;`);
           }
 
           if (!objectType && schemaType !== 'object') continue;
