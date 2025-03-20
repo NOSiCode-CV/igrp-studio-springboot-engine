@@ -250,21 +250,15 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
 };
 
 /**
- * Asynchronously retrieves and logs all Spring Initializer dependencies.
+ * Asynchronously retrieves all Spring Initializer dependencies.
  *
- * This function calls the `getDependencies` function, which fetches the
- * list of dependencies from the Spring Initializer API, and then logs
- * the retrieved dependencies to the console.
+ * This function calls the `getSpringInitializerDependencies` function, which fetches the
+ * list of dependencies from the Spring Initializer API, and then returns it.
+ * If the connection is not successfully it returns the dependencies from a local json named 'spring-dependencies.json'
  *
  * @async
  * @function getSpringDependencies
- * @returns {Promise<void>} - A promise that resolves when dependencies are fetched and logged.
- *
- * @example
- * // Example usage:
- * getSpringDependencies()
- *   .then(() => console.log("Dependencies fetched successfully"))
- *   .catch((error) => console.error("Error fetching dependencies", error));
+ * @returns {Promise<Dependency>} - A promise that resolves when dependencies are fetched and logged.
  */
 export const getSpringDependencies = async (): Promise<Dependency[]> => {
   return await getSpringInitializerDependencies();
