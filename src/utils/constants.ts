@@ -919,7 +919,7 @@ export const SCHEMA_TYPES = [
   'Reference other Object',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
-export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
+export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql', 'H2'] as const;
 export const STRUCT_TYPES = [
   PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN,
   PROJECT_STRUCTURE_STYLE.TECHNICAL,
