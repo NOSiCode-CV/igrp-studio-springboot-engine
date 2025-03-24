@@ -35,7 +35,7 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
   {{/each}}
   }
 {{/if~}})
-public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
+public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
 
    {{#if resourceConfig.primaryKey}}
     @EmbeddedId

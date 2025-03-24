@@ -16,7 +16,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 {{#if resourceConfig.crud}}
 @RepositoryRestResource(path = "{{toCamelCase resourceConfig.name}}")
 {{/if}}
-public interface {{resourceConfig.name}}Repository extends
+public interface {{capitalizeJavaStyle resourceConfig.name}}Repository extends
     JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>,
     JpaSpecificationExecutor<{{resourceConfig.name}}>
     {{#if resourceConfig.revision ~}}RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
