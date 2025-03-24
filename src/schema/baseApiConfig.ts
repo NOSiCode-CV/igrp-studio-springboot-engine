@@ -38,7 +38,7 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       type: "string", 
       enum: DATABASE_TYPES,
       errorMessage: {
-        enum: "The 'database' attribute cannot be empty and must be one of the following: 'Postgresql', 'MySQL', or 'Oracle'."
+        enum: "The 'database' attribute cannot be empty and must be one of the following: 'Postgresql', 'MySQL', 'H2' or 'Oracle'."
       }
     },
     description: { 
