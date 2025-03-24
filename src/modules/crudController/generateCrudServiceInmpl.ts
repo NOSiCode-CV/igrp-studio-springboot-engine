@@ -1,5 +1,5 @@
 import path from 'path';
-import { ControllerConfig, CrudControllerConfig, RenderContext } from '../../interfaces/types';
+import { CrudControllerConfig, RenderContext } from '../../interfaces/types';
 import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';

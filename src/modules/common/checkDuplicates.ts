@@ -4,7 +4,7 @@ import {
   PathVariables,
   Attribute,
   JavaAttribute,
-  EnumValue, SchemaContent, Body, CrudModel, CrudControllerConfig,
+  EnumValue, SchemaContent, Body, CrudModel,
 } from '../../interfaces/types';
 
 export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent, crudModels?: CrudModel[]): void => {

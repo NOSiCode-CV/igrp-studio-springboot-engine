@@ -4,14 +4,13 @@ import {
   ControllerAction,
   HttpMethod,
   RenderContext,
-  Attribute, JavaAttribute, PathVariables,
+  JavaAttribute, PathVariables,
 } from '../../interfaces/types';
 import { loadModelConfigs } from '../../utils/helpers';
 import { addController, addDTO } from '../../index';
 import { getBaseApiConfig } from '../common/getBaseApiConfig';
 import { DIRECTORIES } from '../../utils/constants';
 import { generateElementId } from '../serialization/helpers';
-import { generateServiceInterface } from '../controller/generateServiceInterface';
 import { generateCrudServiceInmpl } from './generateCrudServiceInmpl';
 import { toCamelCase } from '../../helper/stringHelper';
 

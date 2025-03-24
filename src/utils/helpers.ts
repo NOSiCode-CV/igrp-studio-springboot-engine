@@ -4,7 +4,6 @@ import {
   EXTENSIONS,
   PARTIALS,
   PARTIALS_DIR,
-  REQUEST_BODY_NOT_IMPORT,
 } from './constants';
 import path from 'path';
 import fs from 'fs-extra';

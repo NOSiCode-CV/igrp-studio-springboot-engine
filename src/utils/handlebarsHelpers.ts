@@ -8,8 +8,6 @@ import {
   JavaAttribute,
   ModelConfig,
   Relation,
-  RenderContext,
-  ResponseConfig,
   SchemaContent,
 } from '../interfaces/types';
 import {
