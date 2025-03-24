@@ -18,10 +18,10 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
   const template = await renderModel(context);
 
-  const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
+  const errorsUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
-  if (errosUniqueConstraints.length > 0) {
-    throw new Error(`Unique constraint errors found:\n${errosUniqueConstraints.join('\n')}`);
+  if (errorsUniqueConstraints.length > 0) {
+    throw new Error(`Unique constraint errors found:\n${errorsUniqueConstraints.join('\n')}`);
   }
 
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
@@ -68,11 +68,11 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   // Validação e renderização de cada atributo com seu valor padrão
   context.resourceConfig.attributes.forEach(attribute => {
     if (attribute.defaultValue) {
-      const columnAnnotation = renderColumnWithDefault(attribute);
+      renderColumnWithDefault(attribute);
     }
   });
 
-    // Gerar as restrições únicas compostas
+  // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
