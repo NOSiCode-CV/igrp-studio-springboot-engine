@@ -669,16 +669,6 @@ export const validateAnnotations = (attribute: any) => {
   }
 };
 
-export const extractTypeFromList = (typeString: string): string | null => {
-  const listRegex = '^List<(.+)>$';
-  const match = typeString.match(listRegex);
-  if (match && match[1]) {
-    if (match[1].trim() && !REQUEST_BODY_NOT_IMPORT.includes(match[1].trim()))
-      return match[1].trim();
-  } else if (!REQUEST_BODY_NOT_IMPORT.includes(typeString)) return typeString;
-  return null;
-};
-
 /**
  * Extracts the directory path from a given full file path.
  * @param filePath - The full path of the file.
@@ -686,13 +676,6 @@ export const extractTypeFromList = (typeString: string): string | null => {
  */
 export const getDirectoryPath = (filePath: string): string => {
   return path.dirname(filePath);
-};
-
-export const normalizeOutput = (outputPath: string): string => {
-  console.log('Length: ', outputPath.length);
-  if (process.platform === 'win32' && outputPath.length > 50) {
-    return '\\\\?\\' + path.resolve(outputPath);
-  } else return outputPath;
 };
 
 export const isResponseCollection = (type: string): boolean => {
