@@ -2,7 +2,7 @@ import { ApiConfig } from "../interfaces/types";
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
-
+import { dependencySchema } from './baseApiConfig';
 
 const apiSchema: JSONSchemaType<ApiConfig> = {
   type: 'object',
@@ -79,9 +79,14 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     springBootVersion: {
       type: "string",
       nullable: true
-    }
+    },
+    dependencies: {
+      type: "array",
+      items: dependencySchema,
+      errorMessage: 'The dependencies must be an array of valid dependency definitions.'
+    },
   },
-  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
+  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "dependencies"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -92,12 +97,12 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       packageName: "The 'packageName' attribute is required and cannot be empty.",
       database: "The 'database' attribute is required and must specify a valid database type.",
       projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
-      enableObservability: "The 'enableObservability' attribute is required and must specify a valid database type."
+      dependencies: "The 'dependencies' attribute is required and must specify an array of valid dependencies.",
+      enableObservability: "The 'enableObservability' attribute is required and must specify a valid boolean type.",
     },
     additionalProperties: "Extra attributes are not allowed in the API configuration."
   }
 };
-
 
 export const apiValidation: ValidateFunction<ApiConfig> = ajvInstance.compile<ApiConfig>(apiSchema);
 

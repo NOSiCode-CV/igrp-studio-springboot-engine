@@ -13,6 +13,7 @@ import {
   RELATIONSHIP_TYPES,
   STRUCT_TYPES,
 } from '../utils/constants';
+import { Dependency } from './springDependencyTypes';
 
 interface IdentifiableElement {
   id?: string;
@@ -47,6 +48,7 @@ export interface BaseApiConfig {
   enableEntityRevision: boolean;
   igrpCoreVersion: string;
   springBootVersion?: string;
+  dependencies: Dependency[];
 }
 
 export interface ModelConfig extends IdentifiableElement {
@@ -405,6 +407,11 @@ export interface XmlConfig extends SerializationConfig {
 
 export interface DdlConfig extends SerializationConfig {
   ddl: string;
+}
+
+export interface AttributeCategory {
+  name: string,
+  group: string
 }
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

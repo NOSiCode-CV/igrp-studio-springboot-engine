@@ -19,6 +19,7 @@ import {
   XmlConfig,
 } from './interfaces/types';
 import {
+  CATEGORIZED_ATTRIBUTE_TYPES, CATEGORIZED_MODEL_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   DIRECTORIES,
@@ -148,6 +149,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,
     springBootVersion: baseConfig.springBootVersion || SPRING_BOOT_VERSION,
+    dependencies: baseConfig.dependencies
   };
 
   if (!basePath) {
@@ -1271,8 +1273,8 @@ export const engineTypes = async (module: string, basePath: string) => {
     { DATABASE_TYPES: DATABASE_TYPES },
     { SCHEMA_TYPES: schemaTypes },
     { DTO_SCHEMAS: bodyDtos },
-    { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
-    { MODEL_ATTRIBUTE_TYPES: GENERIC_MODEL_ATTRIBUTE_TYPES },
+    { ATTRIBUTE_TYPES: CATEGORIZED_ATTRIBUTE_TYPES },
+    { MODEL_ATTRIBUTE_TYPES: CATEGORIZED_MODEL_ATTRIBUTE_TYPES },
     { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
     { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },

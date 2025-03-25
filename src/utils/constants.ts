@@ -535,6 +535,34 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'instant',
 ];
 
+export const CATEGORIZED_ATTRIBUTE_TYPES = {
+  timing: [
+    'date', 'datetime', 'time', 'instant'
+  ],
+  numeric: [
+    'integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'
+  ],
+  text: [
+    'string', 'char'
+  ],
+  media: [
+    'file', 'binary'
+  ],
+  misc: [
+    'uuid',
+  ],
+  generic: [
+    'object'
+  ]
+}
+
+export const CATEGORIZED_MODEL_ATTRIBUTE_TYPES = {
+  ...CATEGORIZED_ATTRIBUTE_TYPES,
+  generic: [
+    'relation'
+  ]
+}
+
 const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type !== 'object');
 
 export const GENERIC_MODEL_ATTRIBUTE_TYPES = [...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'];
