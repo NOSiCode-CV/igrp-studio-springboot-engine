@@ -2,6 +2,7 @@ import { saveToFile } from '../common/saveToFile';
 import { ModelConfig } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
 import { getModelConfigPath } from '../../utils/helpers';
+import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
 /**
  * Generates and saves the configuration file of a model.
@@ -14,11 +15,8 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
   if (config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
-  
-  // if (config.primaryKey?.length === 0) {
-  //   throw `The model '${config.name}' must have at least one primary key`
-  // }
 
-  const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, config.name, basePath);
+  const fileName = capitalizeJavaStyle(config.name);
+  const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
   await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_MODEL, config.id, config.module, basePath, EXTENSIONS.JSON);
 };

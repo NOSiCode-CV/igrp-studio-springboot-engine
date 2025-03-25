@@ -10,6 +10,7 @@ import {
 } from '../../utils/helpers';
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
+import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
 const REPOSITORY_PREFIX = 'I';
 const REPOSITORY_SUFFIX = 'Repository.java';
@@ -83,8 +84,9 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
 }
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getDDDRepositoryOutputDir(context)
+  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
   context.fullPath = outputDir
-  return path.join(outputDir, `${REPOSITORY_PREFIX}${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+  return path.join(outputDir, `${REPOSITORY_PREFIX}${fileName}${REPOSITORY_SUFFIX}`);
 }
 
 const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {

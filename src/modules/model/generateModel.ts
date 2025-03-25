@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { updatePermissions } from '../permission/permissionManagement';
 import { saveModelConfig } from './saveModelConfig';
+import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
@@ -170,15 +171,17 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 // Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getModelOutputDir(context)
+  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+  return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
 }
 
 // Caminho onde o arquivo é salvo
 const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getDDDModelOutputDir(context)
+  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+  return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
 }
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {

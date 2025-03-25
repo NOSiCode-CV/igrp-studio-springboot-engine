@@ -16,7 +16,7 @@ export function capitalizeJavaStyle(str: string): string {
       .map(singleCapitalize)
       .join('');
   }
-  return str;
+  return singleCapitalize(str);
 }
 
 export function toCamelCase(str: string): string {
