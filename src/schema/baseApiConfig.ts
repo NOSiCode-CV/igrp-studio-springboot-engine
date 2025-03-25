@@ -131,11 +131,12 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
     },
     dependencies: {
       type: "array",
+      nullable: true,
       items: dependencySchema,
       errorMessage: 'The dependencies must be an array of valid dependency definitions.'
     },
   },
-  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision", "dependencies"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision"],
   additionalProperties: false,
   errorMessage: {
     required: {
