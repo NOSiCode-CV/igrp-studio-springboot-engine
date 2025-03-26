@@ -1,6 +1,8 @@
 # General
 spring.config.import=optional:file:.env[.properties]
 
+server.port=${SERVICE_PORT}
+
 # Datasource
 {{#if (eq baseConfig.database "Postgresql")}}
 spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}
