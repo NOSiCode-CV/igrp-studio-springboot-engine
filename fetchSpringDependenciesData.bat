@@ -1,7 +1,7 @@
 @echo off
 
 set URL=https://start.spring.io/dependencies?bootVersion=3.4.3
-set FILE_NAME=spring-dependencies.json
+set FILE_NAME=public/spring_dependencies/spring-dependencies.json
 
 curl -s %URL% -o %FILE_NAME%
 
