@@ -22,7 +22,8 @@ export async function getSpringInitializerDependencies(): Promise<Dependency[]> 
     return mapDependencies(springInitializerData.dependencies);
 
   } catch (error) {
-    console.error(`Failed to fetch from the internet. Getting local dependencies for spring boot version ${SPRING_BOOT_VERSION}`);
+    console.error(`Failed to fetch from the internet`);
+    console.info(`Getting local dependencies for spring boot version ${SPRING_BOOT_VERSION}`);
     try {
 
       const cachedDependencies: string = await fs.promises.readFile(SPRING_DEPENDENCY_CACHE_FILE, 'utf-8');
