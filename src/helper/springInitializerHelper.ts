@@ -1,17 +1,14 @@
 import axios from 'axios';
 import { Dependency, SpringInitializerData } from '../interfaces/springDependencyTypes';
 import { SPRING_DEPENDENCY_CACHE_FILE } from '../utils/constants';
-import fs from 'fs';
+import fs, { pathExists } from 'fs-extra';
 
 export const SPRING_BOOT_VERSION = '3.4.3';
-export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = 'https://start.spring.io/dependencies?bootVersion=';
+export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = `https://start.spring.io/dependencies?bootVersion=${SPRING_BOOT_VERSION}`;
 
 export async function getSpringInitializerDependencies(): Promise<Dependency[]> {
   try {
-
-    const response = await axios.get(
-      `${SPRING_INITIALIZER_DEPENDENCIES_DATA_URL}${SPRING_BOOT_VERSION}`,
-    );
+    const response = await axios.get(`${SPRING_INITIALIZER_DEPENDENCIES_DATA_URL}`);
 
     const data = response.data;
 
@@ -23,16 +20,26 @@ export async function getSpringInitializerDependencies(): Promise<Dependency[]> 
     };
 
     return mapDependencies(springInitializerData.dependencies);
-
   } catch (error) {
     console.error(`Failed to fetch from the internet`);
     console.info(`Getting local dependencies for spring boot version ${SPRING_BOOT_VERSION}`);
     try {
+      console.log(SPRING_DEPENDENCY_CACHE_FILE);
 
-      const cachedDependencies: string = await fs.promises.readFile(SPRING_DEPENDENCY_CACHE_FILE, 'utf-8');
+      const cachedDependencies = await fs.readFile(SPRING_DEPENDENCY_CACHE_FILE, 'utf-8');
+      const b = await pathExists(SPRING_DEPENDENCY_CACHE_FILE);
+
+      console.log(`Path exists ? ${b}`);
+      console.log(`${cachedDependencies}`);
+
       const springInitializerData: SpringInitializerData = JSON.parse(cachedDependencies);
 
+      console.info('--------------------------------------------');
+      console.log(springInitializerData.dependencies);
+      console.info('--------------------------------------------');
+
       return mapDependencies(springInitializerData.dependencies);
+
     } catch (error) {
       console.error('Failed to read from the local dependency JSON file:', error);
     }
