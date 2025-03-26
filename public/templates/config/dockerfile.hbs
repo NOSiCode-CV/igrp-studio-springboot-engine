@@ -6,7 +6,7 @@ ARG SERVICE_NAME
 
 # Set the working directory
 ENV APP_HOME /app
-ENV SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
+ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
 
 # Copy the pom.xml and source code
 COPY src $APP_HOME/src
