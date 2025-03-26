@@ -8,15 +8,18 @@ export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = 'https://start.spring.io
 
 export async function getSpringInitializerDependencies(): Promise<Dependency[]> {
   try {
+
     const response = await axios.get(
       `${SPRING_INITIALIZER_DEPENDENCIES_DATA_URL}${SPRING_BOOT_VERSION}`,
     );
 
+    const data = response.data;
+
     const springInitializerData: SpringInitializerData = {
-      bootVersion: response.data.bootVersion,
-      dependencies: response.data.dependencies,
-      repositories: response.data.repositories,
-      boms: response.data.boms,
+      bootVersion: data.bootVersion,
+      dependencies: data.dependencies,
+      repositories: data.repositories,
+      boms: data.boms,
     };
 
     return mapDependencies(springInitializerData.dependencies);

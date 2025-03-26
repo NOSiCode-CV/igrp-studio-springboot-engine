@@ -42,11 +42,22 @@
 		{{> security-maven-dependencies}}
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
+    {{> igrp-maven-dependencies}}
   {{#if baseConfig.enableObservability}}
 		{{> observability-maven-dependencies}}
   {{/if}}
-		{{> igrp-maven-dependencies}}
-	</dependencies>
+    {{#if baseConfig.dependencies}}
+      {{#each baseConfig.dependencies}}
+      <dependency>
+        <groupId>{{groupId}}</groupId>
+        <artifactId>{{artifactId}}</artifactId>
+        {{#if version}}<version>{{version}}</version>{{/if}}
+        {{#if scope}}<scope>{{scope}}</scope>{{/if}}
+      </dependency>
+
+      {{/each}}
+    {{/if}}
+  </dependencies>
 	<build>
 		<plugins>
 			<plugin>
