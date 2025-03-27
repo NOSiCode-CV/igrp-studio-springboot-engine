@@ -121,6 +121,8 @@ export const PARTIALS = [
   'security-maven-dependencies.hbs',
   'spring-maven-dependencies.hbs',
   'spring-entity-revision-dependencies.hbs',
+  'graal-vm-plugin.hbs',
+  'graal-vm-observability-dependencies.hbs'
 ];
 
 export const ERROR_MESSAGE = {
@@ -251,14 +253,18 @@ export const TEMPLATES = {
   CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
+  CONFIG_DOCKER_FILE_GRAALVM: 'config/dockerfileGraalVM.hbs',
   CONFIG_DOCKER_COMPOSE: 'config/docker-compose.hbs',
   CONFIG_EDITOR_CONFIG: 'config/.editorconfig.hbs',
   CONFIG_DOCKER_FILE_OBSERVABILITY: 'config/dockerfile-observability.hbs',
+  CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY: 'config/dockerfile-graalvm-observability.hbs',
   CONFIG_DOCKER_COMPOSE_OBSERVABILITY: 'config/docker-compose-observability.hbs',
   CONFIG_OTEL_AGENT: 'config/opentelemetry-javaagent.jar',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+  OPEN_TELEMETRY_CONFIG_GRAALVM: 'config/open-telemetry-config-graalvm.hbs',
+  ENVER_HINTS_GRAALVM_CONFIG: 'config/enver-hints-graalvm-config.hbs',
 
   // OBSERVABILITY
   MONITORING_COLLECTOR: 'monitoring/collector.hbs',
@@ -381,6 +387,20 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
+export const CONFIG_FILES_GRAALVM = [
+  { template: TEMPLATES.ENV_FILE, output: '.env' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_EDITOR_CONFIG, output: '.editorconfig' },
+  { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yml' },
+  { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+];
+
+
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
@@ -391,6 +411,19 @@ export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
   { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+];
+
+export const OBSERVABILITY_CONFIG_FILES_GRAALVM = [
+  { template: TEMPLATES.ENV_FILE, output: '.env' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+  // { template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM, output: 'config/OtelConfig.java' }
 ];
 
 export const OBSERVABILITY_YAML_CONFIG_FILES = [
@@ -425,6 +458,8 @@ export const COMMON_FILES = {
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
+  OPEN_TELEMETRY_CONFIG_JAVA_FILE: 'OtelConfig.java',
+  ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',

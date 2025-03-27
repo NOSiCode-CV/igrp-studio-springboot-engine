@@ -60,20 +60,20 @@ export const dependencySchema: JSONSchemaType<Dependency> = {
 const apiSchema: JSONSchemaType<BaseApiConfig> = {
   type: 'object',
   properties: {
-    type: { 
+    type: {
       type: "string",
       const: "springboot",
-      errorMessage: "The 'type' attribute must have the value 'springboot'."  
+      errorMessage: "The 'type' attribute must have the value 'springboot'."
     },
-    apiName: { 
+    apiName: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
         pattern: "The 'apiName' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
       }
     },
-    group: { 
-      type: "string", 
+    group: {
+      type: "string",
       pattern: "^[a-zA-Z0-9._]+$",
       errorMessage: {
         pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
@@ -87,16 +87,16 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       }
     },
 
-    database: { 
-      type: "string", 
+    database: {
+      type: "string",
       enum: DATABASE_TYPES,
       errorMessage: {
         enum: "The 'database' attribute cannot be empty and must be one of the following: 'Postgresql', 'MySQL', 'H2' or 'Oracle'."
       }
     },
-    description: { 
-      type: "string", 
-      nullable: true, 
+    description: {
+      type: "string",
+      nullable: true,
       errorMessage: {
         type: "The 'description' attribute must be a valid string."
       }
@@ -135,8 +135,12 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       items: dependencySchema,
       errorMessage: 'The dependencies must be an array of valid dependency definitions.'
     },
+    enableGraalVm: {
+      type: "boolean",
+      nullable: false
+    },
   },
-  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision"],
+  required: ["type", "apiName", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision", "enableGraalVm"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -147,7 +151,8 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       database: "The 'database' attribute is required and must specify a valid database type.",
       projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
       enableObservability: "The 'enableObservability' attribute is required and must specify a valid boolean type.",
-      dependencies: "The 'dependencies' attribute is required and must specify an array of valid dependencies."
+      dependencies: "The 'dependencies' attribute is required and must specify an array of valid dependencies.",
+      enableGraalVm: "The 'enableGraalVm' attribute is required and must specify a valid boolean type."
     },
     additionalProperties: "Extra attributes are not allowed in the API configuration."
   }

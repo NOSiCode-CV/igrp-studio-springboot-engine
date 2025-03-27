@@ -149,7 +149,8 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,
     springBootVersion: baseConfig.springBootVersion || SPRING_BOOT_VERSION,
-    dependencies: baseConfig.dependencies
+    dependencies: baseConfig.dependencies,
+    enableGraalVm: baseConfig.enableGraalVm
   };
 
   if (!basePath) {
@@ -1099,7 +1100,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
     }
   } else {
     await generateServiceInterface(context);
-    if(!customImpl) await generateServiceInmpl(context);
+    if (!customImpl) await generateServiceInmpl(context);
     await generateTestServiceInmpl(context);
   }
 };

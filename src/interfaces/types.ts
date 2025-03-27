@@ -49,6 +49,7 @@ export interface BaseApiConfig {
   igrpCoreVersion: string;
   springBootVersion?: string;
   dependencies?: Dependency[];
+  enableGraalVm: boolean;
 }
 
 export interface ModelConfig extends IdentifiableElement {
@@ -163,7 +164,7 @@ export interface DTOConfig extends DTOBaseConfig {
   attributes: JavaAttribute[];
 }
 
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
 
 export interface Attribute {
   type: ModelAttributeType;
@@ -368,7 +369,7 @@ export interface Body extends BaseBody {
   module?: string;
 }
 
-export interface RequestConfig extends Body {}
+export interface RequestConfig extends Body { }
 
 export interface ResponseConfig extends Body {
   type: 'response'

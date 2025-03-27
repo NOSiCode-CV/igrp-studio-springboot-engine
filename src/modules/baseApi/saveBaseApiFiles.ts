@@ -10,6 +10,8 @@ import {
   TEMPLATE_DIR,
   OBSERVABILITY_YAML_CONFIG_FILES,
   PROJECT_STRUCTURE_STYLE,
+  OBSERVABILITY_CONFIG_FILES_GRAALVM,
+  CONFIG_FILES_GRAALVM,
 } from '../../utils/constants';
 import { capitalize } from '../../helper/stringHelper';
 import { renderTemplate } from '../common/renderTemplate';
@@ -34,11 +36,12 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
 
-  const mainPath = 
-    path.join(
-      context.basePath,
-      getMainPath(context.baseConfig.group, context.baseConfig.packageName)
-    );
+  const mainPath = path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName)
+  );
+
+  let files: BASE_API_FILES = [];
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
 
@@ -51,16 +54,37 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
     const kubernetesPath = path.join(context.basePath, 'k8s');
 
-    return [
+    if (context.baseConfig.enableGraalVm) {
+      files.push(
+        {
+          output: configPath,
+          template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
+          name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE
+        }
+      );
+
+      if (context.baseConfig.enableObservability) {
+
+        files.push(
+          {
+            output: configPath,
+            template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
+            name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE
+          }
+        );
+      }
+    }
+
+    files.push(
       { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
 
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S },
 
       // DOMAIN LAYER
-      { output: eventPath, template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER, name: COMMON_FILES.EVENT_PUBLISHER},
+      { output: eventPath, template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER, name: COMMON_FILES.EVENT_PUBLISHER },
 
       {
         output: configPath,
@@ -128,20 +152,44 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.DDD_SPRING_QUERY_BUS,
         name: COMMON_FILES.SPRING_QUERY_BUS
       }
+    );
 
-    ];
   } else {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
     const exceptionPath = path.join(mainPath, 'exceptions');
     const kubernetesPath = path.join(context.basePath, 'k8s');
 
-    return [
+
+    if (context.baseConfig.enableGraalVm) {
+      files.push(
+        {
+          output: configPath,
+          template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
+          name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE
+        }
+      );
+
+      if (context.baseConfig.enableObservability) {
+
+        files.push(
+          {
+            output: configPath,
+            template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
+            name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE
+          }
+        );
+      }
+    }
+
+
+    files.push(
+
       { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER},
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S},
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
+      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S },
       {
         output: configPath,
         template: TEMPLATES.DOMAIN_MODEL_AUDIT,
@@ -196,13 +244,14 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: exceptionPath,
         template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
-      },
-    ];
-
+      }
+    );
   }
+
+  return files;
 };
 
-function getSubfolder(file: {template: string; output: string}) {
+function getSubfolder(file: { template: string; output: string }) {
   switch (file.template) {
     case TEMPLATES.MONITORING_COLLECTOR:
       return "collector"
@@ -232,7 +281,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
   );
 
   // Generation and saving of additional configuration files.
-  if(context.baseConfig.enableObservability) {
+  if (context.baseConfig.enableObservability) {
     await Promise.all(
       OBSERVABILITY_YAML_CONFIG_FILES.map(async (file) => {
         const basePath = path.join(context.basePath, DIRECTORIES.MONITORING);
@@ -242,13 +291,25 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         await saveToFile(template, outputPath);
       }),
     );
-    await Promise.all(
-      OBSERVABILITY_CONFIG_FILES.map(async (file) => {
-        const outputPath = path.join(context.basePath, file.output);
-        const template = await renderTemplate(file.template, context);
-        await saveToFile(template, outputPath, false);
-      }),
-    );
+
+    if (context.baseConfig.enableGraalVm) {
+      await Promise.all(
+        OBSERVABILITY_CONFIG_FILES_GRAALVM.map(async (file) => {
+          const outputPath = path.join(context.basePath, file.output);
+          const template = await renderTemplate(file.template, context);
+          await saveToFile(template, outputPath, false);
+        }),
+      );
+    } else {
+      await Promise.all(
+        OBSERVABILITY_CONFIG_FILES.map(async (file) => {
+          const outputPath = path.join(context.basePath, file.output);
+          const template = await renderTemplate(file.template, context);
+          await saveToFile(template, outputPath, false);
+        }),
+      );
+    }
+
     await Promise.all(
       OBSERVABILITY_BINARY_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
@@ -258,13 +319,24 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
       })
     );
   } else {
-    await Promise.all(
-      CONFIG_FILES.map(async (file) => {
-        const outputPath = path.join(context.basePath, file.output);
-        const template = await renderTemplate(file.template, context);
-        await saveToFile(template, outputPath, false);
-      }),
-    );
+
+    if (context.baseConfig.enableGraalVm) {
+      await Promise.all(
+        CONFIG_FILES_GRAALVM.map(async (file) => {
+          const outputPath = path.join(context.basePath, file.output);
+          const template = await renderTemplate(file.template, context);
+          await saveToFile(template, outputPath, false);
+        }),
+      );
+    } else {
+      await Promise.all(
+        CONFIG_FILES.map(async (file) => {
+          const outputPath = path.join(context.basePath, file.output);
+          const template = await renderTemplate(file.template, context);
+          await saveToFile(template, outputPath, false);
+        }),
+      );
+    }
     /*await Promise.all(
       CONFIG_BINARY_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);

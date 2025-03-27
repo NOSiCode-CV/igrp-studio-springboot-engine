@@ -44,8 +44,13 @@
 		{{> generic-maven-dependencies}}
     {{> igrp-maven-dependencies}}
   {{#if baseConfig.enableObservability}}
+       {{#if baseConfig.enableGraalVm}}
+		 {{> graal-vm-observability-dependencies}}
+	   {{/if}}
 		{{> observability-maven-dependencies}}
   {{/if}}
+
+  
     {{#if baseConfig.dependencies}}
       {{#each baseConfig.dependencies}}
       <dependency>
@@ -60,6 +65,9 @@
   </dependencies>
 	<build>
 		<plugins>
+			{{#if baseConfig.enableGraalVm}}
+		       {{> graal-vm-plugin}}
+            {{/if}}
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

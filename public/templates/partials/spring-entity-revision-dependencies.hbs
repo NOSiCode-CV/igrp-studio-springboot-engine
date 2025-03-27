@@ -1,4 +1,4 @@
-{{#if baseConfig.enableEntityRevision}}
+{{#if (or baseConfig.enableEntityRevision baseConfig.enableGraalVm)}}
 <dependency>
   <groupId>org.springframework.data</groupId>
   <artifactId>spring-data-envers</artifactId>
