@@ -2,7 +2,7 @@ import path from 'path';
 import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
-const isProductionEnv = process.env.SPRING_ENGINE_IGRP_STUDIO_ENV === 'production'
+const isProductionEnv = process.env.ENGINE_IGRP_STUDIO_ENV === 'production'
 
 export const TEMPLATE_DIR = path.join(__dirname, isProductionEnv ? './templates' : '../../public/templates');
 export const PARTIALS_DIR = path.join(__dirname, isProductionEnv ? './templates/partials' : '../../public/templates/partials');
