@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { Dependency, SpringInitializerData } from '../interfaces/springDependencyTypes';
-import { SPRING_DEPENDENCY_CACHE_FILE } from '../utils/constants';
 import fs, { pathExists } from 'fs-extra';
+import { getPaths } from '../index';
 
 export const SPRING_BOOT_VERSION = '3.4.3';
 export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = `https://start.spring.io/dependencies?bootVersion=${SPRING_BOOT_VERSION}`;
 
 export async function getSpringInitializerDependencies(): Promise<Dependency[]> {
   try {
+
     const response = await axios.get(`${SPRING_INITIALIZER_DEPENDENCIES_DATA_URL}`);
 
     const data = response.data;
@@ -21,6 +22,9 @@ export async function getSpringInitializerDependencies(): Promise<Dependency[]> 
 
     return mapDependencies(springInitializerData.dependencies);
   } catch (error) {
+
+    const SPRING_DEPENDENCY_CACHE_FILE = getPaths().springDependencies
+
     console.error(`Failed to fetch from the internet`);
     console.info(`Getting local dependencies for spring boot version ${SPRING_BOOT_VERSION}`);
     try {

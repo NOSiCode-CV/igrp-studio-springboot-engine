@@ -1,12 +1,5 @@
-import path from 'path';
 import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
-
-const isProductionEnv = process.env.ENGINE_IGRP_STUDIO_ENV === 'production'
-
-export const TEMPLATE_DIR = path.join(__dirname, isProductionEnv ? './templates' : '../../public/templates');
-export const PARTIALS_DIR = path.join(__dirname, isProductionEnv ? './templates/partials' : '../../public/templates/partials');
-export const SPRING_DEPENDENCY_CACHE_FILE = path.join(__dirname, isProductionEnv ? './spring_dependencies/spring-dependencies.json': '../../public/spring_dependencies/spring-dependencies.json');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',

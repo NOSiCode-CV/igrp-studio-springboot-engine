@@ -1,10 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { Handlebars } from '../../utils/handlebarsHelpers';
-import { DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATE_DIR, TEMPLATES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATES } from '../../utils/constants';
 import { loadPartials } from '../../utils/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { getEnumTypes } from '../enum/helpers';
+import { getPaths } from '../../index';
 
 export const cache: Record<string, any> = {};
 
@@ -38,7 +39,7 @@ export const renderTemplate = async (templateName: string, context: any) => {
     cache["enumImports"] = await getEnumTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
   }
 
-  const templatePath = path.join(TEMPLATE_DIR, templateName);
+  const templatePath = path.join(getPaths().template, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);
 

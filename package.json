@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.0.1-alpha.51",
+  "version": "0.0.1-alpha.54",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "tsc && vite build",
+    "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
     "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
   },
@@ -54,7 +54,8 @@
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.3",
     "vite": "^5.4.2",
-    "vite-plugin-dts": "^4.0.3"
+    "vite-plugin-dts": "^4.0.3",
+    "env-cmd": "^10.1.0"
   },
   "type": "commonjs",
   "exports": {

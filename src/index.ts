@@ -11,7 +11,7 @@ import {
   JavaAttribute,
   JsonConfig,
   ModelConfig,
-  ModuleConfig,
+  ModuleConfig, PathConfig,
   PermissionConfig,
   RenderContext,
   ResponseConfig,
@@ -90,6 +90,27 @@ import { isPageable } from './helper/logicalHelper';
 import { generateCrudController } from './modules/crudController/generateCrudController';
 import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/springInitializerHelper';
 import { Dependency } from './interfaces/springDependencyTypes';
+
+export function getPaths(): PathConfig {
+
+  const environment = process.env.VITE_ENGINE_IGRP_STUDIO_ENV
+
+  if(environment === 'production') {
+    return {
+      template: path.join(__dirname, './templates'),
+      partials: path.join(__dirname, './templates/partials'),
+      springDependencies: path.join(__dirname, './spring_dependencies/spring-dependencies.json')
+    }
+  } else {
+    return {
+      template: path.join(__dirname, '../../public/templates'),
+      partials: path.join(__dirname, '../../public/templates/partials'),
+      springDependencies: path.join(__dirname, '../../public/spring_dependencies/spring-dependencies.json')
+    }
+  }
+
+}
+
 /**
  * Main Function that creates the base api
  *
