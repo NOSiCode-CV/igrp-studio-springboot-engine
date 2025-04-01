@@ -3,7 +3,7 @@ import { MoveConfig } from '../src/interfaces/types';
 // @ts-ignore
 import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 
-describe('Generic deletion in domain driven design project style', () => {
+describe('Generic move in domain driven design project style', () => {
     it('should move a element', async () => {
         const element: MoveConfig = {
           name: "Level",
@@ -17,7 +17,7 @@ describe('Generic deletion in domain driven design project style', () => {
 
 });
 
-describe('Generic deletion in technical style', () => {
+describe('Generic move in technical style', () => {
   it('should move a element', async () => {
     const element: MoveConfig = {
       name: "Teste",
