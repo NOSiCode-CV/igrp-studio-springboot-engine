@@ -583,13 +583,6 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
   ]
 }
 
-export const CATEGORIZED_MODEL_ATTRIBUTE_TYPES = {
-  ...CATEGORIZED_ATTRIBUTE_TYPES,
-  generic: [
-    'relation'
-  ]
-}
-
 const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type !== 'object');
 
 export const GENERIC_MODEL_ATTRIBUTE_TYPES = [...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'];
@@ -1103,6 +1096,8 @@ export const CRUD_DISABLED_OPTIONS = [
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
 export const FETCH_TYPE = ['lazy', 'eager'] as const;
+
+export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE'] as const;
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 

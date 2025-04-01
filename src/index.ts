@@ -11,7 +11,7 @@ import {
   JavaAttribute,
   JsonConfig,
   ModelConfig,
-  ModuleConfig, PathConfig,
+  ModuleConfig, MoveConfig, PathConfig,
   PermissionConfig,
   RenderContext,
   ResponseConfig,
@@ -19,7 +19,7 @@ import {
   XmlConfig,
 } from './interfaces/types';
 import {
-  CATEGORIZED_ATTRIBUTE_TYPES, CATEGORIZED_MODEL_ATTRIBUTE_TYPES,
+  CATEGORIZED_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   DIRECTORIES,
@@ -90,6 +90,8 @@ import { isPageable } from './helper/logicalHelper';
 import { generateCrudController } from './modules/crudController/generateCrudController';
 import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/springInitializerHelper';
 import { Dependency } from './interfaces/springDependencyTypes';
+import { moveElementConfig } from './modules/move/moveElementConfig';
+import { moveValidation } from './schema/moveConfig';
 
 export function getPaths(): PathConfig {
 
@@ -723,6 +725,62 @@ export const deleteElement = async (config: DeleteConfig, basePath: string) => {
 };
 
 /**
+ * Moves an element from the API.
+ *
+ * This function removes an element configuration and its files based on the provided configuration.
+ * It ensures that the element is properly moved from the specified API base path.
+ *
+ * @param {MoveConfig} config - The deletion configuration object, which primarily includes the type, module (if present) and name of the element to be moved.
+ * @param {string} basePath - The base path of the application where the element and repository are located.
+ *
+ * @throws {Error} Will throw an error if the moving configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ * @throws {Error} Will throw an error the element is being used in other JSON configuration.
+ * @example
+ * // Example usage:
+ * import { moveElement } from "spring-engine";
+ * import { MoveConfig } from "spring-engine/dist/interfaces/types";
+
+ * const config: MoveConfig = {
+ *   name: 'MyDTO',
+ *   type: 'dto',
+ *   sourceModule: 'core'
+ *   destinationModule: 'shared'
+ * };
+ * const basePath = 'C://your_project_path';
+ *
+ * const move = async () => {
+ *   try {
+ *     await moveElement(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ *
+ */
+export const moveElement = async (config: MoveConfig, basePath: string) => {
+  const valid = moveValidation(config);
+
+  if (!valid && moveValidation.errors) {
+    throw moveValidation.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name);
+
+  const context: RenderContext<MoveConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  await moveElementConfig(context, false);
+};
+
+/**
  * Loads the DTO configuration for a given module and action.
  *
  * This function attempts to retrieve the DTO configuration based on the provided module name,
@@ -1296,7 +1354,6 @@ export const engineTypes = async (module: string, basePath: string) => {
     { SCHEMA_TYPES: schemaTypes },
     { DTO_SCHEMAS: bodyDtos },
     { ATTRIBUTE_TYPES: CATEGORIZED_ATTRIBUTE_TYPES },
-    { MODEL_ATTRIBUTE_TYPES: CATEGORIZED_MODEL_ATTRIBUTE_TYPES },
     { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
     { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },

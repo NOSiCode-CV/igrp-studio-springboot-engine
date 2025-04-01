@@ -192,6 +192,8 @@ export interface Relation {
   referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
+  cascadeType?: 'ALL' | 'PERSIST' | 'MERGE' | 'REFRESH' | 'REMOVE';
+  orphanRemoval: false;
 }
 
 export interface RelationReference {
@@ -384,6 +386,13 @@ export interface SchemaContent {
 export interface DeleteConfig {
   name: string;
   module?: string;
+  type: ConfigTypes;
+}
+
+export interface MoveConfig {
+  name: string;
+  sourceModule: string;
+  destinationModule: string;
   type: ConfigTypes;
 }
 

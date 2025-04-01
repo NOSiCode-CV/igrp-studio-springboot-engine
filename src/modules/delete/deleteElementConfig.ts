@@ -12,6 +12,12 @@ import { DeleteConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 import { checkDependencyInDTO } from '../dto/checkDependencyInDTO';
 import { checkDependencyInController } from '../dto/checkDependencyInController';
+import { checkDependencyInDTO as checkDTODependencyEnum } from '../enum/checkDependencyInDTO';
+import { checkDependencyInController as checkControllerDependencyEnum } from '../enum/checkDependencyInController';
+import { checkDependencyInModel as checkModelDependencyEnum } from '../enum/checkDependencyInModel';
+import { checkDependencyInDTO as checkDTODependencyResponse } from '../response/checkDependencyInDTO';
+import { checkDependencyInController as checkControllerDependencyResponse } from '../response/checkDependencyInController';
+import { checkDependencyInModel as checkModelDependencyModel } from '../model/checkDependencyInModel';
 import path from 'path';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { updatePermissions } from '../permission/permissionManagement';
@@ -49,6 +55,12 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
   if(context.resourceConfig.type === 'enum') {
 
+    if(!force) {
+      await checkDTODependencyEnum(context)
+      await checkModelDependencyEnum(context)
+      await checkControllerDependencyEnum(context)
+    }
+
     const enumPath = getFilePath(context);
     const enumConfigPath = getEnumConfigPath(
       context.basePath,
@@ -68,6 +80,10 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
   }
 
   if(context.resourceConfig.type === 'model') {
+
+    if(!force) {
+      await checkModelDependencyModel(context)
+    }
 
     let modelPath;
 
@@ -118,8 +134,8 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
   if(context.resourceConfig.type === 'response') {
 
     if (!force) {
-      await checkDependencyInDTO(context);
-      await checkDependencyInController(context);
+      await checkDTODependencyResponse(context);
+      await checkControllerDependencyResponse(context);
     }
 
     const configPath = getResponseConfigPath(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.resourceConfig.name, context.basePath);
