@@ -1,15 +1,11 @@
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  PARTIALS,
-} from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import {
   ApiConfig,
-  ControllerConfig, CrudControllerConfig,
+  ControllerConfig,
+  CrudControllerConfig,
   DeleteConfig,
   DTOBaseConfig,
   DTOConfig,
@@ -433,7 +429,9 @@ export const getDDDExceptionDir = (context: RenderContext<ExceptionConfig>) =>
     DIRECTORIES.EXCEPTIONS,
   );
 
-export const getServiceDir = (context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>) =>
+export const getServiceDir = (
+  context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>,
+) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
@@ -465,7 +463,9 @@ export const getTestServiceDir = (context: RenderContext<ControllerConfig | Mode
     DIRECTORIES.SERVICES,
   );
 
-export const getDDDServiceDir = (context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>) =>
+export const getDDDServiceDir = (
+  context: RenderContext<ControllerConfig | ModelConfig | CrudControllerConfig>,
+) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
@@ -529,6 +529,32 @@ export const loadDTOConfig = async function <DTOConfig>(
   return jsonContent as DTOConfig;
 };
 
+export const loadResponseConfig = async function <ResponseConfig>(
+  type: ObjectTypes,
+  basePath: string,
+  name: string,
+): Promise<ResponseConfig> {
+  if (!name || name.trim() === '') {
+    throw new Error('Invalid Response config name');
+  }
+
+  if (!(await fs.pathExists(basePath))) {
+    throw new Error('Invalid Response config path');
+  }
+
+  const files = await fs.readdir(basePath);
+  const matchingFile = files.find((f) => f === `${name}.json`);
+
+  if (!matchingFile) {
+    throw new Error(`Response config file "${name}.json" not found in the directory.`);
+  }
+
+  const filePath = path.join(basePath, matchingFile);
+
+  return await fs.readJSON(filePath);
+
+};
+
 export const loadEnumConfig = async function <EnumConfig>(
   basePath: string,
   name: string,
@@ -546,6 +572,30 @@ export const loadEnumConfig = async function <EnumConfig>(
 
   if (!matchingFile) {
     throw new Error(`Enum config file "${name}.json" not found in the directory.`);
+  }
+
+  const filePath = path.join(basePath, matchingFile);
+
+  return await fs.readJSON(filePath);
+};
+
+export const loadModelConfig = async function <ModelConfig>(
+  basePath: string,
+  name: string,
+): Promise<ModelConfig> {
+  if (!name || name.trim() === '') {
+    throw new Error('Invalid Model config name');
+  }
+
+  if (!(await fs.pathExists(basePath))) {
+    throw new Error('Invalid Model config path');
+  }
+
+  const files = await fs.readdir(basePath);
+  const matchingFile = files.find((f) => f === `${name}.json`);
+
+  if (!matchingFile) {
+    throw new Error(`Model config file "${name}.json" not found in the directory.`);
   }
 
   const filePath = path.join(basePath, matchingFile);

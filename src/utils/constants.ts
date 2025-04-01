@@ -504,7 +504,7 @@ export const PATTERNS = {
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
   PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_/]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
-  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_-]*$',
+  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_{}/-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',
@@ -584,13 +584,6 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
   ],
   generic: [
     'object'
-  ]
-}
-
-export const CATEGORIZED_MODEL_ATTRIBUTE_TYPES = {
-  ...CATEGORIZED_ATTRIBUTE_TYPES,
-  generic: [
-    'relation'
   ]
 }
 
@@ -1107,6 +1100,8 @@ export const CRUD_DISABLED_OPTIONS = [
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
 export const FETCH_TYPE = ['lazy', 'eager'] as const;
+
+export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE'] as const;
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 

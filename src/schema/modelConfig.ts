@@ -15,7 +15,7 @@ import {
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES, FETCH_TYPE,
+  GENERIC_ATTRIBUTE_TYPES, FETCH_TYPE, CASCADE_TYPE,
 } from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {
@@ -37,6 +37,19 @@ export const relationSchema: JSONSchemaType<Relation> = {
       type: "string",
       enum: FETCH_TYPE,
       errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
+    },
+    cascadeType: {
+      type: 'array',
+      items: {
+        type: "string",
+        enum: CASCADE_TYPE,
+      },
+      nullable: true,
+      errorMessage: `The cascade type, if provided, must be an array of one of ${CASCADE_TYPE}.`
+    },
+    orphanRemoval: {
+      type: 'boolean',
+      errorMessage: 'The orphan removal attribute must be a boolean'
     },
     entity: {
       type: "string",
