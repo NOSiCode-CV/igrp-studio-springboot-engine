@@ -145,6 +145,10 @@ export interface UniqueConstraint {
   columns: string[];
 }
 
+export interface CascadeType {
+  type: CascadeTypes
+}
+
 export interface JavaType {
   name: string;
   namespace?: string;
@@ -185,8 +189,8 @@ export interface Relation {
   referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
-  cascadeType?: CascadeTypes[];
-  orphanRemoval: boolean;
+  cascadeType?: CascadeType[];
+  orphanRemoval?: boolean;
 }
 
 export interface RelationReference {

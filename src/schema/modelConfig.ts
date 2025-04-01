@@ -39,17 +39,32 @@ export const relationSchema: JSONSchemaType<Relation> = {
       errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
     cascadeType: {
-      type: 'array',
+      type: "array",
       items: {
-        type: "string",
-        enum: CASCADE_TYPE,
+        type: "object",
+        properties: {
+          type: {
+            type: "string",
+            enum: [...CASCADE_TYPE],
+            errorMessage: {
+              type: 'Cascade type must be a string',
+              enum: `Each cascade type must be one of: ${CASCADE_TYPE.join(', ')}.`
+            }
+          },
+        },
+        errorMessage: `The cascade type, if provided, must be a valid cascade type configuration.`,
+        required: ["type"],
+        additionalProperties: false
       },
       nullable: true,
-      errorMessage: `The cascade type, if provided, must be an array of one of ${CASCADE_TYPE}.`
+      errorMessage: {
+        type: `The cascade types, if provided, must be an array of a valid cascade type configuration.`
+      }
     },
     orphanRemoval: {
       type: 'boolean',
-      errorMessage: 'The orphan removal attribute must be a boolean'
+      nullable: true,
+      errorMessage: 'The orphan removal attribute, if provided, must be a boolean'
     },
     entity: {
       type: "string",

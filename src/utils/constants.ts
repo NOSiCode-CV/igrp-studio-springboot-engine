@@ -1101,7 +1101,7 @@ export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyTo
 
 export const FETCH_TYPE = ['lazy', 'eager'] as const;
 
-export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE'] as const;
+export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DETACH'] as const;
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 
