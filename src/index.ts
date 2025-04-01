@@ -103,9 +103,9 @@ export function getPaths(): PathConfig {
     }
   } else {
     return {
-      template: path.join(__dirname, '../../public/templates'),
-      partials: path.join(__dirname, '../../public/templates/partials'),
-      springDependencies: path.join(__dirname, '../../public/spring_dependencies/spring-dependencies.json')
+      template: path.join(__dirname, '../public/templates'),
+      partials: path.join(__dirname, '../public/templates/partials'),
+      springDependencies: path.join(__dirname, '../public/spring_dependencies/spring-dependencies.json')
     }
   }
 
