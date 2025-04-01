@@ -361,6 +361,10 @@ export const TEMPLATES = {
   CONFIG_INGRESS: 'config/k8s/ingressyaml.hbs',
   CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
   CONFIG_CLUSTER: 'config/k8s/clusteryaml.hbs',
+
+
+  VALIDATOR_DTO_INTERFACE: 'struct/technical/java/dto/dtoValidatorInterface.hbs',
+  VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs'
 };
 
 export const CONFIG_FILES = [

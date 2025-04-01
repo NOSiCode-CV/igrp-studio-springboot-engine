@@ -59,6 +59,7 @@ import { cleaner } from './modules/common/cleanerConfigFile';
 import { checkDuplicated } from './modules/common/checkDuplicates';
 import { capitalizeResponse } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
+import { generateValidatorDTO } from './modules/dto/generateDTOCustomValidator';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
@@ -95,7 +96,7 @@ export function getPaths(): PathConfig {
 
   const environment = process.env.VITE_ENGINE_IGRP_STUDIO_ENV
 
-  if(environment === 'production') {
+  if (environment === 'production') {
     return {
       template: path.join(__dirname, './templates'),
       partials: path.join(__dirname, './templates/partials'),
@@ -500,6 +501,10 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   };
 
   await generateDTO(context);
+
+  if (context.resourceConfig.enableCustonValidation) {
+    await generateValidatorDTO(context);
+  }
 
   if (config.type === 'dto') await saveDTOConfig(config, basePath);
 

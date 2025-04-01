@@ -440,6 +440,24 @@ export const getServiceDir = (context: RenderContext<ControllerConfig | ModelCon
     DIRECTORIES.SERVICES,
   );
 
+export const getDToValidatorDir = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    DIRECTORIES.DTO,
+    "validator"
+  );
+
+export const getDToValidatorDirDDD = (context: RenderContext<DTOBaseConfig>) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.DTO,
+    "validator"
+  );
+
 export const getTestServiceDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
   path.join(
     context.basePath,

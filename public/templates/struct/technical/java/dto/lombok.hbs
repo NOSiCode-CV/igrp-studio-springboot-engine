@@ -6,15 +6,19 @@ import jakarta.validation.constraints.*;
 {{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
-
+{{#if resourceConfig.enableCustonValidation}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.validator.I{{resourceConfig.name}}DTOValidator;
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
-
 {{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
 {{/if}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
+{{#if resourceConfig.enableCustonValidation}}
+@I{{resourceConfig.name}}DTOValidator
+{{/if}}
 @IgrpDTO
 public class {{resourceConfig.name}}DTO {
 

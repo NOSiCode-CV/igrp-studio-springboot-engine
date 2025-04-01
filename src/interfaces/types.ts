@@ -121,6 +121,7 @@ export interface DTOBaseConfig extends IdentifiableElement {
   type: ObjectTypes;
   name: string;
   module?: string;
+  enableCustonValidation?: boolean
 }
 
 export interface DTOConfig extends DTOBaseConfig {
@@ -154,15 +155,6 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface DTOBaseConfig extends IdentifiableElement {
-  type: ObjectTypes;
-  name: string;
-}
-
-export interface DTOConfig extends DTOBaseConfig {
-  template: 'classic' | 'record';
-  attributes: JavaAttribute[];
-}
 
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
 
