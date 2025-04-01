@@ -7,7 +7,6 @@ import {
   CONFIG_FILES,
   OBSERVABILITY_CONFIG_FILES,
   OBSERVABILITY_BINARY_FILES,
-  TEMPLATE_DIR,
   OBSERVABILITY_YAML_CONFIG_FILES,
   PROJECT_STRUCTURE_STYLE,
   OBSERVABILITY_CONFIG_FILES_GRAALVM,
@@ -18,6 +17,7 @@ import { renderTemplate } from '../common/renderTemplate';
 import { getMainPath } from '../../utils/helpers';
 import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
 import fs from 'fs-extra';
+import { getPaths } from '../../index';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -313,7 +313,7 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
     await Promise.all(
       OBSERVABILITY_BINARY_FILES.map(async (file) => {
         const outputPath = path.join(context.basePath, file.output);
-        const templatePath = path.join(TEMPLATE_DIR, file.template);
+        const templatePath = path.join(getPaths().template, file.template);
         const binaryContent = await fs.readFile(templatePath);
         await saveBinaryToFile(binaryContent, outputPath, false);
       })

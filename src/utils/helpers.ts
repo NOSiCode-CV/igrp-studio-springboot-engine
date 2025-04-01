@@ -3,7 +3,6 @@ import {
   ERROR_MESSAGE,
   EXTENSIONS,
   PARTIALS,
-  PARTIALS_DIR,
 } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
@@ -22,6 +21,7 @@ import {
   RenderContext,
 } from '../interfaces/types';
 import { normalizeDTOType } from '../modules/dto/saveDTOConfig';
+import { getPaths } from '../index';
 
 /**
  * Dynamically loads and registers Handlebars partials in a React.js application.
@@ -33,7 +33,7 @@ export const loadPartials = async (): Promise<void> => {
     await Promise.all(
       PARTIALS.map(async (file) => {
         const partialName = file.replace('.hbs', ''); // Extract partial name
-        const partialContent: string = await fs.readFile(`${PARTIALS_DIR}/${file}`, 'utf-8');
+        const partialContent: string = await fs.readFile(`${getPaths().partials}/${file}`, 'utf-8');
         if (!partialContent) {
           throw new Error(`Failed to load partial: ${file}`);
         }
