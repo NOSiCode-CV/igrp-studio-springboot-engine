@@ -1,6 +1,6 @@
 {{> package-java }}
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{capitalize resourceConfig.name}};
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,8 +18,8 @@ import org.springframework.data.rest.core.annotation.RestResource;
 {{/if}}
 public interface {{capitalizeJavaStyle resourceConfig.name}}Repository extends
     JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>,
-    JpaSpecificationExecutor<{{resourceConfig.name}}>
-    {{#if resourceConfig.revision ~}}RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
+    JpaSpecificationExecutor<{{resourceConfig.name}}>{{#if resourceConfig.revision ~}},
+    RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
 {
 
   {{#if resourceConfig.crud.disabledMethods}}
