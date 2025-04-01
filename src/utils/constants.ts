@@ -6,7 +6,7 @@ const isProductionEnv = process.env.ENGINE_IGRP_STUDIO_ENV === 'production'
 
 export const TEMPLATE_DIR = path.join(__dirname, isProductionEnv ? './templates' : '../../public/templates');
 export const PARTIALS_DIR = path.join(__dirname, isProductionEnv ? './templates/partials' : '../../public/templates/partials');
-export const SPRING_DEPENDENCY_CACHE_FILE = path.join(__dirname, isProductionEnv ? './spring_dependencies/spring-dependencies.json': '../../public/spring_dependencies/spring-dependencies.json');
+export const SPRING_DEPENDENCY_CACHE_FILE = path.join(__dirname, isProductionEnv ? './spring_dependencies/spring-dependencies.json' : '../../public/spring_dependencies/spring-dependencies.json');
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -566,6 +566,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'binary',
   'file',
   'instant',
+  'uri'
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -698,6 +699,12 @@ export const GENERIC_TYPES: Map<
       dotnet: { name: 'TimeSpan', primitive: false, namespace: 'System' },
       python: { name: 'time', primitive: false, namespace: 'datetime' },
       kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+    },
+    uri: {
+      java: { name: 'URI', primitive: false, namespace: 'java.net' },
+      dotnet: { name: "Uri", primitive: false, namespace: "System" },
+      python: { name: 'URI', primitive: false, namespace: 'urllib.parse' },
+      kotlin: { name: 'URI', primitive: false, namespace: 'java.net' },
     },
     instant: {
       java: { name: 'Instant', primitive: false, namespace: 'java.time' },
