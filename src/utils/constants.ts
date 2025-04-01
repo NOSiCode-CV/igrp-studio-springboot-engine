@@ -559,6 +559,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'binary',
   'file',
   'instant',
+  'uri'
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -691,6 +692,12 @@ export const GENERIC_TYPES: Map<
       dotnet: { name: 'TimeSpan', primitive: false, namespace: 'System' },
       python: { name: 'time', primitive: false, namespace: 'datetime' },
       kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+    },
+    uri: {
+      java: { name: 'URI', primitive: false, namespace: 'java.net' },
+      dotnet: { name: "Uri", primitive: false, namespace: "System" },
+      python: { name: 'URI', primitive: false, namespace: 'urllib.parse' },
+      kotlin: { name: 'URI', primitive: false, namespace: 'java.net' },
     },
     instant: {
       java: { name: 'Instant', primitive: false, namespace: 'java.time' },
