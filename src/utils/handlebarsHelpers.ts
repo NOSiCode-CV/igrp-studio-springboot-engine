@@ -39,6 +39,7 @@ import { keyTypeDTO } from '../helper/dtoHelper';
 import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
 import { resolvePathVariables } from '../helper/controllerHelper';
 import { resolveImportReponse } from '../helper/responseHelper';
+import { normalizeInterfaceValidatorName, normalizeImplValidatorName } from '../modules/dto/helpers';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -94,6 +95,14 @@ Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]
 
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
+
+Handlebars.registerHelper('resolve-interface-custon-validator-name', function (name: string): string {
+  return normalizeInterfaceValidatorName(name);
+});
+
+Handlebars.registerHelper('resolve-impl-custon-validator-name', function (name: string): string {
+  return normalizeImplValidatorName(name);
+});
 
 
 Handlebars.registerHelper(

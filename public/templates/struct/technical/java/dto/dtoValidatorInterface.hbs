@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {{resourceConfig.name}}DTOValidator.class)
-public @interface I{{resourceConfig.name}}DTOValidator {
+@Constraint(validatedBy = {{resolve-impl-custon-validator-name resourceConfig.name}}.class)
+public @interface {{resolve-interface-custon-validator-name resourceConfig.name}} {
 
     String message() default "Invalid custom class";
 

@@ -9,10 +9,10 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.ap
  import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.{{resourceConfig.name}}DTO;
 {{/if}}
 
-public class {{resourceConfig.name}}DTOValidator implements ConstraintValidator<I{{resourceConfig.name}}DTOValidator, {{resourceConfig.name}}DTO> {
+public class {{resolve-impl-custon-validator-name resourceConfig.name}} implements ConstraintValidator<{{resolve-interface-custon-validator-name resourceConfig.name}}, {{resourceConfig.name}}DTO> {
 
     @Override
-    public void initialize(I{{resourceConfig.name}}DTOValidator constraintAnnotation) {
+    public void initialize({{resolve-interface-custon-validator-name resourceConfig.name}} constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
