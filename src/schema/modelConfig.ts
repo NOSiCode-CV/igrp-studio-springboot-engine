@@ -39,10 +39,13 @@ export const relationSchema: JSONSchemaType<Relation> = {
       errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
     },
     cascadeType: {
-      type: "string",
-      enum: CASCADE_TYPE,
+      type: 'array',
+      items: {
+        type: "string",
+        enum: CASCADE_TYPE,
+      },
       nullable: true,
-      errorMessage: `The fetchType must be one of ${CASCADE_TYPE} and cannot be empty.`
+      errorMessage: `The cascade type, if provided, must be an array of one of ${CASCADE_TYPE}.`
     },
     orphanRemoval: {
       type: 'boolean',

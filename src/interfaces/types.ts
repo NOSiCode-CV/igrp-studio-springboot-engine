@@ -1,4 +1,5 @@
 import {
+  CASCADE_TYPE,
   CONFIG_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
@@ -192,8 +193,8 @@ export interface Relation {
   referencedColumnName?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
-  cascadeType?: 'ALL' | 'PERSIST' | 'MERGE' | 'REFRESH' | 'REMOVE';
-  orphanRemoval: false;
+  cascadeType?: CascadeTypes[];
+  orphanRemoval: boolean;
 }
 
 export interface RelationReference {
@@ -441,5 +442,6 @@ export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
 export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
+export type CascadeTypes = (typeof CASCADE_TYPE)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
