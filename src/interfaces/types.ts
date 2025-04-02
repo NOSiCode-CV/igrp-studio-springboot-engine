@@ -249,6 +249,7 @@ export interface MultipartFile {
   type: ParamsTypes;
   name: string;
   value?: string;
+  description?: string;
   isRequired: boolean;
 }
 
@@ -256,6 +257,7 @@ export interface RequestParams {
   type: ParamsTypes;
   name: string;
   value?: string;
+  description?: string;
   isRequired: boolean;
 }
 
@@ -263,6 +265,7 @@ export interface PathVariables {
   type: string;
   name: string;
   value?: string;
+  description?: string;
   isRequired: boolean;
 }
 

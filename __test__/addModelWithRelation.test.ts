@@ -29,7 +29,7 @@ describe('Model generator', () => {
               cardinality: 'twoWay',
               referencedColumnName: 'id',
               entity: 'destino',
-              cascadeType: [{ type: 'ALL' }]
+              cascadeType: [{ type: 'ALL' }, { type: 'PERSIST' }]
             },
             nullable: true,
           },

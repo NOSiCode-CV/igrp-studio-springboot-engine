@@ -522,7 +522,44 @@ describe('Technical Controller Module', () => {
   });
 });
 
-const testControllerConfig: ControllerConfig = {"type":"controller","description":"controller desc","name":"Todo","basePath":"api","actions":[{"actionName":"getAll","path":"todo","method":"GET","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"TodoDTO","objectType":"dto"}}}}}}}},{"actionName":"createTodo","path":"todo","method":"POST","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"string"}}}}}}}}],"module":"todo"}
+const testControllerConfig: ControllerConfig = {
+  "type": "controller",
+  "name": "Todo",
+  "module": "todo",
+  "description": "todo",
+  "basePath": "todo",
+  "actions": [
+    {
+      "actionName": "getTodos",
+      "path": "todo/{name}",
+      "method": "GET",
+      "responses": {
+        "200": {
+          "name": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "collectionType": "none"
+              }
+            }
+          }
+        }
+      },
+      "requestParams": [],
+      "pathVariables": [
+        {
+          "name": "name",
+          "type": "string",
+          "isRequired": true,
+
+        }
+      ],
+      "headers": []
+    }
+  ],
+  "id": "vzqkn3ng36"
+}
 
 describe('Test Controller Module', () => {
   it('should create the controller class and the service interface in test', async () => {

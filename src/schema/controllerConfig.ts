@@ -348,6 +348,11 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
       nullable: true,
       errorMessage: 'The param value attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
     },
+    description: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The description attribute, if provided, must be a string'
+    },
     isRequired: {
       type: 'boolean',
       errorMessage: 'The param isRequired must be present and holds values true|false only'
