@@ -20,17 +20,17 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     resolvedType = formatTypeName(singleBody?.name);
   } else {
 
-    if (schema.objectType) {
+    if (schema.objectType === 'dto') {
       resolvedType = formatTypeName(schema.type)
     } else {
-
-      let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+      resolvedType = capitalize(schema.type);
+      /*let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
 
       if (primitiveTypes.includes(schema.type)) {
         resolvedType = capitalize(schema.type);
       } else {
         resolvedType = formatTypeName(schema.type);
-      }
+      }*/
     }
   }
 
