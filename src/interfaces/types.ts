@@ -200,6 +200,8 @@ export interface RelationReference {
   entity: string;
   fieldName?: string;
   mappedBy?: string;
+  cascadeType?: CascadeType[];
+  orphanRemoval?: boolean;
 }
 
 
