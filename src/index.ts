@@ -86,7 +86,7 @@ import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateTestServiceInmpl } from './modules/test/generateTestService';
 import { generateTestHandlers } from './modules/test/generateTestHandlers';
 import { processTableName } from './modules/model/helpers';
-import { capitalize } from './helper/stringHelper';
+import { capitalize, capitalizeJavaStyle } from './helper/stringHelper';
 import { isPageable } from './helper/logicalHelper';
 import { generateCrudController } from './modules/crudController/generateCrudController';
 import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/springInitializerHelper';
@@ -394,6 +394,8 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
 
   const baseConfig = await getBaseApiConfig(basePath);
   config.tableName = processTableName(config.tableName, baseConfig.database);
+
+  config.name = capitalizeJavaStyle(config.name); // normalized the model name
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
