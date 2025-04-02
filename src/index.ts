@@ -93,6 +93,7 @@ import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/
 import { Dependency } from './interfaces/springDependencyTypes';
 import { moveElementConfig } from './modules/move/moveElementConfig';
 import { moveValidation } from './schema/moveConfig';
+import { verifyEnumAttributes } from './modules/enum/helpers';
 
 export function getPaths(): PathConfig {
 
@@ -662,6 +663,8 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
 
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
+
+  config = await verifyEnumAttributes(config);
 
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,
