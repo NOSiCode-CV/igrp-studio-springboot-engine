@@ -291,13 +291,11 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     );
 
   // Import Collection Types
-  imports.add(
-    config.attributes
-      .filter((it: JavaAttribute) => it.collectionType)
-      .map(
-        (attr: JavaAttribute) =>
-          GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java.technical),
-  );
+  config.attributes
+    .filter((it: JavaAttribute) => it.collectionType)
+    .forEach(
+      (attr: JavaAttribute) =>
+        imports.add(GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java.technical));
 
   return Array.from(imports)
     .filter((e) => e)
