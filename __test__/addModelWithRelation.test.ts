@@ -29,7 +29,6 @@ describe('Model generator', () => {
               cardinality: 'twoWay',
               referencedColumnName: 'id',
               entity: 'destino',
-              cascadeType: [{ type: 'ALL' }, { type: 'PERSIST' }]
             },
             nullable: true,
           },
@@ -171,6 +170,8 @@ describe('Model generator', () => {
               referencedColumnName: 'id',
               mappedBy: 'origemf',
               entity: 'destino',
+              orphanRemoval: true,
+              cascadeType: [{ type: 'REMOVE' }, { type: 'PERSIST' }]
             },
             nullable: true,
           },
@@ -199,7 +200,9 @@ describe('Model generator', () => {
             fetchType: 'lazy',
             entity: 'Origem',
             mappedBy: 'destino', // same name as java attribute in source relation
-            fieldName: 'origemf' // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
+            fieldName: 'origemf', // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
+            orphanRemoval: true,
+            cascadeType: [{ type: 'REMOVE' }, { type: 'PERSIST' }]
           },
         ],
         crud: false,

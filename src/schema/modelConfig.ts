@@ -157,6 +157,34 @@ const relationReferenceSchema: JSONSchemaType<RelationReference> = {
       type: "string",
       nullable: true
     },
+    cascadeType: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: {
+            type: "string",
+            enum: [...CASCADE_TYPE],
+            errorMessage: {
+              type: 'Cascade type must be a string',
+              enum: `Each cascade type must be one of: ${CASCADE_TYPE.join(', ')}.`
+            }
+          },
+        },
+        errorMessage: `The cascade type, if provided, must be a valid cascade type configuration.`,
+        required: ["type"],
+        additionalProperties: false
+      },
+      nullable: true,
+      errorMessage: {
+        type: `The cascade types, if provided, must be an array of a valid cascade type configuration.`
+      }
+    },
+    orphanRemoval: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'The orphan removal attribute, if provided, must be a boolean'
+    },
   },
   required: ["type", "entity"],
   additionalProperties: false,
