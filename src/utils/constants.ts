@@ -563,7 +563,8 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'binary',
   'file',
   'instant',
-  'uri'
+  'uri',
+  'url'
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -584,7 +585,8 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
   ],
   generic: [
     'object'
-  ]
+  ],
+  uri: ['url', 'uri']
 }
 
 const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type !== 'object');
@@ -695,6 +697,12 @@ export const GENERIC_TYPES: Map<
       dotnet: { name: "Uri", primitive: false, namespace: "System" },
       python: { name: 'URI', primitive: false, namespace: 'urllib.parse' },
       kotlin: { name: 'URI', primitive: false, namespace: 'java.net' },
+    },
+    url: {
+      java: { name: 'URL', primitive: false, namespace: 'java.net' },
+      dotnet: { name: 'Uri', primitive: false, namespace: 'System' },
+      python: { name: 'URL', primitive: false, namespace: 'urllib.parse' },
+      kotlin: { name: 'URL', primitive: false, namespace: 'java.net' },
     },
     instant: {
       java: { name: 'Instant', primitive: false, namespace: 'java.time' },
