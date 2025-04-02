@@ -45,7 +45,12 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       if (status == '204') continue;
 
       const schema = (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema;
-      if (schema?.objectType == 'dto' || schema?.type !== 'object') {
+      /*if (schema?.objectType == 'dto' || schema?.type !== 'object') {
+        continue;
+      }*/
+
+      if (schema?.type !== 'object') {
+        console.log("schema?.type ", schema?.type);
         continue;
       }
 
