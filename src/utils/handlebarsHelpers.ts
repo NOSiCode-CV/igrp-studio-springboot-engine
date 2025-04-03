@@ -9,6 +9,7 @@ import {
   ModelConfig,
   Relation,
   SchemaContent,
+  SchemaField,
 } from '../interfaces/types';
 import {
   DIRECTORIES,
@@ -116,16 +117,21 @@ Handlebars.registerHelper(
   ) {
     let imports: string[] = [];
 
-    const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
+    const moduloAction = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
     for (const action of actions) {
+      //processing request
       if (action.requestBody)
         if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + 'Request')) {
           const schema = (
             action.requestBody.content['application/json'] ??
             action.requestBody.content['multipart/form-data']
           ).schema;
-          if (schema.objectType) {
+
+
+          processImportsTypes(schema, imports, group, packageName, domainDriven);
+
+          if (action.modelAttribute) {
             if (domainDriven) {
               // TODO: Implementar lógica para imports dinamicos dependendo do module.
               /*imports.push(
@@ -133,87 +139,92 @@ Handlebars.registerHelper(
               );*/
             } else {
               imports.push(
-                `import ${group}.${packageName}.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
+                `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.modelAttribute.name, 'dto')) + 'DTO'};`,
               );
             }
-          } else {
-            if (domainDriven)
-              imports.push(
-                `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
-              );
-            else
-              imports.push(
-                `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
-              );
-          }
-        }
-
-      if (action.modelAttribute) {
-        if (domainDriven) {
-          // TODO: Implementar lógica para imports dinamicos dependendo do module.
-          /*imports.push(
-            `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
-          );*/
-        } else {
-          imports.push(
-            `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.modelAttribute.name, 'dto')) + 'DTO'};`,
-          );
-        }
-      }
-
-      if (action.responses)
-        for (const response of Object.values(action.responses)) {
-          // Get the content for either application/json or multipart/form-data
-          const content =
-            response?.content['application/json'] || response?.content['multipart/form-data'];
-          if (!content) continue;
-
-          // Extract the schema and its properties
-          const { schema } = content;
-          const schemaType = schema?.type;
-          const objectType = schema?.objectType; // New: to check for dto type
-
-          if (schema.collectionType === 'pageable') {
-            imports.push(`import org.springframework.data.domain.Page;`);
-            imports.push(`import org.springframework.data.domain.Pageable;`);
-            imports.push(`import org.springdoc.core.annotations.ParameterObject;`);
           }
 
-          if (!objectType && schemaType !== 'object') continue;
+          //processing response
+          if (action.responses)
+            for (const response of Object.values(action.responses)) {
+              // Get the content for either application/json or multipart/form-data
+              const content =
+                response?.content['application/json'] || response?.content['multipart/form-data'];
+              if (!content) continue;
 
-          // If domain-driven and the schema type is 'object', import from the module-specific directory.
-          if (domainDriven && schemaType === 'object') {
-            const moduleResponse = response?.module || DIRECTORIES.SHARED;
-            const responseName = capitalize(response.name || '');
-            imports.push(
-              `import ${group}.${packageName}.${moduleResponse}.application.dto.${responseName}DTO;`,
-            );
-          }
+              // Extract the schema and its properties
+              const { schema } = content;
 
-          // Determine the DTO type string to import.
-          let type;
-          if (schemaType !== 'object') {
-            type = capitalize(schemaType.replace(/dto$/i, '') + 'DTO');
-          } else if (isResponseCollection(schemaType)) {
-            type = capitalize(schema.items?.type.replace(/dto$/i, '') + 'DTO');
-          } else {
-            type = capitalize((response.name || '').replace(/dto$/i, '') + 'DTO');
-          }
+              processImportsTypes(schema, imports, group, packageName, domainDriven, response.name);
 
-          if (!type) continue;
 
-          // If the objectType is "dto", import using the dto directory.
-          if (!domainDriven) {
-            imports.push(`import ${group}.${packageName}.dto.${type};`);
-          }
+            }
         }
     }
-    imports.push(`import java.util.List;`);
-    imports.push(`import java.util.Collection;`);
 
     return [...new Set(imports)].join('\n');
-  },
+  }
 );
+
+function processImportsTypes(schema: SchemaField, imports: string[], group: string,
+  packageName: string, domainDriven?: boolean, name?: string): string[] {
+
+  const schemaType = schema?.type;
+  const objectType = schema?.objectType; // New: to check for type: dto, enum, schema...
+  const objModulo = schema?.module || DIRECTORIES.SHARED;
+  const collectionType = schema?.collectionType
+
+  const packageSourceName = `${group}.${packageName}`;
+
+  if (collectionType) {
+    if (collectionType === 'pageable') {
+      imports.push(`import org.springdoc.core.annotations.ParameterObject;`);
+      imports.push(`import org.springframework.data.domain.Pageable;`);
+    }
+
+    const genericImports = GENERIC_IMPORTS(packageSourceName, schemaType);
+    const collectionTypeImport = genericImports.get(collectionType);
+
+    const importValue = collectionTypeImport?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
+    }
+  }
+
+  if (schemaType != 'object' && objectType) {
+
+    const genericImports = GENERIC_IMPORTS(packageSourceName, schemaType, objModulo);
+    const importD = genericImports.get(objectType);
+
+    const importValue = domainDriven
+      ? importD?.java?.domain
+      : importD?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
+    }
+  }
+
+  //type object its only implemented in response
+  if (schemaType === 'object' && name) {
+
+    const responseName = capitalize(name || '');
+
+    const genericImports = GENERIC_IMPORTS(packageSourceName, responseName, objModulo);
+    const importD = genericImports.get('dto');
+
+    const importValue = domainDriven
+      ? importD?.java?.domain
+      : importD?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
+    }
+  }
+
+  return imports;
+}
 
 Handlebars.registerHelper(
   'eq',

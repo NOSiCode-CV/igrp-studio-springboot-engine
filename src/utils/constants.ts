@@ -866,8 +866,8 @@ export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, mod
     },
     pageable: {
       java: {
-        domain: `import org.springframework.data.domain.Pageable;`,
-        technical: `import org.springframework.data.domain.Pageable;`
+        domain: `import org.springframework.data.domain.Page;`,
+        technical: `import org.springframework.data.domain.Page;`
       },
       dotnet: {},
       python: {},
