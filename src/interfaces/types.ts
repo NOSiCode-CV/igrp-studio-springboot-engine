@@ -131,7 +131,9 @@ export interface DTOConfig extends DTOBaseConfig {
 }
 
 export interface HandlerConfig extends DTOConfig {
-  response: string;
+  //response: JavaAttribute;
+  //response: string;
+  response: { [p: string]: Body }
 }
 
 export interface ExceptionConfig {

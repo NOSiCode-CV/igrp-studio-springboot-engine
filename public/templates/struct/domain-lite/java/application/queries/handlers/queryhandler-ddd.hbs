@@ -5,29 +5,20 @@ import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
-
-import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.application.dto.*;
-
-import java.util.List;
-import java.util.Collection;
-import java.util.Map;
-import org.springframework.data.domain.Page;
+{{{resolve-imports-handlers-ddd resourceConfig.response baseConfig}}}
 
 @Service
 public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHandler<{{capitalize
-   resourceConfig.name}}Query, ResponseEntity<{{{resourceConfig.response}}}>>{
+   resourceConfig.name}}Query, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>>{
 
    public {{capitalize resourceConfig.name}}QueryHandler() {
 
    }
 
    @IgrpQueryHandler
-   public ResponseEntity<{{{resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
+   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
       return null;
    }

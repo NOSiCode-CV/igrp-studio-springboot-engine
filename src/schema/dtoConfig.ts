@@ -157,9 +157,9 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true
     },
     response: {
-      type: "string",
+      type: "object",
       nullable: true,
-      errorMessage: 'The response, if provided, must be a valid string.'
+      errorMessage: 'The response, if provided, must be a valid object'
     },
   },
   required: ["type", "template", "name", "attributes"],

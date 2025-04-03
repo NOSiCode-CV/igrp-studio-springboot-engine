@@ -8,6 +8,7 @@ import {
   JavaAttribute,
   ModelConfig,
   Relation,
+  ResponseConfig,
   SchemaContent,
   SchemaField,
 } from '../interfaces/types';
@@ -163,6 +164,7 @@ Handlebars.registerHelper(
     }
 
     return [...new Set(imports)].join('\n');
+
   }
 );
 
@@ -250,16 +252,48 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
+Handlebars.registerHelper('resolve-imports-handlers-ddd', function (response: { [p: string]: Body }, baseConfig: any) {
+
+  if (!response) {
+    return null;
+  }
+  if (!baseConfig) return null;
+  //console.log('responses: ', response)
+  const singleBody = response[Object.keys(response)[0]];
+  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
+
+  if (!content) {
+    return null;
+  }
+
+  const schema = content?.schema;
+
+  let imports: string[] = [];
+
+  let name;
+
+  if (schema.type === 'object') {
+    name = singleBody.name;
+  }
+
+  processImportsTypes(schema, imports, baseConfig.group, baseConfig.packageName, true, name)
+
+  return [...new Set(imports)].join('\n');
+
+});
 
 
 
 
+//
 Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
   if (!config) return null;
   if (!baseConfig) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
+
+  //console.log('resourceConfig:: ', config)
 
   const isDDDStyle =
     baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
@@ -307,6 +341,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     .forEach(
       (attr: JavaAttribute) =>
         imports.add(GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java.technical));
+
 
   return Array.from(imports)
     .filter((e) => e)

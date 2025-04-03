@@ -13,7 +13,8 @@ export const resolveImportReponse = (resourceConfig: ResponseConfig, baseConfig:
     if (!baseConfig) return null;
 
     const module = resourceConfig?.module;
-    // Tenta pegar o content a partir dos dois possíveis tipos de media
+
+    
     const content =
         resourceConfig.content['application/json'] ||
         resourceConfig.content['multipart/form-data'];

@@ -1,6 +1,7 @@
 import {
   ApiConfig,
   BaseApiConfig,
+  Body,
   ControllerAction,
   ControllerConfig, CrudControllerConfig,
   DdlConfig,
@@ -1182,7 +1183,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
           template: 'classic',
           module: module,
           attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-          response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
+          response: act.responses,
+          // response: capitalizeResponse(act.responses)  // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,
       );
@@ -1193,6 +1195,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
     await generateTestServiceInmpl(context);
   }
 };
+
+
 
 export const addCrudController = async (dirty: CrudControllerConfig, basePath: string) => {
   /**
