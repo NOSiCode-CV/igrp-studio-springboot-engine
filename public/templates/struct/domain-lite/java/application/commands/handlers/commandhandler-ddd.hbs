@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{resourceConfig.name}}Command;
 
-{{{resolve-imports-handlers-ddd resourceConfig.response baseConfig}}}
+{{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
 
 @Service
 public class {{capitalize resourceConfig.name}}CommandHandler implements CommandHandler<{{capitalize

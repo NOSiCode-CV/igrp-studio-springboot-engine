@@ -50,11 +50,13 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
       }*/
 
       if (schema?.type !== 'object') {
-        console.log("schema?.type ", schema?.type);
+        //console.log("schema?.type ", schema?.type);
         continue;
       }
 
       response.name = capitalize(response.name ?? '');
+      response.module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+
 
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: baseConfig,
@@ -76,8 +78,6 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
         baseConfig,
         fullPath: basePath,
       };
-
-      //console.log('resourceConfig:: ', responseContext.resourceConfig.content);
 
       const modelOutputPath = getDTOOutputPath(dtoContext, responseContext);
       const template = await _renderDTO(responseContext);
@@ -139,7 +139,9 @@ export const transformSchemaDTOConfig = async function (
   basePath: string,
 ): Promise<DTOConfig> {
 
+
   const bodyCfg = structuredClone(config);
+
 
   const ncfg: DTOConfig = {
     type: 'response',

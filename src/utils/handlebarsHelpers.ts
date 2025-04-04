@@ -4,6 +4,7 @@ import {
   Attribute,
   Body,
   ControllerAction,
+  HandlerConfig,
   HttpHeader,
   JavaAttribute,
   ModelConfig,
@@ -148,6 +149,7 @@ Handlebars.registerHelper(
           //processing response
           if (action.responses)
             for (const response of Object.values(action.responses)) {
+
               // Get the content for either application/json or multipart/form-data
               const content =
                 response?.content['application/json'] || response?.content['multipart/form-data'];
@@ -156,7 +158,7 @@ Handlebars.registerHelper(
               // Extract the schema and its properties
               const { schema } = content;
 
-              processImportsTypes(schema, imports, group, packageName, domainDriven, response.name);
+              processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
 
 
             }
@@ -169,7 +171,7 @@ Handlebars.registerHelper(
 );
 
 function processImportsTypes(schema: SchemaField, imports: string[], group: string,
-  packageName: string, domainDriven?: boolean, name?: string): string[] {
+  packageName: string, domainDriven?: boolean, name?: string, moduloContext?: string): string[] {
 
   const schemaType = schema?.type;
   const objectType = schema?.objectType; // New: to check for type: dto, enum, schema...
@@ -212,8 +214,7 @@ function processImportsTypes(schema: SchemaField, imports: string[], group: stri
   if (schemaType === 'object' && name) {
 
     const responseName = capitalize(name || '');
-
-    const genericImports = GENERIC_IMPORTS(packageSourceName, responseName, objModulo);
+    const genericImports = GENERIC_IMPORTS(packageSourceName, responseName, moduloContext);
     const importD = genericImports.get('dto');
 
     const importValue = domainDriven
@@ -252,31 +253,36 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
-Handlebars.registerHelper('resolve-imports-handlers-ddd', function (response: { [p: string]: Body }, baseConfig: any) {
+Handlebars.registerHelper('resolve-imports-handlers-ddd', function (handlerConfig: HandlerConfig, baseConfig: any) {
 
-  if (!response) {
-    return null;
-  }
+
+  if (!handlerConfig) return null;
   if (!baseConfig) return null;
-  //console.log('responses: ', response)
+  if (!handlerConfig.response) return null;
+
+
+  const response: { [p: string]: Body } = handlerConfig.response;
+
   const singleBody = response[Object.keys(response)[0]];
   const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
 
-  if (!content) {
-    return null;
-  }
+  if (!content) return null;
 
   const schema = content?.schema;
 
   let imports: string[] = [];
 
   let name;
+  let moduloContext;
 
   if (schema.type === 'object') {
     name = singleBody.name;
+    moduloContext = handlerConfig.module
   }
 
-  processImportsTypes(schema, imports, baseConfig.group, baseConfig.packageName, true, name)
+  console.log('reponse modulo ddd ', handlerConfig.module)
+
+  processImportsTypes(schema, imports, baseConfig.group, baseConfig.packageName, true, name, moduloContext)
 
   return [...new Set(imports)].join('\n');
 
