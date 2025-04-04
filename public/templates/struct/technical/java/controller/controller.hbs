@@ -40,8 +40,9 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
-
-      return queryBus.handle(query);
+      ResponseEntity<{{{resolveResponse responses}}}> response = (ResponseEntity<{{{resolveResponse responses}}}>) queryBus.handle(query);
+      return ResponseEntity.ok(response.getBody());
+      //return queryBus.handle(query);
   {{else}}
       final var command = new {{capitalize actionName}}Command(
       {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
@@ -53,8 +54,9 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
-
-      return commandBus.send(command);
+       ResponseEntity<{{{resolveResponse responses}}}> response = (ResponseEntity<{{{resolveResponse responses}}}>) commandBus.send(command);
+       return ResponseEntity.ok(response.getBody());
+       //return commandBus.send(command);
   {{/if}}
 {{else}}
     return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
