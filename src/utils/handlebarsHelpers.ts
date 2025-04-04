@@ -365,16 +365,7 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   let rtype: string;
 
   rtype = wrapCollectionType(attributeType, t1.collectionType);
-  /*switch (t1.collectionType) {
-    case 'collection':
-      return `Collection<${attributeType}>`
-    case 'map':
-      return `Map<?, ${attributeType}>`
-    case 'pageable':
-      return `Page<${attributeType}>`
-    default:
-      rtype = attributeType;
-  }*/
+
 
   return rtype;
 });

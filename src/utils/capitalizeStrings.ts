@@ -47,6 +47,10 @@ export function wrapCollectionType(type: string, collectionType: string): string
       return `Map<?, ${type}>`;
     case 'pageable':
       return `Page<${type}>`;
+    case 'list':
+      return `List<${type}>`;
+    case 'set':
+      return `Set<${type}>`;
     default:
       return type;
   }

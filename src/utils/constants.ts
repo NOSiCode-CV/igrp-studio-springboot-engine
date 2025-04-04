@@ -593,7 +593,7 @@ const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type 
 
 export const GENERIC_MODEL_ATTRIBUTE_TYPES = [...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'];
 
-export const GENERIC_COLLECTION_TYPES = ['none', 'collection', 'map', 'pageable'];
+export const GENERIC_COLLECTION_TYPES = ['none', 'collection', 'map', 'pageable', 'list', 'set'];
 
 export const GENERIC_TYPES: Map<
   string,

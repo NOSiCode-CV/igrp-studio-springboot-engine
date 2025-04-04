@@ -346,7 +346,7 @@ export interface SchemaField {
   deprecated?: boolean;
   items?: SchemaField; // For array types
   properties?: { [key: string]: PropertySchemaField }; // For object types
-  collectionType?: 'none' | 'collection' | 'map' | 'pageable';
+  collectionType?: 'none' | 'collection' | 'map' | 'pageable' | 'set' | 'list';
 }
 
 export interface SchemaEnum {
