@@ -35,8 +35,9 @@ export interface ApiConfig extends BaseApiConfig {
   packageName: string;
 }
 
-export interface BaseApiConfig {
+export interface BaseApiConfig extends IdentifiableElement {
   type: 'springboot';
+  workspaceId?: string;
   apiName: string;
   group: string;
   artifact: string;

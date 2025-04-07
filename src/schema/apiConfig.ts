@@ -7,6 +7,16 @@ import { dependencySchema } from './baseApiConfig';
 const apiSchema: JSONSchemaType<ApiConfig> = {
   type: 'object',
   properties: {
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The project id if provided must be a string.'
+    },
+    workspaceId: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The workspace id if provided must be a string.'
+    },
     type: {
       type: "string",
       const: "springboot",
