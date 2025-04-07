@@ -85,7 +85,6 @@ export const saveToFile = async (content: string, outputPath: string, override: 
       const controllers = await loadControllerConfigs(module ?? DIRECTORIES.SHARED, basePath);
       const controller = controllers.find((it) => it.id === id);
       if (controller) {
-        console.log("Found controller by ID")
         let sourcePath;
         if(extension === EXTENSIONS.JSON)
           sourcePath = join(getDirectoryPath(outputPath), controller.name.replace(/controller$/i, '').concat('Controller', extension));
@@ -98,10 +97,6 @@ export const saveToFile = async (content: string, outputPath: string, override: 
               controller.name.toLowerCase(),
             );
         }
-
-        console.log("Src path ", sourcePath)
-        console.log("Out path", outputPath)
-        console.log("Dir path", getDirectoryPath(outputPath))
 
         if(sourcePath != outputPath && sourcePath != getDirectoryPath(outputPath)) {
           await fs.remove(sourcePath);

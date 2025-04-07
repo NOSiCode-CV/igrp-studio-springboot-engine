@@ -146,22 +146,24 @@ Handlebars.registerHelper(
             }
           }
 
-          //processing response
-          if (action.responses)
-            for (const response of Object.values(action.responses)) {
 
-              // Get the content for either application/json or multipart/form-data
-              const content =
-                response?.content['application/json'] || response?.content['multipart/form-data'];
-              if (!content) continue;
+        }
 
-              // Extract the schema and its properties
-              const { schema } = content;
+      //processing response
+      if (action.responses)
+        for (const response of Object.values(action.responses)) {
 
-              processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
+          // Get the content for either application/json or multipart/form-data
+          const content =
+            response?.content['application/json'] || response?.content['multipart/form-data'];
+          if (!content) continue;
+
+          // Extract the schema and its properties
+          const { schema } = content;
+
+         processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
 
 
-            }
         }
     }
 
@@ -279,8 +281,6 @@ Handlebars.registerHelper('resolve-imports-handlers-ddd', function (handlerConfi
     name = singleBody.name;
     moduloContext = handlerConfig.module
   }
-
-  console.log('reponse modulo ddd ', handlerConfig.module)
 
   processImportsTypes(schema, imports, baseConfig.group, baseConfig.packageName, true, name, moduloContext)
 
