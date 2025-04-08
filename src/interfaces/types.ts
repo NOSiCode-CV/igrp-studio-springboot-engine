@@ -190,6 +190,7 @@ export interface Relation {
   mappedBy?: string;
   module?: string;
   referencedColumnName?: string;
+  joinColumn?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
   cascadeType?: CascadeType[];
@@ -203,6 +204,7 @@ export interface RelationReference {
   entity: string;
   fieldName?: string;
   mappedBy?: string;
+  joinColumn?: string;
   cascadeType?: CascadeType[];
   orphanRemoval?: boolean;
 }
