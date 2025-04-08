@@ -35,4 +35,11 @@ management.endpoints.web.exposure.include=*
 management.metrics.tags.application=${spring.application.name}
 management.tracing.enabled=false
 management.tracing.sampling.probability=1.0
+{{#if baseConfig.enableGraalVm}}
+# OpenTelemetry
+otel.traces.exporter=otlp
+otel.metrics.exporter=otlp
+otel.service.name=${OTEL_SERVICE_NAME}
+otel.exporter.otlp.endpoint=${OTEL_COLLECTOR_ENDPOINT}
+{{/if}}
 {{/if}}
