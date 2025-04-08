@@ -35,8 +35,6 @@ export const checkRelationReferences = async function (
   const cfg = context.resourceConfig;
   types.delete(cfg.name);
 
-  console.log(types);
-
   const errors: Array<{ message: string }> = [];
 
   for (const t of types.values()) {
