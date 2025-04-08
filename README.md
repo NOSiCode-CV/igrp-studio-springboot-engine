@@ -42,7 +42,7 @@ The author with your name and your organization.
 
 ```json
 {
-  "name": "@igrp/spring-engine",
+  "name": "@igrp/igrp-studio-springboot-engine",
   "version": "0.0.1-<YOUR_NAME_WITHOUT_SPACES>",
   "description": "Spring API Creation Engine",
   "main": "dist/index.cjs.js",
@@ -108,7 +108,7 @@ If everything succeed you can now run this command:
 
 #### Install the package:
 
-```yarn add @igrp/spring-engine@latest --registry=https://sonatype.nosi.cv/repository/igrp/```
+```yarn add @igrp/igrp-studio-springboot-engine@latest --registry=https://sonatype.nosi.cv/repository/igrp/```
 
 #### You can use this package to:
 
@@ -120,8 +120,8 @@ If everything succeed you can now run this command:
 ```
 
 ```typescript
-import { newApi } from "@igrp/spring-engine"
-import { ApiConfig } from "@igrp/spring-engine/dist/interfaces/types";
+import { newApi } from "@igrp/igrp-studio-springboot-engine"
+import { ApiConfig } from "@igrp/igrp-studio-springboot-engine/dist/interfaces/types";
 
 const baseConfig: ApiConfig = {
   type: 'springboot',
@@ -155,8 +155,8 @@ const createApi = async () => {
 ```
 
 ```typescript
-import { addModel } from '@igrp/spring-engine';
-import { ModelConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { addModel } from '@igrp/igrp-studio-springboot-engine';
+import { ModelConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 //Model with simple primary key
 const config: ModelConfig = {
@@ -292,8 +292,8 @@ The function will update the model configuration file by adding the `relation` t
 @param {string} basePath - The base path of the application where the model configuration will be updated and saved.
 ```
 ```ts
-import { addModel } from '@igrp/spring-engine';
-import { ModelConfig } from "@igrp/spring-engine/dist/interfaces/types";
+import { addModel } from '@igrp/igrp-studio-springboot-engine';
+import { ModelConfig } from "@igrp/igrp-studio-springboot-engine/dist/interfaces/types";
 
 const config: ModelConfig = {
   type: 'model',
@@ -337,8 +337,8 @@ const addOrderRelationship = async () => {
 ```
 
 ```ts
-import { deleteElement } from '@igrp/spring-engine';
-import { DeleteConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { deleteElement } from '@igrp/igrp-studio-springboot-engine';
+import { DeleteConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 const config: DeleteConfig = {
   name: 'Teste',
@@ -425,35 +425,6 @@ const createDTO = async () => {
 * when ns=dto it will check if that dto exist in json config
 * when ns=java it will check if that java class exists on the java allowed list 
 */
-// JAVA LIST
-
-export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
-  'boolean': { name: 'boolean', primitive: true },
-  'short': { name: 'short', primitive: true },
-  'char': { name: 'char', primitive: true },
-  'int': { name: 'int', primitive: true },
-  'long': { name: 'long', primitive: true },
-  'float': { name: 'float', primitive: true },
-  'double': { name: 'double', primitive: true },
-  'Boolean': { name: 'Boolean', primitive: false },
-  'Short': { name: 'Short', primitive: false },
-  'Integer': { name: 'Integer', primitive: false },
-  'Long': { name: 'Long', primitive: false },
-  'Double': { name: 'Double', primitive: false },
-  'String': { name: 'String', primitive: false },
-  'Character': { name: 'Character', primitive: false },
-  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
-  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
-  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
-  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
-  'ZoneDateTime': { name: 'ZoneDateTime', primitive: false, namespace: 'java.time' },
-  'OffsetDateTime': { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
-  'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
-  'List': { name: 'List', primitive: false, namespace: 'java.util', },
-  'Object': { name: 'Object', primitive: false },
-}));
-```
 
 - Add new controller - This function creates a controller based on the provided configuration and integrates it into the specified API base path.
   It also generates the corresponding service interface for the controller actions defined.
@@ -464,8 +435,8 @@ export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
 ```
 
 ```ts
-import { addController } from '@igrp/spring-engine';
-import { ControllerConfig } from '@igrp/spring-engine/dist/interfaces/types';
+import { addController } from '@igrp/igrp-studio-springboot-engine';
+import { ControllerConfig } from '@igrp/igrp-studio-springboot-engine/dist/interfaces/types';
 
 const controllerConfig: ControllerConfig = const config: ControllerConfig = {
   type: 'controller',
@@ -955,14 +926,6 @@ export interface UniqueConstraint {
 }
 ```
 - **UniqueConstraint**: Defines a uniqueness constraint on specified columns in a model.
-
-```ts
-export interface Icontroller {
-  type: 'icontroller';
-  name: string;
-}
-```
-- **Icontroller**: Represents a controller interface configuration.
 
 ```ts
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}

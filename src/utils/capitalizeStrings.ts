@@ -1,22 +1,57 @@
 import { Body } from '../interfaces/types';
-import { isResponseCollection } from './helpers';
-
-const singleCapitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
-
-export const capitalize = (str: string): string => str.split(/[-_,.]/).map(singleCapitalize).join('');
+import { capitalize } from '../helper/stringHelper';
 
 export const capitalizeResponse = (responses?: { [p: string]: Body }): string => {
-  if (!responses) return "?"; // Return empty string if responses is undefined
 
-  const keys = Object.keys(responses);
+  if (!responses || Object.keys(responses).length !== 1) return '?';
 
-  if (keys.length !== 1) return "?"; // Return "?" if there is more than one key
+  const singleBody = responses[Object.keys(responses)[0]];
+  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
+  const schema = content?.schema;
 
-  const singleBody = responses[keys[0]];
+  if (!schema) return '?';
 
-  // Return the "name" attribute if it exists, otherwise return the type from the reference
-  const response = ((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.objectType)? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type?.replace(/dto$/i, '') + "DTO")
-    : (isResponseCollection((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type))? capitalize((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.items?.type?.replace(/dto$/i, '') + "DTO") : capitalize(singleBody?.name.replace(/dto$/i, '') + "DTO")  || "?";
+  const formatTypeName = (type: string | undefined): string =>
+    capitalize(type?.replace(/dto$/i, '') + 'DTO');
 
-  return (isResponseCollection((singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'])?.schema.type))? `List<${response}>` : response
+  let resolvedType: string;
+
+  if (schema.type === 'object') {
+    resolvedType = formatTypeName(singleBody?.name);
+  } else {
+
+    if (schema.objectType === 'dto') {
+      resolvedType = formatTypeName(schema.type)
+    } else {
+      resolvedType = capitalize(schema.type);
+      /*let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+
+      if (primitiveTypes.includes(schema.type)) {
+        resolvedType = capitalize(schema.type);
+      } else {
+        resolvedType = formatTypeName(schema.type);
+      }*/
+    }
+  }
+
+  const responseCollectionType: string = schema.collectionType ?? 'none';
+
+  return wrapCollectionType(resolvedType, responseCollectionType);
 };
+
+export function wrapCollectionType(type: string, collectionType: string): string {
+  switch (collectionType) {
+    case 'collection':
+      return `Collection<${type}>`;
+    case 'map':
+      return `Map<?, ${type}>`;
+    case 'pageable':
+      return `Page<${type}>`;
+    case 'list':
+      return `List<${type}>`;
+    case 'set':
+      return `Set<${type}>`;
+    default:
+      return type;
+  }
+}

@@ -4,11 +4,6 @@ import { TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import {
-  getDDDAggregateElementsOutputDir,
-  getDDDCommandHandlerOutputDir,
-  getDDDCommandOutputDir,
-  getDDDEventHandlerOutputDir,
-  getDDDQueryHandlerOutputDir,
   getDDDTestCommandHandlerOutputDir,
   getDDDTestEventHandlerOutputDir, getDDDTestQueryHandlerOutputDir,
 } from '../../utils/helpers';

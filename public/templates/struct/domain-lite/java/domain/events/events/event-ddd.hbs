@@ -1,10 +1,13 @@
 {{> package-java }}
 
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}

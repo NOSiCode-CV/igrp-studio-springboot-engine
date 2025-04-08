@@ -17,15 +17,15 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       type: "string",
       oneOf: genericAttributeSchema.oneOf
     },
-    name: { 
+    name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
     objectType: {
-      type: "string", 
+      type: "string",
       enum: ['model', 'dto', 'java', 'enum'],
-      errorMessage: 'The abbreaviated namespace must model, dto, java.'
+      errorMessage: 'The abbreviated namespace must model, dto, java.'
     },
     required: {
       type: "boolean",
@@ -55,7 +55,7 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
     minLength: {
       type: "number",
       nullable: true,
-      errorMessage: 'The max length must be a number.'
+      errorMessage: 'The min length must be a number.'
     },
     regex: {
       type: "string",
@@ -126,22 +126,27 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
-    type: { 
+    type: {
       type: "string",
       errorMessage: 'The type must be valid.'
     },
-    name: { 
-      type: "string", 
+    name: {
+      type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
     },
-    template: { 
-      type: "string", 
+    enableCustonValidation: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'enable custon validation must be a boolean value.'
+    },
+    template: {
+      type: "string",
       enum: ['record', 'classic'],
       errorMessage: 'The acceptable template are: record, classic.'
     },
-    attributes: { 
-      type: "array", 
+    attributes: {
+      type: "array",
       items: attributeSchema,
       errorMessage: 'The attributes must be an array of valid attribute definitions.'
     },
@@ -152,9 +157,9 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true
     },
     response: {
-      type: "string",
+      type: "object",
       nullable: true,
-      errorMessage: 'The response, if provided, must be a valid string.'
+      errorMessage: 'The response, if provided, must be a valid object'
     },
   },
   required: ["type", "template", "name", "attributes"],
@@ -177,13 +182,13 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
-    type: { 
-      type: "string", 
+    type: {
+      type: "string",
       const: "dto",
       errorMessage: 'The type must be "dto".'
     },
-    name: { 
-      type: "string", 
+    name: {
+      type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
     },
@@ -192,6 +197,11 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true
+    },
+    enableCustonValidation: {
+      type: "boolean",
+      nullable: true,
+      errorMessage: 'enable custon validation must be a boolean value.'
     }
   },
   required: ["type", "name"],
@@ -206,5 +216,3 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
 };
 
 export const validateDTOConfig: ValidateFunction<DTOConfig> = ajvInstance.compile<DTOConfig>(dtoConfigSchema);
-
-export const validateDeleteDTOConfig: ValidateFunction<DTOBaseConfig> = ajvInstance.compile<DTOBaseConfig>(deletedDTOConfigSchema);

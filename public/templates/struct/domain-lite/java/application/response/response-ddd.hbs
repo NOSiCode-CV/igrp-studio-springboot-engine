@@ -1,14 +1,18 @@
 {{> package-java }}
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import cv.igrp.stereotype.IgrpDTO;
+import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
+{{#if resourceConfig.content}}
 {{> lombok-java-imports}}
+{{/if}}
 
-{{{resolve-imports resourceConfig baseConfig}}}
+{{{resolve-imports-response resourceConfig baseConfig}}}
 
+{{#if resourceConfig.content}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}
@@ -21,8 +25,8 @@ public class {{resourceConfig.name}}DTO {
       {{#each this.schema.properties}}
       @Schema(
           name = "{{@key}}",
-          type = "{{this.type}}"{{#if this.objectType}},
-          implementation = {{this.type}}.class{{/if}}{{#if this.description}},
+          type = "{{{resolve-type this}}}"{{#if this.objectType}},
+          implementation = {{{resolve-type this}}}.class{{/if}}{{#if this.description}},
           description = "{{this.description}}"{{/if}}{{#if this.example}},
           example = "{{this.example}}"{{/if}}{{#if this.pattern}},
           pattern = "{{this.pattern}}"{{/if}}{{#if this.format}},
@@ -34,8 +38,7 @@ public class {{resourceConfig.name}}DTO {
           pattern = "{{this.pattern}}"{{/if}}{{#if this.required}},
           required = true{{/if}}{{#if this.format}},
           format = "{{this.format}}"{{/if}}{{#if this.default}},
-          defaultValue = "{{this.default}}"
-          {{/if}}
+          defaultValue = "{{this.default}}"{{/if}}
       )
       private {{{resolve-type this}}} {{@key}};
       {{/each}}

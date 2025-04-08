@@ -15,7 +15,7 @@ export const saveResponseConfig = async (config: ResponseConfig, basePath: strin
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
-  const output = getResponseConfigPath(config.module ?? DIRECTORIES.SHARED, normalizeName(config.name), basePath);
+  const output = getResponseConfigPath(config.module ?? DIRECTORIES.SHARED, normalizeName(config.name ?? ''), basePath);
   await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_RESPONSE, config.id, config.module, basePath, EXTENSIONS.JSON);
 
 };

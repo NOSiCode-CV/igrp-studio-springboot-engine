@@ -1,8 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { Handlebars } from '../../utils/handlebarsHelpers';
-import { ERROR_MESSAGE, TEMPLATE_DIR, TEMPLATES } from '../../utils/constants';
+import { DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATES } from '../../utils/constants';
 import { loadPartials } from '../../utils/helpers';
+import { getDTOTypes } from '../dto/helpers';
+import { getEnumTypes } from '../enum/helpers';
+import { getPaths } from '../../index';
+
+export const cache: Record<string, any> = {};
 
 /**
  * Generates content from a template and a context.
@@ -12,6 +17,7 @@ import { loadPartials } from '../../utils/helpers';
  * @throws Throws an error if the template name is not provided or if the context is empty.
  */
 export const renderTemplate = async (templateName: string, context: any) => {
+
   if (!templateName) {
     throw ERROR_MESSAGE.TEMPLATE_NAME_REQUIRED;
   }
@@ -23,12 +29,17 @@ export const renderTemplate = async (templateName: string, context: any) => {
   await loadPartials();
 
   if(templateName === TEMPLATES.APPLICATION_RESOURCES_BANNER) {
-
-    context.baseVersion = "0.3.0-alpha-5.0.0";
-
+    context.baseVersion = "0.0.1-alpha";
   }
 
-  const templatePath = path.join(TEMPLATE_DIR, templateName);
+  if(OBJECT_TYPES.includes(context.resourceConfig?.type) || context.resourceConfig?.type === 'model') {
+    const sharedDTOImports = await getDTOTypes(DIRECTORIES.SHARED, context.basePath);
+    const customDTOImports = await getDTOTypes(context.resourceConfig.module, context.basePath);
+    cache["dtoImports"] = new Map([...sharedDTOImports, ...customDTOImports]);
+    cache["enumImports"] = await getEnumTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
+  }
+
+  const templatePath = path.join(getPaths().template, templateName);
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);
 

@@ -1,14 +1,18 @@
 {{> package-java }}
 
-import cv.igrp.core.data.DataTableFilter;
-import cv.igrp.stereotype.IgrpDTO;
+import cv.igrp.framework.core.data.DataTableFilter;
+import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
+{{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}

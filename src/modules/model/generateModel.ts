@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { updatePermissions } from '../permission/permissionManagement';
 import { saveModelConfig } from './saveModelConfig';
+import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
@@ -18,10 +19,10 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
   const template = await renderModel(context);
 
-  const errosUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
+  const errorsUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
 
-  if (errosUniqueConstraints.length > 0) {
-    throw new Error(`Erros de uniqueConstraints encontrados:\n${errosUniqueConstraints.join('\n')}`);
+  if (errorsUniqueConstraints.length > 0) {
+    throw new Error(`Unique constraint errors found:\n${errorsUniqueConstraints.join('\n')}`);
   }
 
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
@@ -59,7 +60,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 const renderModel = async (context: RenderContext<ModelConfig>) => {
 
   context.dateTimeAttributes = dateTimeUniqueAttributes(context.resourceConfig.attributes)
-
   context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
 
   if (context.resourceConfig.attributes.length === 0) {
@@ -69,11 +69,11 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   // Validação e renderização de cada atributo com seu valor padrão
   context.resourceConfig.attributes.forEach(attribute => {
     if (attribute.defaultValue) {
-      const columnAnnotation = renderColumnWithDefault(attribute);
+      renderColumnWithDefault(attribute);
     }
   });
 
-    // Gerar as restrições únicas compostas
+  // Gerar as restrições únicas compostas
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
@@ -143,7 +143,7 @@ const renderColumnWithDefault = (attribute: Attribute) => {
   validateColumnDefault(attribute);
 
   if (attribute.defaultValue) {
-    return `@ColumnDefault(${attribute.defaultValue})`;
+    return `@ColumnDefault('${attribute.defaultValue}')`;
   }
 
   return ''; // Caso não tenha valor padrão, não retorna a anotação
@@ -171,15 +171,17 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 // Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getModelOutputDir(context)
+  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+  return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
 }
 
 // Caminho onde o arquivo é salvo
 const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getDDDModelOutputDir(context)
+  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
   context.fullPath = outputDir
-  return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+  return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
 }
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {

@@ -2,11 +2,15 @@
 
 import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.event.Event;
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
+{{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}

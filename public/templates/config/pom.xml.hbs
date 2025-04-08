@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.6</version>
+		<version>{{baseConfig.springBootVersion}}</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>{{baseConfig.group}}</groupId>
@@ -14,16 +14,6 @@
 	<name>{{baseConfig.apiName}}</name>
 	<description>{{baseConfig.description}}</description>
 	<url/>
-  <repositories>
-    <!--<repository>
-            <id>igrp</id>
-            <url>http://nexus.example.com/repository/maven-releases/</url>
-        </repository>-->
-    <repository>
-      <id>igrp-framework</id>
-      <url>https://sonatype.nosi.cv/repository/igrp-framework/</url>
-    </repository>
-  </repositories>
 	<licenses>
 		<license/>
 	</licenses>
@@ -36,6 +26,12 @@
 		<tag/>
 		<url/>
 	</scm>
+  <repositories>
+    <repository>
+      <id>igrp-framework-releases</id>
+      <url>https://sonatype.nosi.cv/repository/igrp-framework-releases/</url>
+    </repository>
+  </repositories>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -46,11 +42,32 @@
 		{{> security-maven-dependencies}}
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
+    {{> igrp-maven-dependencies}}
+  {{#if baseConfig.enableObservability}}
+       {{#if baseConfig.enableGraalVm}}
+		 {{> graal-vm-observability-dependencies}}
+	   {{/if}}
 		{{> observability-maven-dependencies}}
-		{{> igrp-maven-dependencies}}
-	</dependencies>
+  {{/if}}
+
+  
+    {{#if baseConfig.dependencies}}
+      {{#each baseConfig.dependencies}}
+      <dependency>
+        <groupId>{{groupId}}</groupId>
+        <artifactId>{{artifactId}}</artifactId>
+        {{#if version}}<version>{{version}}</version>{{/if}}
+        {{#if scope}}<scope>{{scope}}</scope>{{/if}}
+      </dependency>
+
+      {{/each}}
+    {{/if}}
+  </dependencies>
 	<build>
 		<plugins>
+			{{#if baseConfig.enableGraalVm}}
+		       {{> graal-vm-plugin}}
+            {{/if}}
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

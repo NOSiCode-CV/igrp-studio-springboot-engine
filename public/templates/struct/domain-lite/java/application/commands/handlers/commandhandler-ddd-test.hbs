@@ -9,9 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 
 @ExtendWith(MockitoExtension.class)
 public class {{capitalize resourceConfig.name}}CommandHandlerTest {
@@ -21,7 +24,7 @@ public class {{capitalize resourceConfig.name}}CommandHandlerTest {
 
     @BeforeEach
     void setUp() {
-        // TODO: initialize mock dependencies if needed
+      // TODO: initialize mock dependencies if needed
     }
 
     @Test
@@ -32,7 +35,8 @@ public class {{capitalize resourceConfig.name}}CommandHandlerTest {
         // {{capitalize resourceConfig.name}}Command command = new {{capitalize resourceConfig.name}}Command(...);
         //
         // When
-        // ResponseEntity<{{normalizeDto resourceConfig.response}}> response = {{toCamelCase resourceConfig.name}}CommandHandler.handle(command);
+        // ResponseEntity<{{{resourceConfig.response}}}> response = {{toCamelCase
+            resourceConfig.name}}CommandHandler.handle(command);
         //
         // Then
         // assertNotNull(response);

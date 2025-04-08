@@ -1,16 +1,13 @@
 import path from 'path';
-import { ControllerConfig, ExceptionConfig, RenderContext } from '../../interfaces/types';
+import { ExceptionConfig, RenderContext } from '../../interfaces/types';
 import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
 import {
   getDDDExceptionDir,
-  getDDDServiceDir,
-  getDDDServiceImplDir,
   getExceptionDir,
-  getServiceDir,
 } from '../../utils/helpers';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 
 const EXCEPTION_SUFFIX = 'Exception.java';
 

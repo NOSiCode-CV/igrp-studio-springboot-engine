@@ -1,25 +1,24 @@
 {{> package-java }}
 
-import cv.igrp.core.domain.QueryHandler;
-import cv.igrp.stereotype.IgrpQueryHandler;
+import cv.igrp.framework.core.domain.QueryHandler;
+import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
-
-import java.util.List;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
+{{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
 
 @Service
-public class {{capitalize resourceConfig.name}}QueryHandler  implements QueryHandler<{{capitalize resourceConfig.name}}Query, ResponseEntity<{{normalizeDto resourceConfig.response}}>>{
+public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHandler<{{capitalize
+   resourceConfig.name}}Query, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>>{
 
    public {{capitalize resourceConfig.name}}QueryHandler() {
 
    }
 
    @IgrpQueryHandler
-   public ResponseEntity<{{normalizeDto resourceConfig.response}}> handle({{capitalize resourceConfig.name}}Query query) {
+   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
       // TODO: Implement the query handling logic here
       return null;
    }

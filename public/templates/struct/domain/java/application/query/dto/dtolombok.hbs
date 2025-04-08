@@ -1,10 +1,14 @@
 package {{baseConfig.group}}.{{baseConfig.packageName}}.application.query.dto.{{toLowerCase resourceConfig.aggregate}};
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
+{{/if}}
 
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
   @{{this.annotation}}
 {{/each}}

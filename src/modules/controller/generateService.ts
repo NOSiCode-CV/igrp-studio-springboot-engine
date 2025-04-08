@@ -3,7 +3,7 @@ import { ControllerConfig, RenderContext } from '../../interfaces/types';
 import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { renderTemplate } from '../common/renderTemplate';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDServiceDir, getDDDServiceImplDir, getServiceDir } from '../../utils/helpers';
+import { getDDDServiceDir, getServiceDir } from '../../utils/helpers';
 
 const SERVICE_SUFFIX = 'Service.java';
 const CMD_SERVICE_SUFFIX = 'CommandService.java';

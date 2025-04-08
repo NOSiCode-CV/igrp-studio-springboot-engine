@@ -25,7 +25,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getEnumTypes } from '../enum/helpers';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
@@ -150,15 +150,14 @@ export const transformSchemaDTOConfig = async function(
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
-      if (dtypes === undefined) {
-        dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-      }
 
-      const dt = dtypes.get(attr.type!);
+      dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
+
+      const dt = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.type!);
+        const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
         if(!dtype) {
             typeNotFound = true;
         }

@@ -8,12 +8,15 @@ spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}
 spring.jpa.open-in-view=false
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
+{{#if baseConfig.enableEntityRevision}}
+# Entity Revision
 # Track entity names modified during a revision
 #spring.jpa.properties.org.hibernate.envers.track_entities_changed_in_revision=true
 # Enable withModifiedFlag globally
 #spring.jpa.properties.org.hibernate.envers.global_with_modified_flag=true
 # Set schema and catalog for audit tables
 #spring.jpa.properties.org.hibernate.envers.default_schema=audit_schema
+{{/if}}
 
 # Spring Data REST
 spring.data.rest.detection-strategy=annotated

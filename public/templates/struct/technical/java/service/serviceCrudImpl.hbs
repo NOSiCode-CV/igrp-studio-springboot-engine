@@ -1,0 +1,172 @@
+{{> package-java }}
+
+/*
+* Implementation class for I{{resourceConfig.name}}Service.
+*
+* This class is generated once and serves as a placeholder for the business logic
+* of the {{resourceConfig.name}} service. Any custom implementations or modifications added here
+* will not be overridden by future code generations.
+*
+*/
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import java.util.Set;
+import java.util.Map;
+{{#each resourceConfig.models}}
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.modelName}}.{{capitalize this.modelName}};
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.modelName}}.{{capitalize this.modelName}}Repository;
+{{/each}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.IgrpProblem;
+{{#if (or resourceConfig.methods.read resourceConfig.methods.delete)}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.Get{{capitalize resourceConfig.name}}ByIdException;
+{{/if}}
+{{#if resourceConfig.methods.read}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{capitalize resourceConfig.name}}NotFoundDTO;
+{{/if}}
+{{#if resourceConfig.methods.delete}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{capitalize resourceConfig.name}}DeletedDTO;
+{{/if}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{capitalize resourceConfig.name}}DTO;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
+resourceConfig.name}}.I{{resourceConfig.name}}Service;
+
+@Service
+public class {{capitalize resourceConfig.name}}Service implements I{{capitalize resourceConfig.name}}Service {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}Service.class);
+
+  {{#each resourceConfig.models}}
+  private final {{capitalize this.modelName}}Repository {{toCamelCase this.modelName}}Repository;
+  {{/each}}
+
+  public {{resourceConfig.name}}Service(
+    {{#each resourceConfig.models}}
+    {{capitalize this.modelName}}Repository {{toCamelCase this.modelName}}Repository{{#if @last}}{{else}}, {{/if}}
+    {{/each}}
+  ) {
+    {{#each resourceConfig.models}}
+    this.{{toCamelCase this.modelName}}Repository = {{toCamelCase this.modelName}}Repository;
+    {{/each}}
+  }
+
+  {{#if resourceConfig.methods.create}}
+  @Override
+  public ResponseEntity<{{capitalize resourceConfig.name}}DTO> create{{capitalize resourceConfig.name}}({{capitalize resourceConfig.name}}DTO {{toCamelCase resourceConfig.name}}DTO) {
+
+    {{capitalize resourceConfig.name}}DTO {{toCamelCase resourceConfig.name}}SavedDTO = new {{capitalize resourceConfig.name}}DTO();
+
+  {{#each resourceConfig.models}}
+
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}} = new {{capitalize this.modelName}}();
+
+    {{#each this.fields}}
+    {{toCamelCase ../this.modelName}}.set{{capitalize this.name}}({{toCamelCase ../../resourceConfig.name}}DTO.get{{capitalize this.name}}());
+    {{/each}}
+
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}}Saved = {{toCamelCase this.modelName}}Repository.save({{toCamelCase this.modelName}});
+
+    {{#each this.fields}}
+    {{toCamelCase ../../resourceConfig.name}}SavedDTO.set{{capitalize this.name}}({{toCamelCase ../this.modelName}}Saved.get{{capitalize this.name}}());
+    {{/each}}
+
+  {{/each}}
+
+    return ResponseEntity.ok({{toCamelCase resourceConfig.name}}SavedDTO);
+
+  }
+
+  {{/if~}}
+
+  {{#if resourceConfig.methods.read}}
+  @Override
+  public ResponseEntity<{{capitalize resourceConfig.name}}DTO> get{{capitalize resourceConfig.name}}ById({{#each resourceConfig.models}}String {{toCamelCase this.modelName}}Id{{#if @last}}{{else}}, {{/if}}{{/each}}) {
+
+    {{capitalize resourceConfig.name}}DTO {{toCamelCase resourceConfig.name}}DTO = new {{capitalize resourceConfig.name}}DTO();
+
+  {{#each resourceConfig.models}}
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
+      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
+        new IgrpProblem<>(
+                HttpStatus.BAD_REQUEST,
+                "{{this.modelName}} was not found",
+                new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+      );
+
+    {{#each this.fields}}
+    {{toCamelCase ../../resourceConfig.name}}DTO.set{{capitalize this.name}}({{toCamelCase ../this.modelName}}.get{{capitalize this.name}}());
+    {{/each}}
+
+  {{/each}}
+
+    return ResponseEntity.ok({{toCamelCase resourceConfig.name}}DTO);
+
+  }
+
+  {{/if~}}
+
+  {{#if resourceConfig.methods.update}}
+  @Override
+  public ResponseEntity<{{capitalize resourceConfig.name}}DTO> update{{capitalize resourceConfig.name}}({{capitalize resourceConfig.name}}DTO {{toCamelCase resourceConfig.name}}DTO, {{#each resourceConfig.models}}String {{toCamelCase this.modelName}}Id{{#if @last}}{{else}}, {{/if}}{{/each}}) {
+
+    {{capitalize resourceConfig.name}}DTO {{toCamelCase resourceConfig.name}}SavedDTO = new {{capitalize resourceConfig.name}}DTO();
+
+  {{#each resourceConfig.models}}
+
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
+      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
+          new IgrpProblem<>(
+                  HttpStatus.BAD_REQUEST,
+                  "{{this.modelName}} was not found",
+                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+      );
+
+    {{#each this.fields}}
+    {{toCamelCase ../this.modelName}}.set{{capitalize this.name}}({{toCamelCase ../../resourceConfig.name}}DTO.get{{capitalize this.name}}());
+    {{/each}}
+
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}}Saved = {{toCamelCase this.modelName}}Repository.save({{toCamelCase this.modelName}});
+
+    {{#each this.fields}}
+    {{toCamelCase ../../resourceConfig.name}}SavedDTO.set{{capitalize this.name}}({{toCamelCase ../this.modelName}}Saved.get{{capitalize this.name}}());
+    {{/each}}
+
+  {{/each}}
+
+    return ResponseEntity.ok({{toCamelCase resourceConfig.name}}SavedDTO);
+
+  }
+
+  {{/if~}}
+
+  {{#if resourceConfig.methods.delete}}
+  @Override
+  public ResponseEntity<{{capitalize resourceConfig.name}}DeletedDTO> delete{{capitalize resourceConfig.name}}ById({{#each resourceConfig.models}}String {{toCamelCase this.modelName}}Id{{#if @last}}{{else}}, {{/if}}{{/each}}) {
+
+    {{capitalize resourceConfig.name}}DeletedDTO {{toCamelCase resourceConfig.name}}DeletedDTO = new {{capitalize resourceConfig.name}}DeletedDTO();
+
+    {{#each resourceConfig.models}}
+    {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
+      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
+          new IgrpProblem<>(
+                  HttpStatus.BAD_REQUEST,
+                  "{{this.modelName}} was not found",
+                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+      );
+
+    {{toCamelCase this.modelName}}Repository.delete({{toCamelCase this.modelName}});
+
+  {{/each}}
+
+    {{toCamelCase resourceConfig.name}}DeletedDTO.setDeleted(true);
+
+    return ResponseEntity.ok({{toCamelCase resourceConfig.name}}DeletedDTO);
+
+  }
+
+  {{/if~}}
+
+}

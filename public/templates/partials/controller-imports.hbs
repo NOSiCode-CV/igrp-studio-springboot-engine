@@ -1,12 +1,24 @@
+import cv.igrp.framework.stereotype.IgrpController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import jakarta.validation.Valid;
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import cv.igrp.core.domain.CommandBus;
-import cv.igrp.core.domain.QueryBus;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
+import cv.igrp.framework.core.domain.CommandBus;
+import cv.igrp.framework.core.domain.QueryBus;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+
+
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module true}}
 {{else}}
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
 {{/if}}

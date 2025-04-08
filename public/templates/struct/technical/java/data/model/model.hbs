@@ -1,43 +1,15 @@
 {{> package-java }}
 
-{{#each resourceConfig.attributes}}
-  {{#if this.relation}}
-    {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
-import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{capitalizeEntity this.relation.entity}};
-    {{else}}
-import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.relation.entity}}.{{capitalizeEntity this.relation.entity}};
-    {{/if}}
-  {{/if}}
-{{/each}}{{#if resourceConfig.audit~}}
+{{#if resourceConfig.audit~}}
   {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
   {{else}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
   {{/if}}
 {{~/if}}
+{{model-imports-helper resourceConfig baseConfig}}
 
-{{{resolve-imports resourceConfig baseConfig}}}
-
-{{#if resourceConfig.revision~}}import org.hibernate.envers.Audited;{{~/if}}
-import cv.igrp.stereotype.IgrpEntity;
-import jakarta.persistence.*;
-import jakarta.validation.*;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-{{#each dateTimeAttributes}}
-import java.time.{{this}};
-{{/each}}
-{{#each mathAttributes}}
-import java.math.{{this}};
-{{/each}}
-{{#breakEach resourceConfig.attributes}}{{#if this.defaultValue}}import org.hibernate.annotations.ColumnDefault;{{/if}}{{/breakEach}}
-{{model-imports resourceConfig}}
-
-{{#if resourceConfig.revision~}}@Audited{{~/if}}
+{{#if resourceConfig.revision~}}@Audited{{~else~}}{{/if}}
 @Getter
 @Setter
 @ToString
@@ -55,62 +27,100 @@ import java.math.{{this}};
       }
     ){{#unless @last}},{{/unless}}
   {{/each}}
-  }{{/if}}
+  }{{/if~}}
 {{#if resourceConfig.indexes}},
   indexes = {
   {{#each resourceConfig.indexes}}
     @Index(name = "{{toLowerCase this.name}}", columnList = "{{#each this.columns}}{{toLowerCase this}}{{#unless @last}},{{/unless}}{{/each}}"{{#if this.unique}}, unique = true{{/if}}){{#unless @last}},{{/unless}}
   {{/each}}
   }
-{{/if}})
-public class {{resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
+{{/if~}})
+public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.audit}}extends AuditEntity{{/if}} {
 
-  {{#if resourceConfig.primaryKey}}
-  @EmbeddedId
-  private {{resourceConfig.name}}PrimaryKey id;{{/if}}{{#each resourceConfig.attributes}}
-  {{#if this.skipFieldRevision}}@NotAudited{{/if~}}
-  {{#if this.primaryKey}}
-  @Id
-  @GeneratedValue(strategy = GenerationType.{{this.generationType}})
-  @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
-  private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
+   {{#if resourceConfig.primaryKey}}
+    @EmbeddedId
+    private {{capitalize resourceConfig.name}}PrimaryKey id;{{/if}}{{~#each resourceConfig.attributes~}}
+    {{#if (and this.skipFieldRevision this.primaryKey)}}@NotAudited{{/if~}}
+    {{#if this.primaryKey}}
+    @Id
+    @GeneratedValue(strategy = GenerationType.{{this.generationType}})
+    @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
+    private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
 
-  @NotBlank(message = "{{this.name}} is mandatory"){{else}}
-  @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
-  private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
+    @NotBlank(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{else}}
+    @NotNull(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+    @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+    private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
+    @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   {{#if (eq this.type "file")}}
-  @Lob
-  @JdbcType(BinaryJdbcType.class)
+    @Lob
+    @JdbcType(BinaryJdbcType.class)
   {{/if}}
   {{#if (eq this.objectType "enum")}}
-  @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
   {{/if}}
   {{#ifNot (eq this.type "relation")}}
-  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
-  private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot}}{{/if}}{{/if}}
-  {{#if relation}}{{#if (eq this.relation.type 'OneToOne') }}
-  @OneToOne{{#if this.relation.mappedBy}}(mappedBy="{{this.relation.mappedBy}}"){{/if}}{{#if this.name}}
-  @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
-  private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') }}
-  @OneToMany(mappedBy = "{{this.mappedBy}}")
-  private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') }}
-  @ManyToOne{{#if this.name}}
-  @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
-  private {{capitalizeEntity this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') }}{{#ifNot this.relation.mappedBy}}
-  @ManyToMany{{#if this.relation.joinTable}}
-  @JoinTable(
-    name = "{{this.relation.joinTable}}"{{#if this.name}},
-    joinColumns = @JoinColumn(name = "{{toLowerCase this.name}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
-    inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
-  ){{/if}}
-  private List<{{capitalizeEntity this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
-  @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}")
-  private List<{{capitalizeEntity this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
-  {{/ifNot}}
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
+    private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot~}}{{/if}}{{/if}}
+
+  {{#if relation}}{{#if (eq this.relation.type 'OneToOne')}}
+    @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.mappedBy}},mappedBy="{{this.relation.mappedBy}}"{{/if}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
+    @JoinColumn(name = "{{toLowerCase this.name}}", unique = true{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
+    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') ~}}
+    @OneToMany(mappedBy = "{{this.relation.mappedBy}}", fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
+    {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    {{/if~}}
+    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') ~}}
+    @ManyToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
+    @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
+    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#ifNot this.relation.mappedBy}}
+    @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.relation.joinTable}}
+    @JoinTable(
+            name = "{{this.relation.joinTable}}"{{#if this.name}},
+            joinColumns = @JoinColumn(name = "{{toLowerCase this.name}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
+            inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
+    ){{/if}}
+    {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    {{/if~}}
+    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
+    @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}",fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
+    {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    {{/if~}}
+    private List<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+  {{/ifNot~}}
+  {{/if~}}
+  {{/if~}}
+  {{/each~}}
+
+{{~#each resourceConfig.relationReference ~}}
+  {{#if (eq this.type 'OneToOne') }}
+   @OneToOne(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   private {{this.entity}} {{capitalizeJavaStyle this.fieldName}};
   {{/if}}
+  {{#if (eq this.type 'OneToMany') }}
+   @ManyToOne(fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   @JoinColumn(name = "{{this.fieldName}}")
+   private {{this.entity}} {{capitalizeJavaStyle this.fieldName}};
   {{/if}}
-  {{/each}}
+  {{#if (eq this.type 'ManyToOne') }}
+   @OneToMany(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}"{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   {{#if this.orphanRemoval}}
+   @OnDelete(action = OnDeleteAction.SET_NULL)
+   {{/if~}}
+   private List<{{this.entity}}> {{capitalizeJavaStyle this.fieldName}};
+  {{/if}}
+  {{#if (eq this.type 'ManyToMany') }}
+   @ManyToMany(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   {{#if this.orphanRemoval}}
+   @OnDelete(action = OnDeleteAction.SET_NULL)
+   {{/if~}}
+   private List<{{this.entity}}> {{capitalizeJavaStyle this.fieldName}};
+  {{/if}}
+
+{{/each}}
+
 }

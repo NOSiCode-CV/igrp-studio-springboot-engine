@@ -1,10 +1,17 @@
 {{> package-java }}
 
-{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
 import org.springframework.http.ResponseEntity;
 
 public interface I{{resourceConfig.name}}Service {
-  {{#each resourceConfig.actions}}
-  ResponseEntity<{{{resolveResponse responses}}}> {{actionName}}({{#if requestBody}}{{#if (isRefSchema this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if (and requestParams pathVariables)}}, {{/if}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+{{#each resourceConfig.actions}}
+  ResponseEntity<{{{resolveResponse responses}}}> {{actionName}}({{~#if requestBody}}{{~#if (isRefSchema
+  this.requestBody.content)}}{{resolve-body this.requestBody.content}}{{else}}{{normalizeDto (concat this.actionName
+  "Request")}}{{/if}} {{toCamelCase actionName}}Request{{/if~}}{{~#if requestBody}}{{~#if (or modelAttribute pathVariables requestParams)}}, {{/if~}}{{/if~}}
+  {{~#if modelAttribute}}{{normalizeDto modelAttribute.name}} {{toCamelCase modelAttribute.name}}{{/if~}}{{~#if modelAttribute}}{{~#if (or pathVariables requestParams)}}, {{/if~}}{{/if~}}
+  {{~#if requestParams}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}},
+  {{/if~}}{{/each}}{{/if~}}{{~#if requestParams}}{{~#if pathVariables}}, {{/if~}}{{/if~}}{{~#if pathVariables}}{{#each pathVariables}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}}, {{/if~}}{{/each}}{{/if~}}
+  {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}Pageable pageable{{/if~}}
+  );
   {{/each}}
 }

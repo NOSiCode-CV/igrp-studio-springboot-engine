@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import { DIRECTORIES, EXTENSIONS, HELPER_FILES } from '../../utils/constants';
+import { DIRECTORIES, HELPER_FILES } from '../../utils/constants';
 
 /**
  * Normalizes a given string to make it a valid folder name.

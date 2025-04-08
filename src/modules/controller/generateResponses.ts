@@ -25,7 +25,7 @@ import {
 } from '../../utils/helpers';
 import path from 'path';
 import { getModelTypes } from '../model/helpers';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { generateException } from './generateException';
@@ -33,21 +33,30 @@ import { getEnumTypes } from '../enum/helpers';
 
 export const generateResponses = async (context: RenderContext<ControllerConfig>) => {
 
-  for(const action of context.resourceConfig.actions) {
+  const baseConfig = context.baseConfig
+  const basePath = context.basePath
 
-    if(!action.responses || !Object.keys(action.responses)) continue
+  for (const action of context.resourceConfig.actions) {
+
+    if (!action.responses || !Object.keys(action.responses)) continue
 
     for (const [status, response] of Object.entries(action.responses)) {
 
-      // If it's a reference attribute that means do not need to generate the DTO
-      if((response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema.objectType) continue;
-      if(status == "204") continue;
+      if (status == '204') continue;
 
-      // Capitalize the response name
-      response.name = capitalize(response.name)
+      const schema = (response?.content['application/json'] ?? response?.content['multipart/form-data'])?.schema;
+      /*if (schema?.objectType == 'dto' || schema?.type !== 'object') {
+        continue;
+      }*/
 
-      const baseConfig = context.baseConfig
-      const basePath = context.basePath
+      if (schema?.type !== 'object') {
+        //console.log("schema?.type ", schema?.type);
+        continue;
+      }
+
+      response.name = capitalize(response.name ?? '');
+      response.module = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+
 
       const dtoContext: RenderContext<DTOConfig> = {
         baseConfig: baseConfig,
@@ -61,8 +70,10 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
         fullPath: basePath,
       };
 
+
+
       const responseContext: RenderContext<ResponseConfig> = {
-        resourceConfig: { ...response, statusCode: status, template: 'classic' },
+        resourceConfig: { ...response, statusCode: status, template: 'classic', type: 'response' },
         basePath,
         baseConfig,
         fullPath: basePath,
@@ -73,11 +84,9 @@ export const generateResponses = async (context: RenderContext<ControllerConfig>
 
       await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
 
-      // await saveResponseConfig({ ...response, template: 'classic', statusCode: status }, context.basePath);
-
       const statusCode = parseInt(status, 10);
 
-      if(statusCode >= 400 && statusCode <= 599) {
+      if (statusCode >= 400 && statusCode <= 599) {
 
         const exceptionContext: RenderContext<ExceptionConfig> = {
           baseConfig: context.baseConfig,
@@ -112,7 +121,7 @@ export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
   }
   let tn;
 
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     tn = TEMPLATES.DDD_RESPONSE_DTO[context.resourceConfig.template];
   else
     tn = TEMPLATES.DOMAIN_RESPONSE[context.resourceConfig.template];
@@ -123,18 +132,20 @@ export const _renderDTO = async (context: RenderContext<ResponseConfig>) => {
   return await renderTemplate(tn, context);
 };
 
-export const transformSchemaDTOConfig = async function(
+export const transformSchemaDTOConfig = async function (
   module: string,
   config: Body,
   api: ApiConfig,
   basePath: string,
 ): Promise<DTOConfig> {
 
+
   const bodyCfg = structuredClone(config);
+
 
   const ncfg: DTOConfig = {
     type: 'response',
-    name: bodyCfg.name,
+    name: bodyCfg.name ?? '',
     template: 'classic',
     module: bodyCfg.module,
     attributes: []
@@ -157,7 +168,7 @@ export const transformSchemaDTOConfig = async function(
       }
       const mt = mtypes.get(attr.type!);
       if (mt) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
@@ -166,22 +177,21 @@ export const transformSchemaDTOConfig = async function(
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
-      if (dtypes === undefined) {
-        dtypes = await getDTOTypes(module ?? DIRECTORIES.SHARED, basePath);
-      }
 
-      const dt = dtypes.get(attr.type!);
+      dtypes = await getDTOTypes(attr.module ?? module ?? DIRECTORIES.SHARED, basePath);
+
+      const dt = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.type!);
-        if(!dtype) {
+        const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
+        if (!dtype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${bodyCfg.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
@@ -198,13 +208,13 @@ export const transformSchemaDTOConfig = async function(
       if (!et) {
         etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
         const etype = etypes.get(type.name);
-        if(!etype) {
+        if (!etype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
@@ -233,19 +243,20 @@ export const transformSchemaDTOConfig = async function(
     ncfg.attributes.push({
       name: key,
       type: attr.type!,
-      objectType: (attr.objectType != 'dto' && attr.objectType != 'model')? 'java' : attr.objectType,
+      objectType: (attr.objectType != 'dto' && attr.objectType != 'model') ? 'java' : attr.objectType,
       required: attr.required ?? false,
       minLength: attr.minimum,
       maxLength: attr.maximum,
       regex: attr.pattern,
       isEmail: attr.format === 'email',
       isUrl: attr.format === 'url',
-      primaryKey: attr.identifier ?? false
+      primaryKey: attr.identifier ?? false,
+      collectionType: attr.collectionType
     })
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.name = normalizeName(bodyCfg.name ?? '', 'dto')
   ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {

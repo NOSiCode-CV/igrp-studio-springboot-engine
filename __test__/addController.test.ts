@@ -5,9 +5,11 @@ import { ControllerConfig } from '../src/interfaces/types';
 import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR } from './outputDirPath';
 
 const domainControllerConfig: ControllerConfig = {
+  id: "avtjtb5d2g",
   type: "controller",
   name: "Animals",
   basePath: "animals",
+  description: "Controller for managing animals",
   actions: [
     {
       actionName: "getAnimalById",
@@ -68,10 +70,49 @@ const domainControllerConfig: ControllerConfig = {
       },
     },
     {
+      actionName: "getAllAnimals",
+      path: "get-all-animals",
+      method: "GET",
+      pathVariables: [
+        {
+          type: "string",
+          name: "id",
+          isRequired: true,
+        },
+      ],
+      responses: {
+        "200": {
+          id: 'uVl1MViEeK',
+          module: "core",
+          name: "AnimalResponse",
+          content: {
+            "application/json": {
+              schema: {
+                type: "AnimalDTO",
+                collectionType: "pageable",
+                objectType: "dto",
+              },
+            },
+          },
+        },
+      },
+    },
+    {
       actionName: "createAnimal",
       path: "create-animal",
       method: "POST",
       requestBody: {
+        id: 'l5MTlX7-eN',
+        content: {
+          "application/json": {
+            schema: {
+              type: "Owner",
+              objectType: "dto",
+            }
+          }
+        }
+      },
+      /*requestBody: {
         id: 'l5MTlX7-eN',
         content: {
           "application/json": {
@@ -98,6 +139,34 @@ const domainControllerConfig: ControllerConfig = {
             },
           },
         },
+      },*/
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'param1',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param2',
+          isRequired: false
+        },
+      ],
+      requestParams: [
+        {
+          type: 'string',
+          name: 'param3',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param4',
+          isRequired: false
+        },
+      ],
+      modelAttribute: {
+        name: "Animal",
+        module: "core"
       },
       responses: {
         "201": {
@@ -223,9 +292,11 @@ const domainControllerConfig: ControllerConfig = {
 };
 
 const technicalControllerConfig: ControllerConfig = {
+  id: "3pnq9b5m1e",
   type: "controller",
   name: "Users",
   basePath: "users",
+  description: "Controller for managing users",
   actions: [
     {
       actionName: "getUserById",
@@ -245,11 +316,9 @@ const technicalControllerConfig: ControllerConfig = {
           content: {
             "application/json": {
               schema: {
-                type: "array",
-                items: {
-                  type: "UserDTO",
-                  objectType: "dto",
-                },
+                type: "UserDTO",
+                objectType: "dto",
+                collectionType: 'collection'
               },
             },
           },
@@ -286,6 +355,33 @@ const technicalControllerConfig: ControllerConfig = {
             },
           },
         },
+      },
+      pathVariables: [
+        {
+          type: 'string',
+          name: 'param1',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param2',
+          isRequired: false
+        },
+      ],
+      requestParams: [
+        {
+          type: 'string',
+          name: 'param3',
+          isRequired: true
+        },
+        {
+          type: 'string',
+          name: 'param4',
+          isRequired: false
+        },
+      ],
+      modelAttribute: {
+        name: 'TestResponseIsolated2'
       },
       responses: {
         "201": {
@@ -426,7 +522,7 @@ describe('Technical Controller Module', () => {
   });
 });
 
-const testControllerConfig: ControllerConfig = {"type":"controller","name":"Todo","basePath":"api","actions":[{"actionName":"getAll","path":"todo","method":"GET","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"TodoDTO","objectType":"dto"}}}}}}}},{"actionName":"createTodo","path":"todo","method":"POST","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"object","properties":{"data":{"type":"string"}}}}}}}}],"module":"todo"}
+const testControllerConfig: ControllerConfig = {"type":"controller","name":"Todo","module":"todo","description":"My todo","basePath":"api","actions":[{"actionName":"findById","path":"todo","method":"GET","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"Todo","objectType":"dto","collectionType":"none","module":"todo"}}}}}}],"id":"obtchz9ytq"}
 
 describe('Test Controller Module', () => {
   it('should create the controller class and the service interface in test', async () => {

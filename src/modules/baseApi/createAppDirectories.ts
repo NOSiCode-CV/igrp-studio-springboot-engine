@@ -6,12 +6,11 @@ import { getMainPath, getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containing all the basic API information.
- * @param output - Output path where directories are created
+ * @param context - API base configuration, containing all the basic API information.
  */
 export const createAppDirectories = async (context: RenderContext) => {
   const directories = getDirectoriesToCreate(context.baseConfig, context.basePath);
-  saveAppDirectories(directories);
+  await saveAppDirectories(directories);
 };
 
 /**
@@ -43,7 +42,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
       //path.join(igrpSharedPath, DIRECTORIES.ENUM),
@@ -97,7 +96,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
       //path.join(igrpSharedPath, DIRECTORIES.ENUM),

@@ -18,15 +18,25 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    type: {
+      type: "string",
+      const: "response",
+      errorMessage: 'The type must be "response".'
+    },
     description: {
       type: "string",
       nullable: true,
       errorMessage: "The 'description' field, if provided, must be a string.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field, if provided, must be a string.",
+    },
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: false,
+      nullable: true,
       errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     template: {
@@ -61,7 +71,7 @@ const bodySchema: JSONSchemaType<ResponseConfig> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["content", "name"],
+  required: ["content"],
   additionalProperties: false
 };
 

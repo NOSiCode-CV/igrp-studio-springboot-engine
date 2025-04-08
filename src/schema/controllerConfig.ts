@@ -3,7 +3,7 @@ import {
   HTTP_METHOD_TYPES,
   PARAMS_TYPES,
   PATTERNS,
-  HTTP_HEADER_TYPES, SCHEMA_TYPES, RELATIONSHIP_TYPES,
+  HTTP_HEADER_TYPES, SCHEMA_TYPES,
 } from '../utils/constants';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
@@ -12,71 +12,11 @@ import {
   Body,
   ControllerAction,
   ControllerConfig,
-  HttpHeader, PropertySchemaField, Relation,
-  RequestParams,
+  HttpHeader, ModelAttribute, PropertySchemaField, RequestParams,
   SchemaContent, SchemaEnum,
   SchemaField,
 } from '../interfaces/types';
-
-const relationSchema: JSONSchemaType<Relation> = {
-  type: "object",
-  properties: {
-    type: {
-      type: "string",
-      enum: RELATIONSHIP_TYPES,
-      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
-    },
-    entity: {
-      type: "string",
-      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
-      errorMessage: 'The entity name is required and cannot be empty.'
-    },
-    fieldName: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.PARAMS_VALIDATION,
-      errorMessage: 'The fieldName field, if provided, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
-    },
-    mappedBy: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The mappedBy field, if provided, must be a valid string following the naming convention.'
-    },
-    referencedColumnName: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The referencedColumnName field, if provided, must be a valid string following the naming convention.'
-    },
-    cardinality: {
-      type: 'string',
-      enum: ['oneWay', 'twoWay'],
-      errorMessage: `The cardinality must be one of 'oneWay' or 'twoWay' and cannot be empty.`
-    },
-    joinTable: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The joinTable field, if provided, must be a valid string following the naming convention.'
-    },
-    inverseJoinColumn: {
-      type: "string",
-      nullable: true,
-      pattern: PATTERNS.RELATIONS_PATTERN,
-      errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
-    }
-  },
-  required: ["type", "entity"],
-  additionalProperties: false,
-  errorMessage: {
-    required: {
-      relationType: 'The relationType is required and cannot be empty.',
-      entity: 'The entity is required and cannot be empty.'
-    },
-    additionalProperties: 'No additional properties are allowed in the relation schema.'
-  }
-};
+import { relationSchema } from './modelConfig';
 
 /**
  * JSON schema for validating the SchemaField interface.
@@ -89,6 +29,11 @@ const schemaField: JSONSchemaType<SchemaField> = {
       type: "string",
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
     },
     objectType: {
       type: "string",
@@ -146,6 +91,11 @@ const schemaField: JSONSchemaType<SchemaField> = {
       },
       errorMessage: "The 'properties' field must be an object with PropertySchemaField values.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field when provided must be one of [none, collection, map, pageable]",
+    },
   },
   required: ["type"],
   additionalProperties: false,
@@ -184,6 +134,11 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       type: 'string',
       nullable: false,
       errorMessage: "The 'type' field is required and must be a string.",
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
     },
     objectType: {
       type: 'string',
@@ -273,6 +228,11 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       },
       errorMessage: "The 'properties' field must be an object with SchemaField values.",
     },
+    collectionType: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'collectionType' field when provided must be one of [none, collection, map, pageable]",
+    },
   },
   required: ['type'],
   additionalProperties: false,
@@ -313,7 +273,7 @@ const bodySchema: JSONSchemaType<Body> = {
     name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: false,
+      nullable: true,
       errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     module: {
@@ -338,7 +298,7 @@ const bodySchema: JSONSchemaType<Body> = {
       errorMessage: "The 'content' field must be an object mapping content types to schemas.",
     },
   },
-  required: ["content", "name"],
+  required: ["content"],
   additionalProperties: false
 };
 
@@ -387,6 +347,11 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
       type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
       nullable: true,
       errorMessage: 'The param value attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
+    },
+    description: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The description attribute, if provided, must be a string'
     },
     isRequired: {
       type: 'boolean',
@@ -517,6 +482,31 @@ const attributeSchema: JSONSchemaType<Attribute> = {
   }
 };
 
+const modelAttributeSchema: JSONSchemaType<ModelAttribute> = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The model attribute name can only contain characters without spaces or special characters.',
+    },
+    module: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true
+    },
+  },
+  required: ["name"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      name: 'The attribute name is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the attribute schema.'
+  }
+}
+
 const controllerActionSchema: JSONSchemaType<ControllerAction> = {
   type: 'object',
   properties: {
@@ -537,10 +527,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage: `Method type can only be one of ${HTTP_METHOD_TYPES}.`,
     },
     modelAttribute: {
-      type: 'string',
-      pattern: PATTERNS.RELATIONS_PATTERN,
+      type: "object",
       nullable: true,
-      errorMessage: 'The modelAttribute can only contain characters without spaces or special characters.',
+      oneOf: [
+        modelAttributeSchema
+      ],
+      errorMessage: 'The model attribute, if provided, must be a valid model attribute definition.'
     },
     requestParams: {
       type: 'array',
@@ -626,8 +618,13 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
     },
     basePath: { 
       type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The basePath attribute can only contain alphanumeric characters without spaces or special characters.'
+      pattern: PATTERNS.PATH_SLASH_VALIDATION_PATTERN,
+      errorMessage: 'The basePath attribute can only contain alphanumeric characters and slash, without spaces or other special characters.'
+    },
+    description: {
+      type: 'string',
+      nullable: false,
+      errorMessage: 'The description attribute must be a valid string'
     },
     actions: { 
       type: 'array',
@@ -653,19 +650,6 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
     additionalProperties: 'No additional properties are allowed in the controller schema.'
   }
 };
-
-export const debugSchema = (data: ControllerConfig) => {
-  const valid = validateController(data);
-  if (!valid) {
-    validateController.errors!.forEach(error => {
-      console.log(`Error at ${error.instancePath}: ${error.message}`);
-      console.log(`Schema path: ${error.schemaPath}`);
-    });
-  } else {
-    console.log("Valid schema");
-  }
-
-}
 
 export const validateController: ValidateFunction<ControllerConfig> =
   ajvInstance.compile<ControllerConfig>(controllerSchema);

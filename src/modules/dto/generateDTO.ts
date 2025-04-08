@@ -5,7 +5,6 @@ import {
   JavaType,
   ModelConfig,
   RenderContext,
-  TypeMetadata,
 } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import {
@@ -26,7 +25,6 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from './helpers';
 import { normalizeName } from './saveDTOConfig';
-import { capitalize } from '../../utils/capitalizeStrings';
 import { getEnumTypes } from '../enum/helpers';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
@@ -138,15 +136,14 @@ export const transformDTOConfig = async function (
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
-      if (dtypes === undefined) {
-        dtypes = await getDTOTypes(config.module ?? DIRECTORIES.SHARED, basePath);
-      }
 
-      const dt = dtypes.get(type.name);
+      dtypes = await getDTOTypes(attr.module ?? config.module ?? DIRECTORIES.SHARED, basePath);
+
+      const dt = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(type.name);
+        const dtype = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
         if(!dtype) {
             typeNotFound = true;
         }

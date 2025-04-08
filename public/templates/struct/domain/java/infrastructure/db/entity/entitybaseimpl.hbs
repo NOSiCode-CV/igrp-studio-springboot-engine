@@ -54,10 +54,10 @@ public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.n
   @NotBlank(message = "{{this.name}} is mandatory")
   {{else}}
   @NotNull(message = "{{this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}} {{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
   private String {{toCamelCase this.name}};{{else}}{{#if this.defaultValue}}
-  @ColumnDefault("{{this.defaultValue}}"){{/if}}
+  @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
   private {{this.type}} {{toCamelCase this.name}};{{/if}}
   {{/each}}{{#if resourceConfig.relations}}{{#each resourceConfig.relations}}{{#if (eq this.relationType 'OneToOne') }}

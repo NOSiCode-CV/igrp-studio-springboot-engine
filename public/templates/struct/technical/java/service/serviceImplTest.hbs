@@ -10,8 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase resourceConfig.name}}.I{{resourceConfig.name}}Service;
+import java.util.List;
+import java.util.Collection;
+import java.util.Set;
+import java.util.Map;
+{{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.controllers.{{toLowerCase
+resourceConfig.name}}.I{{resourceConfig.name}}Service;
 
 @ExtendWith(MockitoExtension.class)
 public class {{resourceConfig.name}}ServiceTest {
@@ -24,25 +29,26 @@ public class {{resourceConfig.name}}ServiceTest {
 
     @BeforeEach
     void setUp() {
-        // TODO: initialize mock dependencies if needed
+      // TODO: initialize mock dependencies if needed
     }
 
     {{#each resourceConfig.actions}}
     @Test
     void test{{capitalize actionName}}() {
-        // TODO: Implement unit test for {{actionName}}
-        // Example:
-        // Given
-        // {{resolveResponse this.responses}} expectedResponse = ...;
-        // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
+      // TODO: Implement unit test for {{actionName}}
+      // Example:
+      // Given
+      // {{resolveResponse this.responses}} expectedResponse = ...;
+      // when(i{{../resourceConfig.name}}Service.{{actionName}}(any())).thenReturn(ResponseEntity.ok(expectedResponse));
 
-        // When
-        // ResponseEntity<{{resolveResponse this.responses}}> response = {{toCamelCase ../resourceConfig.name}}Service.{{actionName}}(...);
+      // When
+      // ResponseEntity<{{{resolveResponse this.responses}}}> response = {{toCamelCase
+          ../resourceConfig.name}}Service.{{actionName}}(...);
 
         // Then
         // assertNotNull(response);
         // assertEquals(expectedResponse, response.getBody());
     }
 
-    {{/each}}
+  {{/each}}
 }

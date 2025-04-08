@@ -1,29 +1,31 @@
 {{> package-java }}
 
-import cv.igrp.core.domain.Query;
-import jakarta.validation.*;
+import cv.igrp.framework.core.domain.Query;
 import jakarta.validation.constraints.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
-{{> lombok-java-imports}}
-{{{resolve-imports resourceConfig baseConfig}}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 
+{{#if resourceConfig.attributes.length}}
+{{> lombok-java-imports}}
+{{/if}}
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#if resourceConfig.attributes.length}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
 public class {{resourceConfig.name}}Query implements Query {
 
-{{#each resourceConfig.attributes}}
+  {{#each resourceConfig.attributes}}
   {{#each this.annotations}}
   @{{this.annotation}}
   {{/each}}
   {{#if (and (eq (resolve-type this) "Object") (eq this.name "none"))}}
-    {{!-- Skip attribute if type is "Object" and name is "none" --}}
+  {{!-- Skip attribute if type is "Object" and name is "none" --}}
   {{else}}
   {{{resolve-annotations this}}}
   private {{{resolve-type this}}} {{this.name}};
   {{/if}}
-{{/each}}
+  {{/each}}
 
 }

@@ -16,11 +16,7 @@ export const checkDependencyInModel = async function(context: RenderContext<DTOB
       
       if (attr.objectType === 'model') {
         let type: JavaType;
-        if (typeof attr.type === 'string') {
-          type = { name: attr.type };
-        } else {
-          type = attr.type;
-        }
+        type = { name: attr.type };
         
         if (modelTypes.has(type.name)) {
           errors.push({ message: `'model.${type.name}' is being used in 'dto.${dto.name}' on attribute '${attr.name}'` });

@@ -13,7 +13,7 @@ public enum {{resourceConfig.name}} {
     {{{formatAttribute this}}}{{#unless @last}}, {{/unless}}
     {{/each}}
   ){{/if}}{{#unless @last}},{{/unless}}
-  {{/each}};
+  {{/each~}};
 
   {{#if resourceConfig.attributes}}
   {{#each resourceConfig.attributes}}
@@ -25,5 +25,6 @@ public enum {{resourceConfig.name}} {
     this.{{toLowerCase this.name}} = {{toLowerCase this.name}};
     {{/each}}
   }
+
   {{/if}}
 }

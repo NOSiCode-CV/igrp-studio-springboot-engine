@@ -6,9 +6,9 @@ import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
 describe('Generic deletion in domain driven design project style', () => {
     it('should delete a element', async () => {
         const element: DeleteConfig = {
-          name: "TestResponseIsolated",
-          type: 'response',
-          module: 'core'
+          name: "Level",
+          type: 'enum',
+          module: 'shared'
         };
 
         await deleteElement(element, DOMAIN_OUTPUT_DIR)

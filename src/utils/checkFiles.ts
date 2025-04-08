@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { ApiConfig, ModelConfig, ControllerConfig } from '../interfaces/types';
+import { ApiConfig, ControllerConfig, ModelConfig } from '../interfaces/types';
 
 export const isApiConfig = (
   config: ApiConfig | ModelConfig | ControllerConfig,

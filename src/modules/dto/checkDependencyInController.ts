@@ -1,8 +1,7 @@
 import { DeleteConfig, DTOBaseConfig, RenderContext } from '../../interfaces/types';
 import { getControllerTypes } from "../controller/getControllerTypes";
-import { getDTOTypes } from "./helpers";
 import { DIRECTORIES } from '../../utils/constants';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 
 export const checkDependencyInController = async function (context: RenderContext<DTOBaseConfig>  | RenderContext<DeleteConfig>) {
 

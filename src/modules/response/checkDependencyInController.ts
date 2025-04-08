@@ -1,9 +1,9 @@
-import { RenderContext, ResponseConfig } from '../../interfaces/types';
+import { DeleteConfig, RenderContext, ResponseConfig } from '../../interfaces/types';
 import { getControllerTypes } from "../controller/getControllerTypes";
 import { DIRECTORIES } from '../../utils/constants';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 
-export const checkDependencyInController = async function (context: RenderContext<ResponseConfig>) {
+export const checkDependencyInController = async function (context: RenderContext<ResponseConfig | DeleteConfig>) {
 
   const dtoName = context.resourceConfig.name
   /**

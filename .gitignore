@@ -4,6 +4,8 @@ node_modules/
 # Tests
 #__test__
 generatedEnvironment/
+demoDomain/
+demoTechnical/
 
 # Logs
 logs

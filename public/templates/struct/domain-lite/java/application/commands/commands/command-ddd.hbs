@@ -1,13 +1,15 @@
 {{> package-java }}
 
-import cv.igrp.core.domain.Command;
-import jakarta.validation.*;
+import cv.igrp.framework.core.domain.Command;
 import jakarta.validation.constraints.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+{{#if resourceConfig.attributes.length}}
 {{> lombok-java-imports}}
+{{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
+{{#if resourceConfig.attributes.length}}
 {{> lombok-java-annotations}}
+{{/if}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}

@@ -1,28 +1,24 @@
 # Use an official Maven image with JDK 21 to build the application
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 
 # Define build-time argument
 ARG SERVICE_NAME
 
 # Set the working directory
 ENV APP_HOME /app
-ENV SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
+ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
 
-# Copy the pom.xml and install dependencies
-COPY .mvn $APP_HOME/.mvn
+# Copy the pom.xml and source code
 COPY src $APP_HOME/src
-COPY mvnw $APP_HOME/mvnw
-COPY mvnw.cmd $APP_HOME/mvnw.cmd
 COPY pom.xml $APP_HOME/pom.xml
 
 WORKDIR $APP_HOME
 
 # Package the application
-RUN chmod +x $APP_HOME/mvnw
-RUN ./mvnw package -DskipTests
+RUN mvn package -DskipTests
 
 # Runtime image
-FROM eclipse-temurin:21-jdk-alpine
+FROM maven:3.9.9-eclipse-temurin-21-alpine
 
 # Define runtime environment variable
 ENV SERVICE_NAME=${SERVICE_NAME}
@@ -33,10 +29,10 @@ WORKDIR /app
 
 RUN mkdir /config
 
-COPY --from=build /app/target/{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar ./
+COPY --from=build /app/target/*.jar /app/app.jar
 
 # Expose the port that the application will run on
 EXPOSE ${SERVICE_PORT}
 
 # Command to run the application
-CMD ["sh", "-c", "java -jar ./{{baseConfig.artifact}}-0.0.1-SNAPSHOT.jar"]
+CMD ["sh", "-c", "java -jar /app/app.jar"]

@@ -1,13 +1,5 @@
-import path from 'path';
-import { TypeMetadata } from '../interfaces/types';
-
- /* Use the definition below if it's the local environment and unit tests execution */
- //export const TEMPLATE_DIR = path.join(__dirname, '../../public/templates');
- //export const PARTIALS_DIR = path.join(__dirname, '../../public/templates/partials');
-
- /* Use the definition below if it's the production environment and publishing execution */
- export const TEMPLATE_DIR = path.join(__dirname, './templates');
- export const PARTIALS_DIR = path.join(__dirname, './templates/partials');
+import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
+import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -65,7 +57,7 @@ export const DIRECTORIES = {
   PERSISTENCE: 'persistence',
   MODULE: 'module',
   CONSTANTS: 'constants',
-  KUBERNETES: 'k8s'
+  KUBERNETES: 'k8s',
 };
 
 export const PACKAGES = {
@@ -82,48 +74,45 @@ export const PACKAGE_NS = {
   enum: 'enum',
   model: 'model',
   dto: 'dto',
-  controller: 'controller'
+  controller: 'controller',
 };
 
 export const PROJECT_STRUCTURE_STYLE = {
   DOMAIN_DRIVEN_DESIGN: 'domain',
-  TECHNICAL: 'technical'
-}
-
-export const SUCCESS_MESSAGE = {
-  DIRECTORY_CREATED: 'Directories created',
-  FILE_SAVED: 'The file has been saved successfully.',
+  TECHNICAL: 'technical',
 };
 
 export const PARTIALS = [
-  "controller-action-definition.hbs",
-  "controller-action-documentation.hbs",
-  "controller-constructor.hbs",
-  "controller-imports.hbs",
-  "controller-injection.hbs",
-  "database-docker-env.hbs",
-  "database-docker-volumes.hbs",
-  "database-env.hbs",
-  "auth-env.hbs",
-  "database-maven-dependencies.hbs",
-  "generic-maven-dependencies.hbs",
-  "igrp-maven-dependencies.hbs",
-  "lombok-java-annotations.hbs",
-  "lombok-java-imports.hbs",
-  "mysql-docker-service.hbs",
-  "oauth-maven-dependencies.hbs",
-  "observability-docker-env.hbs",
-  "observability-docker-services.hbs",
-  "observability-docker-volumes.hbs",
-  "observability-env.hbs",
-  "observability-maven-dependencies.hbs",
-  "oracle-docker-service.hbs",
-  "package-java.hbs",
-  "postgres-docker-service.hbs",
-  "security-maven-dependencies.hbs",
-  "spring-maven-dependencies.hbs",
-  "spring-entity-revision-dependencies.hbs"
-]
+  'controller-action-definition.hbs',
+  'controller-action-documentation.hbs',
+  'controller-constructor.hbs',
+  'controller-imports.hbs',
+  'controller-injection.hbs',
+  'database-docker-env.hbs',
+  'database-docker-volumes.hbs',
+  'database-env.hbs',
+  'auth-env.hbs',
+  'database-maven-dependencies.hbs',
+  'generic-maven-dependencies.hbs',
+  'igrp-maven-dependencies.hbs',
+  'lombok-java-annotations.hbs',
+  'lombok-java-imports.hbs',
+  'mysql-docker-service.hbs',
+  'oauth-maven-dependencies.hbs',
+  'observability-docker-env.hbs',
+  'observability-docker-services.hbs',
+  'observability-docker-volumes.hbs',
+  'observability-env.hbs',
+  'observability-maven-dependencies.hbs',
+  'oracle-docker-service.hbs',
+  'package-java.hbs',
+  'postgres-docker-service.hbs',
+  'security-maven-dependencies.hbs',
+  'spring-maven-dependencies.hbs',
+  'spring-entity-revision-dependencies.hbs',
+  'graal-vm-plugin.hbs',
+  'graal-vm-observability-dependencies.hbs'
+];
 
 export const ERROR_MESSAGE = {
   BASE_API_NOT_FOUND: 'The base api json file configuration was not found.',
@@ -153,16 +142,22 @@ export const ERROR_MESSAGE = {
   INVALID_PERMISSION_CONFIG:
     'The provided Permission configuration is invalid. Please verify the model details and try again.',
   INVALID_OUTPUT_PATH: 'The provided output path is invalid or does not exist.',
+  FAILED_TO_GET_SPRING_DEPENDENCIES: 'Failed to fetch dependencies from Spring Initializr.',
   MODEL_REQUIRED:
     'The model is required. Please provide the model configuration to save your data.',
   MODEL_FILE_CONFIG_NOT_FOUNT: 'Model file configuration not found',
   DTO_FILE_CONFIG_NOT_FOUNT: 'DTO file configuration not found',
+  ENUM_FILE_CONFIG_NOT_FOUNT: 'ENUM configuration file not found',
   DTO_FILE_NOT_FOUND: 'DTO file not found',
+  ENUM_FILE_NOT_FOUND: 'ENUM file not found',
   TEMPLATE_NAME_REQUIRED: 'The name of the template must be provided.',
   TEMPLATE_NAME_NOT_REGISTERED: 'The name of the template must be registered.',
-  CONFLICTING_PRIMARY_KEY_TYPES: "A compound primary key and a simple primary key cannot be selected simultaneously.",
-  MULTIPLE_SIMPLE_PRIMARY_KEYS: 'Only one simple primary key is allowed; multiple simple primary keys are not acceptable',
-  MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY: 'A generation type must be specified when a simple primary key is selected.',
+  CONFLICTING_PRIMARY_KEY_TYPES:
+    'A compound primary key and a simple primary key cannot be selected simultaneously.',
+  MULTIPLE_SIMPLE_PRIMARY_KEYS:
+    'Only one simple primary key is allowed; multiple simple primary keys are not acceptable',
+  MISSING_GENERATION_TYPE_FOR_SIMPLE_PRIMARY_KEY:
+    'A generation type must be specified when a simple primary key is selected.',
   MISSING_PRIMARY_KEY: 'A primary key must be defined for the entity.',
   ACCEPTS_REQUIRED: 'Accepts is required for POST, PUT and PATCH methods',
   REQUEST_BODY_REQUIRED: 'Request Body is required for POST, PUT and PATCH methods',
@@ -175,6 +170,7 @@ export const TEMPLATES = {
   DOMAIN_CONTROLLER: 'struct/technical/java/controller/controller.hbs',
   DOMAIN_ICONTROLLER: 'struct/technical/java/controller/controllerInterface.hbs',
   DOMAIN_SERVICE: 'struct/technical/java/service/serviceImpl.hbs',
+  DOMAIN_CRUD_SERVICE: 'struct/technical/java/service/serviceCrudImpl.hbs',
   DOMAIN_TEST_SERVICE: 'struct/technical/java/service/serviceImplTest.hbs',
   DOMAIN_MODEL: 'struct/technical/java/data/model/model.hbs',
   DOMAIN_ENUM: 'struct/technical/java/constants/enum.hbs',
@@ -189,50 +185,50 @@ export const TEMPLATES = {
   APPLICATION_AUDIT_AWARE: 'struct/technical/java/data/model/applicationAditorAware.hbs',
 
   DOMAIN_DTO: {
-    'classic': 'struct/technical/java/dto/lombok.hbs',
-    'record': 'struct/technical/java/dto/record.hbs',
+    classic: 'struct/technical/java/dto/lombok.hbs',
+    record: 'struct/technical/java/dto/record.hbs',
   },
 
   DOMAIN_RESPONSE: {
-    'classic': 'struct/technical/java/response/lombok.hbs',
-    'record': 'struct/technical/java/response/record.hbs',
+    classic: 'struct/technical/java/response/lombok.hbs',
+    record: 'struct/technical/java/response/record.hbs',
   },
 
   DOMAIN_FILTER: 'struct/technical/java/dto/filter.hbs',
 
   DDD_DATA_TRANSFER_OBJECT_DTO: {
-    'classic': 'struct/domain/java/application/query/dto/dtolombok.hbs',
-    'record': 'struct/domain/java/application/query/dto/dtorecord.hbs',
+    classic: 'struct/domain/java/application/query/dto/dtolombok.hbs',
+    record: 'struct/domain/java/application/query/dto/dtorecord.hbs',
   },
 
   DDD_COMMAND_DTO: {
-    'classic': 'struct/domain/java/application/command/commandlombok.hbs',
-    'record': 'struct/domain/java/application/command/commandrecord.hbs',
+    classic: 'struct/domain/java/application/command/commandlombok.hbs',
+    record: 'struct/domain/java/application/command/commandrecord.hbs',
   },
 
   DDD_QUERY_DTO: {
-    'classic': 'struct/domain/java/application/query/querylombok.hbs',
-    'record': 'struct/domain/java/application/query/queryrecord.hbs',
+    classic: 'struct/domain/java/application/query/querylombok.hbs',
+    record: 'struct/domain/java/application/query/queryrecord.hbs',
   },
 
   DDD_DOMAIN_ENTITY_DTO: {
-    'classic': 'struct/domain/java/domain/aggregate/domainentitylombok.hbs',
-    'record': 'struct/domain/java/domain/aggregate/domainentityrecord.hbs',
+    classic: 'struct/domain/java/domain/aggregate/domainentitylombok.hbs',
+    record: 'struct/domain/java/domain/aggregate/domainentityrecord.hbs',
   },
 
   DDD_VALUE_OBJECT_DTO: {
-    'classic': 'struct/domain/java/domain/aggregate/valueobjectlombok.hbs',
-    'record': 'struct/domain/java/domain/aggregate/valueobjectrecord.hbs',
+    classic: 'struct/domain/java/domain/aggregate/valueobjectlombok.hbs',
+    record: 'struct/domain/java/domain/aggregate/valueobjectrecord.hbs',
   },
 
   DDD_EVENT_DTO: {
-    'classic': 'struct/domain/java/domain/event/eventlombok.hbs',
-    'record': 'struct/domain/java/domain/event/eventrecord.hbs',
+    classic: 'struct/domain/java/domain/event/eventlombok.hbs',
+    record: 'struct/domain/java/domain/event/eventrecord.hbs',
   },
 
   DDD_DATA_OBJECT_DTO: {
-    'classic': 'struct/domain/java/infrastructure/db/dataobject/dataobjectlombok.hbs',
-    'record': 'struct/domain/java/infrastructure/db/dataobject/dataobjectrecord.hbs',
+    classic: 'struct/domain/java/infrastructure/db/dataobject/dataobjectlombok.hbs',
+    record: 'struct/domain/java/infrastructure/db/dataobject/dataobjectrecord.hbs',
   },
 
   IGRP_BASE_API: 'igrpstudio/baseApi.hbs',
@@ -243,18 +239,21 @@ export const TEMPLATES = {
   CONFIG_MVNW: 'config/mvnw',
   CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
-  CONFIG_POM_XML_OBSERVABILITY: 'config/pom.xml-observability.hbs',
   CONFIG_MVNW_CMD: 'config/mvnw.cmd.hbs',
   CONFIG_GITIGNORE: 'config/gitignore.hbs',
   CONFIG_DOCKER_FILE: 'config/dockerfile.hbs',
+  CONFIG_DOCKER_FILE_GRAALVM: 'config/dockerfileGraalVM.hbs',
   CONFIG_DOCKER_COMPOSE: 'config/docker-compose.hbs',
   CONFIG_EDITOR_CONFIG: 'config/.editorconfig.hbs',
   CONFIG_DOCKER_FILE_OBSERVABILITY: 'config/dockerfile-observability.hbs',
+  CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY: 'config/dockerfile-graalvm-observability.hbs',
   CONFIG_DOCKER_COMPOSE_OBSERVABILITY: 'config/docker-compose-observability.hbs',
   CONFIG_OTEL_AGENT: 'config/opentelemetry-javaagent.jar',
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+  OPEN_TELEMETRY_CONFIG_GRAALVM: 'config/open-telemetry-config-graalvm.hbs',
+  ENVER_HINTS_GRAALVM_CONFIG: 'config/enver-hints-graalvm-config.hbs',
 
   // OBSERVABILITY
   MONITORING_COLLECTOR: 'monitoring/collector.hbs',
@@ -271,7 +270,8 @@ export const TEMPLATES = {
   DDD_COMMAND_LISTENER_IMPL: 'struct/domain/java/application/command/commandlistenerimpl.hbs',
   DDD_ASSEMBLER: 'struct/domain/java/application/query/assembler/assembler.hbs',
   DDD_ASSEMBLER_DATA_IMPL: 'struct/domain/java/application/query/assembler/assemblerdataimpl.hbs',
-  DDD_ASSEMBLER_AGGREGATE_IMPL: 'struct/domain/java/application/query/assembler/assembleraggimpl.hbs',
+  DDD_ASSEMBLER_AGGREGATE_IMPL:
+    'struct/domain/java/application/query/assembler/assembleraggimpl.hbs',
   DDD_DATA_TRANSFER_OBJECT: 'struct/domain/java/application/query/dto/datatransferobject.hbs',
   DDD_AGGREGATE: 'struct/domain/java/domain/aggregate/aggregate.hbs',
   DDD_AGGREGATE_IDENTIFIER: 'struct/domain/java/domain/aggregate/aggregateidentifier.hbs',
@@ -301,65 +301,77 @@ export const TEMPLATES = {
   DDD_ENTITY_BASE: 'struct/domain/java/infrastructure/db/entity/entitybase.hbs',
   DDD_ENTITY_BASE_IMPL: 'struct/domain/java/infrastructure/db/entity/entitybaseimpl.hbs',
   DDD_BASE_REPOSITORY: 'struct/domain/java/infrastructure/db/repository/baserepository.hbs',
-  DDD_BASE_REPOSITORY_IMPL: 'struct/domain/java/infrastructure/db/repository/baserepositoryimpl.hbs',
+  DDD_BASE_REPOSITORY_IMPL:
+    'struct/domain/java/infrastructure/db/repository/baserepositoryimpl.hbs',
   DDD_AGGREGATE_REPOSITORY: 'struct/domain/java/domain/repository/domainrepository.hbs',
-  DDD_AGGREGATE_REPOSITORY_IMPL: 'struct/domain/java/infrastructure/db/impl/domainrepositoryimpl.hbs',
+  DDD_AGGREGATE_REPOSITORY_IMPL:
+    'struct/domain/java/infrastructure/db/impl/domainrepositoryimpl.hbs',
   DDD_SPRING_COMMAND_BUS: 'struct/domain/java/infrastructure/spring/springcommandbus.hbs',
   DDD_SPRING_QUERY_BUS: 'struct/domain/java/infrastructure/spring/springquerybus.hbs',
   DDD_SPRING_EVENT_BUS: 'struct/domain/java/infrastructure/spring/springeventbus.hbs',
 
   // DOMAIN DRIVEN DESIGN LITE
   DDD_LITE_COMMAND: {
-    'classic': 'struct/domain-lite/java/application/commands/commands/command-ddd.hbs',
-    'record': 'struct/domain-lite/java/application/commands/commands/command-record-ddd.hbs',
+    classic: 'struct/domain-lite/java/application/commands/commands/command-ddd.hbs',
+    record: 'struct/domain-lite/java/application/commands/commands/command-record-ddd.hbs',
   },
 
-  DDD_LITE_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd.hbs',
-  DDD_LITE_TEST_COMMAND_HANDLER: 'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd-test.hbs',
+  DDD_LITE_COMMAND_HANDLER:
+    'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd.hbs',
+  DDD_LITE_TEST_COMMAND_HANDLER:
+    'struct/domain-lite/java/application/commands/handlers/commandhandler-ddd-test.hbs',
 
   DDD_LITE_DTO: {
-    'classic': 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
-    'record': 'struct/domain-lite/java/application/dto/dto-record-ddd.hbs',
+    classic: 'struct/domain-lite/java/application/dto/dto-ddd.hbs',
+    record: 'struct/domain-lite/java/application/dto/dto-record-ddd.hbs',
   },
 
   DDD_RESPONSE_DTO: {
-    'classic': 'struct/domain-lite/java/application/response/response-ddd.hbs',
-    'record': 'struct/domain-lite/java/application/response/response-record-ddd.hbs',
+    classic: 'struct/domain-lite/java/application/response/response-ddd.hbs',
+    record: 'struct/domain-lite/java/application/response/response-record-ddd.hbs',
   },
 
   DDD_LITE_FILTER: 'struct/domain-lite/java/application/dto/filter-ddd.hbs',
 
   DDD_LITE_QUERY: {
-    'classic': 'struct/domain-lite/java/application/queries/queries/query-ddd.hbs',
-    'record': 'struct/domain-lite/java/application/queries/queries/query-record-ddd.hbs',
+    classic: 'struct/domain-lite/java/application/queries/queries/query-ddd.hbs',
+    record: 'struct/domain-lite/java/application/queries/queries/query-record-ddd.hbs',
   },
 
-  DDD_LITE_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd.hbs',
-  DDD_LITE_TEST_QUERY_HANDLER: 'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd-test.hbs',
+  DDD_LITE_QUERY_HANDLER:
+    'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd.hbs',
+  DDD_LITE_TEST_QUERY_HANDLER:
+    'struct/domain-lite/java/application/queries/handlers/queryhandler-ddd-test.hbs',
 
   DDD_LITE_EVENT: {
-    'classic': 'struct/domain-lite/java/domain/events/events/event-ddd.hbs',
-    'record': 'struct/domain-lite/java/domain/events/events/event-record-ddd.hbs',
+    classic: 'struct/domain-lite/java/domain/events/events/event-ddd.hbs',
+    record: 'struct/domain-lite/java/domain/events/events/event-record-ddd.hbs',
   },
 
   DDD_LITE_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd.hbs',
-  DDD_LITE_TEST_EVENT_HANDLER: 'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd-test.hbs',
+  DDD_LITE_TEST_EVENT_HANDLER:
+    'struct/domain-lite/java/domain/events/handlers/eventhandler-ddd-test.hbs',
   DDD_LITE_EVENT_PUBLISHER: 'struct/domain-lite/java/domain/events/eventpublisher-ddd.hbs',
   DDD_LITE_REPOSITORY: 'struct/domain-lite/java/domain/repository/repository-ddd.hbs',
   DDD_LITE_CONTROLLER: 'struct/domain-lite/java/infrastructure/controller/controller-ddd.hbs',
-  DDD_LITE_REPOSITORY_IMPL: 'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
+  DDD_LITE_REPOSITORY_IMPL:
+    'struct/domain-lite/java/infrastructure/persistence/repositoryimpl-ddd.hbs',
 
   CONFIG_DEPLOYMENT: 'config/k8s/deploymentyaml.hbs',
   CONFIG_INGRESS: 'config/k8s/ingressyaml.hbs',
   CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
   CONFIG_CLUSTER: 'config/k8s/clusteryaml.hbs',
+
+
+  VALIDATOR_DTO_INTERFACE: 'struct/technical/java/dto/dtoValidatorInterface.hbs',
+  VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs'
 };
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
-  { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_EDITOR_CONFIG, output: '.editorconfig' },
@@ -368,20 +380,43 @@ export const CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
-export const CONFIG_BINARY_FILES = [
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
-]
+export const CONFIG_FILES_GRAALVM = [
+  { template: TEMPLATES.ENV_FILE, output: '.env' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_EDITOR_CONFIG, output: '.editorconfig' },
+  { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yml' },
+  { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+];
+
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
-  { template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
-  { template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
   { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+];
+
+export const OBSERVABILITY_CONFIG_FILES_GRAALVM = [
+  { template: TEMPLATES.ENV_FILE, output: '.env' },
+  //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
+  { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
+  //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
+  { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY, output: 'Dockerfile' },
+  { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
+  { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
+  // { template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM, output: 'config/OtelConfig.java' }
 ];
 
 export const OBSERVABILITY_YAML_CONFIG_FILES = [
@@ -393,8 +428,8 @@ export const OBSERVABILITY_YAML_CONFIG_FILES = [
 
 export const OBSERVABILITY_BINARY_FILES = [
   { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' },
-  { template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
-]
+  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
+];
 
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES_FILE: 'application.properties',
@@ -416,6 +451,8 @@ export const COMMON_FILES = {
   AUDIT_ENTITY: 'AuditEntity.java',
   AUDIT_CONFIG: 'AuditConfig.java',
   APPLICATION_AUDIT_AWARE: 'ApplicationAuditorAware.java',
+  OPEN_TELEMETRY_CONFIG_JAVA_FILE: 'OtelConfig.java',
+  ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',
@@ -448,7 +485,7 @@ export const COMMON_FILES = {
   DEPLOYMENT: 'deployment.yaml',
   INGRESS: 'ingress.yaml',
   CLUSTER: 'cluster.yaml',
-  SERVICE_K8S: 'service.yaml'
+  SERVICE_K8S: 'service.yaml',
 };
 
 export const HELPER_FILES = {
@@ -465,439 +502,47 @@ export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z_]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
+  PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_/]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
-  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_-]*$',
+  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_{}/-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',
   STATUS_CODE: '^\\d{3}$',
   JSON_PATTERN: '^\\{(?:[^{}]|(?:\\{[^{}]*\\}))*\\}$',
-  SQL_PATTERN: '^SELECT\\s+[a-zA-Z0-9_ ,]+\\s+FROM\\s+[a-zA-Z0-9_]+;?$'
+  SQL_PATTERN: '^SELECT\\s+[a-zA-Z0-9_ ,]+\\s+FROM\\s+[a-zA-Z0-9_]+;?$',
 };
 
-const IMPORT_MAP = {
-    // Core Java imports
-    List: 'java.util.List',
-    Map: 'java.util.Map',
-    Set: 'java.util.Set',
-    HashMap: 'java.util.HashMap',
-    HashSet: 'java.util.HashSet',
-    Optional: 'java.util.Optional',
-    Date: 'java.util.Date',
-    UUID: 'java.util.UUID',
+export const VALID_PRIMARY_KEY = ['int', 'integer', 'long', 'uuid', 'string'];
 
-    // Java time API
-    LocalDate: 'java.time.LocalDate',
-    LocalDateTime: 'java.time.LocalDateTime',
-    LocalTime: 'java.time.LocalTime',
-    ZonedDateTime: 'java.time.ZonedDateTime',
-    ZoneId: 'java.time.ZoneId',
-    Instant: 'java.time.Instant',
-    Duration: 'java.time.Duration',
-    Period: 'java.time.Period',
-
-    // I/O and Serialization
-    Serializable: 'java.io.Serializable',
-    InputStream: 'java.io.InputStream',
-    OutputStream: 'java.io.OutputStream',
-    File: 'java.io.File',
-    BufferedReader: 'java.io.BufferedReader',
-    BufferedWriter: 'java.io.BufferedWriter',
-    PrintWriter: 'java.io.PrintWriter',
-
-    // Concurrency
-    Thread: 'java.lang.Thread',
-    Runnable: 'java.lang.Runnable',
-    ExecutorService: 'java.util.concurrent.ExecutorService',
-    Executors: 'java.util.concurrent.Executors',
-    CompletableFuture: 'java.util.concurrent.CompletableFuture',
-
-    // Exceptions
-    IOException: 'java.io.IOException',
-    IllegalArgumentException: 'java.lang.IllegalArgumentException',
-    NullPointerException: 'java.lang.NullPointerException',
-    RuntimeException: 'java.lang.RuntimeException',
-    Exception: 'java.lang.Exception',
-
-    // Annotations
-    Override: 'java.lang.Override',
-    Deprecated: 'java.lang.Deprecated',
-
-    // Utility
-    Objects: 'java.util.Objects',
-    Collections: 'java.util.Collections',
-    Arrays: 'java.util.Arrays',
-    Comparator: 'java.util.Comparator',
-    Stream: 'java.util.stream.Stream',
-
-    // Core Spring Framework
-    Autowired: 'org.springframework.beans.factory.annotation.Autowired',
-    Component: 'org.springframework.stereotype.Component',
-    Service: 'org.springframework.stereotype.Service',
-    Repository: 'org.springframework.stereotype.Repository',
-    Configuration: 'org.springframework.context.annotation.Configuration',
-    Bean: 'org.springframework.context.annotation.Bean',
-
-    // Spring Boot
-    SpringApplication: 'org.springframework.boot.SpringApplication',
-    SpringBootApplication: 'org.springframework.boot.autoconfigure.SpringBootApplication',
-    Value: 'org.springframework.beans.factory.annotation.Value',
-    Environment: 'org.springframework.core.env.Environment',
-
-    // Validation
-    NotNull: 'jakarta.validation.constraints.NotNull',
-    NotEmpty: 'jakarta.validation.constraints.NotEmpty',
-    NotBlank: 'jakarta.validation.constraints.NotBlank',
-    Size: 'jakarta.validation.constraints.Size',
-    Email: 'jakarta.validation.constraints.Email',
-    Pattern: 'jakarta.validation.constraints.Pattern',
-    Min: 'jakarta.validation.constraints.Min',
-    Max: 'jakarta.validation.constraints.Max',
-    Past: 'jakarta.validation.constraints.Past',
-    Future: 'jakarta.validation.constraints.Future',
-
-    // Web
-    RestController: 'org.springframework.web.bind.annotation.RestController',
-    RequestMapping: 'org.springframework.web.bind.annotation.RequestMapping',
-    GetMapping: 'org.springframework.web.bind.annotation.GetMapping',
-    PostMapping: 'org.springframework.web.bind.annotation.PostMapping',
-    PutMapping: 'org.springframework.web.bind.annotation.PutMapping',
-    DeleteMapping: 'org.springframework.web.bind.annotation.DeleteMapping',
-    RequestParam: 'org.springframework.web.bind.annotation.RequestParam',
-    PathVariable: 'org.springframework.web.bind.annotation.PathVariable',
-    RequestBody: 'org.springframework.web.bind.annotation.RequestBody',
-    ResponseBody: 'org.springframework.web.bind.annotation.ResponseBody',
-
-    // Spring Data
-    JpaRepository: 'org.springframework.data.jpa.repository.JpaRepository',
-    CrudRepository: 'org.springframework.data.repository.CrudRepository',
-    PagingAndSortingRepository: 'org.springframework.data.repository.PagingAndSortingRepository',
-    Query: 'org.springframework.data.jpa.repository.Query',
-
-    // Spring Security
-    PreAuthorize: 'org.springframework.security.access.prepost.PreAuthorize',
-    PostAuthorize: 'org.springframework.security.access.prepost.PostAuthorize',
-    Secured: 'org.springframework.security.access.annotation.Secured',
-    RolesAllowed: 'jakarta.annotation.security.RolesAllowed',
-    Authentication: 'org.springframework.security.core.Authentication',
-    SecurityContextHolder: 'org.springframework.security.core.context.SecurityContextHolder',
-
-    // Spring Scheduling
-    Scheduled: 'org.springframework.scheduling.annotation.Scheduled',
-    EnableScheduling: 'org.springframework.scheduling.annotation.EnableScheduling',
-
-    // Jackson
-    JsonIgnore: 'com.fasterxml.jackson.annotation.JsonIgnore',
-    JsonProperty: 'com.fasterxml.jackson.annotation.JsonProperty',
-    JsonCreator: 'com.fasterxml.jackson.annotation.JsonCreator',
-    JsonInclude: 'com.fasterxml.jackson.annotation.JsonInclude',
-
-    // Lombok
-    Getter: 'lombok.Getter',
-    Setter: 'lombok.Setter',
-    Builder: 'lombok.Builder',
-    AllArgsConstructor: 'lombok.AllArgsConstructor',
-    NoArgsConstructor: 'lombok.NoArgsConstructor',
-    Data: 'lombok.Data',
-    EqualsAndHashCode: 'lombok.EqualsAndHashCode',
-    ToString: 'lombok.ToString',
-
-    // Apache Commons
-    StringUtils: 'org.apache.commons.lang3.StringUtils',
-    CollectionUtils: 'org.apache.commons.collections4.CollectionUtils',
-
-    // Hibernate
-    Entity: 'jakarta.persistence.Entity',
-    Id: 'jakarta.persistence.Id',
-    Table: 'jakarta.persistence.Table',
-    Column: 'jakarta.persistence.Column',
-    GeneratedValue: 'jakarta.persistence.GeneratedValue',
-    GenerationType: 'jakarta.persistence.GenerationType',
-
-    // Validation
-    ValidationException: 'jakarta.validation.ValidationException',
-    Validator: 'jakarta.validation.Validator',
-
-    // SLF4J
-    Logger: 'org.slf4j.Logger',
-    LoggerFactory: 'org.slf4j.LoggerFactory',
-
-    // Mockito
-    Mock: 'org.mockito.Mock',
-    InjectMocks: 'org.mockito.InjectMocks',
-    MockitoAnnotations: 'org.mockito.MockitoAnnotations',
-
-};
-
-const MEDIA_TYPE_MAP = {
-  JSON: 'org.springframework.http.MediaType.APPLICATION_JSON_VALUE',
-  XML: 'org.springframework.http.MediaType.APPLICATION_XML_VALUE',
-  FORM_URLENCODED: 'org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE',
-  MULTIPART: 'org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE',
-  TEXT_HTML: 'org.springframework.http.MediaType.TEXT_HTML_VALUE',
-  TEXT_PLAIN: 'org.springframework.http.MediaType.TEXT_PLAIN_VALUE',
-  TEXT_XML: 'org.springframework.http.MediaType.TEXT_XML_VALUE',
-  OCTET_STREAM: 'org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE',
-  ANY: 'org.springframework.http.MediaType.ALL_VALUE',
-};
-
-const ANNOTATION_MAP = {
-  // REST Controller
-  RestController: 'org.springframework.web.bind.annotation.RestController',
-  RequestMapping: 'org.springframework.web.bind.annotation.RequestMapping',
-  GetMapping: 'org.springframework.web.bind.annotation.GetMapping',
-  PostMapping: 'org.springframework.web.bind.annotation.PostMapping',
-  PutMapping: 'org.springframework.web.bind.annotation.PutMapping',
-  DeleteMapping: 'org.springframework.web.bind.annotation.DeleteMapping',
-  PatchMapping: 'org.springframework.web.bind.annotation.PatchMapping',
-
-  // Request Handling
-  RequestParam: 'org.springframework.web.bind.annotation.RequestParam',
-  PathVariable: 'org.springframework.web.bind.annotation.PathVariable',
-  RequestBody: 'org.springframework.web.bind.annotation.RequestBody',
-  ResponseBody: 'org.springframework.web.bind.annotation.ResponseBody',
-
-  // Exception Handling
-  ExceptionHandler: 'org.springframework.web.bind.annotation.ExceptionHandler',
-  ControllerAdvice: 'org.springframework.web.bind.annotation.ControllerAdvice',
-
-  // Cross-Origin
-  CrossOrigin: 'org.springframework.web.bind.annotation.CrossOrigin',
-
-  // Validation
-  Valid: 'jakarta.validation.Valid',
-
-  // Response Status
-  ResponseStatus: 'org.springframework.http.HttpStatus',
-};
-
-const HTTP_STATUS_MAP = {
-  OK: 'org.springframework.http.HttpStatus.OK',
-  CREATED: 'org.springframework.http.HttpStatus.CREATED',
-  ACCEPTED: 'org.springframework.http.HttpStatus.ACCEPTED',
-  NO_CONTENT: 'org.springframework.http.HttpStatus.NO_CONTENT',
-  BAD_REQUEST: 'org.springframework.http.HttpStatus.BAD_REQUEST',
-  UNAUTHORIZED: 'org.springframework.http.HttpStatus.UNAUTHORIZED',
-  FORBIDDEN: 'org.springframework.http.HttpStatus.FORBIDDEN',
-  NOT_FOUND: 'org.springframework.http.HttpStatus.NOT_FOUND',
-  INTERNAL_SERVER_ERROR: 'org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR',
-  NOT_IMPLEMENTED: 'org.springframework.http.HttpStatus.NOT_IMPLEMENTED',
-  SERVICE_UNAVAILABLE: 'org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE',
-};
-
-const REQUEST_RESPONSE_MAP = {
-  HttpHeaders: 'org.springframework.http.HttpHeaders',
-  HttpEntity: 'org.springframework.http.HttpEntity',
-  ResponseEntity: 'org.springframework.http.ResponseEntity',
-};
-
-const SPRING_BOOT_COMMON_MAP = {
-  Application: 'org.springframework.boot.SpringApplication',
-  SpringBootApplication: 'org.springframework.boot.autoconfigure.SpringBootApplication',
-};
-
-const DEPENDENCY_INJECTION_MAP = {
-  Autowired: 'org.springframework.beans.factory.annotation.Autowired',
-  Component: 'org.springframework.stereotype.Component',
-  Service: 'org.springframework.stereotype.Service',
-  Repository: 'org.springframework.stereotype.Repository',
-  Configuration: 'org.springframework.context.annotation.Configuration',
-  Bean: 'org.springframework.context.annotation.Bean',
-  Value: 'org.springframework.beans.factory.annotation.Value',
-};
-
-const VALIDATION_MAP = {
-  NotNull: 'jakarta.validation.constraints.NotNull',
-  NotEmpty: 'jakarta.validation.constraints.NotEmpty',
-  NotBlank: 'jakarta.validation.constraints.NotBlank',
-  Email: 'jakarta.validation.constraints.Email',
-  Size: 'jakarta.validation.constraints.Size',
-  Pattern: 'jakarta.validation.constraints.Pattern',
-};
-
-const IMPORTS_MAP = {
-  mediaTypes: MEDIA_TYPE_MAP,
-  annotations: ANNOTATION_MAP,
-  httpStatuses: HTTP_STATUS_MAP,
-  requestResponse: REQUEST_RESPONSE_MAP,
-  springBoot: SPRING_BOOT_COMMON_MAP,
-  dependencyInjection: DEPENDENCY_INJECTION_MAP,
-  validation: VALIDATION_MAP,
-};
-
-export const JAVA_ATTRIBUTE_TYPES = [
-  // Basic Types
-  'String',
-  'UUID',
-  'Integer',
-  'int',
-  'Long',
-  'long',
-  'Boolean',
-  'boolean',
-  'Short',
-  'short',
-  'Byte',
-  'byte',
-  'Float',
-  'float',
-  'Double',
-  'double',
-  'Character',
-  'char',
-
-  // Date and Time
-  'LocalTime',
-  'LocalDate',
-  'LocalDateTime',
-  'ZonedDateTime',
-  'OffsetDateTime',
-  'Instant',
-  'Date',
-  'Calendar',
-  'TimeZone',
-  'Duration',
-  'Period',
-
-  // Number Types
-  'BigInteger',
-  'BigDecimal',
-
-  // Streams and I/O
-  'InputStream',
-  'OutputStream',
-  'BufferedInputStream',
-  'BufferedOutputStream',
-  'Reader',
-  'Writer',
-  'BufferedReader',
-  'BufferedWriter',
-  'File',
-  'Path',
-  'Files',
-  'FileReader',
-  'FileWriter',
-  'PrintWriter',
-  'PrintStream',
-
-  // Miscellaneous
-  'Optional',
-  'Object',
-  'Stream',
-  'IntStream',
-  'LongStream',
-  'DoubleStream',
-
-  // Arrays and Primitives
-  'int[]',
-  'long[]',
-  'double[]',
-  'float[]',
-  'byte[]',
-  'char[]',
-  'boolean[]',
-  'String[]',
-  'Object[]',
-] as const;
-
-export const JAVA_8_TYPES = [
-  // Java 8 and Above Functional Types
-  'Function',
-  'Consumer',
-  'Collectors',
-  'Supplier',
-  'Predicate',
-  'BiFunction',
-  'BiConsumer',
-  'UnaryOperator',
-  'BinaryOperator',
-]
-
-export const JAVA_EXCEPTIONS = [
-  'Throwable',
-  'Exception',
-  'RuntimeException',
-  'IllegalArgumentException',
-  'NullPointerException',
-  'IllegalStateException',
-  'IOException',
-  'SQLException',
-]
-
-export const JAVA_COLLECTION_TYPES = [
-  // Collections and Data Structures
-  'List',
-  'ArrayList',
-  'LinkedList',
-  'Set',
-  'HashSet',
-  'TreeSet',
-  'Map',
-  'HashMap',
-  'TreeMap',
-  'Queue',
-  'Deque',
-  'PriorityQueue',
-  'Stack',
-  'Vector',
-  'Arrays',
-]
-
-export const JAVA_CONCURRENCY_TYPES = [
-  // Concurrency
-  'Thread',
-  'Runnable',
-  'Callable',
-  'Executor',
-  'ExecutorService',
-  'ScheduledExecutorService',
-  'Future',
-  'CompletableFuture',
-  'Semaphore',
-  'Lock',
-  'ReentrantLock',
-  'CountDownLatch',
-  'CyclicBarrier',
-]
-
-export const JAVA_NETWORK_TYPES = [
-  // Networking
-  'URL',
-  'URLConnection',
-  'HttpURLConnection',
-  'InetAddress',
-  'Socket',
-  'ServerSocket'
-]
-
-export const VALID_PRIMARY_KEY = ['int','integer', 'long', 'uuid', 'string']
-
-export const JAVA_TYPES: Map<string, TypeMetadata> = new Map(Object.entries({
-  'boolean': { name: 'boolean', primitive: true },
-  'short': { name: 'short', primitive: true },
-  'char': { name: 'char', primitive: true },
-  'int': { name: 'int', primitive: true },
-  'long': { name: 'long', primitive: true },
-  'float': { name: 'float', primitive: true },
-  'double': { name: 'double', primitive: true },
-  'Boolean': { name: 'Boolean', primitive: false },
-  'Short': { name: 'Short', primitive: false },
-  'Integer': { name: 'Integer', primitive: false },
-  'Long': { name: 'Long', primitive: false },
-  'Double': { name: 'Double', primitive: false },
-  'String': { name: 'String', primitive: false },
-  'Character': { name: 'Character', primitive: false },
-  'BigDecimal': { name: 'BigDecimal', primitive: false, namespace: 'java.math', },
-  'BigInteger': { name: 'BigInteger', primitive: false, namespace: 'java.math' },
-  'LocalDate': { name: 'LocalDate', primitive: false, namespace: 'java.time' },
-  'LocalDateTime': { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
-  'LocalTime': { name: 'LocalTime', primitive: false, namespace: 'java.time' },
-  'ZoneDateTime': { name: 'ZoneDateTime', primitive: false, namespace: 'java.time' },
-  'OffsetDateTime': { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
-  'Instant': { name: 'Instant', primitive: false, namespace: 'java.time' },
-  'List': { name: 'List', primitive: false, namespace: 'java.util', },
-  'Object': { name: 'Object', primitive: false },
-}));
+new Map(
+  Object.entries({
+    boolean: { name: 'boolean', primitive: true },
+    short: { name: 'short', primitive: true },
+    char: { name: 'char', primitive: true },
+    int: { name: 'int', primitive: true },
+    long: { name: 'long', primitive: true },
+    float: { name: 'float', primitive: true },
+    double: { name: 'double', primitive: true },
+    Boolean: { name: 'Boolean', primitive: false },
+    Short: { name: 'Short', primitive: false },
+    Integer: { name: 'Integer', primitive: false },
+    Long: { name: 'Long', primitive: false },
+    Double: { name: 'Double', primitive: false },
+    String: { name: 'String', primitive: false },
+    Character: { name: 'Character', primitive: false },
+    BigDecimal: { name: 'BigDecimal', primitive: false, namespace: 'java.math' },
+    BigInteger: { name: 'BigInteger', primitive: false, namespace: 'java.math' },
+    LocalDate: { name: 'LocalDate', primitive: false, namespace: 'java.time' },
+    LocalDateTime: { name: 'LocalDateTime', primitive: false, namespace: 'java.time' },
+    LocalTime: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
+    ZoneDateTime: { name: 'ZoneDateTime', primitive: false, namespace: 'java.time' },
+    OffsetDateTime: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
+    Instant: { name: 'Instant', primitive: false, namespace: 'java.time' },
+    List: { name: 'List', primitive: false, namespace: 'java.util' },
+    Object: { name: 'Object', primitive: false },
+  }),
+);
 
 export const GENERIC_ATTRIBUTE_TYPES = [
   'boolean',
@@ -918,23 +563,37 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'binary',
   'file',
   'instant',
+  'uri',
+  'url'
 ];
 
-const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter(type => type !== "object");
+export const CATEGORIZED_ATTRIBUTE_TYPES = {
+  timing: [
+    'date', 'datetime', 'time', 'instant'
+  ],
+  numeric: [
+    'integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'
+  ],
+  text: [
+    'string', 'char'
+  ],
+  media: [
+    'file', 'binary'
+  ],
+  misc: [
+    'uuid',
+  ],
+  generic: [
+    'object'
+  ],
+  uri: ['url', 'uri']
+}
 
-export const GENERIC_MODEL_ATTRIBUTE_TYPES = [
-  ...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'
-]
+const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type !== 'object');
 
-export const GENERIC_DTO_ATTRIBUTE_TYPES = [
-  ...GENERIC_ATTRIBUTE_TYPES
-]
+export const GENERIC_MODEL_ATTRIBUTE_TYPES = [...NO_OBJECT_ATTRIBUTE_TYPES, 'relation'];
 
-export const GENERIC_COLLECTION_TYPES = [
-  'list',
-  'map',
-  'set'
-];
+export const GENERIC_COLLECTION_TYPES = ['none', 'collection', 'map', 'pageable', 'list', 'set'];
 
 export const GENERIC_TYPES: Map<
   string,
@@ -1033,6 +692,18 @@ export const GENERIC_TYPES: Map<
       python: { name: 'time', primitive: false, namespace: 'datetime' },
       kotlin: { name: 'LocalTime', primitive: false, namespace: 'java.time' },
     },
+    uri: {
+      java: { name: 'URI', primitive: false, namespace: 'java.net' },
+      dotnet: { name: "Uri", primitive: false, namespace: "System" },
+      python: { name: 'URI', primitive: false, namespace: 'urllib.parse' },
+      kotlin: { name: 'URI', primitive: false, namespace: 'java.net' },
+    },
+    url: {
+      java: { name: 'URL', primitive: false, namespace: 'java.net' },
+      dotnet: { name: 'Uri', primitive: false, namespace: 'System' },
+      python: { name: 'URL', primitive: false, namespace: 'urllib.parse' },
+      kotlin: { name: 'URL', primitive: false, namespace: 'java.net' },
+    },
     instant: {
       java: { name: 'Instant', primitive: false, namespace: 'java.time' },
       dotnet: { name: 'DateTimeOffset', primitive: false, namespace: 'System' },
@@ -1052,14 +723,28 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'OffsetDateTime', primitive: false, namespace: 'java.time' },
     },
     file: {
-      java: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart' },
+      java: {
+        name: 'MultipartFile',
+        primitive: false,
+        namespace: 'org.springframework.web.multipart',
+      },
       dotnet: { name: 'byte', primitive: true },
       python: { name: 'int', primitive: true },
-      kotlin: { name: 'MultipartFile', primitive: false, namespace: 'org.springframework.web.multipart' },
+      kotlin: {
+        name: 'MultipartFile',
+        primitive: false,
+        namespace: 'org.springframework.web.multipart',
+      },
     },
     // Collections
     list: {
       java: { name: 'List', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'list', primitive: false },
+      kotlin: { name: 'List', primitive: false },
+    },
+    pageable: {
+      java: { name: 'Pageable', primitive: false, namespace: 'org.springframework.data.domain' },
       dotnet: { name: 'List', primitive: false, namespace: 'System.Collections.Generic' },
       python: { name: 'list', primitive: false },
       kotlin: { name: 'List', primitive: false },
@@ -1076,6 +761,13 @@ export const GENERIC_TYPES: Map<
       python: { name: 'dict', primitive: false },
       kotlin: { name: 'Map', primitive: false },
     },
+    collection: {
+      java: { name: 'Collection', primitive: false, namespace: 'java.util' },
+      dotnet: { name: 'ICollection', primitive: false, namespace: 'System.Collections.Generic' },
+      python: { name: 'list', primitive: false },
+      kotlin: { name: 'Collection', primitive: false },
+    },
+
     // Miscellaneous
     enum: {
       java: { name: 'Enum', primitive: false },
@@ -1093,14 +785,144 @@ export const GENERIC_TYPES: Map<
       java: { name: 'byte[]', primitive: true },
       dotnet: { name: 'byte[]', primitive: true },
       python: { name: 'bytes', primitive: true },
-      kotlin: { name: "ByteArray", primitive: true }
-    }
-  })
+      kotlin: { name: 'ByteArray', primitive: true },
+    },
+  }),
 );
+
+export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, module?: string): Map<
+  string,
+  { java: ImportTypeMetadata; dotnet: ImportTypeMetadata; python: ImportTypeMetadata; kotlin: ImportTypeMetadata }
+> => new Map(
+  Object.entries({
+    model: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.domain.${PACKAGES.MODELS}.${type};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${type};`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    dto: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    enum: {
+      java: {
+        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.CONSTANTS}.${type};`,
+        technical: `import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${type};`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    file: {
+      java: {
+        domain:
+          `import org.hibernate.annotations.JdbcType;`
+          + '\n' +
+          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`,
+        technical:
+          `import org.hibernate.annotations.JdbcType;`
+          + '\n' +
+          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    binary: {
+      java: {
+        domain: `import org.hibernate.annotations.JdbcType;`,
+        technical: `import org.hibernate.annotations.JdbcType;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    list: {
+      java: {
+        domain: `import java.util.List;`,
+        technical: `import java.util.List;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    collection: {
+      java: {
+        domain: `import java.util.Collection;`,
+        technical: `import java.util.Collection;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    pageable: {
+      java: {
+        domain: `import org.springframework.data.domain.Page;`,
+        technical: `import org.springframework.data.domain.Page;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    map: {
+      java: {
+        domain: `import java.util.Map;`,
+        technical: `import java.util.Map;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    set: {
+      java: {
+        domain: `import java.util.Set;`,
+        technical: `import java.util.Set;`
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    jsonProperty: {
+      java: {
+        domain: 'import com.fasterxml.jackson.annotation.JsonProperty;',
+        technical: 'import com.fasterxml.jackson.annotation.JsonProperty;'
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+    xmlProperty: {
+      java: {
+        domain: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
+        technical: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;'
+      },
+      dotnet: {},
+      python: {},
+      kotlin: {},
+    },
+
+  }),
+);
+
 
 export const TYPESCRIPT_TYPES: Map<
   string,
-  { java: TypeMetadata; dotnet: TypeMetadata; python: TypeMetadata; kotlin: TypeMetadata; generic: TypeMetadata; }
+  {
+    java: TypeMetadata;
+    dotnet: TypeMetadata;
+    python: TypeMetadata;
+    kotlin: TypeMetadata;
+    generic: TypeMetadata;
+  }
 > = new Map(
   Object.entries({
     boolean: {
@@ -1108,63 +930,76 @@ export const TYPESCRIPT_TYPES: Map<
       dotnet: { name: 'bool', primitive: true },
       python: { name: 'bool', primitive: true },
       kotlin: { name: 'Boolean', primitive: true },
-      generic: { name: 'boolean', primitive: true }
+      generic: { name: 'boolean', primitive: true },
     },
     number: {
       java: { name: 'Double', primitive: true },
       dotnet: { name: 'double', primitive: true },
       python: { name: 'float', primitive: true },
       kotlin: { name: 'Double', primitive: true },
-      generic: { name: 'double', primitive: true }
+      generic: { name: 'double', primitive: true },
     },
     string: {
       java: { name: 'String', primitive: false },
       dotnet: { name: 'string', primitive: false },
       python: { name: 'str', primitive: false },
       kotlin: { name: 'String', primitive: false },
-      generic: { name: 'string', primitive: true }
+      generic: { name: 'string', primitive: true },
     },
     object: {
       java: { name: 'Object', primitive: false },
       dotnet: { name: 'object', primitive: false },
       python: { name: 'object', primitive: false },
       kotlin: { name: 'Any', primitive: false },
-      generic: { name: 'object', primitive: true }
+      generic: { name: 'object', primitive: true },
     },
     undefined: {
       java: { name: 'Void', primitive: false },
       dotnet: { name: 'void', primitive: false },
       python: { name: 'None', primitive: false },
       kotlin: { name: 'Unit', primitive: false },
-      generic: { name: 'object', primitive: true }
+      generic: { name: 'object', primitive: true },
     },
     function: {
       java: { name: 'Runnable', primitive: false },
       dotnet: { name: 'Action', primitive: false, namespace: 'System' },
       python: { name: 'Callable', primitive: false, namespace: 'collections.abc' },
       kotlin: { name: '() -> Unit', primitive: false },
-      generic: { name: 'object', primitive: true }
+      generic: { name: 'object', primitive: true },
     },
     symbol: {
       java: { name: 'Object', primitive: false },
       dotnet: { name: 'object', primitive: false },
       python: { name: 'object', primitive: false },
       kotlin: { name: 'Any', primitive: false },
-      generic: { name: 'object', primitive: true }
-    }
-  })
+      generic: { name: 'object', primitive: true },
+    },
+  }),
 );
 
-
-export const SIMPLE_RESPONSE_TYPES = ['String', 'Integer', 'Boolean', 'Object'] as const;
-//export const RESPONSE_TYPES = [...SIMPLE_RESPONSE_TYPES, ...SIMPLE_RESPONSE_TYPES.map(responseType => `List<${responseType}>`)]
-
-export const SCHEMA_TYPES = ['Reference other schemas', 'string', 'integer', 'boolean', 'array', 'object', 'number', 'null', 'any', 'Schema Composition', 'Customize'] as const
+export const SCHEMA_TYPES = [
+  'string',
+  'integer',
+  'boolean',
+  'object',
+  'Reference other Object',
+] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
-export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql'] as const;
-export const STRUCT_TYPES = [PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN, PROJECT_STRUCTURE_STYLE.TECHNICAL] as const
-export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter', 'response'] as const
-export const CONFIG_TYPES = ['dto', 'controller', 'model', 'module', 'enum', 'filter', 'response'] as const
+export const DATABASE_TYPES = ['MySQL', 'Oracle', 'Postgresql', 'H2'] as const;
+export const STRUCT_TYPES = [
+  PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN,
+  PROJECT_STRUCTURE_STYLE.TECHNICAL,
+] as const;
+export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter', 'response'] as const;
+export const CONFIG_TYPES = [
+  'dto',
+  'controller',
+  'model',
+  'module',
+  'enum',
+  'filter',
+  'response',
+] as const;
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',
@@ -1176,72 +1011,72 @@ export const HTTP_METHOD_TYPES = [
 ] as const;
 
 export const MIME_TYPES = [
-  "",
-  "font/woff2",
-  "application/json",
-  "multipart/form-data",
-  "video/ogg",
-  "application/ogg",
-  "audio/3gpp",
-  "audio/webm",
-  "audio/wav",
-  "image/svg+xml",
-  "image/jpeg",
-  "audio/aac",
-  "audio/mpeg",
-  "application/x-csh",
-  "image/webp",
-  "application/x-7z-compressed",
-  "font/woff",
-  "font/ttf",
-  "video/mpeg",
-  "application/gzip",
-  "application/xml",
-  "text/csv",
-  "text/javascript",
-  "application/pdf",
-  "application/x-tar",
-  "font/otf",
-  "application/zip",
-  "audio/midi",
-  "video/3gpp",
-  "audio/ogg",
-  "image/apng",
-  "image/png",
-  "text/calendar",
-  "text/css",
-  "application/x-cdf",
-  "application/x-bzip",
-  "text/plain",
-  "image/tiff",
-  "video/webm",
-  "audio/x-midi",
-  "image/gif",
-  "application/x-bzip2",
-  "image/bmp",
-  "text/html",
-  "audio/3gpp2",
-  "application/octet-stream",
-  "video/mp4",
-  "video/3gpp2",
-  "application/epub+zip",
-  "image/avif",
-  "video/mp2t"
+  '',
+  'font/woff2',
+  'application/json',
+  'multipart/form-data',
+  'video/ogg',
+  'application/ogg',
+  'audio/3gpp',
+  'audio/webm',
+  'audio/wav',
+  'image/svg+xml',
+  'image/jpeg',
+  'audio/aac',
+  'audio/mpeg',
+  'application/x-csh',
+  'image/webp',
+  'application/x-7z-compressed',
+  'font/woff',
+  'font/ttf',
+  'video/mpeg',
+  'application/gzip',
+  'application/xml',
+  'text/csv',
+  'text/javascript',
+  'application/pdf',
+  'application/x-tar',
+  'font/otf',
+  'application/zip',
+  'audio/midi',
+  'video/3gpp',
+  'audio/ogg',
+  'image/apng',
+  'image/png',
+  'text/calendar',
+  'text/css',
+  'application/x-cdf',
+  'application/x-bzip',
+  'text/plain',
+  'image/tiff',
+  'video/webm',
+  'audio/x-midi',
+  'image/gif',
+  'application/x-bzip2',
+  'image/bmp',
+  'text/html',
+  'audio/3gpp2',
+  'application/octet-stream',
+  'video/mp4',
+  'video/3gpp2',
+  'application/epub+zip',
+  'image/avif',
+  'video/mp2t',
 ];
 
 export const REQUEST_MAPPING_OPTIONS = {
-  "Content-Type": "consumes", // Content-Type header maps to consumes
-  "Accept": "produces",       // Accept header maps to produces
-  "Cache-Control": "headers", // Cache-Control header maps to headers
-  "Content-Length": "headers", // Content-Length header maps to headers
-  "Accept-Charset": "headers", // Accept-Charset header maps to headers
-  "Accept-Encoding": "headers", // Accept-Encoding header maps to headers
-  "Accept-Language": "headers", // Accept-Language header maps to headers
-  "Expires": "headers", // Expires header maps to headers
-  "Access-Control-Allow-Origin": "headers", // Access-Control-Allow-Origin header maps to headers
-  "Access-Control-Request-Headers": "headers", // Access-Control-Request-Headers header maps to headers
-  "Access-Control-Request-Method": "headers", // Access-Control-Request-Method header maps to headers
-  "Custom-Header": "headers" // Custom-Header maps to headers
+  'Content-Type': 'consumes', // Content-Type header maps to consumes
+  Accept: 'produces', // Accept header maps to produces
+  'Cache-Control': 'headers', // Cache-Control header maps to headers
+  'Content-Length': 'headers', // Content-Length header maps to headers
+  'Accept-Charset': 'headers', // Accept-Charset header maps to headers
+  'Accept-Encoding': 'headers', // Accept-Encoding header maps to headers
+  'Accept-Language': 'headers', // Accept-Language header maps to headers
+  Expires: 'headers', // Expires header maps to headers
+  'Access-Control-Allow-Origin': 'headers', // Access-Control-Allow-Origin header maps to headers
+  'Access-Control-Request-Headers': 'headers', // Access-Control-Request-Headers header maps to headers
+  'Access-Control-Request-Method': 'headers', // Access-Control-Request-Method header maps to headers
+  'Custom-Header': 'headers', // Custom-Header maps to headers
 } as const;
 
 export const HTTP_HEADER_TYPES = [
@@ -1256,22 +1091,26 @@ export const HTTP_HEADER_TYPES = [
   'Access-Control-Allow-Origin',
   'Access-Control-Request-Headers',
   'Access-Control-Request-Method',
-  'Custom-Header'
+  'Custom-Header',
 ] as const;
 
 export const CRUD_DISABLED_OPTIONS = [
-  'save', 
+  'save',
   'saveAll',
-  'delete', 
-  'deleteAll', 
+  'delete',
+  'deleteAll',
   'deleteById',
-  'findAll', 
-  'findById', 
+  'findAll',
+  'findById',
   'findAllById',
 ] as const;
 
 export const RELATIONSHIP_TYPES = ['OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany'] as const;
 
-export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const
+export const FETCH_TYPE = ['lazy', 'eager'] as const;
 
-export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const
+export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DETACH'] as const;
+
+export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
+
+export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const;

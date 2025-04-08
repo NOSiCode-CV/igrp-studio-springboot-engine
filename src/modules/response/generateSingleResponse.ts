@@ -23,7 +23,7 @@ import path from 'path';
 import { getModelTypes } from '../model/helpers';
 import { getDTOTypes } from '../dto/helpers';
 import { normalizeName } from '../dto/saveDTOConfig';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getEnumTypes } from '../enum/helpers';
 
 export const generateSingleResponse = async (context: RenderContext<ResponseConfig>) => {
@@ -80,7 +80,7 @@ export const transformSchemaDTOConfig = async function(
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'response',
-    name: capitalize(bodyCfg.name),
+    name: capitalize(bodyCfg.name ?? ''),
     template: 'classic',
     module: bodyCfg.module,
     attributes: []
@@ -112,15 +112,14 @@ export const transformSchemaDTOConfig = async function(
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto) {
-      if (dtypes === undefined) {
-        dtypes = await getDTOTypes(bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
-      }
 
-      const dt = dtypes.get(attr.type!);
+      dtypes = await getDTOTypes(attr.module ?? bodyCfg.module ?? DIRECTORIES.SHARED, basePath);
+
+      const dt = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(attr.type!);
+        const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
         if(!dtype) {
             typeNotFound = true;
         }
@@ -191,7 +190,7 @@ export const transformSchemaDTOConfig = async function(
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(bodyCfg.name, 'dto')
+  ncfg.name = normalizeName(bodyCfg.name ?? '', 'dto')
   ncfg.id = bodyCfg.id
 
   if (errors.length > 0) {

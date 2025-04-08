@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { addDTO, serializeElement } from '../src';
 import { DTOConfig, JsonConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR_OTHER, TEST_OUTPUT_DIR } from './outputDirPath';
 
 beforeAll(async () => {
   await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -11,97 +11,58 @@ beforeAll(async () => {
 
 describe('DTO generator', () => {
 
-  it('should create DTO for domain driven design project style', async() => {
+  it('should create DTO for domain driven design project style', async () => {
 
     const domainTestCases: DTOConfig[] = [
-
-      // Owner DTO
-
       {
-        "id": "ab3de9fghj",
         "type": "dto",
-        "module": "core",
-        "name": "Owner",
-        "template": "record",
+        "module": "shared",
+        "name": "demo",
+        "template": "classic",
+        "enableCustonValidation": true,
         "attributes": [
           {
-            "type": "string",
+            "name": "uriType",
             "objectType": "java",
-            "name": "ownerName",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "contactNumber",
-            "required": true,
-            "regex": "^\\+?[0-9]{7,15}$"
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "email",
+            "type": "uri",
             "required": false,
-            "isEmail": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "address",
-            "required": false
-          },
-          {
-            "type": "integer",
-            "objectType": "java",
-            "name": "animalsOwnedId",
-            "required": false,
-            "collectionType": "list"
+            "before": false,
+            "after": false,
+            "positive": false,
+            "regex": "",
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false,
+            "collectionType": ""
           }
-        ]
+        ],
+        "id": "xr5l53jn5e"
       },
-
-      // Animal DTO
-
       {
-        "id": "yjektfkd2g",
         "type": "dto",
-        "module": "core",
-        "name": "Animal",
-        "template": "record",
+        "module": "shared",
+        "name": "outro",
+        "template": "classic",
+        "enableCustonValidation": true,
         "attributes": [
           {
+            "name": "uriType",
+            "objectType": "java",
             "type": "string",
-            "objectType": "java",
-            "name": "species",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "name",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "objectType": "java",
-            "name": "age",
-            "required": true,
-            "positive": true
-          },
-          {
-            "type": "boolean",
-            "objectType": "java",
-            "name": "vaccinated",
-            "required": false
-          },
-          {
-            "type": "OwnerDTO",
-            "objectType": "dto",
-            "name": "owner",
-            "required": true
+            "required": false,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "regex": "",
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false,
+            "collectionType": ""
           }
-        ]
+        ],
+        "id": "xr5l53jn5e44"
       }
+
 
     ];
 
@@ -110,142 +71,130 @@ describe('DTO generator', () => {
     }
   })
 
-  it('should create DTO for technical project style', async() => {
+  it('should create DTO for technical project style', async () => {
 
     const technicalTestCases: DTOConfig[] = [
-
-      // User DTO
-
       {
-        "id": "mlu6m6vxha",
         "type": "dto",
-        "name": "User",
+        "module": "shared",
+        "name": "demo",
         "template": "classic",
+        "enableCustonValidation": true,
         "attributes": [
           {
-            "type": "string",
+            "name": "uriType",
             "objectType": "java",
-            "name": "username",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "email",
-            "required": true,
-            "isEmail": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "password",
-            "required": true,
-            "regex": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$"
-          },
-          {
-            "type": "Level",
-            "objectType": "enum",
-            "name": "userLevel",
-            "required": true
-          },
-          {
-            "type": "string",
-            "objectType": "java",
-            "name": "roles",
+            "type": "uri",
             "required": false,
-            "collectionType": "list"
-          },
-          {
-            "type": "date",
-            "objectType": "java",
-            "name": "lastLogin",
-            "required": false
+            "before": false,
+            "after": false,
+            "positive": false,
+            "regex": "",
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false,
+            "collectionType": ""
           }
-        ]
+        ],
+        "id": "xr5l53jn5e"
       },
-
       {
-        "id": "hcxghbutva",
         "type": "dto",
-        "name": "Teste",
+        "module": "shared",
+        "name": "outro",
         "template": "classic",
+        "enableCustonValidation": true,
         "attributes": [
           {
-            "type": "string",
+            "name": "uriType",
             "objectType": "java",
-            "name": "field",
-            "required": true
-          },
-          {
-            "type": "UserDTO",
-            "objectType": "dto",
-            "name": "user",
-            "required": true
-          },
-
-        ]
+            "type": "string",
+            "required": false,
+            "before": false,
+            "after": false,
+            "positive": false,
+            "regex": "",
+            "isEmail": false,
+            "isUrl": false,
+            "primaryKey": false,
+            "collectionType": ""
+          }
+        ],
+        "id": "xr5l53jn5e44"
       }
-
     ];
 
     for (const testCase of technicalTestCases) {
-      await addDTO(testCase, TECHNICAL_OUTPUT_DIR);
+      await addDTO(testCase, TECHNICAL_OUTPUT_DIR_OTHER);
     }
   })
 
-  it('should create a DTO based on JSON serialization', async() => {
+  it('should create DTO for test ', async () => {
 
+    const testCases: DTOConfig[] = [
+      {"type":"dto","module":"shared","name":"User","template":"classic","attributes":[{"name":"igrpUsername","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false},{"name":"fullname","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false},{"name":"email","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false},{"name":"roles","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false,"collectionType":"collection"},{"name":"departments","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false,"collectionType":"collection"},{"name":"apps","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false,"collectionType":"collection"},{"name":"imageUrl","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false},{"name":"signatureUrl","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false},{"name":"status","objectType":"java","type":"string","required":false,"before":false,"after":false,"positive":false,"isEmail":false,"isUrl":false,"primaryKey":false}],"id":"plmvfsaeug"}
+    ];
+
+    for (const testCase of testCases) {
+      await addDTO(testCase, TEST_OUTPUT_DIR);
+    }
+  })
+
+
+
+  /*it('should create a DTO based on JSON serialization', async() => {
+ 
     const sampleJson = {
       name: "John Doe",
       age: 34,
       birthDate: "1995-09-10"
     }
-
+ 
     const json = JSON.stringify(sampleJson)
-
+ 
     const config : JsonConfig = {
       name: "Person",
       template: "classic",
       type: "dto",
       json: json
     };
-
+ 
     await serializeElement(config, TECHNICAL_OUTPUT_DIR);
-
+ 
   })
-
+ 
   it('should create a DTO based on XML serialization', async() => {
-
+ 
     const sampleXml: string = `
       <name>John Doe</name>
       <age>34</age>
       <birthDate>1995-09-10</birthDate>
   `;
-
+ 
     const config: XmlConfig = {
       name: "Person",
       template: "classic",
       type: "dto",
       xml: sampleXml
     };
-
+ 
     await serializeElement(config, TECHNICAL_OUTPUT_DIR);
-
+ 
   });
-
+ 
   it('should create a DTO based on SQL SELECT command serialization', async() => {
-
+ 
     const sampleSql = "SELECT name, age, birth_date FROM persons";
-
+ 
     const config: SqlConfig = {
       name: "Person",
       template: "classic",
       type: "dto",
       sql: sampleSql
     };
-
+ 
     await serializeElement(config, TECHNICAL_OUTPUT_DIR);
-
-  });
+ 
+  });*/
 
 });

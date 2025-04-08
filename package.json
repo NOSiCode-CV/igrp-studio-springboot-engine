@@ -1,7 +1,7 @@
 {
-  "name": "@igrp/spring-engine",
-  "version": "0.0.1-alpha",
-  "description": "Spring API Creation Engine",
+  "name": "@igrp/igrp-studio-springboot-engine",
+  "version": "0.0.1-alpha.65",
+  "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
@@ -10,13 +10,13 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "tsc && vite build",
+    "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
-    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/"
+    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/NOSiCode-CV/igrp-studio-springboot-engine.git"
+    "url": "git+https://github.com/NOSiCode-CV/igrp-studio-springboot-engine.git"
   },
   "keywords": [
     "Spring",
@@ -32,11 +32,12 @@
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
+    "axios": "^1.8.3",
+    "fast-xml-parser": "^4.3.2",
     "fs-extra": "^11.2.0",
     "sass": "^1.77.8",
     "source-map-loader": "^5.0.0",
-    "ts-loader": "^9.5.1",
-    "fast-xml-parser": "^4.3.2"
+    "ts-loader": "^9.5.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -53,7 +54,8 @@
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.3",
     "vite": "^5.4.2",
-    "vite-plugin-dts": "^4.0.3"
+    "vite-plugin-dts": "^4.0.3",
+    "env-cmd": "^10.1.0"
   },
   "type": "commonjs",
   "exports": {

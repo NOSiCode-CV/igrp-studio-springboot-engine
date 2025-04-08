@@ -8,14 +8,14 @@ import {
   PrimaryKey,
   UniqueConstraint,
   IModelPermission,
-  EntityIndex, AttributeType,
+  EntityIndex, AttributeType, RelationReference,
 } from '../interfaces/types';
 import {
   CRUD_DISABLED_OPTIONS,
   PATTERNS,
   RELATIONSHIP_TYPES,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES, GENERIC_MODEL_ATTRIBUTE_TYPES,
+  GENERIC_ATTRIBUTE_TYPES, FETCH_TYPE, CASCADE_TYPE,
 } from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {
@@ -25,13 +25,46 @@ const genericAttributeSchema: JSONSchemaType<AttributeType> = {
   errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
 }
 
-const relationSchema: JSONSchemaType<Relation> = {
+export const relationSchema: JSONSchemaType<Relation> = {
   type: "object",
   properties: {
     type: {
       type: "string",
       enum: RELATIONSHIP_TYPES,
       errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
+    },
+    cascadeType: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: {
+            type: "string",
+            enum: [...CASCADE_TYPE],
+            errorMessage: {
+              type: 'Cascade type must be a string',
+              enum: `Each cascade type must be one of: ${CASCADE_TYPE.join(', ')}.`
+            }
+          },
+        },
+        errorMessage: `The cascade type, if provided, must be a valid cascade type configuration.`,
+        required: ["type"],
+        additionalProperties: false
+      },
+      nullable: true,
+      errorMessage: {
+        type: `The cascade types, if provided, must be an array of a valid cascade type configuration.`
+      }
+    },
+    orphanRemoval: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'The orphan removal attribute, if provided, must be a boolean'
     },
     entity: {
       type: "string",
@@ -72,7 +105,12 @@ const relationSchema: JSONSchemaType<Relation> = {
       nullable: true,
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
-    }
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'module' field if provided must be a valid string",
+    },
   },
   required: ["type", "entity"],
   additionalProperties: false,
@@ -82,6 +120,79 @@ const relationSchema: JSONSchemaType<Relation> = {
       entity: 'The entity is required and cannot be empty.'
     },
     additionalProperties: 'No additional properties are allowed in the relation schema.'
+  }
+};
+
+const relationReferenceSchema: JSONSchemaType<RelationReference> = {
+  type: "object",
+  properties: {
+    type: {
+      type: "string",
+      enum: RELATIONSHIP_TYPES,
+      errorMessage: `The relationType must be one of ${RELATIONSHIP_TYPES} and cannot be empty.`
+    },
+    fetchType: {
+      type: "string",
+      enum: FETCH_TYPE,
+      nullable: false,
+      errorMessage: `The fetchType must be one of ${FETCH_TYPE} and cannot be empty.`
+    },
+    module: {
+      type: "string",
+      nullable: true,
+      errorMessage: `The module must be a valid string.`
+    },
+    entity: {
+      type: "string",
+      pattern: PATTERNS.NO_SPACE_AND_HYPHEN,
+      errorMessage: 'The entity name is required and cannot be empty.'
+    },
+    fieldName: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The fieldName field, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
+    },
+    mappedBy: {
+      type: "string",
+      nullable: true
+    },
+    cascadeType: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: {
+            type: "string",
+            enum: [...CASCADE_TYPE],
+            errorMessage: {
+              type: 'Cascade type must be a string',
+              enum: `Each cascade type must be one of: ${CASCADE_TYPE.join(', ')}.`
+            }
+          },
+        },
+        errorMessage: `The cascade type, if provided, must be a valid cascade type configuration.`,
+        required: ["type"],
+        additionalProperties: false
+      },
+      nullable: true,
+      errorMessage: {
+        type: `The cascade types, if provided, must be an array of a valid cascade type configuration.`
+      }
+    },
+    orphanRemoval: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'The orphan removal attribute, if provided, must be a boolean'
+    },
+  },
+  required: ["type", "entity"],
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      type: 'The attribute type is required.'
+    },
+    additionalProperties: 'No additional properties are allowed in the reference relation schema.'
   }
 };
 
@@ -352,6 +463,12 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       items: uniqueConstraintSchema,
       errorMessage: 'The uniqueConstraints must be an array of valid unique constraint definitions.'
     },
+    relationReference: {
+      type: "array",
+      nullable: true,
+      items: relationReferenceSchema,
+      errorMessage: 'The relation Reference must be an array of valid relation Reference definitions.'
+    },
     indexes: {
       type: "array",
       nullable: true,
@@ -389,4 +506,3 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
 };
 
 export const validateModelConfig: ValidateFunction<ModelConfig> = ajvInstance.compile<ModelConfig>(modelConfigSchema);
-export const validateCrud: ValidateFunction<Crud> = ajvInstance.compile<Crud>(crudSchema)

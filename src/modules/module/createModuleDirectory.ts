@@ -1,31 +1,28 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { ApiConfig, ModuleConfig, RenderContext } from '../../interfaces/types';
+import { ModuleConfig, RenderContext } from '../../interfaces/types';
 import { DIRECTORIES, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
-import { getMainPath, getTestPath, normalizePackageName } from '../../utils/helpers';
+import { getMainPath, normalizePackageName } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containning all the basic API information.
- * @param output - Output path where directories are created
+ * @param context - API base configuration containing all the basic API information.
  */
 export const createModuleDirectory = async (context: RenderContext<ModuleConfig>) => {
   const directories = getDirectoriesToCreate(context);
-  saveModuleDirectory(directories);
+  await saveModuleDirectory(directories);
 };
 
 /**
  * Function that generates a list of directory paths to create based on the configuration and the output path.
- * @param config - API base configuration file containning all the basic API information.
- * @param basePath - Output path where directories will be created
+ * @param context - API base configuration containing all the basic API information.
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
-
-  context.resourceConfig.name = normalizePackageName(context.resourceConfig.name).toLowerCase()
+  context.resourceConfig.name = normalizePackageName(context.resourceConfig.name).toLowerCase();
 
   const { group, packageName } = context.baseConfig;
-  const basePath = context.basePath
+  const basePath = context.basePath;
 
   const mainPath = path.join(basePath, getMainPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
@@ -39,10 +36,8 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
   const infraPath = path.join(modulePath, DIRECTORIES.INFRASTRUCTURE);
   const igrpSharedPath = path.join(igrpstudioPath, context.resourceConfig.name);
 
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-
-    const paths = [
-
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    return [
       igrpSharedPath,
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
@@ -115,15 +110,9 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(igrpstudioPath, DIRECTORIES.MODELS),
 
       */
-
     ];
-
-    return paths
-
-  } else {
-
-    const paths = [
-
+  }
+    return [
       igrpSharedPath,
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
@@ -135,13 +124,7 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(mainPath, DIRECTORIES.CONTROLLERS),
       path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
       path.join(mainPath, DIRECTORIES.SECURITY),
-
     ];
-
-    return paths
-
-  }
-
 };
 
 /**

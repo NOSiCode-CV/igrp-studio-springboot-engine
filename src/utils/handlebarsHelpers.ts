@@ -1,191 +1,112 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute, Body,
+  Attribute,
+  Body,
   ControllerAction,
-  DTOConfig,
+  HandlerConfig,
   HttpHeader,
   JavaAttribute,
-  JavaType,
   ModelConfig,
-  Relation, SchemaContent,
+  Relation,
+  ResponseConfig,
+  SchemaContent,
+  SchemaField,
 } from '../interfaces/types';
 import {
   DIRECTORIES,
-  GENERIC_TYPES, PACKAGES, PROJECT_STRUCTURE_STYLE,
+  GENERIC_IMPORTS,
+  GENERIC_TYPES,
+  PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { extractTypeFromList, getPackageNameFromConfig, validateAnnotations } from './helpers';
-import { capitalize, capitalizeResponse } from './capitalizeStrings';
+import { getPackageNameFromConfig, isResponseCollection } from './helpers';
+import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
+import {
+  capitalize, capitalizeJavaStyle,
+  concat,
+  fullCamelCaseAndPluralize,
+  lowercaseAndPluralize, sanitizeHeaderName,
+  toCamelCase,
+  toFullCamelCaseFromSnakeCase,
+  toLowerCase,
+  toTitleCase,
+  toUpperCase, wrapInCurlyBraces,
+} from '../helper/stringHelper';
+import { json } from '../helper/jsonHelper';
+import { equals, ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
+import { keyTypeModel, modelImport } from '../helper/modelHelper';
+import { keyTypeDTO } from '../helper/dtoHelper';
+import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
+import { resolvePathVariables } from '../helper/controllerHelper';
+import { resolveImportReponse } from '../helper/responseHelper';
+import { normalizeInterfaceValidatorName, normalizeImplValidatorName } from '../modules/dto/helpers';
 
-Handlebars.registerHelper('capitalize', (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+// String
+Handlebars.registerHelper('capitalize', capitalize);
+Handlebars.registerHelper('capitalizeJavaStyle', capitalizeJavaStyle);
+Handlebars.registerHelper('toCamelCase', toCamelCase);
+Handlebars.registerHelper('concat', concat);
+Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', toFullCamelCaseFromSnakeCase);
+Handlebars.registerHelper('toTitleCase', toTitleCase);
+Handlebars.registerHelper('toLowerCase', toLowerCase);
+Handlebars.registerHelper('toUpperCase', toUpperCase);
+Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
+Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
+Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
+Handlebars.registerHelper('wrapInCurlyBraces', wrapInCurlyBraces);
+Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
+Handlebars.registerHelper('cleanStr', function (str) {
+  return new Handlebars.SafeString(str);
 });
 
-Handlebars.registerHelper('capitalizeEntity', (str: string) => {
-  return capitalize(str);
-});
 
-Handlebars.registerHelper('toCamelCase', (str: string) => {
-  if (!str) return '';
-  return str.charAt(0).toLowerCase() + str.slice(1);
-});
 
-Handlebars.registerHelper('concat', (str1: string, str2: string) => {
-  return str1 + str2;
-});
 
-Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', (str: string) => {
-  if (!str) return '';
+// JSON
+Handlebars.registerHelper('json', json);
 
-  return str
-    .toLowerCase()
-    .split('_')
-    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
-});
+// LOGICAL
+Handlebars.registerHelper('ifNot', ifNot);
+Handlebars.registerHelper('not', not);
+Handlebars.registerHelper('ifEquals', ifEquals);
+Handlebars.registerHelper('ne', notEquals);
+Handlebars.registerHelper('eq', equals);
+Handlebars.registerHelper('isText-type', isText);
+Handlebars.registerHelper('isPageable', isPageable);
 
-Handlebars.registerHelper('toTitleCase', (str: string) => {
-  if (!str) return '';
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-});
+// MODEL
+Handlebars.registerHelper('keyType', keyTypeModel);
+Handlebars.registerHelper('model-imports-helper', modelImport);
 
-Handlebars.registerHelper('toLowerCase', (str: string) => {
-  return (str || '').toLowerCase();
-});
+// DTO
+Handlebars.registerHelper('keyType', keyTypeDTO);
 
-Handlebars.registerHelper('toUpperCase', (str: string) => {
-  return (str || '').toUpperCase();
-});
+// CONTROLLER
+Handlebars.registerHelper('resolve-mapping', resolvePathVariables);
 
-Handlebars.registerHelper('lowercaseAndPluralize', (str: string) => {
-  const lowerStr = str.toLowerCase();
-
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
-});
-
-Handlebars.registerHelper('fullCamelCaseAndPluralize', (str: string) => {
-  if(!str) return '';
-
-  const lowerStr = str
-    .toLowerCase()
-    .split('_')
-    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
-
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
-});
-
-Handlebars.registerHelper('replace', (str: string) => {
-  return str.replace('.', '/');
-});
-
-Handlebars.registerHelper('json', function (context) {
-  return JSON.stringify(context);
-});
-
-Handlebars.registerHelper('ifNot', function (this: any, conditional: any, options: any) {
-  if (!conditional) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-});
-
-Handlebars.registerHelper('not', function (conditional: any) {
-  return !conditional;
-});
-
-Handlebars.registerHelper('keyType', function (config: ModelConfig) {
-  if (config.primaryKey) {
-    return `${config.name}PrimaryKey`;
-  }
-  const primaryKeyAttr = config.attributes?.find((p) => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
-
-  return GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name;
-});
-
-Handlebars.registerHelper('like', function (value, substring) {
-  return value && value.includes(substring);
-});
-
-/*Handlebars.registerHelper('keyType', function(config: ControllerConfig) {
-  const primaryKeyAttr = config.attributes?.find(p => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
-  if (primaryKeyAttr.type === 'int') {
-    return 'Integer';
-  } else if (primaryKeyAttr.type === 'long') {
-    return 'Long';
-  } else {
-    return primaryKeyAttr.type;
-  }
-});*/
-
-Handlebars.registerHelper('keyType', function (config: DTOConfig) {
-  if (!config) {
-    return null;
-  }
-  if (!config.attributes) {
-    return null;
-  }
-  const primaryKeyAttr = config.attributes?.find((p) => p.primaryKey === true);
-  if (!primaryKeyAttr) {
-    return null;
-  }
-
-  const result: JavaType | string = {
-    name: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.name ?? '',
-    namespace: GENERIC_TYPES.get(primaryKeyAttr.type)?.java.namespace,
-  };
-  return result.name;
-});
-
-Handlebars.registerHelper(
-  'ifEquals',
-  function (
-    this: unknown, // Specify the `this` type
-    arg1: any,
-    arg2: any,
-    options: Handlebars.HelperOptions,
-  ): string {
-    return arg1 === arg2 ? options.fn(this) : options.inverse(this);
-  },
-);
-
-/*Handlebars.registerHelper('keyType', function (resourceConfig) {
-    return resourceConfig.keyType || 'DefaultType';
-});*/
+// GENERAL
+Handlebars.registerHelper('resolve-package', resolvePackage);
+Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
-    return capitalizeResponse(responses);
+  return capitalizeResponse(responses);
 });
+
+
+//RESPONSE
+Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
+
+Handlebars.registerHelper('resolve-interface-custon-validator-name', function (name: string): string {
+  return normalizeInterfaceValidatorName(name);
+});
+
+Handlebars.registerHelper('resolve-impl-custon-validator-name', function (name: string): string {
+  return normalizeImplValidatorName(name);
+});
+
 
 Handlebars.registerHelper(
   'importsTypes',
@@ -198,175 +119,117 @@ Handlebars.registerHelper(
   ) {
     let imports: string[] = [];
 
-    const mod = module ? module.toLowerCase() : DIRECTORIES.SHARED;
+    const moduloAction = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 
     for (const action of actions) {
+      //processing request
       if (action.requestBody)
-        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + "Request")) {
+        if (!REQUEST_BODY_NOT_IMPORT.includes(capitalize(action.actionName) + 'Request')) {
           const schema = (
             action.requestBody.content['application/json'] ??
             action.requestBody.content['multipart/form-data']
           ).schema;
-          if (schema.objectType) {
-            if (domainDriven === true)
-              imports.push(
+
+
+          processImportsTypes(schema, imports, group, packageName, domainDriven);
+
+          if (action.modelAttribute) {
+            if (domainDriven) {
+              // TODO: Implementar lógica para imports dinamicos dependendo do module.
+              /*imports.push(
                 `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
-              );
-            else
+              );*/
+            } else {
               imports.push(
-                `import ${group}.${packageName}.dto.${capitalize(normalizeName(schema.type, 'dto')) + 'DTO'};`,
+                `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.modelAttribute.name, 'dto')) + 'DTO'};`,
               );
-          } else {
-            if (domainDriven === true)
-              imports.push(
-                `import ${group}.${packageName}.${mod}.application.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
-              );
-            else
-              imports.push(
-                `import ${group}.${packageName}.dto.${capitalize(normalizeName(action.actionName, 'dto')) + 'RequestDTO'};`,
-              );
+            }
           }
+
+
         }
+
+      //processing response
       if (action.responses)
         for (const response of Object.values(action.responses)) {
-          const className = capitalize(normalizeName(response.name, 'dto')) + "DTO"
-          if (extractTypeFromList(className)) {
-            const type = extractTypeFromList(className);
-            if (domainDriven === true)
-              imports.push(`import ${group}.${packageName}.${mod}.application.dto.${type};`);
-            else imports.push(`import ${group}.${packageName}.dto.${type};`);
-          }
+
+          // Get the content for either application/json or multipart/form-data
+          const content =
+            response?.content['application/json'] || response?.content['multipart/form-data'];
+          if (!content) continue;
+
+          // Extract the schema and its properties
+          const { schema } = content;
+
+         processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
+
+
         }
-      imports.push(`import java.util.List;`);
     }
 
     return [...new Set(imports)].join('\n');
-  },
+
+  }
 );
 
-Handlebars.registerHelper('resolve-annotations', function (attribute) {
-  const annotations = [];
+function processImportsTypes(schema: SchemaField, imports: string[], group: string,
+  packageName: string, domainDriven?: boolean, name?: string, moduloContext?: string): string[] {
 
-  validateAnnotations(attribute);
+  const schemaType = schema?.type;
+  const objectType = schema?.objectType; // New: to check for type: dto, enum, schema...
+  const objModulo = schema?.module || DIRECTORIES.SHARED;
+  const collectionType = schema?.collectionType
 
-  // JSON / XML annotations
-  if (attribute.jsonAttributeName) {
-    annotations.push(`@JsonProperty("${attribute.jsonAttributeName}")`);
-  }
+  const packageSourceName = `${group}.${packageName}`;
 
-  if (attribute.xmlAttributeName) {
-    annotations.push(`@JacksonXmlProperty(localName = "${attribute.jsonAttributeName}")`);
-  }
+  if (collectionType) {
+    if (collectionType === 'pageable') {
+      imports.push(`import org.springdoc.core.annotations.ParameterObject;`);
+      imports.push(`import org.springframework.data.domain.Pageable;`);
+    }
 
-  // Required validation
-  if (attribute.required) {
-    if (attribute.type === 'string') {
-      annotations.push(`@NotBlank(message = "The field <${attribute.name}> is required.")`);
-    } else {
-      annotations.push(`@NotNull(message = "The field <${attribute.name}> is required.")`);
+    const genericImports = GENERIC_IMPORTS(packageSourceName, schemaType);
+    const collectionTypeImport = genericImports.get(collectionType);
+
+    const importValue = collectionTypeImport?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
     }
   }
 
-  // String-specific validations
-  if (attribute.type === 'string') {
-    if(attribute.minLength !== undefined)
-      annotations.push(
-        `@Size(${[
-          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters."`
-        ]
-          .filter(Boolean)
-          .join(', ')})`,
-      );
-    if(attribute.maxLength !== undefined)
-      annotations.push(
-        `@Size(${[
-          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters."`
-        ]
-          .filter(Boolean)
-          .join(', ')})`,
-      );
-    if (attribute.regex) {
-      annotations.push(
-        `@Pattern(message = "Invalid value format for field <${attribute.name}>.", regexp = "${attribute.regex.replace(/\\/g, '\\\\')}")`,
-      );
+  if (schemaType != 'object' && objectType) {
+
+    const genericImports = GENERIC_IMPORTS(packageSourceName, schemaType, objModulo);
+    const importD = genericImports.get(objectType);
+
+    const importValue = domainDriven
+      ? importD?.java?.domain
+      : importD?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
     }
   }
 
-  // Number-specific validations
-  if (['Integer', 'Long', 'Double', 'Float', 'BigDecimal', 'BigInteger'].includes(attribute.type)) {
-    if (attribute.minLength !== undefined) {
-      annotations.push(`@Min(${attribute.minLength})`);
-    }
-    if (attribute.maxLength !== undefined) {
-      annotations.push(`@Max(${attribute.maxLength})`);
-    }
-    if (attribute.positive) {
-      annotations.push(
-        attribute.minLength === 0
-          ? `@PositiveOrZero(message = "<${attribute.name}> must be greater than or equal to zero.")`
-          : `@Positive(message = "<${attribute.name}> must be greater than zero.")`,
-      );
-    }
-  }
+  //type object its only implemented in response
+  if (schemaType === 'object' && name) {
 
-  // Date-specific validations
-  if (['Date', 'LocalDate', 'LocalDateTime', 'ZonedDateTime'].includes(attribute.type)) {
-    if (attribute.before) {
-      annotations.push(
-        `@Past(message = "The date <${attribute.name}> must be before today's date.")`,
-      );
-    }
-    if (attribute.after) {
-      annotations.push(
-        `@Future(message = "The date <${attribute.name}> must be after today's date.")`,
-      );
+    const responseName = capitalize(name || '');
+    const genericImports = GENERIC_IMPORTS(packageSourceName, responseName, moduloContext);
+    const importD = genericImports.get('dto');
+
+    const importValue = domainDriven
+      ? importD?.java?.domain
+      : importD?.java?.technical;
+
+    if (importValue) {
+      imports.push(importValue);
     }
   }
 
-  // Email validation
-  if (attribute.isEmail) {
-    annotations.push(`@Email(message = "Invalid email format for field <${attribute.name}>.")`);
-  }
-
-  // URL validation
-  if (attribute.isUrl) {
-    annotations.push(`@URL(message = "Invalid URL format for field <${attribute.name}>.")`);
-  }
-
-  // Return the generated annotations as a joined string
-  return annotations.join('\n\t');
-});
-
-Handlebars.registerHelper('resolve-package', function (fullPath, basePath) {
-  if (!fullPath || !basePath) {
-    throw new Error('Both fullPath and basePath are required to resolve the package.');
-  }
-
-  // Normalize paths to handle both Unix and Windows formats
-  const normalizedFullPath = fullPath.replace(/\\/g, '/');
-  const normalizedBasePath = basePath.replace(/\\/g, '/');
-
-  // Ensure the basePath ends with a trailing slash for accurate replacement
-  const formattedBasePath = normalizedBasePath.endsWith('/')
-    ? normalizedBasePath
-    : normalizedBasePath + '/';
-
-  // Remove the basePath portion from the full path
-  let relativePath: string;
-  if (normalizedFullPath.startsWith(formattedBasePath)) {
-    relativePath = normalizedFullPath.slice(formattedBasePath.length);
-  } else {
-    return '';
-  }
-
-  // Extract only the meaningful parts of the path for the Java package
-  const packagePath = relativePath
-    .split('/')
-    .filter((segment) => !['src', 'main', 'test', 'java'].includes(segment)) // Exclude common directory names
-    .join('.');
-
-  return packagePath;
-});
+  return imports;
+}
 
 Handlebars.registerHelper(
   'eq',
@@ -374,10 +237,6 @@ Handlebars.registerHelper(
     return arg1 === arg2;
   },
 );
-
-Handlebars.registerHelper('contains', function (str, substring) {
-  return str.includes(substring);
-});
 
 Handlebars.registerHelper('paramsFormat', function (str) {
   return `{${str}}`;
@@ -396,110 +255,131 @@ Handlebars.registerHelper('resolve-mapping', function (this: any, action: Contro
   }
 });
 
-Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
+Handlebars.registerHelper('resolve-imports-handlers-ddd', function (handlerConfig: HandlerConfig, baseConfig: any) {
 
+
+  if (!handlerConfig) return null;
+  if (!baseConfig) return null;
+  if (!handlerConfig.response) return null;
+
+
+  const response: { [p: string]: Body } = handlerConfig.response;
+
+  const singleBody = response[Object.keys(response)[0]];
+  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
+
+  if (!content) return null;
+
+  const schema = content?.schema;
+
+  let imports: string[] = [];
+
+  let name;
+  let moduloContext;
+
+  if (schema.type === 'object') {
+    name = singleBody.name;
+    moduloContext = handlerConfig.module
+  }
+
+  processImportsTypes(schema, imports, baseConfig.group, baseConfig.packageName, true, name, moduloContext)
+
+  return [...new Set(imports)].join('\n');
+
+});
+
+
+
+
+//
+Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: any) {
   if (!config) return null;
   if (!baseConfig) return null;
   if (!config.type) return null;
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
-  const api = baseConfig
+  //console.log('resourceConfig:: ', config)
+
+  const isDDDStyle =
+    baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
   const imports = new Set();
-  config.attributes.forEach((attr: JavaAttribute) => {
 
-    if(attr.objectType === 'model') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}.${attr.type};`);
-      else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}.${attr.type};`);
-      return;
-    } else if (attr.objectType === 'dto') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}.${attr.type};`);
-      else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.DTO}.${attr.type};`);
-      return;
-    } else if (attr.objectType === 'enum') {
-      if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
-        imports.add(`import ${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}.${attr.type};`);
-      else
-        imports.add(`import ${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}.${attr.type};`);
-      return;
+  const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
+
+  for (const attr of config.attributes) {
+    const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module).get(
+      attr.objectType,
+    );
+
+    if (objectImports) {
+      imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
+      continue;
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
-    if (genType?.java.primitive) return null;
-    const type: JavaType = { name: genType?.java.name ?? '', namespace: genType?.java.namespace };
-    if (type.name == '') return null;
 
-    if(type.namespace) {
-      imports.add(`import ${type.namespace}.${type.name};`);
+    if (genType?.java.namespace) {
+      imports.add(`import ${genType?.java.namespace}.${genType?.java.name};`);
     }
 
-    if(attr.type == 'file' || attr.type == 'binary') {
-      imports.add(`import org.hibernate.annotations.JdbcType;`);
-      imports.add(`import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`);
-    }
-  });
+    const specialAttributeImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type).get(
+      attr.type,
+    );
 
-  if (config.attributes.filter((it: JavaAttribute) => it.jsonAttributeName).length > 0) {
-    imports.add('import com.fasterxml.jackson.annotation.JsonProperty;');
+    if (specialAttributeImports) imports.add(specialAttributeImports.java.technical);
   }
 
-  if (config.attributes.filter((it: JavaAttribute) => it.xmlAttributeName).length > 0) {
-    imports.add('import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;');
-  }
+  if (config.attributes.find((it: JavaAttribute) => it.jsonAttributeName))
+    imports.add(
+      GENERIC_IMPORTS(packageNameFromConfig, 'jsonProperty').get('jsonProperty')?.java.technical,
+    );
 
-  config.attributes.filter((it: JavaAttribute) => it.collectionType).forEach((attr: JavaAttribute) => {
-    switch (attr.collectionType) {
-      case 'list':
-        imports.add(`import java.util.List;`);
-        break;
-      case 'map':
-        imports.add(`import java.util.Map;`);
-        break;
-      case 'set':
-        imports.add(`import java.util.Set;`);
-        break;
-      default:
-      // Optionally handle unknown collection types
-    }
-  })
+  if (config.attributes.find((it: JavaAttribute) => it.xmlAttributeName))
+    imports.add(
+      GENERIC_IMPORTS(packageNameFromConfig, 'xmlProperty').get('xmlProperty')?.java.technical,
+    );
 
-  return Array.from(imports).sort().join('\n');
+  // Import Collection Types
+  config.attributes
+    .filter((it: JavaAttribute) => it.collectionType)
+    .forEach(
+      (attr: JavaAttribute) =>
+        imports.add(GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java.technical));
+
+
+  return Array.from(imports)
+    .filter((e) => e)
+    .sort()
+    .join('\n');
 });
 
 Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   if (!t1.type) return t1.type;
 
-  const attributeType = GENERIC_TYPES.get(t1.type)?.java.name ?? t1.type;
+  const attributeType =
+    GENERIC_TYPES.get(t1.type)?.java.name ??
+    (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + 'DTO' : t1.type);
 
   let rtype: string;
-  switch (t1.collectionType) {
-    case 'list':
-      rtype = `List<${capitalize(attributeType)}>`;
-      break;
-    case 'set':
-      rtype = `Set<${capitalize(attributeType)}>`;
-      break;
-    case 'map':
-      rtype = `Map<Object, ${capitalize(attributeType)}>`; // TODO: handle the key type
-      break;
-    default:
-      rtype = attributeType; // Default type if no collection type matches
-  }
+
+  rtype = wrapCollectionType(attributeType, t1.collectionType);
+
+
   return rtype;
 });
 
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
   const imports = new Set();
 
-  config.attributes.filter(that => that.relation).map(it => it.relation!).forEach((relation: Relation) => {
-    if (relation.type !== 'ManyToOne' && relation.type !== 'OneToOne')
-      imports.add('import java.util.List;');
-  });
+  config.attributes
+    .filter((that) => that.relation)
+    .map((it) => it.relation!)
+    .forEach((relation: Relation) => {
+      if (relation.type !== 'ManyToOne' && relation.type !== 'OneToOne')
+        imports.add('import java.util.List;');
+    });
 
   config.attributes.forEach((attr: Attribute) => {
     if (attr.type === 'String' && attr.nullable === false)
@@ -523,28 +403,6 @@ Handlebars.registerHelper('import-uuid', function (this: any, config: ModelConfi
   return Array.from(imports).sort().join('\n');
 });
 
-Handlebars.registerHelper('cleanStr', function (str) {
-  return new Handlebars.SafeString(str);
-});
-
-Handlebars.registerHelper('isText-type', function (this: any, type: any) {
-  const textTypes = [
-    'String',
-    'Text',
-    'VARCHAR',
-    'CHAR',
-    'TEXT',
-    'CLOB',
-    'LONGTEXT',
-    'MEDIUMTEXT',
-    'TINYTEXT',
-    'NVARCHAR',
-    'NCHAR',
-    'NCLOB',
-  ];
-  return textTypes.includes(type);
-});
-
 Handlebars.registerHelper('breakEach', function (context, options) {
   let result = '';
   for (let i = 0; i < context.length; i++) {
@@ -557,8 +415,15 @@ Handlebars.registerHelper('breakEach', function (context, options) {
   return result;
 });
 
-Handlebars.registerHelper('or', function (a, b) {
+/*.registerHelper('or', function (a, b) {
   return a || b;
+});*/
+
+Handlebars.registerHelper('or', function (...args) {
+  const options = args.pop(); // Remove o último argumento (objeto de opções do Handlebars)
+
+  // Verifica se algum dos argumentos é verdadeiro
+  return args.some(Boolean);
 });
 
 Handlebars.registerHelper('filterCommandActions', function (array: ControllerAction[], options) {
@@ -601,8 +466,8 @@ Handlebars.registerHelper('filterQueryActions', function (array: ControllerActio
 });
 
 Handlebars.registerHelper('and', function (...args) {
-  args.pop(); // Remove the last element, which is the Handlebars options object
-  return args.every(Boolean); // Check if all arguments are truthy
+  args.pop();
+  return args.every(Boolean);
 });
 
 Handlebars.registerHelper('formatAttribute', function (value) {
@@ -631,18 +496,12 @@ Handlebars.registerHelper('mapHeaderToOption', function (config: HttpHeader): st
   return REQUEST_MAPPING_OPTIONS[config.header] || null;
 });
 
-Handlebars.registerHelper('sanitizeHeaderName', function (headerName: string) {
-  return headerName
-    .toLowerCase() // Step 1: Convert all to lowercase
-    .replace(/-./g, (match) => match.charAt(1).toUpperCase()); // Step 2: Capitalize letters after hyphens
-});
-
-Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[], options) {
+Handlebars.registerHelper('containsCustomHeader', function (headers: HttpHeader[]) {
   // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
   return headers.some((header) => header.header !== 'Accept' && header.header !== 'Content-Type');
 });
 
-Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader[], options) {
+Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader[]) {
   // Check if the headers array contains any header that is not 'Accept' or 'Content-Type'
   return headers.some((header) => header.header == 'Accept' || header.header == 'Content-Type');
 });
@@ -650,41 +509,69 @@ Handlebars.registerHelper('containsContentHeader', function (headers: HttpHeader
 Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (!str) return '';
   if (str == '?') return '?';
-  return capitalize(str).replace(/dto$/i, "") + "DTO";
+  return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
 
-Handlebars.registerHelper('containsFormData', (content:  { [p: string]: SchemaContent }): boolean => {
-  if (!content) return false;
-  return !!content["multipart/form-data"];
+Handlebars.registerHelper('processImplementation', (type: string) => {
+  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+
+  if (primitiveTypes.includes(type)) {
+    return capitalize(type);
+  } else if (type == 'object') return 'object';
+  else {
+    return normalizeName(type, 'dto') + 'DTO';
+  }
 });
 
-Handlebars.registerHelper('isRefSchema', (content:  { [p: string]: SchemaContent }): boolean => {
+Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
+  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+
+  if (objType === 'dto') return 'object';
+
+  if (primitiveTypes.includes(type)) {
+    return capitalize(type);
+  } else if (type === 'object' && (!objType || objType.trim() === '')) return 'object';
+  else {
+    return normalizeName(type, 'dto') + 'DTO';
+  }
+});
+
+Handlebars.registerHelper(
+  'containsFormData',
+  (content: { [p: string]: SchemaContent }): boolean => {
+    if (!content) return false;
+    return !!content['multipart/form-data'];
+  },
+);
+
+Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
   if (!content) return false;
-  const schema = content["application/json"] ?? content["multipart/form-data"];
+  const schema = content['application/json'] ?? content['multipart/form-data'];
   return !!schema.schema.objectType;
 });
 
-Handlebars.registerHelper('resolve-body', (content:  { [p: string]: SchemaContent }): string => {
+Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
   if (!content) return '';
-  const schema = content["application/json"] ?? content["multipart/form-data"];
-  return capitalize(schema.schema.type);
+  const schema = content['application/json'] ?? content['multipart/form-data'];
+  return normalizeName(capitalize(schema.schema.type), 'dto') + 'DTO';
 });
 
-function extractClassNameFromStatusCode(statusCode: string, actionName: string): string {
-  if(statusCode === "200")
-    return actionName + "Response"
-  if(statusCode === "201")
-    return actionName + "CreatedResponse"
-  if(statusCode === "400")
-    return actionName + "BadResponse"
-  if(statusCode === "500")
-    return actionName + "ErrorResponse"
-  if(statusCode === "401")
-    return actionName + "UnauthorizedResponse"
-  if(statusCode === "403")
-    return actionName + "ForbiddenResponse"
-  else
-    return actionName + statusCode + "Response"
-}
+Handlebars.registerHelper('addPropPageable', function (context): boolean {
+  let isPageable = false;
+
+  const response = context?.response;
+  const type = context?.type;
+
+  const isPageType = (str: string): boolean => {
+    const regex = /^Page<.*>$/;
+    return regex.test(str);
+  };
+
+  if (isPageType(response) && type === 'query') {
+    isPageable = true;
+  }
+
+  return isPageable;
+});
 
 export { Handlebars };

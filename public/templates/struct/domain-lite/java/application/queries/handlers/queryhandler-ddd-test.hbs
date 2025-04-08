@@ -10,9 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
+resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class {{capitalize resourceConfig.name}}QueryHandlerTest {
@@ -22,7 +25,7 @@ public class {{capitalize resourceConfig.name}}QueryHandlerTest {
 
     @BeforeEach
     void setUp() {
-        // TODO: Initialize mock dependencies if needed
+      // TODO: Initialize mock dependencies if needed
     }
 
     @Test
@@ -33,10 +36,12 @@ public class {{capitalize resourceConfig.name}}QueryHandlerTest {
         // {{capitalize resourceConfig.name}}Query query = new {{capitalize resourceConfig.name}}Query(...);
         //
         // When
-        // ResponseEntity<{{normalizeDto resourceConfig.response}}> response = {{toCamelCase resourceConfig.name}}QueryHandler.handle(query);
+        // ResponseEntity<{{{resourceConfig.response}}}> response = {{toCamelCase
+            resourceConfig.name}}QueryHandler.handle(query);
         //
         // Then
         // assertNotNull(response);
         // assertEquals(..., response.getBody());
     }
+
 }

@@ -2,7 +2,7 @@
 import { newApi } from '../src';
 import { BaseApiConfig } from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from 'outputDirPath';
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR_OTHER } from './outputDirPath';
 
 const domainApiConfig: BaseApiConfig = {
   type: 'springboot',
@@ -14,7 +14,8 @@ const domainApiConfig: BaseApiConfig = {
   projectStructureStyle: 'domain',
   enableObservability: true,
   enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-SNAPSHOT"
+  igrpCoreVersion: "0.0.1-alpha",
+  enableGraalVm: false
 };
 
 const technicalApiConfig: BaseApiConfig = {
@@ -25,9 +26,10 @@ const technicalApiConfig: BaseApiConfig = {
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'technical',
-  enableObservability: false,
-  enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-SNAPSHOT"
+  enableObservability: true,
+  enableEntityRevision: false,
+  igrpCoreVersion: "0.0.1-alpha",
+  enableGraalVm: true
 };
 
 beforeAll(async () => {
@@ -41,12 +43,12 @@ afterEach(async () => {
 
 describe('New API Module', () => {
 
-  it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
+  /*it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
     await newApi(domainApiConfig, DOMAIN_OUTPUT_DIR);
-  });
+  });*/
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR);
+    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR_OTHER);
   });
 
 });

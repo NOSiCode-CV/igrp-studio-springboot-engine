@@ -1,25 +1,25 @@
 {{> package-java }}
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{capitalize resourceConfig.name}};
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.rest.core.annotation.RestResource;
 {{#if resourceConfig.crud}}
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 {{/if}}
 {{#if resourceConfig.crud.disabledMethods}}{{else}}import java.util.Optional;{{/if}}
 {{import-uuid resourceConfig}}
-{{#if resourceConfig.audit~}} import org.springframework.data.repository.history.RevisionRepository;{{~/if}}
+{{#if resourceConfig.revision~}} import org.springframework.data.repository.history.RevisionRepository;{{~/if}}
 
 @Repository
 {{#if resourceConfig.crud}}
 @RepositoryRestResource(path = "{{toCamelCase resourceConfig.name}}")
 {{/if}}
-public interface {{resourceConfig.name}}Repository extends
+public interface {{capitalizeJavaStyle resourceConfig.name}}Repository extends
     JpaRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}>,
-    JpaSpecificationExecutor<{{resourceConfig.name}}>
-    {{#if resourceConfig.audit ~}}RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
+    JpaSpecificationExecutor<{{resourceConfig.name}}>{{#if resourceConfig.revision ~}},
+    RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
 {
 
   {{#if resourceConfig.crud.disabledMethods}}

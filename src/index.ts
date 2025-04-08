@@ -1,8 +1,9 @@
 import {
   ApiConfig,
   BaseApiConfig,
+  Body,
   ControllerAction,
-  ControllerConfig,
+  ControllerConfig, CrudControllerConfig,
   DdlConfig,
   DeleteConfig,
   DTOConfig,
@@ -11,7 +12,7 @@ import {
   JavaAttribute,
   JsonConfig,
   ModelConfig,
-  ModuleConfig,
+  ModuleConfig, MoveConfig, PathConfig,
   PermissionConfig,
   RenderContext,
   ResponseConfig,
@@ -19,6 +20,7 @@ import {
   XmlConfig,
 } from './interfaces/types';
 import {
+  CATEGORIZED_ATTRIBUTE_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
   DIRECTORIES,
@@ -48,7 +50,7 @@ import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
 import { generateController } from './modules/controller/generateController';
 import { createAppDirectories } from './modules/baseApi/createAppDirectories';
 import { generateServiceInterface } from './modules/controller/generateServiceInterface';
-import { saveDTOConfig } from './modules/dto/saveDTOConfig';
+import { normalizeName, saveDTOConfig } from './modules/dto/saveDTOConfig';
 import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
 import { validateDTOConfig } from './schema/dtoConfig';
 import { getDTOTypes } from './modules/dto/helpers';
@@ -56,8 +58,9 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalize, capitalizeResponse } from './utils/capitalizeStrings';
+import { capitalizeResponse } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
+import { generateValidatorDTO } from './modules/dto/generateDTOCustomValidator';
 import { savePermission } from './modules/permission/savePermissionConfig';
 import { validatePermission } from './schema/permissionConfig';
 import { deletePerm } from './modules/permission/deletePermission';
@@ -83,6 +86,35 @@ import { serializeData } from './modules/serialization/serializeData';
 import { saveEnumConfig } from './modules/enum/saveEnumConfig';
 import { generateTestServiceInmpl } from './modules/test/generateTestService';
 import { generateTestHandlers } from './modules/test/generateTestHandlers';
+import { processTableName } from './modules/model/helpers';
+import { capitalize, capitalizeJavaStyle } from './helper/stringHelper';
+import { isPageable } from './helper/logicalHelper';
+import { generateCrudController } from './modules/crudController/generateCrudController';
+import { getSpringInitializerDependencies, SPRING_BOOT_VERSION } from './helper/springInitializerHelper';
+import { Dependency } from './interfaces/springDependencyTypes';
+import { moveElementConfig } from './modules/move/moveElementConfig';
+import { moveValidation } from './schema/moveConfig';
+import { verifyEnumAttributes } from './modules/enum/helpers';
+
+export function getPaths(): PathConfig {
+
+  const environment = process.env.VITE_ENGINE_IGRP_STUDIO_ENV
+
+  if (environment === 'production') {
+    return {
+      template: path.join(__dirname, './templates'),
+      partials: path.join(__dirname, './templates/partials'),
+      springDependencies: path.join(__dirname, './spring_dependencies/spring-dependencies.json')
+    }
+  } else {
+    return {
+      template: path.join(__dirname, '../public/templates'),
+      partials: path.join(__dirname, '../public/templates/partials'),
+      springDependencies: path.join(__dirname, '../public/spring_dependencies/spring-dependencies.json')
+    }
+  }
+
+}
 
 /**
  * Main Function that creates the base api
@@ -142,6 +174,9 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,
+    springBootVersion: baseConfig.springBootVersion || SPRING_BOOT_VERSION,
+    dependencies: baseConfig.dependencies,
+    enableGraalVm: baseConfig.enableGraalVm
   };
 
   if (!basePath) {
@@ -241,6 +276,21 @@ export const addModule = async (dirty: ModuleConfig, basePath: string) => {
   await createModuleDirectory(context);
 
   await saveModuleConfig(context, basePath);
+};
+
+/**
+ * Asynchronously retrieves all Spring Initializer dependencies.
+ *
+ * This function calls the `getSpringInitializerDependencies` function, which fetches the
+ * list of dependencies from the Spring Initializer API, and then returns it.
+ * If the connection is not successfully it returns the dependencies from a local json named 'spring-dependencies.json'
+ *
+ * @async
+ * @function getSpringDependencies
+ * @returns {Promise<Dependency>} - A promise that resolves when dependencies are fetched and logged.
+ */
+export const getSpringDependencies = async (): Promise<Dependency[]> => {
+  return await getSpringInitializerDependencies();
 };
 
 /**
@@ -345,7 +395,9 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
   checkPrimaryKeys(config);
 
   const baseConfig = await getBaseApiConfig(basePath);
-  config.name = capitalize(config.name);
+  config.tableName = processTableName(config.tableName, baseConfig.database);
+
+  config.name = capitalizeJavaStyle(config.name); // normalized the model name
 
   const context: RenderContext<ModelConfig> = {
     resourceConfig: config,
@@ -456,6 +508,10 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
 
   await generateDTO(context);
 
+  if (context.resourceConfig.enableCustonValidation) {
+    await generateValidatorDTO(context);
+  }
+
   if (config.type === 'dto') await saveDTOConfig(config, basePath);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
@@ -539,7 +595,8 @@ export const addResponse = async (dirty: ResponseConfig, basePath: string) => {
 
   if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
 
-  config.name = capitalize(config.name);
+  config.name = capitalize(config.name ?? '');
+
   const baseConfig = await getBaseApiConfig(basePath);
 
   const context: RenderContext<ResponseConfig> = {
@@ -607,6 +664,8 @@ export const addEnum = async (config: EnumConfig, basePath: string) => {
 
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
+
+  config = await verifyEnumAttributes(config);
 
   const context: RenderContext<EnumConfig> = {
     resourceConfig: config,
@@ -677,6 +736,62 @@ export const deleteElement = async (config: DeleteConfig, basePath: string) => {
 };
 
 /**
+ * Moves an element from the API.
+ *
+ * This function removes an element configuration and its files based on the provided configuration.
+ * It ensures that the element is properly moved from the specified API base path.
+ *
+ * @param {MoveConfig} config - The deletion configuration object, which primarily includes the type, module (if present) and name of the element to be moved.
+ * @param {string} basePath - The base path of the application where the element and repository are located.
+ *
+ * @throws {Error} Will throw an error if the moving configuration is invalid.
+ * @throws {Error} Will throw an error if the base path is not provided.
+ * @throws {Error} Will throw an error the element is being used in other JSON configuration.
+ * @example
+ * // Example usage:
+ * import { moveElement } from "spring-engine";
+ * import { MoveConfig } from "spring-engine/dist/interfaces/types";
+
+ * const config: MoveConfig = {
+ *   name: 'MyDTO',
+ *   type: 'dto',
+ *   sourceModule: 'core'
+ *   destinationModule: 'shared'
+ * };
+ * const basePath = 'C://your_project_path';
+ *
+ * const move = async () => {
+ *   try {
+ *     await moveElement(config, basePath);
+ *   } catch (error) {
+ *     console.error(error);
+ *   }
+ * };
+ *
+ */
+export const moveElement = async (config: MoveConfig, basePath: string) => {
+  const valid = moveValidation(config);
+
+  if (!valid && moveValidation.errors) {
+    throw moveValidation.errors;
+  }
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  config.name = capitalize(config.name);
+
+  const context: RenderContext<MoveConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  await moveElementConfig(context, false);
+};
+
+/**
  * Loads the DTO configuration for a given module and action.
  *
  * This function attempts to retrieve the DTO configuration based on the provided module name,
@@ -699,8 +814,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   } catch (e) {
@@ -710,8 +825,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   }
@@ -725,6 +840,7 @@ async function requestDtoConfig(
  *
  * @param {ControllerConfig} dirty - The controller configuration object, including the controller name, base path, and actions.
  * @param {string} basePath - The base path of the application where the controller will be generated and saved.
+ * @param {boolean} customImpl - The boolean to set if must generate an implementation service.
  *
  * @throws {Error} Throws an error if the controller configuration is invalid or if the base path is not provided.
  *
@@ -944,7 +1060,7 @@ async function requestDtoConfig(
  * };
  *
  */
-export const addController = async (dirty: ControllerConfig, basePath: string) => {
+export const addController = async (dirty: ControllerConfig, basePath: string, customImpl?: boolean) => {
   /**
    * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
    */
@@ -985,95 +1101,128 @@ export const addController = async (dirty: ControllerConfig, basePath: string) =
     const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      const config: DTOConfig | null =
-        (act?.requestBody?.content['application/json']?.schema.objectType ??
-        act?.requestBody?.content['multipart/form-data']?.schema.objectType)
-          ? await requestDtoConfig(module, context, act)
-          : null;
+      let requestBodyAttributes: JavaAttribute[]
+
+      if (
+        act?.requestBody?.content['application/json']?.schema.objectType ??
+        act?.requestBody?.content['multipart/form-data']?.schema.objectType
+      ) {
+        const reqDtoConfig = (await requestDtoConfig(module, context, act))
+        requestBodyAttributes = [
+          {
+            name: reqDtoConfig.name.toLowerCase(),
+            type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
+            required: false,
+          }
+        ];
+      } else {
+        requestBodyAttributes = requestConfig ? [
+          {
+            name: requestConfig.resourceConfig.name.toLowerCase(),
+            type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
+            required: false,
+          }
+        ] : []
+      }
+
+      const modelAttribute: JavaAttribute[] = act?.modelAttribute
+        ? [
+          {
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            required: false,
+            module: act.modelAttribute.module
+          },
+        ]
+        : [];
+
+      const pathVariables = act?.pathVariables
+        ? act.pathVariables.map((e) => ({
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      const requestParams = act?.requestParams
+        ? act.requestParams.map((e) => ({
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
+
+      let pageable: any[] = []
+
+      if (act.responses) {
+        if (isPageable(act.responses))
+          pageable = [
+            {
+              name: 'pageable',
+              type: 'pageable',
+              objectType: 'java',
+              required: true,
+            }
+          ]
+
+      }
+
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable];
+
       await addDTO(
         {
           type: act.method === 'GET' ? 'query' : 'command',
           name: act.actionName,
           template: 'classic',
           module: module,
-          attributes:
-            (act?.requestBody?.content['application/json'] ??
-            act?.requestBody?.content['multipart/form-data'])
-              ? (act?.requestBody?.content['application/json']?.schema.objectType ??
-                act?.requestBody?.content['multipart/form-data']?.schema.objectType)
-                ? config!.attributes
-                : requestConfig?.resourceConfig.attributes
-              : ((act?.modelAttribute
-                  ? [
-                      {
-                        name: act.modelAttribute.toLowerCase(),
-                        type: act.modelAttribute,
-                        objectType: 'dto',
-                        required: false,
-                      },
-                    ]
-                  : []
-                ).concat(
-                  act?.pathVariables
-                    ? act.pathVariables
-                        .map((e) => ({
-                          name: e.name,
-                          type: e.type,
-                          objectType: 'java',
-                          required: true,
-                        }))
-                        .concat(
-                          act?.requestParams
-                            ? act.requestParams.map((e) => ({
-                                name: e.name,
-                                type: e.type,
-                                objectType: 'java',
-                                required: true,
-                              }))
-                            : [],
-                        )
-                    : act?.requestParams
-                      ? act.requestParams
-                          .map((e) => ({
-                            name: e.name,
-                            type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-                            objectType: 'java',
-                            required: true,
-                          }))
-                          .concat(
-                            act?.pathVariables
-                              ? act.pathVariables.map((e) => ({
-                                  name: e.name,
-                                  type: e.type as
-                                    | 'long'
-                                    | 'string'
-                                    | 'integer'
-                                    | 'boolean'
-                                    | 'object',
-                                  objectType: 'java',
-                                  required: true,
-                                }))
-                              : [
-                                  {
-                                    name: 'none',
-                                    type: 'object',
-                                    objectType: 'java',
-                                    required: false,
-                                  },
-                                ],
-                          )
-                      : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-                ) as JavaAttribute[]),
-          response: capitalizeResponse(act.responses), // TODO: handle this 06-01-2025
+          attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
+          response: act.responses,
+          // response: capitalizeResponse(act.responses)  // TODO: handle this 06-01-2025
         } as HandlerConfig,
         context.basePath,
       );
     }
   } else {
     await generateServiceInterface(context);
-    await generateServiceInmpl(context);
+    if (!customImpl) await generateServiceInmpl(context);
     await generateTestServiceInmpl(context);
   }
+};
+
+
+
+export const addCrudController = async (dirty: CrudControllerConfig, basePath: string) => {
+  /**
+   * the cleaner function removes all null or empty attributes from the json to avoid error in ajv validation
+   */
+  const config: CrudControllerConfig = cleaner(dirty);
+
+  // this function check is the models and its fields have duplicateds names
+  checkDuplicated([], [], [], [], undefined, config.models);
+
+  //config.actions = upperCaseResponse(config.actions);
+
+  /*const isConfigValid = validateCrudController(config);
+
+  if (!isConfigValid && validateCrudController.errors) {
+    throw validateController.errors;
+  }*/
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  config.name = capitalize(config.name);
+
+  await generateCrudController(config, basePath);
+
 };
 
 /**
@@ -1218,8 +1367,7 @@ export const engineTypes = async (module: string, basePath: string) => {
     { DATABASE_TYPES: DATABASE_TYPES },
     { SCHEMA_TYPES: schemaTypes },
     { DTO_SCHEMAS: bodyDtos },
-    { ATTRIBUTE_TYPES: GENERIC_ATTRIBUTE_TYPES },
-    { MODEL_ATTRIBUTE_TYPES: GENERIC_MODEL_ATTRIBUTE_TYPES },
+    { ATTRIBUTE_TYPES: CATEGORIZED_ATTRIBUTE_TYPES },
     { HTTP_HEADER_TYPES: HTTP_HEADER_TYPES },
     { COLLECTION_TYPES: GENERIC_COLLECTION_TYPES },
     { RELATIONSHIP_TYPES: RELATIONSHIP_TYPES },

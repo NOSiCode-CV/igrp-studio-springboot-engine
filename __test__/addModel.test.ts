@@ -59,6 +59,7 @@ describe('Model generator', () => {
             "name": "owner",
             "relation": {
               "type": "ManyToOne",
+              "fetchType": "lazy",
               "cardinality": "twoWay",
               "entity": "Owner",
               "mappedBy": "animals",
@@ -104,6 +105,7 @@ describe('Model generator', () => {
             "name": "animals",
             "relation": {
               "type": "OneToMany",
+              "fetchType": "lazy",
               "cardinality": "twoWay",
               "entity": "Animal",
               "mappedBy": "Owner",
@@ -154,7 +156,6 @@ describe('Model generator', () => {
             "type": "Level",
             "objectType": "enum",
             "name": "userLevelNew",
-            "length": 255,
             "nullable": false,
             "unique": true,
             "skipFieldRevision": true
@@ -178,7 +179,7 @@ describe('Model generator', () => {
           {
             "type": "string",
             "name": "password",
-            "length": 255,
+            "length": 25,
             "nullable": false,
             "skipFieldRevision": true
           },
@@ -224,7 +225,6 @@ describe('Model generator', () => {
           {
             "type": "integer",
             "name": "phoneNumber",
-            "length": 7,
             "nullable": false,
             "unique": true
           },
@@ -238,6 +238,7 @@ describe('Model generator', () => {
             "type": "relation",
             "name": "user",
             "relation": {
+              "fetchType": "lazy",
               "fieldName": "owner",
               "type": "OneToOne",
               "cardinality": "oneWay",

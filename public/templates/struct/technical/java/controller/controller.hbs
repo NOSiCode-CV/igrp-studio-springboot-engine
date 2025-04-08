@@ -1,22 +1,11 @@
 {{> package-java }}
 
-import cv.igrp.stereotype.IgrpController;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-
-{{>controller-imports}}
+{{> controller-imports}}
 
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-@Tag(name = "{{capitalize resourceConfig.name}}", description = "Controller for handling {{resourceConfig.name}}")
+@Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-injection}}
@@ -25,8 +14,9 @@ public class {{capitalize resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}"{{else}}{{#if pathVariables}}
-    value = "{{#each pathVariables}}/{{paramsFormat this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if (containsContentHeader headers)}}, {{/if}}{{/if}}
+    value = "{{path}}{{#each pathVariables}}/{{wrapInCurlyBraces this.name}}{{/each}}"{{else}}{{#if pathVariables}}
+    value = "{{#each pathVariables}}/{{wrapInCurlyBraces this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if
+    (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}
     {{#each headers}}
     {{#if (or (eq this.header "Accept") (eq this.header "Content-Type"))}}
@@ -39,23 +29,48 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{> controller-action-documentation action=this}}
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
-    {{#if (eq method "GET")}}
-    {{#if (or requestParams pathVariables)}}final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}}{{#if (and modelAttribute pathVariables)}}, {{else}}{{#if (and modelAttribute requestParams)}}, {{else}}{{/if}}{{/if}}{{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
-    final var query = new {{capitalize actionName}}Query({{#if modelAttribute}}{{toCamelCase modelAttribute}}{{/if}});
-    {{/if}}
-    {{else}}
-    {{#if requestBody}}{{else if (or requestParams pathVariables)}}final var command = new {{capitalize actionName}}Command({{#if pathVariables}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{#if ../requestParams}}, {{else}}{{/if}}{{else}}, {{/if}}{{/each}}{{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});{{else}}
-    final var command = new {{capitalize actionName}}Command();
-    {{/if}}
-    {{/if}}
-
-    {{#if (eq method "GET")}}return queryBus.handle({{#if requestBody}}{{toCamelCase actionName}}Request{{else if requestParams}}query{{else}}query{{/if}});{{else}}return commandBus.send({{#if requestBody}}{{toCamelCase actionName}}Command{{else if requestParams}}command{{else}}command{{/if}});{{/if}}
-
+  {{#if (eq method "GET")}}
+      final var query = new {{capitalize actionName}}Query(
+      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+      {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+      {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+      {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+      {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+      {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+      {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+      {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
+      );
+      ResponseEntity<{{{resolveResponse responses}}}> response = (ResponseEntity<{{{resolveResponse responses}}}>) queryBus.handle(query);
+      return ResponseEntity.ok(response.getBody());
+      //return queryBus.handle(query);
   {{else}}
-    return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}({{#if requestBody}}{{toCamelCase actionName}}Request{{/if}}{{#if (and requestBody requestParams)}}, {{/if}}{{#if (and pathVariables requestBody)}}, {{/if}}{{#each requestParams}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}}{{#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if}}{{#each pathVariables}}{{this.name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-
+      final var command = new {{capitalize actionName}}Command(
+      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+      {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+      {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+      {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+      {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+      {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+      {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+      {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
+      );
+       ResponseEntity<{{{resolveResponse responses}}}> response = (ResponseEntity<{{{resolveResponse responses}}}>) commandBus.send(command);
+       return ResponseEntity.ok(response.getBody());
+       //return commandBus.send(command);
   {{/if}}
+{{else}}
+    return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
+    {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+    {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
+    {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
+    {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
+    {{~#each requestParams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+    {{~#if requestParams}}{{#if pathVariables}}, {{/if}}{{/if~}}
+    {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
+    {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
+    );
+{{/if}}
   }
-  
-  {{/each}}
+
+{{/each}}
 }

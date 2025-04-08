@@ -1,0 +1,24 @@
+{{> package-java }}
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.application.dto.{{resourceConfig.name}}DTO;
+ {{else}}
+ import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.{{resourceConfig.name}}DTO;
+{{/if}}
+
+public class {{resolve-impl-custon-validator-name resourceConfig.name}} implements ConstraintValidator<{{resolve-interface-custon-validator-name resourceConfig.name}}, {{resourceConfig.name}}DTO> {
+
+    @Override
+    public void initialize({{resolve-interface-custon-validator-name resourceConfig.name}} constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid({{resourceConfig.name}}DTO value, ConstraintValidatorContext context) {
+        //todo implemented validation here for {{resourceConfig.name}}DTO...
+        return true;
+    }
+}

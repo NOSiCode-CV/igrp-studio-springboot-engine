@@ -2,25 +2,35 @@ import { ApiConfig } from "../interfaces/types";
 import { ajvInstance } from "../utils/ajv-instance";
 import { JSONSchemaType, ValidateFunction } from "ajv";
 import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
-
+import { dependencySchema } from './baseApiConfig';
 
 const apiSchema: JSONSchemaType<ApiConfig> = {
   type: 'object',
   properties: {
-    type: { 
+    id: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The project id if provided must be a string.'
+    },
+    workspaceId: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The workspace id if provided must be a string.'
+    },
+    type: {
       type: "string",
       const: "springboot",
-      errorMessage: "The 'type' attribute must have the value 'springboot'."  
+      errorMessage: "The 'type' attribute must have the value 'springboot'."
     },
-    apiName: { 
+    apiName: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
         pattern: "The 'apiName' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
       }
     },
-    group: { 
-      type: "string", 
+    group: {
+      type: "string",
       pattern: "^[a-zA-Z0-9._]+$",
       errorMessage: {
         pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
@@ -30,20 +40,20 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       type: "string",
       pattern: "^[a-zA-Z0-9._-]+$",
       errorMessage: {
-        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
+        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters without spaces or special characters."
       }
     },
 
-    database: { 
-      type: "string", 
+    database: {
+      type: "string",
       enum: DATABASE_TYPES,
       errorMessage: {
         enum: "The 'database' attribute cannot be empty and must be one of the following: 'PostgreSQL', 'MySQL', or 'Oracle'."
       }
     },
-    description: { 
-      type: "string", 
-      nullable: true, 
+    description: {
+      type: "string",
+      nullable: true,
       errorMessage: {
         type: "The 'description' attribute must be a valid string."
       }
@@ -75,9 +85,23 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     igrpCoreVersion: {
       type: "string",
       nullable: false
-    }
+    },
+    springBootVersion: {
+      type: "string",
+      nullable: true
+    },
+    dependencies: {
+      type: "array",
+      nullable: true,
+      items: dependencySchema,
+      errorMessage: 'The dependencies must be an array of valid dependency definitions.'
+    },
+    enableGraalVm: {
+      type: "boolean",
+      nullable: false
+    },
   },
-  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion"],
+  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableGraalVm"],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -88,12 +112,13 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       packageName: "The 'packageName' attribute is required and cannot be empty.",
       database: "The 'database' attribute is required and must specify a valid database type.",
       projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
-      enableObservability: "The 'enableObservability' attribute is required and must specify a valid database type."
+      dependencies: "The 'dependencies' attribute is required and must specify an array of valid dependencies.",
+      enableObservability: "The 'enableObservability' attribute is required and must specify a valid boolean type.",
+      enableGraalVm: "The 'enableGraalVm' attribute is required and must specify a valid boolean type."
     },
     additionalProperties: "Extra attributes are not allowed in the API configuration."
   }
 };
-
 
 export const apiValidation: ValidateFunction<ApiConfig> = ajvInstance.compile<ApiConfig>(apiSchema);
 

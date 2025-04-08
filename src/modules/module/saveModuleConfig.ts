@@ -4,15 +4,16 @@ import { saveToFile } from '../common/saveToFile';
 import {
   COMMON_FILES, DIRECTORIES, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,
 } from '../../utils/constants';
-import { capitalize } from '../../utils/capitalizeStrings';
+import { capitalize } from '../../helper/stringHelper';
 import { getMainPath } from '../../utils/helpers';
 import { BASE_API_FILES } from '../baseApi/saveBaseApiFiles';
 import { renderTemplate } from '../common/renderTemplate';
 
 export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, basePath: string) => {
 
-  const baseApiFiles = generateBaseModuleFiles(context);
-  await saveBaseApiFiles(baseApiFiles, context);
+  // No need to save any file when creating a module yet
+  //const baseApiFiles = generateBaseModuleFiles(context);
+  //await saveBaseApiFiles(baseApiFiles, context);
 
   const baseApiFileOutputPah = path.join(
     basePath,
