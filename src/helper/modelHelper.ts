@@ -62,7 +62,12 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
     if (attribute.defaultValue) imports.push('import org.hibernate.annotations.ColumnDefault;');
 
     if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany') {
-      imports.push('import java.util.List;');
+
+      const collectionType = attribute.relation?.type === 'ManyToMany' ? 'java.util.Set' : 'java.util.List';
+      //console.log(collectionType);
+      //console.log(attribute.relation.type);
+
+      imports.push(`import ${collectionType};`);
 
       if (attribute.relation?.cardinality === 'twoWay' && attribute.relation?.orphanRemoval) {
         imports.push(
@@ -71,7 +76,7 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
         );
       }
     }
-    
+
     if (attribute.relation?.entity) {
       if (isDDDStyle) {
         if (modelConfig.module !== attribute.relation.module)
@@ -107,8 +112,11 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
 
   modelConfig.relationReference?.forEach((rel) => {
     if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne') {
-      imports.push('import java.util.List;');
-      if(rel.orphanRemoval) {
+
+      const collectionType = rel.type === 'ManyToMany' ? 'java.util.Set' : 'java.util.List';
+      imports.push(`import ${collectionType};`);
+
+      if (rel.orphanRemoval) {
         imports.push(
           'import org.hibernate.annotations.OnDelete;',
           'import org.hibernate.annotations.OnDeleteAction;'

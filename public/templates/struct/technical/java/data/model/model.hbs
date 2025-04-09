@@ -85,7 +85,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
+    private Set<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
     @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}",fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
@@ -118,7 +118,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private List<{{this.entity}}> {{toFullCamelCaseFromSnakeCase this.fieldName}};
+   private Set<{{this.entity}}> {{toFullCamelCaseFromSnakeCase this.fieldName}};
   {{/if}}
 
 {{/each}}
