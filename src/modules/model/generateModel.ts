@@ -1,4 +1,4 @@
-import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
+import { Attribute, ModelConfig, RemovedRelationReference, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
@@ -25,29 +25,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     throw new Error(`Unique constraint errors found:\n${errorsUniqueConstraints.join('\n')}`);
   }
 
-  const modulo = context.resourceConfig.module ?? DIRECTORIES.SHARED;
-  const modelPath = getModelConfigPath(modulo, context.resourceConfig.name, context.basePath);
-
-  const modelExists = await fs.pathExists(modelPath);
-
-  if (modelExists) {
-    const modelDirPath = path.dirname(modelPath);
-    const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
-    const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
-
-    /*console.log('old model:: ', oldModel)
-    console.log('---------------------------------------------------------------------')
-    console.log('new Model:: ', newModel)*/
-
-    const removedRelations = await findRemovedRelations(oldModel, newModel);
-
-    if (removedRelations.length > 0) {
-      for (const removedRelation of removedRelations) {
-        await removeRelationFromModel(context, removedRelation, context.resourceConfig.name);
-      }
-    }
-  }
-
 
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     // Before creating the model with the new configuration, the engine checks if a model directory already exists.
@@ -64,9 +41,13 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   }
 
+  //finding remove relations before saving
+  await findRemovedRelations(context);
+
   await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
   await saveModelConfig(context.resourceConfig, context.basePath);
+
 
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
@@ -75,18 +56,72 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
 };
 
+async function findRemovedRelations(context: RenderContext<ModelConfig>) {
+
+  const modulo = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+  const modelPath = getModelConfigPath(modulo, context.resourceConfig.name, context.basePath);
+  const modelExists = await fs.pathExists(modelPath);
+  //console.log('modelPath:: ', modelPath)
+  const removedRelations: RemovedRelationReference[] = [];
+  //console.log('---------------------------------------------------------------------')
+  if (!modelExists) {
+    throw new Error(`Model with '${context.resourceConfig.name}' not found in path ${modelPath}`);
+  }
+
+  const modelDirPath = path.dirname(modelPath);
+  const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
+  const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
+
+  // console.log('old model:: ', oldModel)
+  // console.log('---------------------------------------------------------------------')
+  // console.log('new Model:: ', newModel)
+
+  for (const oldAttr of oldModel.attributes) {
+
+    if (oldAttr.type === 'relation' && oldAttr.relation) {
+      const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
+
+      if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
+        const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
+        const removedRelation: RemovedRelationReference = {
+          entity: oldAttr.relation.entity,
+          module: modulo
+        };
+        removedRelations.push(removedRelation);
+      }
+    }
+  }
+
+  // console.log('removedRelations : ', removedRelations);
+
+  if (removedRelations.length > 0) {
+    for (const removedRelation of removedRelations) {
+      await removeRelationFromModel(context, removedRelation, context.resourceConfig.name);
+    }
+  }
+
+
+};
+
+
 async function removeRelationFromModel(
   context: RenderContext<ModelConfig>,
-  removedRelation: RemovedRelation,
+  removedRelationReference: RemovedRelationReference,
   modelToRemoveRelation: string
 ) {
 
   let modelOutputPath: string;
-  const modelName = removedRelation.entity;
-  const moduleName = removedRelation.module;
+  const modelName = removedRelationReference.entity;
+  const moduleName = removedRelationReference.module;
 
   const modelPath = getModelConfigPath(moduleName, modelName, context.basePath);
   const modelDirPath = path.dirname(modelPath);
+  const modelExists = await fs.pathExists(modelPath);
+
+
+  if (!modelExists) {
+    throw new Error(`relation reference model '${modelName}' not found in path ${modelPath}`);
+  }
 
   const config = await loadModelConfig<ModelConfig>(modelDirPath, modelName);
 
@@ -102,7 +137,7 @@ async function removeRelationFromModel(
     resourceConfig: config
   };
 
-  console.log('relationReferenceContext: ', relationReferenceContext);
+  //console.log('relationReferenceContext: ', relationReferenceContext);
 
   //await fs.writeJSON(modelPath, config, { spaces: 2 });
   if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
@@ -120,37 +155,6 @@ async function removeRelationFromModel(
     `Relações com a entidade '${modelToRemoveRelation}' removidas do modelo '${modelName}' e arquivo salvo com sucesso.`
   );*/
 }
-
-interface RemovedRelation {
-  entity: string;
-  module: string;
-}
-
-const findRemovedRelations = (oldModel: ModelConfig, newModel: ModelConfig): RemovedRelation[] => {
-  const removedRelations: RemovedRelation[] = [];
-
-  for (const oldAttr of oldModel.attributes) {
-
-    if (oldAttr.type === 'relation' && oldAttr.relation) {
-      const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
-
-      if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
-        const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
-        const removedRelation: RemovedRelation = {
-          entity: oldAttr.relation.entity,
-          module: modulo
-        };
-        removedRelations.push(removedRelation);
-      }
-    }
-
-  }
-
-  console.log('removedRelations : ', removedRelations);
-
-  return removedRelations;
-};
-
 
 /**
  * Generates the model in the API using the provided configuration.
