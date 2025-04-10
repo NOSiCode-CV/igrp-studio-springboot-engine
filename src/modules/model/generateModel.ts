@@ -64,30 +64,28 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
   //console.log('modelPath:: ', modelPath)
   const removedRelations: RemovedRelationReference[] = [];
   //console.log('---------------------------------------------------------------------')
-  if (!modelExists) {
-    throw new Error(`Model with '${context.resourceConfig.name}' not found in path ${modelPath}`);
-  }
+  if (modelExists) {
+    const modelDirPath = path.dirname(modelPath);
+    const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
+    const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
 
-  const modelDirPath = path.dirname(modelPath);
-  const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
-  const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
+    // console.log('old model:: ', oldModel)
+    // console.log('---------------------------------------------------------------------')
+    // console.log('new Model:: ', newModel)
 
-  // console.log('old model:: ', oldModel)
-  // console.log('---------------------------------------------------------------------')
-  // console.log('new Model:: ', newModel)
+    for (const oldAttr of oldModel.attributes) {
 
-  for (const oldAttr of oldModel.attributes) {
+      if (oldAttr.type === 'relation' && oldAttr.relation) {
+        const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
 
-    if (oldAttr.type === 'relation' && oldAttr.relation) {
-      const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
-
-      if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
-        const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
-        const removedRelation: RemovedRelationReference = {
-          entity: oldAttr.relation.entity,
-          module: modulo
-        };
-        removedRelations.push(removedRelation);
+        if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
+          const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
+          const removedRelation: RemovedRelationReference = {
+            entity: oldAttr.relation.entity,
+            module: modulo
+          };
+          removedRelations.push(removedRelation);
+        }
       }
     }
   }
