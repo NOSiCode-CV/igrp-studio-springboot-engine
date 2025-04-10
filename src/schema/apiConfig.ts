@@ -22,11 +22,11 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       const: "springboot",
       errorMessage: "The 'type' attribute must have the value 'springboot'."
     },
-    apiName: {
+    name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
-        pattern: "The 'apiName' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
+        pattern: "The 'name' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
       }
     },
     group: {
@@ -59,10 +59,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       }
     },
     package: {
-      type: "string",
-      nullable: true
-    },
-    name: {
       type: "string",
       nullable: true
     },
@@ -101,12 +97,12 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       nullable: false
     },
   },
-  required: ["type", "apiName", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableGraalVm"],
+  required: ["type", "name", "group", "artifact", "packageName", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableGraalVm"],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: "The 'type' attribute is required and must be specified.",
-      apiName: "The 'apiName' attribute is required and cannot be left blank.",
+      name: "The 'name' attribute is required and cannot be left blank.",
       group: "The 'group' attribute is required and must be provided.",
       artifact: "The 'artifact' attribute is required and cannot be empty.",
       packageName: "The 'packageName' attribute is required and cannot be empty.",

@@ -132,7 +132,7 @@ export function getPaths(): PathConfig {
  *
  * const config: ApiConfig = {
  *    type: 'springboot',
- *    apiName: 'my_api', // Names with hyphens or spaces are not accepted.
+ *    name: 'my_api', // Names with hyphens or spaces are not accepted.
  *    group: 'cv.example',
  *    artifact: 'demo',
  *    database: 'MySQL', // You can choose between MySQL, Oracle and PostgreSQL
@@ -162,7 +162,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
   const config: ApiConfig = {
     type: baseConfig.type,
-    apiName: baseConfig.apiName,
+    name: baseConfig.name,
     group: baseConfig.group,
     artifact: baseConfig.artifact,
     packageName: normalizePackageName(baseConfig.artifact),
@@ -170,7 +170,6 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     description: baseConfig.description,
     package: baseConfig.package,
     projectStructureStyle: baseConfig.projectStructureStyle,
-    name: baseConfig.name,
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,

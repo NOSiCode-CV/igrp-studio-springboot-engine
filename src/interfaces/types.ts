@@ -38,14 +38,13 @@ export interface ApiConfig extends BaseApiConfig {
 export interface BaseApiConfig extends IdentifiableElement {
   type: 'springboot';
   workspaceId?: string;
-  apiName: string;
+  name: string;
   group: string;
   artifact: string;
   database: DatabaseTypes;
   description?: string;
   package?: string;
   projectStructureStyle: ProjectStructureStyle;
-  name?: string;
   enableObservability: boolean;
   enableEntityRevision: boolean;
   igrpCoreVersion: string;
