@@ -505,6 +505,8 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     fullPath: basePath,
   };
 
+  console.log('dto atrr:: ', context.resourceConfig.attributes);
+
   await generateDTO(context);
 
   if (context.resourceConfig.enableCustonValidation) {
@@ -1107,6 +1109,12 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         act?.requestBody?.content['multipart/form-data']?.schema.objectType
       ) {
         const reqDtoConfig = (await requestDtoConfig(module, context, act))
+
+        const collectionType =
+          act?.requestBody?.content['application/json']?.schema.collectionType ??
+          act?.requestBody?.content['multipart/form-data']?.schema.collectionType ??
+          'none';
+
         requestBodyAttributes = [
           {
             name: reqDtoConfig.name.toLowerCase(),
@@ -1114,9 +1122,12 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
             objectType: 'dto',
             module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
             required: false,
+            collectionType: collectionType
           }
         ];
       } else {
+        //const collectionType = act?.requestBody?.content['application/json']?.schema.collectionType;
+
         requestBodyAttributes = requestConfig ? [
           {
             name: requestConfig.resourceConfig.name.toLowerCase(),
@@ -1124,9 +1135,43 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
             objectType: 'dto',
             module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
             required: false,
+            //collectionType: collectionType ?? 'none'
           }
         ] : []
       }
+
+
+      /////////////////// todo improve this
+      const objectType =
+        act?.requestBody?.content['application/json']?.schema.objectType ??
+        act?.requestBody?.content['multipart/form-data']?.schema.objectType;
+      //console.log(objectType);
+      const type =
+        act?.requestBody?.content['application/json']?.schema.type ??
+        act?.requestBody?.content['multipart/form-data']?.schema.type ?? '';
+      // console.log(type);
+      let javaObject: JavaAttribute[] = [];
+
+      if (type !== 'object' && !objectType) {
+        console.log('entrou');
+        console.log(type);
+        const collectionType =
+          act?.requestBody?.content['application/json']?.schema.collectionType ??
+          act?.requestBody?.content['multipart/form-data']?.schema.collectionType ??
+          'none'; // Default to 'none' if collectionType is not defined
+
+        javaObject = [
+          {
+            name: 'customAttribute',
+            type: type,
+            objectType: 'java',
+            required: false,
+            module: act.modelAttribute?.module,
+            collectionType: collectionType
+          },
+        ];
+      }
+
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
         ? [
@@ -1173,7 +1218,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       }
 
-      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable];
+      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable, ...javaObject];
+
+      console.log('attributes:', attributes);
 
       await addDTO(
         {
@@ -1209,7 +1256,7 @@ export const addCrudController = async (dirty: CrudControllerConfig, basePath: s
   //config.actions = upperCaseResponse(config.actions);
 
   /*const isConfigValid = validateCrudController(config);
-
+ 
   if (!isConfigValid && validateCrudController.errors) {
     throw validateController.errors;
   }*/

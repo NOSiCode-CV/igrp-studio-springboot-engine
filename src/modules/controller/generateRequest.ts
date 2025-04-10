@@ -28,13 +28,13 @@ import { normalizeName } from '../dto/saveDTOConfig';
 import { capitalize } from '../../helper/stringHelper';
 import { getEnumTypes } from '../enum/helpers';
 
-export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
+/*export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
 
-  for(const action of context.resourceConfig.actions) {
+  for (const action of context.resourceConfig.actions) {
 
-    if(!action.requestBody ||
+    if (!action.requestBody ||
       (!Object.keys(action.requestBody.content).includes("application/json")
-      && !Object.keys(action.requestBody.content).includes("multipart/form-data"))
+        && !Object.keys(action.requestBody.content).includes("multipart/form-data"))
       || (action.requestBody.content["application/json"] ?? action.requestBody.content["multipart/form-data"]).schema.objectType
     ) continue
 
@@ -55,7 +55,62 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     return dtoContext;
 
   }
+};*/
+
+export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
+
+  for (const action of context.resourceConfig.actions) {
+    const requestBody = action.requestBody;
+    if (!requestBody) continue;
+
+    const content = requestBody.content;
+    const contentTypes = Object.keys(content || {});
+    const hasJson = contentTypes.includes("application/json");
+    const hasMultipart = contentTypes.includes("multipart/form-data");
+
+    if (!hasJson && !hasMultipart) continue;
+
+    const bodyContent = content["application/json"] ?? content["multipart/form-data"];
+    //const isObjectType = bodyContent?.schema?.objectType;
+    //if (isObjectType) continue;
+
+    const isTypeObject = bodyContent?.schema?.type;
+    if (isTypeObject !== 'object') {
+      continue;
+    }
+
+    const transformedConfig = await transformSchemaDTOConfig(
+      action,
+      context.baseConfig,
+      context.basePath
+    );
+
+    const dtoContext: RenderContext<DTOConfig> = {
+      baseConfig: context.baseConfig,
+      basePath: context.basePath,
+      resourceConfig: transformedConfig,
+      fullPath: context.basePath,
+    };
+
+    //await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
+
+    const modelOutputPath = getDTOOutputPath(dtoContext);
+    const template = await _renderDTO(dtoContext);
+
+    await saveToFile(
+      template,
+      modelOutputPath,
+      true,
+      DIRECTORIES.DTO,
+      dtoContext.resourceConfig.id,
+      dtoContext.resourceConfig.module,
+      context.basePath
+    );
+
+    return dtoContext;
+  }
 };
+
 
 /**
  * Generates the DTO in the API using the provided configuration.
@@ -70,22 +125,22 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ACTION_ATTRIBUTES;
   }
   let tn;
-  
+
   switch (context.resourceConfig.type) {
     case "dto":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
     case "response":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
     case "filter":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_FILTER;
       else
         tn = TEMPLATES.DOMAIN_FILTER;
@@ -100,14 +155,14 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
       tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
       break;
   }
-  
+
   if (!tn) {
     throw ERROR_MESSAGE.TEMPLATE_NAME_NOT_REGISTERED;
   }
   return await renderTemplate(tn, context);
 };
 
-export const transformSchemaDTOConfig = async function(
+export const transformSchemaDTOConfig = async function (
   action: ControllerAction,
   api: ApiConfig,
   basePath: string,
@@ -141,7 +196,7 @@ export const transformSchemaDTOConfig = async function(
       }
       const mt = mtypes.get(attr.type!);
       if (mt) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
@@ -158,13 +213,13 @@ export const transformSchemaDTOConfig = async function(
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
         const dtype = dtypes.get(normalizeName(attr.type!, 'dto') + "DTO");
-        if(!dtype) {
-            typeNotFound = true;
+        if (!dtype) {
+          typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
@@ -181,13 +236,13 @@ export const transformSchemaDTOConfig = async function(
       if (!et) {
         etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
         const etype = etypes.get(type.name);
-        if(!etype) {
+        if (!etype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
@@ -216,7 +271,7 @@ export const transformSchemaDTOConfig = async function(
     ncfg.attributes.push({
       name: key,
       type: attr.type!,
-      objectType: (attr.objectType != 'dto' && attr.objectType != 'model')? 'java' : attr.objectType,
+      objectType: (attr.objectType != 'dto' && attr.objectType != 'model') ? 'java' : attr.objectType,
       required: attr.required ?? false,
       minLength: attr.minimum,
       maxLength: attr.maximum,

@@ -22,7 +22,7 @@ import {
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
 import { getPackageNameFromConfig, isResponseCollection } from './helpers';
-import { capitalizeResponse, wrapCollectionType } from './capitalizeStrings';
+import { capitalizeResponse, formatTypeName, wrapCollectionType } from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 import {
   capitalize, capitalizeJavaStyle,
@@ -161,7 +161,7 @@ Handlebars.registerHelper(
           // Extract the schema and its properties
           const { schema } = content;
 
-         processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
+          processImportsTypes(schema, imports, group, packageName, domainDriven, response.name, moduloAction);
 
 
         }
@@ -544,17 +544,52 @@ Handlebars.registerHelper(
   },
 );
 
+/*Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
+  if (!content) return false;
+  const schema = content['application/json'] ?? content['multipart/form-data'];
+  return !!schema.schema.objectType;
+});*/
+
 Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
+  // console.log('SchemaContent:: ', content);
   if (!content) return false;
   const schema = content['application/json'] ?? content['multipart/form-data'];
   return !!schema.schema.objectType;
 });
 
-Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
+/*Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
   if (!content) return '';
   const schema = content['application/json'] ?? content['multipart/form-data'];
   return normalizeName(capitalize(schema.schema.type), 'dto') + 'DTO';
+});*/
+
+
+Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }): string => {
+  if (!content) return '';
+
+  const jsonContent = content['application/json'] ?? content['multipart/form-data'];
+  if (!jsonContent || !jsonContent.schema) return '';
+
+  const schema = jsonContent.schema;
+
+  let resolvedType: string;
+
+  if (schema.type === 'object') {
+    // TODO: implementar resolução de tipo para schemas do tipo 'object'
+    resolvedType = 'Object'; // ou pode deixar vazio '' se quiser forçar falha visível
+  } else {
+    if (schema.objectType === 'dto') {
+      resolvedType = formatTypeName(schema.type);
+    } else {
+      resolvedType = capitalize(schema.type);
+    }
+  }
+
+  const responseCollectionType: string = schema.collectionType ?? 'none';
+
+  return wrapCollectionType(resolvedType, responseCollectionType);
 });
+
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
   let isPageable = false;

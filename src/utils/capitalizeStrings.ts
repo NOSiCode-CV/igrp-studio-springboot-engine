@@ -11,9 +11,6 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
 
   if (!schema) return '?';
 
-  const formatTypeName = (type: string | undefined): string =>
-    capitalize(type?.replace(/dto$/i, '') + 'DTO');
-
   let resolvedType: string;
 
   if (schema.type === 'object') {
@@ -38,6 +35,11 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
 
   return wrapCollectionType(resolvedType, responseCollectionType);
 };
+
+export function formatTypeName(type: string | undefined): string {
+  return capitalize((type ?? '').replace(/dto$/i, '') + 'DTO');
+}
+
 
 export function wrapCollectionType(type: string, collectionType: string): string {
   switch (collectionType) {
