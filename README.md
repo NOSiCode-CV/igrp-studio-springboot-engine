@@ -125,7 +125,7 @@ import { ApiConfig } from "@igrp/igrp-studio-springboot-engine/dist/interfaces/t
 
 const baseConfig: ApiConfig = {
   type: 'springboot',
-  apiName: 'demoTechnical',
+  name: 'demoTechnical',
   group: 'cv.nosi',
   artifact: 'users',
   description: 'Demo project for Spring Boot',
@@ -789,7 +789,7 @@ export interface ApiConfig extends BaseApiConfig {
 ```ts
 export interface BaseApiConfig {
   type: 'springboot';
-  apiName: string;
+  name: string;
   group: string;
   artifact: string;
   database: DatabaseTypes;
