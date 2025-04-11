@@ -1110,10 +1110,10 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       const type = schema?.type ?? '';
 
-
       let requestBodyAttributes: JavaAttribute[] = [];
 
       if (objectType) {
+        console.log(objectType);
         const dto = await requestDtoConfig(module, context, act);
         requestBodyAttributes = [{
           name: dto.name.toLowerCase(),
@@ -1135,39 +1135,45 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         }];
       }
 
-      const modelAttribute = act?.modelAttribute ? [{
-        name: act.modelAttribute.name.toLowerCase(),
-        type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
-        objectType: 'dto',
-        required: false,
-        module: act.modelAttribute.module
-      }] : [];
+      const modelAttribute: JavaAttribute[] = act?.modelAttribute
+        ? [
+          {
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            required: false,
+            module: act.modelAttribute.module
+          },
+        ]
+        : [];
 
-      const pathVariables = act?.pathVariables?.map((e) => ({
-        name: e.name,
-        type: e.type,
-        objectType: 'java',
-        required: true,
-      })) ?? [];
+      const pathVariables = act?.pathVariables
+        ? act.pathVariables.map((e) => ({
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
 
-      const requestParams = act?.requestParams?.map((e) => ({
-        name: e.name,
-        type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-        objectType: 'java',
-        required: true,
-      })) ?? [];
+      const requestParams = act?.requestParams
+        ? act.requestParams.map((e) => ({
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
+        : [];
 
-      if(schema) {
-        requestBodyAttributes = (type !== 'object' && !objectType) ? [{
+      if (schema && type !== 'object' && !objectType) {
+        requestBodyAttributes = [{
           name: act.actionName.concat('Request'),
           type: type,
           objectType: 'java',
           required: false,
           module: act.modelAttribute?.module,
           collectionType,
-        }] : [];
-      } else {
-        requestBodyAttributes = []
+        }];
       }
 
       let pageable: any[] = []
@@ -1184,6 +1190,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       }
 
+      //console.log('requestBodyAttributes: ', requestBodyAttributes);
+
       const attributes = [
         ...requestBodyAttributes,
         ...modelAttribute,
@@ -1191,6 +1199,8 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         ...pathVariables,
         ...pageable,
       ];
+
+      //console.log('attributes:: ', attributes);
 
       await addDTO({
         type: act.method === 'GET' ? 'query' : 'command',
