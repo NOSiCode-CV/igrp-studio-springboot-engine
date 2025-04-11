@@ -1107,6 +1107,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       const objectType = schema?.objectType;
       const collectionType = schema?.collectionType ?? 'none';
+
       const type = schema?.type ?? '';
 
 
@@ -1134,7 +1135,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         }];
       }
 
-
       const modelAttribute = act?.modelAttribute ? [{
         name: act.modelAttribute.name.toLowerCase(),
         type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
@@ -1157,15 +1157,18 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         required: true,
       })) ?? [];
 
-      const javaPrimitiveTypes: JavaAttribute[] = (type !== 'object' && !objectType) ? [{
-        name: act.actionName.concat('Request'),
-        type,
-        objectType: 'java',
-        required: false,
-        module: act.modelAttribute?.module,
-        collectionType,
-      }] : [];
-
+      if(schema) {
+        requestBodyAttributes = (type !== 'object' && !objectType) ? [{
+          name: act.actionName.concat('Request'),
+          type: type,
+          objectType: 'java',
+          required: false,
+          module: act.modelAttribute?.module,
+          collectionType,
+        }] : [];
+      } else {
+        requestBodyAttributes = []
+      }
 
       let pageable: any[] = []
       if (act.responses) {
@@ -1187,10 +1190,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         ...requestParams,
         ...pathVariables,
         ...pageable,
-        ...javaPrimitiveTypes
       ];
-
-      //console.log('attributes:', attributes);
 
       await addDTO({
         type: act.method === 'GET' ? 'query' : 'command',

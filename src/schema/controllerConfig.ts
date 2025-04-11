@@ -402,86 +402,6 @@ const headersSchema: JSONSchemaType<HttpHeader> = {
   }
 };
 
-const attributeSchema: JSONSchemaType<Attribute> = {
-  type: "object",
-  properties: {
-    type: {
-      type: "string",
-      enum: SCHEMA_TYPES,
-      errorMessage: `The attribute type must be one of ${SCHEMA_TYPES} and cannot be empty.`
-    },
-    name: {
-      type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
-    },
-    length: {
-      type: "number",
-      nullable: true,
-      errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
-    },
-    unique: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The unique attribute must be a boolean value if provided.'
-    },
-    skipFieldRevision: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
-    },
-    nullable: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The notNull attribute must be a boolean value if provided.'
-    },
-    defaultValue: {
-      type: "string",
-      nullable: true,
-      errorMessage: 'The defaultValue, if provided, must be a valid string.'
-    },
-    generationType: {
-      type: "string",
-      nullable: true,
-      enum: GENERATION_TYPES,
-      errorMessage: `The generation type, if provided, must be one of ${GENERATION_TYPES}`
-    },
-    primaryKey: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The primary key, if provided, must be a valid boolean.'
-    },
-    objectType: {
-      type: "string",
-      nullable: true,
-      errorMessage: 'The objectType, if provided, must be a valid string.'
-    },
-    relation: {
-      type: "object",
-      nullable: true,
-      oneOf: [
-        relationSchema
-      ],
-      errorMessage: 'The relation, if provided, must be a valid relationship definition.'
-    },
-    module: {
-      type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
-    },
-  },
-  required: ["type", "name"],
-  additionalProperties: false,
-  errorMessage: {
-    required: {
-      type: 'The attribute type is required.',
-      name: 'The attribute name is required.'
-    },
-    additionalProperties: 'No additional properties are allowed in the attribute schema.'
-  }
-};
-
 const modelAttributeSchema: JSONSchemaType<ModelAttribute> = {
   type: 'object',
   properties: {
@@ -631,12 +551,6 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       items: controllerActionSchema,
       errorMessage: 'The actions array must contain valid controller actions.'
     },
-    attributes: {
-      type: "array",
-      items: attributeSchema,
-      errorMessage: 'The attributes must be an array of valid attribute definitions.',
-      nullable: true
-    }
   },
   required: ['type', 'name', 'basePath', 'actions'],
   additionalProperties: false,
