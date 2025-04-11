@@ -79,13 +79,13 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}){{#if this.relation.joinTable}}
     @JoinTable(
             name = "{{this.relation.joinTable}}"{{#if this.name}},
-            joinColumns = @JoinColumn(name = "{{toLowerCase this.relation.mappedBy}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
+            joinColumns = @JoinColumn(name = "{{toLowerCase ../resourceConfig.name}}_id"){{/if}}{{#if this.relation.inverseJoinColumn}},
             inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
     ){{/if}}
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private Set<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};{{else}}
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
@@ -118,7 +118,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private Set<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}};
+   private Set<{{this.entity}}> {{fullCamelCaseAndPluralize this.entity}};
   {{/if}}
 
 {{/each}}
