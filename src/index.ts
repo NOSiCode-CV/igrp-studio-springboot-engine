@@ -505,7 +505,7 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     fullPath: basePath,
   };
 
-  console.log('dto atrr:: ', context.resourceConfig.attributes);
+  //console.log('dto atrr:: ', context.resourceConfig.attributes);
 
   await generateDTO(context);
 
@@ -1190,7 +1190,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         ...javaPrimitiveTypes
       ];
 
-      console.log('attributes:', attributes);
+      //console.log('attributes:', attributes);
 
       await addDTO({
         type: act.method === 'GET' ? 'query' : 'command',
