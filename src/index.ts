@@ -1102,109 +1102,72 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
     const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      let requestBodyAttributes: JavaAttribute[]
+      const content = act?.requestBody?.content;
+      const schema = content?.['application/json']?.schema ?? content?.['multipart/form-data']?.schema;
 
-      if (
-        act?.requestBody?.content['application/json']?.schema.objectType ??
-        act?.requestBody?.content['multipart/form-data']?.schema.objectType
-      ) {
-        const reqDtoConfig = (await requestDtoConfig(module, context, act))
+      const objectType = schema?.objectType;
+      const collectionType = schema?.collectionType ?? 'none';
+      const type = schema?.type ?? '';
 
-        const collectionType =
-          act?.requestBody?.content['application/json']?.schema.collectionType ??
-          act?.requestBody?.content['multipart/form-data']?.schema.collectionType ??
-          'none';
 
-        requestBodyAttributes = [
-          {
-            name: reqDtoConfig.name.toLowerCase(),
-            type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
-            objectType: 'dto',
-            module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
-            required: false,
-            collectionType: collectionType
-          }
-        ];
-      } else {
-        //const collectionType = act?.requestBody?.content['application/json']?.schema.collectionType;
+      let requestBodyAttributes: JavaAttribute[] = [];
 
-        requestBodyAttributes = requestConfig ? [
-          {
-            name: requestConfig.resourceConfig.name.toLowerCase(),
-            type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
-            objectType: 'dto',
-            module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
-            required: false,
-            //collectionType: collectionType ?? 'none'
-          }
-        ] : []
+      if (objectType) {
+        const dto = await requestDtoConfig(module, context, act);
+        requestBodyAttributes = [{
+          name: dto.name.toLowerCase(),
+          type: normalizeName(dto.name, 'dto') + 'DTO',
+          objectType: 'dto',
+          module: dto.module ?? DIRECTORIES.SHARED,
+          required: false,
+          collectionType,
+        }];
+      } else if (requestConfig) {
+        const resource = requestConfig.resourceConfig;
+        requestBodyAttributes = [{
+          name: resource.name.toLowerCase(),
+          type: normalizeName(resource.name, 'dto') + 'DTO',
+          objectType: 'dto',
+          module: resource.module ?? DIRECTORIES.SHARED,
+          required: false,
+          collectionType
+        }];
       }
 
 
-      /////////////////// todo improve this
-      const objectType =
-        act?.requestBody?.content['application/json']?.schema.objectType ??
-        act?.requestBody?.content['multipart/form-data']?.schema.objectType;
-      //console.log(objectType);
-      const type =
-        act?.requestBody?.content['application/json']?.schema.type ??
-        act?.requestBody?.content['multipart/form-data']?.schema.type ?? '';
-      // console.log(type);
-      let javaObject: JavaAttribute[] = [];
+      const modelAttribute = act?.modelAttribute ? [{
+        name: act.modelAttribute.name.toLowerCase(),
+        type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+        objectType: 'dto',
+        required: false,
+        module: act.modelAttribute.module
+      }] : [];
 
-      if (type !== 'object' && !objectType) {
-        console.log('entrou');
-        console.log(type);
-        const collectionType =
-          act?.requestBody?.content['application/json']?.schema.collectionType ??
-          act?.requestBody?.content['multipart/form-data']?.schema.collectionType ??
-          'none'; // Default to 'none' if collectionType is not defined
+      const pathVariables = act?.pathVariables?.map((e) => ({
+        name: e.name,
+        type: e.type,
+        objectType: 'java',
+        required: true,
+      })) ?? [];
 
-        javaObject = [
-          {
-            name: 'customAttribute',
-            type: type,
-            objectType: 'java',
-            required: false,
-            module: act.modelAttribute?.module,
-            collectionType: collectionType
-          },
-        ];
-      }
+      const requestParams = act?.requestParams?.map((e) => ({
+        name: e.name,
+        type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+        objectType: 'java',
+        required: true,
+      })) ?? [];
 
+      const javaPrimitiveTypes: JavaAttribute[] = (type !== 'object' && !objectType) ? [{
+        name: act.actionName.concat('Request'),
+        type,
+        objectType: 'java',
+        required: false,
+        module: act.modelAttribute?.module,
+        collectionType,
+      }] : [];
 
-      const modelAttribute: JavaAttribute[] = act?.modelAttribute
-        ? [
-          {
-            name: act.modelAttribute.name.toLowerCase(),
-            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
-            objectType: 'dto',
-            required: false,
-            module: act.modelAttribute.module
-          },
-        ]
-        : [];
-
-      const pathVariables = act?.pathVariables
-        ? act.pathVariables.map((e) => ({
-          name: e.name,
-          type: e.type,
-          objectType: 'java',
-          required: true,
-        }))
-        : [];
-
-      const requestParams = act?.requestParams
-        ? act.requestParams.map((e) => ({
-          name: e.name,
-          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-          objectType: 'java',
-          required: true,
-        }))
-        : [];
 
       let pageable: any[] = []
-
       if (act.responses) {
         if (isPageable(act.responses))
           pageable = [
@@ -1218,28 +1181,40 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       }
 
-      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable, ...javaObject];
+      const attributes = [
+        ...requestBodyAttributes,
+        ...modelAttribute,
+        ...requestParams,
+        ...pathVariables,
+        ...pageable,
+        ...javaPrimitiveTypes
+      ];
 
       console.log('attributes:', attributes);
 
-      await addDTO(
-        {
-          type: act.method === 'GET' ? 'query' : 'command',
-          name: act.actionName,
-          template: 'classic',
-          module: module,
-          attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-          response: act.responses,
-          // response: capitalizeResponse(act.responses)  // TODO: handle this 06-01-2025
-        } as HandlerConfig,
-        context.basePath,
-      );
+      await addDTO({
+        type: act.method === 'GET' ? 'query' : 'command',
+        name: act.actionName,
+        template: 'classic',
+        module,
+        attributes: attributes.length > 0
+          ? attributes
+          : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
+        response: act.responses,
+      } as HandlerConfig, context.basePath);
     }
   } else {
     await generateServiceInterface(context);
-    if (!customImpl) await generateServiceInmpl(context);
+
+    if (!customImpl) {
+      await generateServiceInmpl(context);
+    }
+
     await generateTestServiceInmpl(context);
   }
+
+
+
 };
 
 
