@@ -14,8 +14,7 @@ public class {{capitalize resourceConfig.name}}Controller {
 
   {{#each resourceConfig.actions}}
   @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}{{#each pathVariables}}/{{wrapInCurlyBraces this.name}}{{/each}}"{{else}}{{#if pathVariables}}
-    value = "{{#each pathVariables}}/{{wrapInCurlyBraces this.name}}{{/each}}" {{/if}}{{/if}}{{#if (and this.headers path)}}{{#if
+    value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}
     {{#each headers}}
