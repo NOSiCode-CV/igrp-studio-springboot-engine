@@ -504,9 +504,6 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     baseConfig,
     fullPath: basePath,
   };
-
-  //console.log('dto atrr:: ', context.resourceConfig.attributes);
-
   await generateDTO(context);
 
   if (context.resourceConfig.enableCustonValidation) {

@@ -107,6 +107,26 @@ Handlebars.registerHelper('resolve-impl-custon-validator-name', function (name: 
   return normalizeImplValidatorName(name);
 });
 
+Handlebars.registerHelper('isAttributesEmpty', function (attributes: JavaAttribute[]): boolean {
+
+  if (!attributes || attributes.length === 0) return true;
+
+  // Represents a placeholder attribute used to indicate "no attributes"
+  const noAttributes = {
+    name: 'none',
+    type: 'object',
+    objectType: 'java',
+    required: false
+  };
+
+  // If the array contains only this placeholder, treat it as empty
+  return attributes.length === 1 &&
+    attributes[0].name === noAttributes.name &&
+    attributes[0].type === noAttributes.type &&
+    attributes[0].objectType === noAttributes.objectType &&
+    attributes[0].required === noAttributes.required;
+});
+
 
 Handlebars.registerHelper(
   'importsTypes',

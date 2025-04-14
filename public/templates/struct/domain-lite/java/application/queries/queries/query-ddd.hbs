@@ -3,14 +3,14 @@
 import cv.igrp.framework.core.domain.Query;
 import jakarta.validation.constraints.*;
 
-{{#if resourceConfig.attributes.length}}
+{{#unless (isAttributesEmpty resourceConfig.attributes)}}
 {{> lombok-java-imports}}
-{{/if}}
+{{/unless}}
 {{{resolve-imports resourceConfig baseConfig}}}
 
-{{#if resourceConfig.attributes.length}}
+{{#unless (isAttributesEmpty resourceConfig.attributes)}}
 {{> lombok-java-annotations}}
-{{/if}}
+{{/unless}}
 {{#each resourceConfig.annotations}}
 @{{this.annotation}}
 {{/each}}
