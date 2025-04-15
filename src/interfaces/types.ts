@@ -338,6 +338,7 @@ export type RenderContext<T = undefined> = {
 };
 
 export interface SchemaField {
+  name?: string
   type: string;
   objectType?: string;
   module?: string;

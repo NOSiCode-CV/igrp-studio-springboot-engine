@@ -25,6 +25,11 @@ import { relationSchema } from './modelConfig';
 const schemaField: JSONSchemaType<SchemaField> = {
   type: "object",
   properties: {
+    name: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'name' field, if provided, must be a string.",
+    },
     type: {
       type: "string",
       nullable: false,
@@ -130,6 +135,11 @@ const schemaEnum: JSONSchemaType<SchemaEnum> = {
 const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
   type: 'object',
   properties: {
+    name: {
+      type: "string",
+      nullable: true,
+      errorMessage: "The 'name' field, if provided, must be a string.",
+    },
     type: {
       type: 'string',
       nullable: false,
@@ -194,7 +204,7 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       errorMessage: "The 'format' field, if provided, must be a string.",
     },
     enum: {
-      oneOf: [ schemaEnum ],
+      oneOf: [schemaEnum],
       nullable: true,
       errorMessage: "The 'enum' field, if provided, must be an array of SchemaEnum.",
     },
@@ -333,13 +343,13 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
 const pathParamsSchema: JSONSchemaType<RequestParams> = {
   type: 'object',
   properties: {
-    type: { 
-      type: 'string', 
+    type: {
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       enum: PARAMS_TYPES,
       errorMessage: `Param type not valid. It must be one of ${PARAMS_TYPES}`
     },
-    name: { 
+    name: {
       type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
       errorMessage: 'The param name attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
     },
@@ -520,13 +530,13 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
-    type: { 
-      type: 'string', 
+    type: {
+      type: 'string',
       const: 'controller',
       errorMessage: `The type must be 'controller'.`
     },
-    name: { 
-      type: 'string', 
+    name: {
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
@@ -536,7 +546,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: true,
       errorMessage: 'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
-    basePath: { 
+    basePath: {
       type: 'string',
       pattern: PATTERNS.PATH_SLASH_VALIDATION_PATTERN,
       errorMessage: 'The basePath attribute can only contain alphanumeric characters and slash, without spaces or other special characters.'
@@ -546,7 +556,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: false,
       errorMessage: 'The description attribute must be a valid string'
     },
-    actions: { 
+    actions: {
       type: 'array',
       items: controllerActionSchema,
       errorMessage: 'The actions array must contain valid controller actions.'
