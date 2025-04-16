@@ -96,6 +96,14 @@ Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]
   return capitalizeResponse(responses);
 });
 
+Handlebars.registerHelper('is-nested-object', function (attribute: JavaAttribute): string {
+
+  if (attribute.objectType === 'dto') {
+    return '@Valid';
+  }
+  return '';
+});
+
 
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
