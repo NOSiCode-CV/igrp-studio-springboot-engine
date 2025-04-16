@@ -30,7 +30,7 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
   {{#if (eq method "GET")}}
       final var query = new {{capitalize actionName}}Query(
-      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+      {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
       {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
       {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
@@ -43,7 +43,7 @@ public class {{capitalize resourceConfig.name}}Controller {
       return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
   {{else}}
       final var command = new {{capitalize actionName}}Command(
-      {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+      {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
       {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
       {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}
@@ -57,7 +57,7 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{/if}}
 {{else}}
     return {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
-    {{~#if requestBody}}{{toCamelCase actionName}}Request{{/if~}}
+    {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
     {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
     {{~#if modelAttribute}}{{toCamelCase modelAttribute.name}}{{/if~}}
     {{~#if modelAttribute}}{{#if (or requestParams pathVariables)}}, {{/if}}{{/if~}}

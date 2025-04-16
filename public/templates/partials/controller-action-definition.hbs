@@ -10,7 +10,7 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
   modelAttribute.name}}{{/if~}}{{#if (and modelAttribute requestParams)}}, {{else}}{{#if (and pathVariables
   modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}}, {{else}}{{/if~}}{{/if~}}{{/if~}}
   {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute {{else}}{{#if (addValidAnnotation
-  this.requestBody.content)}}@Valid {{/if~}}@RequestBody {{/if~}} {{{resolve-body this.requestBody.content}}} {{toCamelCase actionName}}Request{{/if}}
+  this.requestBody.content)}}@Valid {{/if~}}@RequestBody {{/if~}} {{{resolve-body this.requestBody actionName}}} {{{resolve-body-name this.requestBody actionName}}}{{/if}}
   {{#if (and requestBody requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{else}}{{/if~}}{{/if~}}{{#each
   requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{~#if
   (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}},
@@ -34,7 +34,7 @@ public ResponseEntity<{{{resolveResponse responses}}}> {{toCamelCase actionName}
   {{else}}{{#if (and pathVariables modelAttribute)}}, {{else}}{{#if (and requestBody modelAttribute)}},
   {{/if~}}{{/if~}}{{/if~}}
   {{#if requestBody}}{{#if (containsFormData requestBody.content)}}@ModelAttribute {{else}}{{#if (addValidAnnotation
-  this.requestBody.content)}}@Valid {{/if~}}@RequestBody {{/if~}} {{{resolve-body this.requestBody.content actionName}}} {{toCamelCase actionName}}Request{{/if}}{{~#if (and requestBody
+  this.requestBody.content)}}@Valid {{/if~}}@RequestBody {{/if~}} {{{resolve-body this.requestBody actionName}}} {{{resolve-body-name this.requestBody actionName}}}{{/if}}{{~#if (and requestBody
   requestParams)}}, {{else}}{{#if (and pathVariables requestBody)}}, {{/if~}}{{/if~}}
   {{#each requestParams}}@RequestParam({{#if this.value}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}}, {{/if~}}{{/each}}{{#if (and pathVariables requestParams)}}, {{/if~}}
   {{#each pathVariables}}@PathVariable({{#if (this.value)}}value = "{{this.value}}"{{else}}value = "{{this.name}}"{{/if~}}{{#if (not this.isRequired)}}, required = false{{/if~}}) {{resolve-type this}} {{this.name}}{{#if @last}}{{else}},{{/if~}}{{/each}}{{#if (and pathVariables multipartFiles)}}, {{else}}

@@ -24,7 +24,7 @@ public class {{resourceConfig.name}}Service implements I{{resourceConfig.name}}S
 
   {{#each resourceConfig.actions}}
   @Override
-  public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{~#if requestBody}}{{{resolve-body this.requestBody.content actionName}}} {{toCamelCase actionName}}Request{{/if~}}
+  public ResponseEntity<{{{resolveResponse this.responses}}}> {{actionName}}({{~#if requestBody}}{{{resolve-body this.requestBody actionName}}} {{{resolve-body-name this.requestBody actionName}}}{{/if~}}
     {{~#if requestBody}}{{~#if (or modelAttribute pathVariables requestParams)}}, {{/if~}}{{/if~}}
     {{~#if modelAttribute}}{{normalizeDto modelAttribute.name}} {{toCamelCase modelAttribute.name}}{{/if~}}{{~#if modelAttribute}}{{~#if (or pathVariables requestParams)}}, {{/if~}}{{/if~}}
     {{~#if requestParams}}{{#each requestParams}}{{resolve-type this}} {{this.name}}{{~#if @last}}{{else}},

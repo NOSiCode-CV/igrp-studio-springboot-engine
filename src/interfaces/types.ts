@@ -338,7 +338,6 @@ export type RenderContext<T = undefined> = {
 };
 
 export interface SchemaField {
-  name?: string
   type: string;
   objectType?: string;
   module?: string;
@@ -367,6 +366,7 @@ export interface PropertySchemaField extends SchemaField {
 }
 
 export interface BaseBody extends IdentifiableElement {
+  name?: string;
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
   };

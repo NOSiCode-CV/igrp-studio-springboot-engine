@@ -25,11 +25,6 @@ import { relationSchema } from './modelConfig';
 const schemaField: JSONSchemaType<SchemaField> = {
   type: "object",
   properties: {
-    name: {
-      type: "string",
-      nullable: true,
-      errorMessage: "The 'name' field, if provided, must be a string.",
-    },
     type: {
       type: "string",
       nullable: false,
@@ -135,11 +130,6 @@ const schemaEnum: JSONSchemaType<SchemaEnum> = {
 const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
   type: 'object',
   properties: {
-    name: {
-      type: "string",
-      nullable: true,
-      errorMessage: "The 'name' field, if provided, must be a string.",
-    },
     type: {
       type: 'string',
       nullable: false,
@@ -319,6 +309,12 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
       type: "string",
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
+    },
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
     },
     content: {
       type: "object",

@@ -170,10 +170,17 @@ export const transformSchemaDTOConfig = async function (
 
   const config = action.requestBody!;
 
+
+
+  const name: string = action.requestBody?.name ?? action.actionName;
+
+  //console.log('name::  ' + name);
+
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'dto',
-    name: capitalize(action.actionName) + "Request",
+    // name: capitalize(action.actionName) + "Request",
+    name: capitalize(name),
     template: 'classic',
     module: DIRECTORIES.SHARED,
     attributes: []
@@ -278,13 +285,16 @@ export const transformSchemaDTOConfig = async function (
       regex: attr.pattern,
       isEmail: attr.format === 'email',
       isUrl: attr.format === 'url',
-      primaryKey: attr.identifier ?? false
+      primaryKey: attr.identifier ?? false,
+      collectionType: attr.collectionType
     })
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(capitalize(action.actionName) + "Request", 'dto')
+  // ncfg.name = normalizeName(capitalize(action.actionName) + "Request", 'dto')
+  ncfg.name = normalizeName(capitalize(name), 'dto')
 
+  //console.log(' ncfg.name: ' + ncfg.name);
   // the action identifier
   ncfg.id = bodyCfg.id
 

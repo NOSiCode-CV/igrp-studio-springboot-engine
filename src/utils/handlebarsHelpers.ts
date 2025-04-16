@@ -151,8 +151,10 @@ Handlebars.registerHelper(
             action.requestBody.content['multipart/form-data']
           ).schema;
 
-
-          processImportsTypes(schema, imports, group, packageName, domainDriven);
+          /*console.log('here', schema);
+          console.log('-------------------------------------');*/
+          const name = action.requestBody?.name ?? action.actionName;
+          processImportsTypes(schema, imports, group, packageName, domainDriven, name, moduloAction);
 
           if (action.modelAttribute) {
             if (domainDriven) {
@@ -232,8 +234,6 @@ function processImportsTypes(schema: SchemaField, imports: string[], group: stri
       imports.push(importValue);
     }
   }
-
-  //type object its only implemented in response
   if (schemaType === 'object' && name) {
 
     const responseName = capitalize(name || '');
@@ -589,7 +589,7 @@ Handlebars.registerHelper('addValidAnnotation', (content: { [p: string]: SchemaC
 });
 
 
-Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }, name?: string): string => {
+/*Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }, name?: string): string => {
   if (!content) return '';
 
   const jsonContent = content['application/json'] ?? content['multipart/form-data'];
@@ -600,9 +600,7 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   let resolvedType: string;
 
   if (schema.type === 'object') {
-    // TODO: implementar resolução do tipo 'object'
-    console.log('name::', name);
-    console.log('------------------------------------------------------');
+
     resolvedType = formatTypeName(name);
   } else {
     if (schema.objectType === 'dto') {
@@ -615,9 +613,9 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   const responseCollectionType: string = schema.collectionType ?? 'none';
 
   return wrapCollectionType(resolvedType, responseCollectionType);
-});
+});*/
 
-/*Handlebars.registerHelper('resolve-body1', (pRequestBody: BaseBody): string => {
+Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: string): string => {
   if (!pRequestBody) return '';
   if (!pRequestBody.content) return '';
 
@@ -631,7 +629,7 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   let resolvedType: string;
 
   if (schema.type === 'object') {
-    resolvedType = formatTypeName(pRequestBody.name);
+    resolvedType = formatTypeName(pRequestBody?.name ?? actionName);
 
   } else {
     if (schema.objectType === 'dto') {
@@ -644,7 +642,35 @@ Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent
   const responseCollectionType: string = schema.collectionType ?? 'none';
 
   return wrapCollectionType(resolvedType, responseCollectionType);
-});*/
+});
+
+Handlebars.registerHelper('resolve-body-name', (pRequestBody: BaseBody, actionName: string): string => {
+  if (!pRequestBody) return '';
+  if (!pRequestBody.content) return '';
+
+  const content = pRequestBody.content;
+
+  const jsonContent = content['application/json'] ?? content['multipart/form-data'];
+  if (!jsonContent || !jsonContent.schema) return '';
+
+  const schema = jsonContent.schema;
+
+  let resolvedName: string;
+
+  if (schema.type === 'object') {
+
+    resolvedName = formatTypeName(pRequestBody?.name) ?? actionName.concat('Request');
+
+  } else {
+    if (schema.objectType === 'dto') {
+      resolvedName = formatTypeName(pRequestBody?.name ?? actionName.concat('Request'));
+    } else {
+      resolvedName = pRequestBody?.name ?? actionName.concat('Request');
+    }
+  }
+
+  return toFullCamelCaseFromSnakeCase(resolvedName);
+});
 
 
 Handlebars.registerHelper('addPropPageable', function (context): boolean {
