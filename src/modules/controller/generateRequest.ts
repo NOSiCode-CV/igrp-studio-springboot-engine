@@ -59,6 +59,8 @@ import { getEnumTypes } from '../enum/helpers';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
 
+  const dtoConfigMap = new Map<string, RenderContext<DTOConfig>>();
+
   for (const action of context.resourceConfig.actions) {
     const requestBody = action.requestBody;
     if (!requestBody) continue;
@@ -75,14 +77,17 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     //if (isObjectType) continue;
 
     const isTypeObject = bodyContent?.schema?.type;
+
     if (isTypeObject !== 'object') {
       continue;
     }
 
+
     const transformedConfig = await transformSchemaDTOConfig(
       action,
       context.baseConfig,
-      context.basePath
+      context.basePath,
+      context.resourceConfig.module
     );
 
     const dtoContext: RenderContext<DTOConfig> = {
@@ -107,8 +112,11 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
       context.basePath
     );
 
-    return dtoContext;
+    dtoConfigMap.set(action.actionName, dtoContext)
+    // return dtoContext;
   }
+
+  return dtoConfigMap;
 };
 
 
@@ -166,6 +174,7 @@ export const transformSchemaDTOConfig = async function (
   action: ControllerAction,
   api: ApiConfig,
   basePath: string,
+  module?: string
 ): Promise<DTOConfig> {
 
   const config = action.requestBody!;
@@ -180,9 +189,9 @@ export const transformSchemaDTOConfig = async function (
   const ncfg: DTOConfig = {
     type: 'dto',
     // name: capitalize(action.actionName) + "Request",
-    name: capitalize(name),
+    name: name,
     template: 'classic',
-    module: DIRECTORIES.SHARED,
+    module: module ?? DIRECTORIES.SHARED,
     attributes: []
   };
   const schemacfg = bodyCfg.content["application/json"]?.schema ?? bodyCfg.content["multipart/form-data"]?.schema

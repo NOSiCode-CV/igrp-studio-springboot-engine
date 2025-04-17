@@ -498,6 +498,8 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
+  //console.log('config: ', config)
+
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
@@ -1091,7 +1093,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
   await generateController(context);
 
-  const requestConfig = await generateRequest(context);
+  //const requestConfig = await generateRequest(context);
+
+  const requestConfigMap = await generateRequest(context);
 
   await generateResponses(context);
 
@@ -1120,16 +1124,19 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
           required: false,
           collectionType,
         }];
-      } else if (requestConfig) {
-        const resource = requestConfig.resourceConfig;
-        requestBodyAttributes = [{
-          name: resource.name.toLowerCase(),
-          type: normalizeName(resource.name, 'dto') + 'DTO',
-          objectType: 'dto',
-          module: resource.module ?? DIRECTORIES.SHARED,
-          required: false,
-          collectionType
-        }];
+      } else if (requestConfigMap) {
+        const actionName = act.actionName;
+        const resource = requestConfigMap.get(actionName)?.resourceConfig;
+        if (resource) {
+          requestBodyAttributes = [{
+            name: resource.name,
+            type: 'object',
+            objectType: 'dto',
+            module: resource.module ?? DIRECTORIES.SHARED,
+            required: false,
+            collectionType
+          }];
+        }
       }
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
@@ -1186,8 +1193,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
           ]
 
       }
-
-      //console.log('requestBodyAttributes: ', requestBodyAttributes);
 
       const attributes = [
         ...requestBodyAttributes,

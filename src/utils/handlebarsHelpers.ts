@@ -18,6 +18,7 @@ import {
   DIRECTORIES,
   GENERIC_IMPORTS,
   GENERIC_TYPES,
+  PACKAGE_NS,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
@@ -336,13 +337,28 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
   for (const attr of config.attributes) {
-    const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module).get(
-      attr.objectType,
-    );
 
-    if (objectImports) {
-      imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
-      continue;
+    if (attr.type != 'object') {
+      const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module).get(
+        attr.objectType,
+      );
+
+      if (objectImports) {
+        imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
+        continue;
+      }
+    }
+
+    if (attr.type === 'object') {
+      const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.name, attr.module).get(
+        attr.objectType,
+      );
+
+
+      if (objectImports) {
+        imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
+        continue;
+      }
     }
 
     const genType = GENERIC_TYPES.get(attr.type);
@@ -382,7 +398,7 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
     .join('\n');
 });
 
-Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
+/*Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   if (!t1.type) return t1.type;
 
   const attributeType =
@@ -395,7 +411,30 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
 
   return rtype;
+});*/
+
+
+Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
+  if (!t1.type) return t1.type;
+
+  let attributeType: string;
+
+  if (t1.type === 'object') {
+    attributeType = normalizeName(t1.name, 'dto') + 'DTO'
+  } else {
+    // Caso contrário, usa o tipo genérico se existir
+    attributeType =
+      GENERIC_TYPES.get(t1.type)?.java.name ??
+      (t1.objectType === 'dto' ? normalizeName(t1.type, 'dto') + 'DTO' : t1.type);
+  }
+
+  const rtype = wrapCollectionType(attributeType, t1.collectionType);
+
+  return rtype;
 });
+
+
+
 
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
   const imports = new Set();
@@ -647,6 +686,8 @@ Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: 
     }
   }
 
+  //console.log('resolvedType: ', resolvedType);
+
   const responseCollectionType: string = schema.collectionType ?? 'none';
 
   return wrapCollectionType(resolvedType, responseCollectionType);
@@ -667,11 +708,11 @@ Handlebars.registerHelper('resolve-body-name', (pRequestBody: BaseBody, actionNa
 
   if (schema.type === 'object') {
 
-    resolvedName = formatTypeName(pRequestBody?.name) ?? actionName.concat('Request');
+    resolvedName = pRequestBody?.name ? formatTypeName(pRequestBody.name) : actionName.concat('Request');
 
   } else {
     if (schema.objectType === 'dto') {
-      resolvedName = formatTypeName(pRequestBody?.name ?? actionName.concat('Request'));
+      resolvedName = pRequestBody?.name ? formatTypeName(pRequestBody.name) : actionName.concat('Request');
     } else {
       resolvedName = pRequestBody?.name ?? actionName.concat('Request');
     }
