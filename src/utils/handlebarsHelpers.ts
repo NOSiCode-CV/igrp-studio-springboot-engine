@@ -10,6 +10,7 @@ import {
   JavaAttribute,
   ModelConfig,
   Relation,
+  RequestParams,
   ResponseConfig,
   SchemaContent,
   SchemaField,
@@ -163,6 +164,7 @@ Handlebars.registerHelper(
           /*console.log('here', schema);
           console.log('-------------------------------------');*/
           const name = action.requestBody?.name ?? action.actionName;
+
           processImportsTypes(schema, imports, group, packageName, domainDriven, name, moduloAction);
 
           if (action.modelAttribute) {
@@ -197,6 +199,19 @@ Handlebars.registerHelper(
 
 
         }
+
+      const reqParam: RequestParams[] = action.requestParams ? action.requestParams : [];
+      if (reqParam) {
+        console.log(reqParam);
+
+        reqParam.forEach(atrr => {
+          const genType = GENERIC_TYPES.get(atrr.type);
+
+          if (genType?.java.namespace) {
+            imports.push(`import ${genType?.java.namespace}.${genType?.java.name};`);
+          }
+        })
+      }
     }
 
     return [...new Set(imports)].join('\n');
