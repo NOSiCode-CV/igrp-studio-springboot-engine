@@ -180,10 +180,8 @@ export const transformSchemaDTOConfig = async function (
   const config = action.requestBody!;
 
 
-
   const name: string = action.requestBody?.name ?? action.actionName;
 
-  //console.log('name::  ' + name);
 
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {

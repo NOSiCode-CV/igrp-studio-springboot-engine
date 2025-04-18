@@ -161,8 +161,10 @@ Handlebars.registerHelper(
             action.requestBody.content['multipart/form-data']
           ).schema;
 
-          /*console.log('here', schema);
-          console.log('-------------------------------------');*/
+
+          // Ensure that the value is not the string "undefined"
+          ensureItsNotStringUndefined(action.requestBody);
+
           const name = action.requestBody?.name ?? action.actionName;
 
           processImportsTypes(schema, imports, group, packageName, domainDriven, name, moduloAction);
@@ -202,7 +204,7 @@ Handlebars.registerHelper(
 
       const reqParam: RequestParams[] = action.requestParams ? action.requestParams : [];
       if (reqParam) {
-        console.log(reqParam);
+        //console.log(reqParam);
 
         reqParam.forEach(atrr => {
           const genType = GENERIC_TYPES.get(atrr.type);
@@ -218,6 +220,11 @@ Handlebars.registerHelper(
 
   }
 );
+
+function ensureItsNotStringUndefined(reqBody: BaseBody) {
+  if (reqBody?.name)
+    reqBody.name = reqBody.name.trim().toLowerCase() === "undefined" ? undefined : reqBody.name;
+}
 
 function processImportsTypes(schema: SchemaField, imports: string[], group: string,
   packageName: string, domainDriven?: boolean, name?: string, moduloContext?: string): string[] {
@@ -688,6 +695,9 @@ Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: 
 
   const schema = jsonContent.schema;
 
+  // Ensure that the value is not the string "undefined"
+  ensureItsNotStringUndefined(pRequestBody);
+
   let resolvedType: string;
 
   if (schema.type === 'object') {
@@ -718,6 +728,12 @@ Handlebars.registerHelper('resolve-body-name', (pRequestBody: BaseBody, actionNa
   if (!jsonContent || !jsonContent.schema) return '';
 
   const schema = jsonContent.schema;
+
+  // Ensure that the value is not the string "undefined"
+  ensureItsNotStringUndefined(pRequestBody);
+
+  if (pRequestBody?.name)
+    pRequestBody.name = pRequestBody.name.trim().toLowerCase() === "undefined" ? undefined : pRequestBody.name;
 
   let resolvedName: string;
 
