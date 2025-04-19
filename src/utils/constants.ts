@@ -982,6 +982,7 @@ export const SCHEMA_TYPES = [
   'integer',
   'boolean',
   'object',
+  'binary',
   'Reference other Object',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];
