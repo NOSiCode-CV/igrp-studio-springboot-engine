@@ -441,7 +441,7 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
 
   let attributeType: string;
 
-  if (t1.type === 'object') {
+  if (t1.type === 'object' && t1.objectType === 'dto') {
     attributeType = normalizeName(t1.name, 'dto') + 'DTO'
   } else {
     // Caso contrário, usa o tipo genérico se existir
