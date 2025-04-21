@@ -19,9 +19,9 @@ export const saveBaseTestApiFileConfig = async (context: RenderContext) => {
 
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
-  context.baseConfig.name = capitalize(context.baseConfig.apiName);
+  context.baseConfig.name = capitalize(context.baseConfig.name);
   context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
-  const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
+  const name = `${capitalize(context.baseConfig.name)}${APPLICATION_SUFFIX}`;
 
   const testPath =
     path.join(
@@ -32,7 +32,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   context.fullPath = testPath;
 
   return [
-    { output: testPath, template: TEMPLATES.APPLICATION_TEST, name: apiName },
+    { output: testPath, template: TEMPLATES.APPLICATION_TEST, name: name },
   ];
 
 };

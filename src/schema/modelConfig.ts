@@ -106,6 +106,12 @@ export const relationSchema: JSONSchemaType<Relation> = {
       pattern: PATTERNS.RELATIONS_PATTERN,
       errorMessage: 'The inverseJoinColumn field, if provided, must be a valid string following the naming convention.'
     },
+    joinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.RELATIONS_PATTERN,
+      errorMessage: 'The joinColumn field, if provided, must be a valid string following the naming convention.'
+    },
     module: {
       type: "string",
       nullable: true,
@@ -152,6 +158,12 @@ const relationReferenceSchema: JSONSchemaType<RelationReference> = {
       nullable: true,
       pattern: PATTERNS.PARAMS_VALIDATION,
       errorMessage: 'The fieldName field, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
+    },
+    joinColumn: {
+      type: "string",
+      nullable: true,
+      pattern: PATTERNS.PARAMS_VALIDATION,
+      errorMessage: 'The joinColumn field, cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.'
     },
     mappedBy: {
       type: "string",
@@ -284,7 +296,7 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
     },
     permissions: {
       type: 'array',
-      items: {type: 'string'}
+      items: { type: 'string' }
     }
   },
   required: ['method', 'permissions'],
@@ -294,12 +306,12 @@ const permissionSchema: JSONSchemaType<IModelPermission> = {
 const crudSchema: JSONSchemaType<Crud> = {
   type: "object",
   properties: {
-    enabled: { 
+    enabled: {
       type: "boolean",
       errorMessage: 'The enabled property must be a boolean value.'
     },
-    path: { 
-      type: "string", 
+    path: {
+      type: "string",
       pattern: PATTERNS.PATH_VALIDATION,
       errorMessage: 'The path must contain only alphabetic characters and cannot contain spaces or special characters.'
     },
@@ -308,11 +320,11 @@ const crudSchema: JSONSchemaType<Crud> = {
       items: permissionSchema,
       nullable: true
     },
-    
-    disabledMethods: { 
-      type: "array", 
-      items: { 
-        type: "string", 
+
+    disabledMethods: {
+      type: "array",
+      items: {
+        type: "string",
         enum: CRUD_DISABLED_OPTIONS,
         errorMessage: `Each disabled method must be one of the following: ${CRUD_DISABLED_OPTIONS}.`
       },
@@ -334,12 +346,12 @@ const crudSchema: JSONSchemaType<Crud> = {
 const primaryKeySchema: JSONSchemaType<PrimaryKey> = {
   type: "object",
   properties: {
-    type: { 
+    type: {
       type: "string",
       enum: GENERIC_ATTRIBUTE_TYPES,
       errorMessage: `The attribute type must be one of ${GENERIC_ATTRIBUTE_TYPES} and cannot be empty.`
     },
-    name: { 
+    name: {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
@@ -431,8 +443,8 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       const: "model",
       errorMessage: 'The type must be "model".'
     },
-    name: { 
-      type: "string", 
+    name: {
+      type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
     },
@@ -440,19 +452,19 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
       type: "string",
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The table name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
-    }, 
+    },
     primaryKey: {
       type: 'array',
       nullable: true,
       items: primaryKeySchema,
       errorMessage: 'The primary key attribute must be provided.'
     },
-    attributes: { 
-      type: "array", 
+    attributes: {
+      type: "array",
       items: attributeSchema,
       errorMessage: 'The attributes must be an array of valid attribute definitions.'
     },
-    crud: { 
+    crud: {
       type: "boolean",
       nullable: true,
       errorMessage: 'If provided, the CRUD configuration must be a boolean.'

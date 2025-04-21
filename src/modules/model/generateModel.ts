@@ -1,8 +1,8 @@
-import { Attribute, ModelConfig, RenderContext } from '../../interfaces/types';
+import { Attribute, ModelConfig, RemovedRelationReference, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDModelOutputDir, getModelOutputDir } from '../../utils/helpers';
+import { getDDDModelOutputDir, getModelConfigPath, getModelOutputDir, loadModelConfig } from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
 import { updatePermissions } from '../permission/permissionManagement';
@@ -12,7 +12,7 @@ import { capitalizeJavaStyle } from '../../helper/stringHelper';
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
 
-  if(context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(context);
   else
     modelOutputPath = getModelOutputPath(context);
@@ -25,6 +25,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     throw new Error(`Unique constraint errors found:\n${errorsUniqueConstraints.join('\n')}`);
   }
 
+
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     // Before creating the model with the new configuration, the engine checks if a model directory already exists.
     // If it does, the old model directory will be deleted to ensure a clean setup for the new model.
@@ -32,7 +33,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
   }
 
-  const {primaryKey} = context.resourceConfig
+  const { primaryKey } = context.resourceConfig
 
   if (primaryKey) {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
@@ -40,9 +41,13 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     await saveToFile(primaryKeyTemplate, primaryKeyPath);
   }
 
+  //finding remove relations before saving
+  await findRemovedRelations(context);
+
   await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
 
   await saveModelConfig(context.resourceConfig, context.basePath);
+
 
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created model has the correct access rights configured 
@@ -50,6 +55,104 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   await updatePermissions(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath, context.resourceConfig.type);
 
 };
+
+async function findRemovedRelations(context: RenderContext<ModelConfig>) {
+
+  const modulo = context.resourceConfig.module ?? DIRECTORIES.SHARED;
+  const modelPath = getModelConfigPath(modulo, context.resourceConfig.name, context.basePath);
+  const modelExists = await fs.pathExists(modelPath);
+  //console.log('modelPath:: ', modelPath)
+  const removedRelations: RemovedRelationReference[] = [];
+  //console.log('---------------------------------------------------------------------')
+  if (modelExists) {
+    const modelDirPath = path.dirname(modelPath);
+    const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
+    const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
+
+    // console.log('old model:: ', oldModel)
+    // console.log('---------------------------------------------------------------------')
+    // console.log('new Model:: ', newModel)
+
+    for (const oldAttr of oldModel.attributes) {
+
+      if (oldAttr.type === 'relation' && oldAttr.relation) {
+        const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
+
+        if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
+          const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
+          const removedRelation: RemovedRelationReference = {
+            entity: oldAttr.relation.entity,
+            module: modulo
+          };
+          removedRelations.push(removedRelation);
+        }
+      }
+    }
+  }
+
+  // console.log('removedRelations : ', removedRelations);
+
+  if (removedRelations.length > 0) {
+    for (const removedRelation of removedRelations) {
+      await removeRelationFromModel(context, removedRelation, context.resourceConfig.name);
+    }
+  }
+
+
+};
+
+
+async function removeRelationFromModel(
+  context: RenderContext<ModelConfig>,
+  removedRelationReference: RemovedRelationReference,
+  modelToRemoveRelation: string
+) {
+
+  let modelOutputPath: string;
+  const modelName = removedRelationReference.entity;
+  const moduleName = removedRelationReference.module;
+
+  const modelPath = getModelConfigPath(moduleName, modelName, context.basePath);
+  const modelDirPath = path.dirname(modelPath);
+  const modelExists = await fs.pathExists(modelPath);
+
+
+  if (!modelExists) {
+    throw new Error(`relation reference model '${modelName}' not found in path ${modelPath}`);
+  }
+
+  const config = await loadModelConfig<ModelConfig>(modelDirPath, modelName);
+
+  // Remove relações com a entidade informada
+  if (config.relationReference && Array.isArray(config.relationReference)) {
+    config.relationReference = config.relationReference.filter(
+      (rel) => rel.entity !== modelToRemoveRelation
+    );
+  }
+
+  const relationReferenceContext: RenderContext<ModelConfig> = {
+    ...context,
+    resourceConfig: config
+  };
+
+  //console.log('relationReferenceContext: ', relationReferenceContext);
+
+  //await fs.writeJSON(modelPath, config, { spaces: 2 });
+  if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    modelOutputPath = getDDDModelOutputPath(relationReferenceContext);
+  else
+    modelOutputPath = getModelOutputPath(relationReferenceContext);
+
+  const template = await renderModel(relationReferenceContext);
+
+  await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, relationReferenceContext.resourceConfig.id, relationReferenceContext.resourceConfig.module, relationReferenceContext.basePath);
+
+  await saveModelConfig(relationReferenceContext.resourceConfig, relationReferenceContext.basePath);
+
+  /*console.log(
+    `Relações com a entidade '${modelToRemoveRelation}' removidas do modelo '${modelName}' e arquivo salvo com sucesso.`
+  );*/
+}
 
 /**
  * Generates the model in the API using the provided configuration.
@@ -106,7 +209,7 @@ const dateTimeUniqueAttributes = (attributes: Attribute[]) => {
 const mathUniquesAttributes = (attributes: Attribute[]) => {
   let mathAttributes: string[] = [];
   attributes.forEach(attribute => {
-    if (attribute.type === "BigInteger" || attribute.type === "BigDecimal"){
+    if (attribute.type === "BigInteger" || attribute.type === "BigDecimal") {
       mathAttributes.push(attribute.type)
     }
   })
@@ -185,7 +288,7 @@ const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) => {
 }
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const outputDir = getDDDModelOutputDir(context)
     context.fullPath = outputDir
     return path.join(
@@ -204,7 +307,7 @@ const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
 }
 
 const modelDirectory = (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const outputDir = getDDDModelOutputDir(context)
     context.fullPath = outputDir
     return path.join(outputDir);
@@ -215,3 +318,5 @@ const modelDirectory = (context: RenderContext<ModelConfig>) => {
     return path.join(outputDir);
   }
 }
+
+

@@ -28,6 +28,7 @@ public class {{resourceConfig.name}}DTO {
   @{{this.annotation}}
   {{/each}}
   {{{resolve-annotations this}}}
+  {{{is-nested-object this}}}
   private {{{resolve-type this}}} {{this.name}};
 {{/each}}
 

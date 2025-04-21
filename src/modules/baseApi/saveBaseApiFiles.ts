@@ -30,9 +30,9 @@ export const saveFileConfig = async (context: RenderContext) => {
 
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
-  context.baseConfig.name = capitalize(context.baseConfig.apiName);
+  context.baseConfig.name = capitalize(context.baseConfig.name);
   context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
-  const apiName = `${capitalize(context.baseConfig.apiName)}${APPLICATION_SUFFIX}`;
+  const name = `${capitalize(context.baseConfig.name)}${APPLICATION_SUFFIX}`;
 
   const resourcePath = path.join(context.basePath, DIRECTORIES.RESOURCES);
 
@@ -76,7 +76,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     }
 
     files.push(
-      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: name },
 
       { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
@@ -185,7 +185,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
     files.push(
 
-      { output: mainPath, template: TEMPLATES.APPLICATION, name: apiName },
+      { output: mainPath, template: TEMPLATES.APPLICATION, name: name },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },

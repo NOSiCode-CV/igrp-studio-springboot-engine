@@ -47,22 +47,22 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
   let tn;
-  
+
   switch (context.resourceConfig.type) {
     case "dto":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
     case "response":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
       else
         tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
     case "filter":
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_FILTER;
       else
         tn = TEMPLATES.DOMAIN_FILTER;
@@ -86,7 +86,7 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
       tn = TEMPLATES.DDD_DOMAIN_ENTITY_DTO[context.resourceConfig.template];
       break;*/
   }
-  
+
   if (!tn) {
     throw ERROR_MESSAGE.TEMPLATE_NAME_NOT_REGISTERED;
   }
@@ -127,7 +127,7 @@ export const transformDTOConfig = async function (
       }
       const mt = mtypes.get(type.name);
       if (mt) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.domain.${PACKAGES.MODELS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.MODELS}`;
@@ -135,7 +135,7 @@ export const transformDTOConfig = async function (
       } else {
         typeNotFound = true;
       }
-    } else if (attr.objectType === PACKAGE_NS.dto) {
+    } else if (attr.objectType === PACKAGE_NS.dto && attr.type != 'object') {
 
       dtypes = await getDTOTypes(attr.module ?? config.module ?? DIRECTORIES.SHARED, basePath);
 
@@ -144,13 +144,13 @@ export const transformDTOConfig = async function (
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
         const dtype = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
-        if(!dtype) {
-            typeNotFound = true;
+        if (!dtype) {
+          typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.DTO}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
@@ -167,20 +167,24 @@ export const transformDTOConfig = async function (
       if (!et) {
         etypes = await getEnumTypes(DIRECTORIES.SHARED, basePath);
         const etype = etypes.get(type.name);
-        if(!etype) {
+        if (!etype) {
           typeNotFound = true;
         }
       }
 
-      if(!typeNotFound) {
-        if(api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN){
+      if (!typeNotFound) {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
           type.namespace = `${getPackageNameFromConfig(api)}.${config.module ?? DIRECTORIES.SHARED}.application.${PACKAGES.CONSTANTS}`;
         } else {
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
 
-    } else {
+    }
+    else if (attr.objectType === PACKAGE_NS.dto && attr.type === 'object') {
+      typeNotFound = false;
+    }
+    else {
       typeNotFound = true;
     }
 

@@ -1,12 +1,12 @@
 
 import { newApi } from '../src';
-import { BaseApiConfig } from '../src/interfaces/types';
+import { ApiConfig, BaseApiConfig } from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR_OTHER } from './outputDirPath';
+import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR } from './outputDirPath';
 
 const domainApiConfig: BaseApiConfig = {
   type: 'springboot',
-  apiName: 'demoDomain',
+  name: 'demoDomain',
   group: 'com.petshop',
   artifact: 'animals',
   description: 'Demo project for Spring Boot',
@@ -20,7 +20,7 @@ const domainApiConfig: BaseApiConfig = {
 
 const technicalApiConfig: BaseApiConfig = {
   type: 'springboot',
-  apiName: 'demoTechnical',
+  name: 'demoTechnical',
   group: 'cv.nosi',
   artifact: 'users',
   description: 'Demo project for Spring Boot',
@@ -31,6 +31,21 @@ const technicalApiConfig: BaseApiConfig = {
   igrpCoreVersion: "0.0.1-alpha",
   enableGraalVm: true
 };
+
+const testApiConfig: BaseApiConfig = {
+  type: "springboot",
+  name: "igrp_platform_access_management",
+  group: "cv.igrp.platform",
+  artifact: "access-management",
+  database: "Postgresql",
+  description: "IGRP Platform Access Management",
+  projectStructureStyle: "domain",
+  enableObservability: true,
+  enableEntityRevision: true,
+  igrpCoreVersion: "0.0.1-alpha",
+  springBootVersion: "3.4.3",
+  enableGraalVm: true
+}
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -48,7 +63,7 @@ describe('New API Module', () => {
   });*/
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR_OTHER);
+    await newApi(testApiConfig, TEST_OUTPUT_DIR);
   });
 
 });

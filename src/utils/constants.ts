@@ -504,7 +504,7 @@ export const PATTERNS = {
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
   PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_/]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
-  PATH_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_{}/-]*$',
+  PATH_PATTERN: '^$|^/?[A-Za-z_{][A-Za-z0-9_{}/-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
   PARAMS_VALIDATION: '^[a-zA-Z0-9_]+$',
   PATH_VALIDATION: '^[a-zA-Z_/]+$',
@@ -982,6 +982,7 @@ export const SCHEMA_TYPES = [
   'integer',
   'boolean',
   'object',
+  'binary',
   'Reference other Object',
 ] as const;
 export const REQUEST_BODY_NOT_IMPORT = ['String', 'Integer', 'Boolean', 'Object'];

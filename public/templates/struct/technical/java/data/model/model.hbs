@@ -65,60 +65,60 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot~}}{{/if}}{{/if}}
 
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne')}}
-    @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.mappedBy}},mappedBy="{{this.relation.mappedBy}}"{{/if}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
+    @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
     @JoinColumn(name = "{{toLowerCase this.name}}", unique = true{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
     private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'OneToMany') ~}}
-    @OneToMany(mappedBy = "{{this.relation.mappedBy}}", fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
+    @OneToMany(mappedBy = "{{toFullCamelCaseFromSnakeCase this.relation.mappedBy}}", fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
     private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToOne') ~}}
-    @ManyToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
+    @ManyToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}){{#if this.name}}
     @JoinColumn(name = "{{toLowerCase this.name}}"{{#if this.relation.referencedColumnName}}, referencedColumnName = "{{this.relation.referencedColumnName}}"{{/if}}){{/if}}
-    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#ifNot this.relation.mappedBy}}
-    @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.relation.joinTable}}
+    private {{capitalize this.relation.entity}} {{#if this.relation.fieldName}}{{toFullCamelCaseFromSnakeCase this.relation.fieldName}}{{else}}{{toFullCamelCaseFromSnakeCase this.name}}{{/if}};{{else if (eq this.relation.type 'ManyToMany') ~}}{{#if this.relation.inverseJoinColumn}}
+    @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}){{#if this.relation.joinTable}}
     @JoinTable(
             name = "{{this.relation.joinTable}}"{{#if this.name}},
-            joinColumns = @JoinColumn(name = "{{toLowerCase this.name}}"){{/if}}{{#if this.relation.inverseJoinColumn}},
+            joinColumns = @JoinColumn(name = "{{toLowerCase ../resourceConfig.name}}_id"){{/if}}{{#if this.relation.inverseJoinColumn}},
             inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
     ){{/if}}
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private List<{{capitalize this.relation.entity}}> {{#if this.relation.fieldName}}{{toCamelCase this.relation.fieldName}}{{else}}{{fullCamelCaseAndPluralize this.relation.entity}}{{/if}};{{else}}
-    @ManyToMany(mappedBy = "{{toLowerCase this.relation.mappedBy}}",fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}})
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};{{else}}
+    @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private List<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
-  {{/ifNot~}}
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+  {{/if~}}
   {{/if~}}
   {{/if~}}
   {{/each~}}
 
 {{~#each resourceConfig.relationReference ~}}
   {{#if (eq this.type 'OneToOne') }}
-   @OneToOne(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
-   private {{this.entity}} {{capitalizeJavaStyle this.fieldName}};
+   @OneToOne(mappedBy = "{{toFullCamelCaseFromSnakeCase this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'OneToMany') }}
    @ManyToOne(fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
    @JoinColumn(name = "{{this.fieldName}}")
-   private {{this.entity}} {{capitalizeJavaStyle this.fieldName}};
+   private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'ManyToOne') }}
-   @OneToMany(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}"{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   @OneToMany(mappedBy = "{{toFullCamelCaseFromSnakeCase this.mappedBy}}"{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private List<{{this.entity}}> {{capitalizeJavaStyle this.fieldName}};
+   private List<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'ManyToMany') }}
-   @ManyToMany(mappedBy = "{{capitalizeJavaStyle this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   @ManyToMany(mappedBy = "{{fullCamelCaseAndPluralize this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private List<{{this.entity}}> {{capitalizeJavaStyle this.fieldName}};
+   private Set<{{this.entity}}> {{fullCamelCaseAndPluralize this.entity}};
   {{/if}}
 
 {{/each}}

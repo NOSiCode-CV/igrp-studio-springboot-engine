@@ -60,7 +60,6 @@ management.endpoints.web.exposure.include=*
 management.metrics.tags.application=${spring.application.name}
 management.tracing.enabled=false
 management.tracing.sampling.probability=1.0
-
 {{#if baseConfig.enableGraalVm}}
 # OpenTelemetry
 otel.traces.exporter=otlp
@@ -68,5 +67,14 @@ otel.metrics.exporter=otlp
 otel.service.name=${OTEL_SERVICE_NAME}
 otel.exporter.otlp.endpoint=${OTEL_COLLECTOR_ENDPOINT}
 {{/if}}
+{{/if}}
 
+{{#if baseConfig.enableEntityRevision}}
+# Entity Revision
+# Track entity names modified during a revision
+#spring.jpa.properties.org.hibernate.envers.track_entities_changed_in_revision=true
+# Enable withModifiedFlag globally
+#spring.jpa.properties.org.hibernate.envers.global_with_modified_flag=true
+# Set schema and catalog for audit tables
+#spring.jpa.properties.org.hibernate.envers.default_schema=audit_schema
 {{/if}}

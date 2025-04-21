@@ -132,7 +132,7 @@ export function getPaths(): PathConfig {
  *
  * const config: ApiConfig = {
  *    type: 'springboot',
- *    apiName: 'my_api', // Names with hyphens or spaces are not accepted.
+ *    name: 'my_api', // Names with hyphens or spaces are not accepted.
  *    group: 'cv.example',
  *    artifact: 'demo',
  *    database: 'MySQL', // You can choose between MySQL, Oracle and PostgreSQL
@@ -162,7 +162,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
   const config: ApiConfig = {
     type: baseConfig.type,
-    apiName: baseConfig.apiName,
+    name: baseConfig.name,
     group: baseConfig.group,
     artifact: baseConfig.artifact,
     packageName: normalizePackageName(baseConfig.artifact),
@@ -170,7 +170,6 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     description: baseConfig.description,
     package: baseConfig.package,
     projectStructureStyle: baseConfig.projectStructureStyle,
-    name: baseConfig.name,
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
     igrpCoreVersion: baseConfig.igrpCoreVersion,
@@ -499,13 +498,14 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
+  //console.log('config: ', config)
+
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
     baseConfig,
     fullPath: basePath,
   };
-
   await generateDTO(context);
 
   if (context.resourceConfig.enableCustonValidation) {
@@ -1093,7 +1093,9 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
   await generateController(context);
 
-  const requestConfig = await generateRequest(context);
+  //const requestConfig = await generateRequest(context);
+
+  const requestConfigMap = await generateRequest(context);
 
   await generateResponses(context);
 
@@ -1101,32 +1103,40 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
     const module = context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED;
 
     for (const act of config.actions) {
-      let requestBodyAttributes: JavaAttribute[]
+      const content = act?.requestBody?.content;
+      const schema = content?.['application/json']?.schema ?? content?.['multipart/form-data']?.schema;
 
-      if (
-        act?.requestBody?.content['application/json']?.schema.objectType ??
-        act?.requestBody?.content['multipart/form-data']?.schema.objectType
-      ) {
-        const reqDtoConfig = (await requestDtoConfig(module, context, act))
-        requestBodyAttributes = [
-          {
-            name: reqDtoConfig.name.toLowerCase(),
-            type: normalizeName(reqDtoConfig.name, 'dto') + 'DTO',
+      const objectType = schema?.objectType;
+      const collectionType = schema?.collectionType ?? 'none';
+
+      const type = schema?.type ?? '';
+
+      let requestBodyAttributes: JavaAttribute[] = [];
+
+      if (objectType) {
+        console.log(objectType);
+        const dto = await requestDtoConfig(module, context, act);
+        requestBodyAttributes = [{
+          name: dto.name.toLowerCase(),
+          type: normalizeName(dto.name, 'dto') + 'DTO',
+          objectType: 'dto',
+          module: dto.module ?? DIRECTORIES.SHARED,
+          required: false,
+          collectionType,
+        }];
+      } else if (requestConfigMap) {
+        const actionName = act.actionName;
+        const resource = requestConfigMap.get(actionName)?.resourceConfig;
+        if (resource) {
+          requestBodyAttributes = [{
+            name: resource.name,
+            type: 'object',
             objectType: 'dto',
-            module: reqDtoConfig.module ?? DIRECTORIES.SHARED,
+            module: resource.module ?? DIRECTORIES.SHARED,
             required: false,
-          }
-        ];
-      } else {
-        requestBodyAttributes = requestConfig ? [
-          {
-            name: requestConfig.resourceConfig.name.toLowerCase(),
-            type: normalizeName(requestConfig.resourceConfig.name, 'dto') + 'DTO',
-            objectType: 'dto',
-            module: requestConfig.resourceConfig.module ?? DIRECTORIES.SHARED,
-            required: false,
-          }
-        ] : []
+            collectionType
+          }];
+        }
       }
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
@@ -1159,8 +1169,18 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         }))
         : [];
 
-      let pageable: any[] = []
+      if (schema && type !== 'object' && !objectType) {
+        requestBodyAttributes = [{
+          name: act.actionName.concat('Request'),
+          type: type,
+          objectType: 'java',
+          required: false,
+          module: act.modelAttribute?.module,
+          collectionType,
+        }];
+      }
 
+      let pageable: any[] = []
       if (act.responses) {
         if (isPageable(act.responses))
           pageable = [
@@ -1174,26 +1194,39 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
       }
 
-      const attributes = [...requestBodyAttributes, ...modelAttribute, ...requestParams, ...pathVariables, ...pageable];
+      const attributes = [
+        ...requestBodyAttributes,
+        ...modelAttribute,
+        ...requestParams,
+        ...pathVariables,
+        ...pageable,
+      ];
 
-      await addDTO(
-        {
-          type: act.method === 'GET' ? 'query' : 'command',
-          name: act.actionName,
-          template: 'classic',
-          module: module,
-          attributes: attributes.length > 0 ? attributes : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
-          response: act.responses,
-          // response: capitalizeResponse(act.responses)  // TODO: handle this 06-01-2025
-        } as HandlerConfig,
-        context.basePath,
-      );
+      //console.log('attributes:: ', attributes);
+
+      await addDTO({
+        type: act.method === 'GET' ? 'query' : 'command',
+        name: act.actionName,
+        template: 'classic',
+        module,
+        attributes: attributes.length > 0
+          ? attributes
+          : [{ name: 'none', type: 'object', objectType: 'java', required: false }],
+        response: act.responses,
+      } as HandlerConfig, context.basePath);
     }
   } else {
     await generateServiceInterface(context);
-    if (!customImpl) await generateServiceInmpl(context);
+
+    if (!customImpl) {
+      await generateServiceInmpl(context);
+    }
+
     await generateTestServiceInmpl(context);
   }
+
+
+
 };
 
 
@@ -1210,7 +1243,7 @@ export const addCrudController = async (dirty: CrudControllerConfig, basePath: s
   //config.actions = upperCaseResponse(config.actions);
 
   /*const isConfigValid = validateCrudController(config);
-
+ 
   if (!isConfigValid && validateCrudController.errors) {
     throw validateController.errors;
   }*/

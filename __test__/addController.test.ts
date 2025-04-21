@@ -501,6 +501,41 @@ const technicalControllerConfig: ControllerConfig = {
   ],
 };
 
+const testControllerConfig: ControllerConfig = {
+  "type": "controller",
+  "name": "Resource",
+  "module": "resource",
+  "description": "Resource Management",
+  "basePath": "api",
+  "actions": [
+    {
+      "actionName": "getResources",
+      "path": "resources",
+      "method": "GET",
+      "responses": {
+        "200": {
+          "name": "",
+          "description": "A List Resources",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "ResourceDTO",
+                "objectType": "dto",
+                "collectionType": "list",
+                "module": "resource"
+              }
+            }
+          }
+        }
+      },
+      "requestParams": [],
+      "pathVariables": [],
+      "headers": []
+    }
+  ],
+  "id": "bct780hqlb"
+}
+
 beforeAll(async () => {
   await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
   await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
@@ -522,10 +557,8 @@ describe('Technical Controller Module', () => {
   });
 });
 
-const testControllerConfig: ControllerConfig = {"type":"controller","name":"Todo","module":"todo","description":"My todo","basePath":"api","actions":[{"actionName":"findById","path":"todo","method":"GET","responses":{"200":{"name":"OK","content":{"application/json":{"schema":{"type":"Todo","objectType":"dto","collectionType":"none","module":"todo"}}}}}}],"id":"obtchz9ytq"}
-
 describe('Test Controller Module', () => {
-  it('should create the controller class and the service interface in test', async () => {
+  it('should create the controller class and the service interface in technical style', async () => {
     await addController(testControllerConfig, TEST_OUTPUT_DIR);
   });
 });

@@ -17,7 +17,7 @@ import { checkDependencyInController as checkControllerDependencyEnum } from '..
 import { checkDependencyInModel as checkModelDependencyEnum } from '../enum/checkDependencyInModel';
 import { checkDependencyInDTO as checkDTODependencyResponse } from '../response/checkDependencyInDTO';
 import { checkDependencyInController as checkControllerDependencyResponse } from '../response/checkDependencyInController';
-import { checkDependencyInModel as checkModelDependencyModel } from '../model/checkDependencyInModel';
+import { checkDependencyInModel as checkModelDependencyModel, checkRelationReferences } from '../model/checkDependencyInModel';
 import path from 'path';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { updatePermissions } from '../permission/permissionManagement';
@@ -28,7 +28,7 @@ import { updatePermissions } from '../permission/permissionManagement';
  */
 export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, force: boolean) => {
 
-  if(context.resourceConfig.type === 'dto' || context.resourceConfig.type === 'filter') {
+  if (context.resourceConfig.type === 'dto' || context.resourceConfig.type === 'filter') {
 
     if (!force) {
       await checkDependencyInDTO(context);
@@ -53,9 +53,9 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
   }
 
-  if(context.resourceConfig.type === 'enum') {
+  if (context.resourceConfig.type === 'enum') {
 
-    if(!force) {
+    if (!force) {
       await checkDTODependencyEnum(context)
       await checkModelDependencyEnum(context)
       await checkControllerDependencyEnum(context)
@@ -75,19 +75,20 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
     else throw ERROR_MESSAGE.ENUM_FILE_CONFIG_NOT_FOUNT;
   }
 
-  if(context.resourceConfig.type === 'module') {
+  if (context.resourceConfig.type === 'module') {
     // TODO: not implemented
   }
 
-  if(context.resourceConfig.type === 'model') {
+  if (context.resourceConfig.type === 'model') {
 
-    if(!force) {
+    if (!force) {
       await checkModelDependencyModel(context)
+      await checkRelationReferences(context);
     }
 
     let modelPath;
 
-    if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
       modelPath = path.join(getDDDModelOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     } else {
       modelPath = getModelOutputDir(context);
@@ -105,7 +106,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
   }
 
-  if(context.resourceConfig.type === 'controller') {
+  if (context.resourceConfig.type === 'controller') {
 
     let controllerPath;
 
@@ -131,7 +132,7 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
   }
 
-  if(context.resourceConfig.type === 'response') {
+  if (context.resourceConfig.type === 'response') {
 
     if (!force) {
       await checkDTODependencyResponse(context);
@@ -154,28 +155,28 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
 const getFilePath = (context: RenderContext<DeleteConfig>) => {
   switch (context.resourceConfig.type) {
-    case "dto" :
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    case "dto":
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
-    case "response" :
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    case "response":
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
-    case "filter" :
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    case "filter":
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
-    case "enum" :
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+    case "enum":
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDEnumOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       else
         return path.join(getEnumOutputDir(context), `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
     default:
-      if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+      if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         return path.join(getDDDDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       else
         return path.join(getDtoOutputDir(context), `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);

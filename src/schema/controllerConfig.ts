@@ -194,7 +194,7 @@ const propertySchemaField: JSONSchemaType<PropertySchemaField> = {
       errorMessage: "The 'format' field, if provided, must be a string.",
     },
     enum: {
-      oneOf: [ schemaEnum ],
+      oneOf: [schemaEnum],
       nullable: true,
       errorMessage: "The 'enum' field, if provided, must be an array of SchemaEnum.",
     },
@@ -310,6 +310,12 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    name: {
+      type: "string",
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.",
+    },
     content: {
       type: "object",
       required: [],
@@ -333,13 +339,13 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
 const pathParamsSchema: JSONSchemaType<RequestParams> = {
   type: 'object',
   properties: {
-    type: { 
-      type: 'string', 
+    type: {
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       enum: PARAMS_TYPES,
       errorMessage: `Param type not valid. It must be one of ${PARAMS_TYPES}`
     },
-    name: { 
+    name: {
       type: 'string', pattern: PATTERNS.PARAMS_VALIDATION,
       errorMessage: 'The param name attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed'
     },
@@ -399,86 +405,6 @@ const headersSchema: JSONSchemaType<HttpHeader> = {
       value: 'The param value is required and must not be empty.',
       isRequired: 'The obligation of the param must be present.'
     }
-  }
-};
-
-const attributeSchema: JSONSchemaType<Attribute> = {
-  type: "object",
-  properties: {
-    type: {
-      type: "string",
-      enum: SCHEMA_TYPES,
-      errorMessage: `The attribute type must be one of ${SCHEMA_TYPES} and cannot be empty.`
-    },
-    name: {
-      type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
-    },
-    length: {
-      type: "number",
-      nullable: true,
-      errorMessage: 'The attribute length must contain only numeric characters and cannot contain spaces or special characters.'
-    },
-    unique: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The unique attribute must be a boolean value if provided.'
-    },
-    skipFieldRevision: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The skip field revision attribute must be a boolean value if provided.'
-    },
-    nullable: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The notNull attribute must be a boolean value if provided.'
-    },
-    defaultValue: {
-      type: "string",
-      nullable: true,
-      errorMessage: 'The defaultValue, if provided, must be a valid string.'
-    },
-    generationType: {
-      type: "string",
-      nullable: true,
-      enum: GENERATION_TYPES,
-      errorMessage: `The generation type, if provided, must be one of ${GENERATION_TYPES}`
-    },
-    primaryKey: {
-      type: "boolean",
-      nullable: true,
-      errorMessage: 'The primary key, if provided, must be a valid boolean.'
-    },
-    objectType: {
-      type: "string",
-      nullable: true,
-      errorMessage: 'The objectType, if provided, must be a valid string.'
-    },
-    relation: {
-      type: "object",
-      nullable: true,
-      oneOf: [
-        relationSchema
-      ],
-      errorMessage: 'The relation, if provided, must be a valid relationship definition.'
-    },
-    module: {
-      type: "string",
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
-    },
-  },
-  required: ["type", "name"],
-  additionalProperties: false,
-  errorMessage: {
-    required: {
-      type: 'The attribute type is required.',
-      name: 'The attribute name is required.'
-    },
-    additionalProperties: 'No additional properties are allowed in the attribute schema.'
   }
 };
 
@@ -600,13 +526,13 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
-    type: { 
-      type: 'string', 
+    type: {
+      type: 'string',
       const: 'controller',
       errorMessage: `The type must be 'controller'.`
     },
-    name: { 
-      type: 'string', 
+    name: {
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The name attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
@@ -616,7 +542,7 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: true,
       errorMessage: 'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.'
     },
-    basePath: { 
+    basePath: {
       type: 'string',
       pattern: PATTERNS.PATH_SLASH_VALIDATION_PATTERN,
       errorMessage: 'The basePath attribute can only contain alphanumeric characters and slash, without spaces or other special characters.'
@@ -626,17 +552,11 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: false,
       errorMessage: 'The description attribute must be a valid string'
     },
-    actions: { 
+    actions: {
       type: 'array',
       items: controllerActionSchema,
       errorMessage: 'The actions array must contain valid controller actions.'
     },
-    attributes: {
-      type: "array",
-      items: attributeSchema,
-      errorMessage: 'The attributes must be an array of valid attribute definitions.',
-      nullable: true
-    }
   },
   required: ['type', 'name', 'basePath', 'actions'],
   additionalProperties: false,

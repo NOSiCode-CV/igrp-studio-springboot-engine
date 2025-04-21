@@ -38,14 +38,13 @@ export interface ApiConfig extends BaseApiConfig {
 export interface BaseApiConfig extends IdentifiableElement {
   type: 'springboot';
   workspaceId?: string;
-  apiName: string;
+  name: string;
   group: string;
   artifact: string;
   database: DatabaseTypes;
   description?: string;
   package?: string;
   projectStructureStyle: ProjectStructureStyle;
-  name?: string;
   enableObservability: boolean;
   enableEntityRevision: boolean;
   igrpCoreVersion: string;
@@ -190,6 +189,7 @@ export interface Relation {
   mappedBy?: string;
   module?: string;
   referencedColumnName?: string;
+  joinColumn?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
   cascadeType?: CascadeType[];
@@ -203,6 +203,7 @@ export interface RelationReference {
   entity: string;
   fieldName?: string;
   mappedBy?: string;
+  joinColumn?: string;
   cascadeType?: CascadeType[];
   orphanRemoval?: boolean;
 }
@@ -365,6 +366,7 @@ export interface PropertySchemaField extends SchemaField {
 }
 
 export interface BaseBody extends IdentifiableElement {
+  name?: string;
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
   };
@@ -434,6 +436,12 @@ export interface PathConfig {
   partials: string,
   springDependencies: string,
 }
+
+export interface RemovedRelationReference {
+  entity: string;
+  module: string;
+}
+
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

@@ -9,8 +9,8 @@ describe('Model generator', () => {
       {
         id: 'mgg6olyps8',
         type: 'model',
-        name: 'origem',
-        tableName: 'origem',
+        name: 'Pessoa',
+        tableName: 't_pessoa',
         module: 'core',
         attributes: [
           {
@@ -21,16 +21,24 @@ describe('Model generator', () => {
             nullable: false,
           },
           {
+            type: 'string',
+            name: 'nome',
+          },
+          {
             type: 'relation',
-            name: 'destinof',
+            name: 'documento', // relation field name
             relation: {
               type: 'OneToOne',
               fetchType: 'lazy',
               cardinality: 'twoWay',
               referencedColumnName: 'id',
-              entity: 'destino',
+              joinColumn: 'doc_id',
+              entity: 'DocumentoIdentidade',
+              orphanRemoval: true,
+              cascadeType: [{ type: 'ALL' }]
             },
-            nullable: true,
+            nullable: false,
+            unique: true
           },
         ],
         crud: false,
@@ -39,8 +47,8 @@ describe('Model generator', () => {
       {
         id: 'dspza5xl7e',
         type: 'model',
-        name: 'destino',
-        tableName: 'destino',
+        name: 'DocumentoIdentidade',
+        tableName: 't_documentoIdentidade',
         module: 'core',
         attributes: [
           {
@@ -50,14 +58,18 @@ describe('Model generator', () => {
             generationType: 'IDENTITY',
             nullable: false,
           },
+          {
+            type: 'string',
+            name: 'numero',
+          }
         ],
         relationReference: [
           {
             type: 'OneToOne',
             fetchType: 'lazy',
-            entity: 'Origem',
-            fieldName: 'origemId', // nome do campo na tabela destino deve ser inserido para casos de multiplos foreign keys
-            mappedBy: "destinof" // nome do campo(java) na entidade origem
+            entity: 'Pessoa',
+            fieldName: 'pessoa',
+            mappedBy: "documento" // same name as java attribute in source relation
           },
         ],
         crud: false,
@@ -75,8 +87,8 @@ describe('Model generator', () => {
       {
         id: 'mgg6olyps8',
         type: 'model',
-        name: 'origem',
-        tableName: 'origem',
+        name: 'Autor',
+        tableName: 't_autor',
         module: 'core',
         attributes: [
           {
@@ -96,14 +108,17 @@ describe('Model generator', () => {
           },
           {
             type: 'relation',
-            name: 'destino',
+            name: 'livro',
             relation: {
               type: 'OneToMany',
               fetchType: 'lazy',
               cardinality: 'twoWay',
               referencedColumnName: 'id',
-              mappedBy: 'origemf',
-              entity: 'destino',
+              joinColumn: 'autor_id',
+              mappedBy: 'autor', // "inverse side field name
+              entity: 'Livro',
+              orphanRemoval: true,
+              cascadeType: [{ type: 'ALL' }]
             },
             nullable: true,
           },
@@ -114,8 +129,8 @@ describe('Model generator', () => {
       {
         id: 'dspza5xl7e',
         type: 'model',
-        name: 'destino',
-        tableName: 'destino',
+        name: 'Livro',
+        tableName: 't_livro',
         module: 'core',
         attributes: [
           {
@@ -130,8 +145,9 @@ describe('Model generator', () => {
           {
             type: 'OneToMany',
             fetchType: 'lazy',
-            entity: 'Origem',
-            fieldName: 'origemf' // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
+            entity: 'Autor',
+            fieldName: 'autor',// field name
+            joinColumn: 'autor_id'
           },
         ],
         crud: false,
@@ -144,13 +160,14 @@ describe('Model generator', () => {
     }
   });
 
+
   it('should create model for DDD with ManyToOne Mapping', async () => {
     const ManyToOne: ModelConfig[] = [
       {
         id: 'mgg6olyps8',
         type: 'model',
-        name: 'origem',
-        tableName: 'origem',
+        name: 'TransacaoPagamento',
+        tableName: 't_transacaoPagamento',
         module: 'core',
         attributes: [
           {
@@ -161,17 +178,20 @@ describe('Model generator', () => {
             nullable: false,
           },
           {
+            type: 'integer',
+            name: 'valor',
+          },
+          {
             type: 'relation',
-            name: 'destino',
+            name: 'cliente', // field name
             relation: {
               type: 'ManyToOne',
               fetchType: 'lazy',
               cardinality: 'twoWay',
               referencedColumnName: 'id',
-              mappedBy: 'origemf',
-              entity: 'destino',
-              orphanRemoval: true,
-              cascadeType: [{ type: 'REMOVE' }, { type: 'PERSIST' }]
+              joinColumn: 'cliente_id',
+              entity: 'Cliente',
+
             },
             nullable: true,
           },
@@ -182,8 +202,8 @@ describe('Model generator', () => {
       {
         id: 'dspza5xl7e',
         type: 'model',
-        name: 'destino',
-        tableName: 'destino',
+        name: 'Cliente',
+        tableName: 't_cliente',
         module: 'core',
         attributes: [
           {
@@ -193,14 +213,18 @@ describe('Model generator', () => {
             generationType: 'IDENTITY',
             nullable: false,
           },
+          {
+            type: 'string',
+            name: 'nome',
+          }
         ],
         relationReference: [
           {
             type: 'ManyToOne',
             fetchType: 'lazy',
-            entity: 'Origem',
-            mappedBy: 'destino', // same name as java attribute in source relation
-            fieldName: 'origemf', // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
+            entity: 'TransacaoPagamento',
+            mappedBy: 'cliente', // same name as java attribute in source relation
+            fieldName: 'transacoes', // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
             orphanRemoval: true,
             cascadeType: [{ type: 'REMOVE' }, { type: 'PERSIST' }]
           },
@@ -216,12 +240,12 @@ describe('Model generator', () => {
   });
 
   it('should create model for DDD with ManyToMany Mapping', async () => {
-    const ManyToOne: ModelConfig[] = [
+    const ManyToMany: ModelConfig[] = [
       {
         id: 'mgg6olyps8',
         type: 'model',
-        name: 'origem',
-        tableName: 'origem',
+        name: 'Estudante',
+        tableName: 't_estudante',
         module: 'core',
         attributes: [
           {
@@ -232,17 +256,21 @@ describe('Model generator', () => {
             nullable: false,
           },
           {
+            type: 'string',
+            name: 'nome'
+          },
+          {
             type: 'relation',
-            name: 'destino',
+            name: 'disciplina', // field name
             relation: {
               type: 'ManyToMany',
               fetchType: 'lazy',
               cardinality: 'twoWay',
               referencedColumnName: 'id',
-              entity: 'destino',
-              joinTable: 'origem_destino',
-              inverseJoinColumn: 'origemId',
-              fieldName: 'destinos'
+              joinColumn: 'estudante_id',
+              entity: 'Disciplina',
+              joinTable: 'estudante_disciplina',
+              inverseJoinColumn: 'disciplina_id',
             },
             nullable: true,
           },
@@ -253,8 +281,8 @@ describe('Model generator', () => {
       {
         id: 'dspza5xl7e',
         type: 'model',
-        name: 'destino',
-        tableName: 'destino',
+        name: 'Disciplina',
+        tableName: 't_disciplina',
         module: 'core',
         attributes: [
           {
@@ -264,14 +292,18 @@ describe('Model generator', () => {
             generationType: 'IDENTITY',
             nullable: false,
           },
+          {
+            type: 'string',
+            name: 'nome'
+          }
         ],
         relationReference: [
           {
             type: 'ManyToMany',
             fetchType: 'lazy',
-            entity: 'Origem',
-            mappedBy: 'destino', // same name as java attribute in source relation
-            fieldName: 'origemf' // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
+            entity: 'Estudante',
+            mappedBy: 'disciplina', // same name as java attribute in source relation
+            fieldName: 'estudantes' // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
           },
         ],
         crud: false,
@@ -279,7 +311,7 @@ describe('Model generator', () => {
       },
     ];
 
-    for (const testCase of ManyToOne) {
+    for (const testCase of ManyToMany) {
       await addModel(testCase, DOMAIN_OUTPUT_DIR);
     }
   });
