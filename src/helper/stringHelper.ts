@@ -1,3 +1,5 @@
+import pluralize from 'pluralize';
+
 export function singleCapitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -70,7 +72,7 @@ export function lowercaseAndPluralize(str: string): string {
   return lowerStr + 's';
 }
 
-export function fullCamelCaseAndPluralize(str: string): string {
+/*export function fullCamelCaseAndPluralize(str: string): string {
   if (!str) return '';
 
   const lowerStr = str
@@ -88,6 +90,18 @@ export function fullCamelCaseAndPluralize(str: string): string {
   }
 
   return lowerStr + 's';
+}*/
+
+export function fullCamelCaseAndPluralize(str: string): string {
+  if (!str) return '';
+
+  const lowerStr = str
+    .toLowerCase()
+    .split('_')
+    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join('');
+
+  return pluralize(lowerStr);
 }
 
 export function sanitizeHeaderName(headerName: string): string {
@@ -97,3 +111,5 @@ export function sanitizeHeaderName(headerName: string): string {
 export function wrapInCurlyBraces(str: string): string {
   return `{${str}}`;
 }
+
+
