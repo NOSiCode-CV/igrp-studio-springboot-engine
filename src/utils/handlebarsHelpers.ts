@@ -600,8 +600,8 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
 
-Handlebars.registerHelper('processImplementation', (type: string) => {
-  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+/*Handlebars.registerHelper('processImplementation', (type: string) => {
+  let primitiveTypes: string[] = ['integer', 'boolean', 'string', 'byte'];
 
   if (primitiveTypes.includes(type)) {
     return capitalize(type);
@@ -609,9 +609,9 @@ Handlebars.registerHelper('processImplementation', (type: string) => {
   else {
     return normalizeName(type, 'dto') + 'DTO';
   }
-});
+});*/
 
-Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
+/*Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
   let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
 
   if (objType === 'dto') return 'object';
@@ -621,6 +621,23 @@ Handlebars.registerHelper('processDocumentationType', (type: string, objType?: s
   } else if (type === 'object' && (!objType || objType.trim() === '')) return 'object';
   else {
     return normalizeName(type, 'dto') + 'DTO';
+  }
+});*/
+
+Handlebars.registerHelper('processImplementation', (type: string) => {
+
+  const resolvedType = GENERIC_TYPES.get(type)?.java.name ?? normalizeName(type, 'dto') + 'DTO'
+  return resolvedType;
+});
+
+
+Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
+  if (objType === 'dto') return 'object';
+
+  const javaGenericType = GENERIC_TYPES.get(type)?.java.name;
+
+  if (javaGenericType) {
+    return javaGenericType;
   }
 });
 

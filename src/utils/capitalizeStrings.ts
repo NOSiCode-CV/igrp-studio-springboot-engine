@@ -1,5 +1,6 @@
 import { Body } from '../interfaces/types';
 import { capitalize } from '../helper/stringHelper';
+import { GENERIC_TYPES } from './constants';
 
 export const capitalizeResponse = (responses?: { [p: string]: Body }): string => {
 
@@ -20,14 +21,12 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
     if (schema.objectType === 'dto') {
       resolvedType = formatTypeName(schema.type)
     } else {
-      resolvedType = capitalize(schema.type);
-      /*let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
+      resolvedType = GENERIC_TYPES.get(schema.type)?.java.name ?? capitalize(schema.type);
 
-      if (primitiveTypes.includes(schema.type)) {
-        resolvedType = capitalize(schema.type);
-      } else {
-        resolvedType = formatTypeName(schema.type);
-      }*/
+      if (schema.type != 'binary') {
+        resolvedType = capitalize(resolvedType);
+      }
+
     }
   }
 
