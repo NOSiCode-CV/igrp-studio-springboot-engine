@@ -123,6 +123,12 @@ export interface DTOBaseConfig extends IdentifiableElement {
   name: string;
   module?: string;
   enableCustonValidation?: boolean
+  extends?: DTOParentReference;
+}
+
+export interface DTOParentReference {
+  name: string;
+  module: string;
 }
 
 export interface DTOConfig extends DTOBaseConfig {

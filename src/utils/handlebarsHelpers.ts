@@ -360,6 +360,16 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 
   const packageNameFromConfig = getPackageNameFromConfig(baseConfig);
 
+  //import do parent class caso pertencer a um modulo diferente
+  if (config.extends) {
+    console.log();
+    const parentImport = GENERIC_IMPORTS(packageNameFromConfig, config.extends.name, config.extends.module)
+      .get('dto');
+    if (parentImport) {
+      imports.add(isDDDStyle ? parentImport.java.domain : parentImport.java.technical);
+    }
+  }
+
   for (const attr of config.attributes) {
 
     if (attr.type != 'object') {

@@ -161,6 +161,28 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true,
       errorMessage: 'The response, if provided, must be a valid object'
     },
+    extends: {
+      type: "object",
+      nullable: true,
+      properties: {
+        name: {
+          type: "string",
+          errorMessage: 'The name field of extends must be a string.'
+        },
+        module: {
+          type: "string",
+          pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+          errorMessage: 'The module name in extends must follow the naming convention (only alphabetic characters allowed).'
+        }
+      },
+      required: ["name", "module"], // Ensure both name and module are required when extends is provided
+      errorMessage: {
+        required: {
+          name: 'The name field in extends is required.',
+          module: 'The module field in extends is required.'
+        }
+      }
+    },
   },
   required: ["type", "template", "name", "attributes"],
   additionalProperties: false,
@@ -202,6 +224,28 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       type: "boolean",
       nullable: true,
       errorMessage: 'enable custon validation must be a boolean value.'
+    },
+    extends: {
+      type: "object",
+      nullable: true,
+      properties: {
+        name: {
+          type: "string",
+          errorMessage: 'The name field of extends must be a string.'
+        },
+        module: {
+          type: "string",
+          pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+          errorMessage: 'The module name in extends must follow the naming convention (only alphabetic characters allowed).'
+        }
+      },
+      required: ["name", "module"], // Ensure both name and module are required when extends is provided
+      errorMessage: {
+        required: {
+          name: 'The name field in extends is required.',
+          module: 'The module field in extends is required.'
+        }
+      }
     }
   },
   required: ["type", "name"],
