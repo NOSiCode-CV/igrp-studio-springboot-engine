@@ -4,6 +4,10 @@ export function singleCapitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export function lowerCaseFirstLetter(name: string): string {
+  return name.charAt(0).toLowerCase() + name.slice(1);
+}
+
 export function capitalize(str: string): string {
   return str
     .split(/[-_,.]/)

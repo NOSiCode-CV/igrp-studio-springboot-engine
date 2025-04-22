@@ -37,6 +37,7 @@ import {
   toLowerCase,
   toTitleCase,
   toUpperCase, wrapInCurlyBraces,
+  lowerCaseFirstLetter
 } from '../helper/stringHelper';
 import { json } from '../helper/jsonHelper';
 import { equals, ifEquals, ifNot, isPageable, isText, not, notEquals } from '../helper/logicalHelper';
@@ -55,6 +56,7 @@ Handlebars.registerHelper('concat', concat);
 Handlebars.registerHelper('toFullCamelCaseFromSnakeCase', toFullCamelCaseFromSnakeCase);
 Handlebars.registerHelper('toTitleCase', toTitleCase);
 Handlebars.registerHelper('toLowerCase', toLowerCase);
+Handlebars.registerHelper('lowerCaseFirstLetter', lowerCaseFirstLetter);
 Handlebars.registerHelper('toUpperCase', toUpperCase);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
