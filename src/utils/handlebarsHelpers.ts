@@ -362,11 +362,12 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 
   //import do parent class caso pertencer a um modulo diferente
   if (config.extends) {
-    console.log();
-    const parentImport = GENERIC_IMPORTS(packageNameFromConfig, config.extends.name, config.extends.module)
-      .get('dto');
-    if (parentImport) {
-      imports.add(isDDDStyle ? parentImport.java.domain : parentImport.java.technical);
+    if (config.extends.module != config.module) {
+      const parentImport = GENERIC_IMPORTS(packageNameFromConfig, config.extends.name, config.extends.module)
+        .get('dto');
+      if (parentImport) {
+        imports.add(isDDDStyle ? parentImport.java.domain : parentImport.java.technical);
+      }
     }
   }
 
