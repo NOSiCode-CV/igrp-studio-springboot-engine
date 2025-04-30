@@ -22,7 +22,7 @@ FROM maven:3.9.9-eclipse-temurin-21-alpine
 
 # Define runtime environment variable
 ENV SERVICE_NAME=${SERVICE_NAME}
-ENV SPRING_PROFILES_ACTIVE=docker
+ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
 
 # Set the working directory
 WORKDIR /app
