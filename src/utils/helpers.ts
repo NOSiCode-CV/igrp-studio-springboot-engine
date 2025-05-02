@@ -1,4 +1,4 @@
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS } from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS, PROJECT_STRUCTURE_STYLE } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
@@ -578,6 +578,29 @@ export const loadEnumConfig = async function <EnumConfig>(
 
   return await fs.readJSON(filePath);
 };
+
+export const checkIfModuleExist = async function (
+  basePath: string,
+  moduleName: string
+) {
+  if (!moduleName && moduleName.trim() === '') {
+    throw new Error('Invalid module name');
+  }
+
+
+  if (!(await fs.pathExists(basePath))) {
+    throw new Error('Invalid base path');
+  }
+
+  const modulePath = path.join(basePath, DIRECTORIES.IGRPSTUDIO, moduleName);
+
+  const exists = await fs.pathExists(modulePath);
+
+  if (!exists) {
+    throw new Error(`Module directory "${moduleName}" not found in the base path.`);
+  }
+};
+
 
 export const loadModelConfig = async function <ModelConfig>(
   basePath: string,

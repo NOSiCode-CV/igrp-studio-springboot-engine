@@ -1,4 +1,4 @@
-import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
+import { ConfigTypes, ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 export const DIRECTORIES = {
@@ -1001,6 +1001,18 @@ export const CONFIG_TYPES = [
   'filter',
   'response',
 ] as const;
+
+
+export const configTypeMapping: Record<ConfigTypes, string> = {
+  dto: 'dto',
+  controller: 'controllers',
+  model: 'models',
+  module: 'module',
+  enum: 'enum',
+  filter: 'filter',
+  response: 'response',
+};
+
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',

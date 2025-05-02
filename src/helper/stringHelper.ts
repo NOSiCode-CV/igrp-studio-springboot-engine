@@ -15,6 +15,13 @@ export function capitalize(str: string): string {
     .join('');
 }
 
+export function revertCapitalize(str: string): string {
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '');
+}
+
 export function capitalizeJavaStyle(str: string): string {
   if (str.includes('_')) {
     return str

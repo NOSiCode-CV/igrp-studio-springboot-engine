@@ -21,6 +21,7 @@ import { checkDependencyInModel as checkModelDependencyModel, checkRelationRefer
 import path from 'path';
 import { normalizeName } from '../dto/saveDTOConfig';
 import { updatePermissions } from '../permission/permissionManagement';
+import { checkDependencyInModule } from '../module/checkDependencyInModule';
 
 /**
 * @param {RenderContext<DeleteConfig>} context - Context for the deletion of configuration.
@@ -77,6 +78,8 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
 
   if (context.resourceConfig.type === 'module') {
     // TODO: not implemented
+    checkDependencyInModule(context);
+
   }
 
   if (context.resourceConfig.type === 'model') {
