@@ -564,7 +564,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'file',
   'instant',
   'uri',
-  'url'
+  'url',
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -581,7 +581,7 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
     'file', 'binary'
   ],
   misc: [
-    'uuid',
+    'uuid', 'boolean'
   ],
   generic: [
     'object'
