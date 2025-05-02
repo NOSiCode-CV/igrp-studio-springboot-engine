@@ -77,8 +77,9 @@ export const deleteElementConfig = async (context: RenderContext<DeleteConfig>, 
   }
 
   if (context.resourceConfig.type === 'module') {
-    // TODO: not implemented
-    checkDependencyInModule(context);
+    if (!force) {
+      await checkDependencyInModule(context);
+    }
 
   }
 
