@@ -1,5 +1,6 @@
 {{> package-java }}
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import cv.igrp.framework.core.domain.QueryHandler;
 import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
@@ -12,6 +13,9 @@ resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resou
 @Service
 public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHandler<{{capitalize
    resourceConfig.name}}Query, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>>{
+
+  private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}QueryHandler.class);
+
 
    public {{capitalize resourceConfig.name}}QueryHandler() {
 

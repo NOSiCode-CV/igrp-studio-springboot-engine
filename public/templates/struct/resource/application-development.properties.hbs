@@ -3,6 +3,14 @@ spring.config.import=optional:file:.env[.properties]
 
 server.port=${SERVICE_PORT}
 
+# Logging Levels
+#sets the baseline logging level for the entire application
+logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
+#targets the web layer, allowing control over HTTP request/response logs
+logging.level.org.springframework.web=${LOGGING_LEVEL_SPRING_WEB:INFO}
+#applies to our application-specific logic, providing detailed logging where needed
+logging.level.{{baseConfig.group}}.{{baseConfig.artifact}}=${LOGGING_LEVEL_APP:INFO}
+
 # Datasource
 {{#if (eq baseConfig.database "Postgresql")}}
 spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_INTERNAL_PORT}/${POSTGRES_DATABASE}

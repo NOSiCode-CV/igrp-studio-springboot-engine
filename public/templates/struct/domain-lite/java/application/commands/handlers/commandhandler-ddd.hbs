@@ -4,6 +4,8 @@ import cv.igrp.framework.core.domain.CommandHandler;
 import cv.igrp.framework.stereotype.IgrpCommandHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{resourceConfig.name}}Command;
 
@@ -12,6 +14,8 @@ resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.{{res
 @Service
 public class {{capitalize resourceConfig.name}}CommandHandler implements CommandHandler<{{capitalize
    resourceConfig.name}}Command, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>> {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}CommandHandler.class);
 
    public {{capitalize resourceConfig.name}}CommandHandler() {
 
