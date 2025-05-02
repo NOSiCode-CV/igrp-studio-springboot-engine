@@ -15,7 +15,7 @@ export const checkDependencyInModule = async function (context: RenderContext<De
 
     await checkIfModuleExist(basePath, moduleName);
 
-    const errors: string[] = [];
+    const errors: Array<{ message: string }> = [];
 
     for (const type of CONFIG_TYPES) {
         // Ignorar 'module'
@@ -27,13 +27,15 @@ export const checkDependencyInModule = async function (context: RenderContext<De
 
         if (configs.length > 0) {
             // Se houver configurações
-            errors.push(`The module "${moduleName}" cannot be deleted because there are "${type}" configurations.`);
+            errors.push({
+                message: `The module "${moduleName}" cannot be deleted because there are "${type}" configurations.`,
+            });
         }
 
     }
 
     if (errors.length > 0) {
-        throw new Error(errors.join('\n'));
+        throw errors;
     }
 
     const modulePathConf = path.join(basePath, DIRECTORIES.IGRPSTUDIO, moduleName);
