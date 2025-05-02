@@ -28,7 +28,7 @@ export const checkDependencyInModule = async function (context: RenderContext<De
         if (configs.length > 0) {
             // Se houver configurações
             errors.push({
-                message: `The module "${moduleName}" cannot be deleted because there are "${type}" configurations.`,
+                message: `The module "${moduleName}" cannot be deleted because there are "${type}" configurations!!!!`,
             });
         }
 
