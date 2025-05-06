@@ -13,8 +13,6 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 
 @ExtendWith(MockitoExtension.class)
 public class {{capitalize resourceConfig.name}}CommandHandlerTest {
