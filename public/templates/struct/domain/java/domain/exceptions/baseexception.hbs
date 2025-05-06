@@ -1,16 +1,29 @@
 {{>package-java}}
 
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
 public class IgrpResponseStatusException extends RuntimeException {
 
     private final IgrpProblem<?> problem;
 
-    public IgrpResponseStatusException(IgrpProblem<?> problem) {
-        super(problem.getTitle());
+    private IgrpResponseStatusException(IgrpProblem<?> problem) {
+        super(problem.title());
         this.problem = problem;
     }
 
-    public IgrpProblem<?> getProblem() {
-        return problem;
+    public static <T> IgrpResponseStatusException of(HttpStatus status, String title, T details) {
+          final var problem = new IgrpProblem<>(status, title, details);
+          return new IgrpResponseStatusException(problem);
+    }
+
+    public static IgrpResponseStatusException of(HttpStatus status, String title) {
+        return of(status, title, null);
+    }
+
+    public static IgrpResponseStatusException of(HttpStatus status) {
+        return of(status, null);
     }
 
 }
