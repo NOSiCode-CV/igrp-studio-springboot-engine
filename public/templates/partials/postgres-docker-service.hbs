@@ -1,5 +1,5 @@
 postgres:
-    image: postgres:14-alpine
+    image: postgres:16-alpine
     container_name: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -8,5 +8,5 @@ postgres:
     ports:
       - ${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}
     volumes:
-      - postgres-data-14:/var/lib/postgresql/data
+      - postgres-data-16:/var/lib/postgresql/data
     restart: unless-stopped
