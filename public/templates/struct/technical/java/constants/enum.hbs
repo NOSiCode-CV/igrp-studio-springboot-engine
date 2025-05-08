@@ -1,5 +1,9 @@
 {{> package-java}}
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 {{#if resourceConfig.attributes}}
 import lombok.Getter;{{/if}}
 
@@ -27,4 +31,24 @@ public enum {{resourceConfig.name}} {
   }
 
   {{/if}}
+
+  /**
+  * Pre-built maps for fast lookup.
+  */
+  private static final Map<String, {{resourceConfig.name}}> CODE_MAP = Arrays.stream(values()).collect(Collectors.toMap({{resourceConfig.name}}::getCode, Function.identity()));
+
+    /**
+    * Returns the enum constant matching the code.
+    */
+  public static Optional<{{resourceConfig.name}}> fromCode(String code) {
+    return Optional.ofNullable(CODE_MAP.get(code));
+  }
+
+    /**
+    * Returns a map of code to description.
+    */
+  public static Map<String, String> codeDescriptionMap() {
+    return Arrays.stream(values()).collect(Collectors.toMap({{resourceConfig.name}}::getCode, {{resourceConfig.name}}::getDescription));
+  }
+
 }
