@@ -1,3 +1,4 @@
+import { toLowerCase } from '../../helper/stringHelper';
 import { EnumConfig, } from '../../interfaces/types';
 import {
     loadEnumConfig,
@@ -34,7 +35,7 @@ export const verifyEnumAttributes = async function (config: EnumConfig): Promise
 
             if (allHaveOneAttributeOrEmpty) {
                 // Remover o atributo 'description' se existir
-                config.attributes = config.attributes?.filter(attribute => attribute.name !== 'description');
+                config.attributes = config.attributes?.filter(attribute => toLowerCase(attribute.name) !== 'description');
             }
         }
     }
