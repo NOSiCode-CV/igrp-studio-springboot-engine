@@ -20,7 +20,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.validator.{{resolve-inte
 @{{resolve-interface-custon-validator-name resourceConfig.name}}
 {{/if}}
 @IgrpDTO
-public class {{resourceConfig.name}}DTO {
+public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}}{
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
