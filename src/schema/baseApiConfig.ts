@@ -65,6 +65,11 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       nullable: true,
       errorMessage: 'The project id if provided must be a string.'
     },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
+    },
     workspaceId: {
       type: "string",
       nullable: true,

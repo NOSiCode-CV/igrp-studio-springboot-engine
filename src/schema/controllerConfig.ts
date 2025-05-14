@@ -265,6 +265,11 @@ const bodySchema: JSONSchemaType<Body> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
+    },
     description: {
       type: "string",
       nullable: true,
@@ -309,6 +314,11 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
       type: "string",
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
+    },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
     },
     name: {
       type: "string",
@@ -525,6 +535,11 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       type: "string",
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
+    },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
     },
     type: {
       type: 'string',
