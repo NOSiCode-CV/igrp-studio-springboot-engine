@@ -13,9 +13,7 @@ public enum {{resourceConfig.name}} {
 
   {{#each resourceConfig.values}}
   {{toUpperCase this.name}}{{#if this.attributes}}(
-    {{#each this.attributes}}
-    {{{formatAttribute this}}}{{#unless @last}}, {{/unless}}
-    {{/each}}
+    {{#each this.attributes}}{{{formatAttribute this}}}{{#unless @last}}, {{/unless}}{{/each}}
   ){{/if}}{{#unless @last}},{{/unless}}
   {{/each~}};
 
@@ -29,7 +27,6 @@ public enum {{resourceConfig.name}} {
     this.{{toLowerCase this.name}} = {{toLowerCase this.name}};
     {{/each}}
   }
-
   {{/if}}
 
   /**
@@ -48,7 +45,7 @@ public enum {{resourceConfig.name}} {
     * Returns a map of code to description.
     */
   public static Map<String, String> codeDescriptionMap() {
-    return Arrays.stream(values()).collect(Collectors.toMap({{resourceConfig.name}}::getCode, {{resourceConfig.name}}::getDescription));
+    return CODE_MAP.values().stream().collect(Collectors.toMap({{resourceConfig.name}}::getCode, {{resourceConfig.name}}::getDescription));
   }
 
 }
