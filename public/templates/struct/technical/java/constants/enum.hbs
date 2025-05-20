@@ -32,18 +32,31 @@ public enum {{resourceConfig.name}} {
   /**
   * Pre-built maps for fast lookup.
   */
-  private static final Map<String, {{resourceConfig.name}}> CODE_MAP = Arrays.stream(values()).collect(Collectors.toMap({{resourceConfig.name}}::getCode, Function.identity()));
+  private static final Map<String, {{resourceConfig.name}}> CODE_MAP = Arrays.stream(values())
+          .collect(Collectors.toMap({{resourceConfig.name}}::getCode, Function.identity()));
 
-    /**
-    * Returns the enum constant matching the code.
-    */
+  /**
+  * Attempts to find the enum value associated with the given code.
+  * @param code The code to look up
+  * @return An Optional containing the enum value if found, empty Optional otherwise
+  */
   public static Optional<{{resourceConfig.name}}> fromCode(String code) {
     return Optional.ofNullable(CODE_MAP.get(code));
   }
 
-    /**
-    * Returns a map of code to description.
-    */
+  /**
+  * Finds the enum value associated with the given code or throws an exception if not found.
+  * @param code The code to look up
+  * @return The enum value for the given code
+  * @throws IllegalArgumentException if no enum value exists for the given code
+  */
+  public static {{resourceConfig.name}} fromCodeOrThrow(String code) {
+    return fromCode(code).orElseThrow(() -> new IllegalArgumentException("Invalid {{resourceConfig.name}} for this code: " + code));
+  }
+
+  /**
+  * Returns a map of code to description.
+  */
   public static Map<String, String> codeDescriptionMap() {
     return CODE_MAP.values().stream().collect(Collectors.toMap({{resourceConfig.name}}::getCode, {{resourceConfig.name}}::getDescription));
   }
