@@ -59,6 +59,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
     ];
   }
   return [

@@ -19,6 +19,7 @@ export const createModuleDirectory = async (context: RenderContext<ModuleConfig>
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
+
   context.resourceConfig.name = normalizePackageName(context.resourceConfig.name).toLowerCase();
 
   const { group, packageName } = context.baseConfig;
@@ -42,23 +43,21 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       modulePath,
 
       applicationPath,
+      path.join(applicationPath, DIRECTORIES.DTO),
+
       domainPath,
+
       infraPath,
+      path.join(infraPath, DIRECTORIES.REPOSITORIES),
 
       commandPath,
       queryPath,
 
-      path.join(applicationPath, DIRECTORIES.DTO),
-
       eventPath,
-
-      path.join(eventPath, DIRECTORIES.EVENTS),
-      path.join(eventPath, DIRECTORIES.HANDLERS),
 
       path.join(domainPath, DIRECTORIES.MODELS),
       path.join(domainPath, DIRECTORIES.REPOSITORY),
@@ -67,44 +66,8 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
-
-      /*
-
-      FULL DDD
-
-      path.join(basePath, DIRECTORIES.RESOURCES),
-
-      path.join(mainPath, DIRECTORIES.API),
-      path.join(mainPath, DIRECTORIES.APPLICATION),
-      path.join(mainPath, DIRECTORIES.DOMAIN),
-      path.join(mainPath, DIRECTORIES.INFRASTRUCTURE),
-
-      path.join(apiPath, DIRECTORIES.CONTROLLER),
-
-      path.join(applicationPath, DIRECTORIES.COMMAND),
-      path.join(applicationPath, DIRECTORIES.QUERY),
-
-      path.join(queryPath, DIRECTORIES.ASSEMBLER),
-      path.join(queryPath, DIRECTORIES.DTO),
-
-      path.join(domainPath, DIRECTORIES.AGGREGATE),
-      path.join(domainPath, DIRECTORIES.EVENT),
-      path.join(domainPath, DIRECTORIES.EXCEPTIONS),
-      path.join(domainPath, DIRECTORIES.IMPLEMENTATION),
-      path.join(domainPath, DIRECTORIES.REPOSITORIES),
-      path.join(domainPath, DIRECTORIES.SERVICE),
-
-      path.join(infraPath, DIRECTORIES.CACHE),
-      path.join(infraPath, DIRECTORIES.DATABASE),
-      path.join(infraPath, DIRECTORIES.SPRING),
-
-      path.join(testPath, DIRECTORIES.REPOSITORIES),
-      path.join(testPath, DIRECTORIES.SERVICES),
-
-      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpstudioPath, DIRECTORIES.MODELS),
-
-      */
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
     ];
   }
     return [
@@ -112,7 +75,6 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(mainPath, DIRECTORIES.MODELS),
       path.join(mainPath, DIRECTORIES.SERVICES),
