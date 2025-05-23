@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
+import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
 
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.artifact resourceConfig.module true}}
 

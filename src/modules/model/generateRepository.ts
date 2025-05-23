@@ -2,8 +2,6 @@ import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
 import {
-  getDDDAggregateRepositoryImplOutputDir,
-  getDDDAggregateRepositoryOutputDir,
   getDDDRepositoryImplOutputDir,
   getDDDRepositoryOutputDir,
   getModelOutputDir,
@@ -14,7 +12,6 @@ import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
 const REPOSITORY_PREFIX = 'I';
 const REPOSITORY_SUFFIX = 'Repository.java';
-const REPOSITORY_IMPL_SUFFIX = 'Repository.java';
 
 /**
  * Generates a repository for the given model and saves it to the appropriate location.
@@ -24,9 +21,10 @@ const REPOSITORY_IMPL_SUFFIX = 'Repository.java';
  */
 export const generateRepository = async (context: RenderContext<ModelConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    const modelOutputPath = getDDDRepositoryOutputPath(context);
-    const dddTemplate = await renderDDDRepository(context);
-    await saveToFile(dddTemplate, modelOutputPath, false);
+    // prevent generation of repository for aggregate root entities
+    //const modelOutputPath = getDDDRepositoryOutputPath(context);
+    //const dddTemplate = await renderDDDRepository(context);
+    //await saveToFile(dddTemplate, modelOutputPath, false);
   } else {
     const modelOutputPath = getRepositoryOutputPath(context);
     const template = await renderRepository(context);
@@ -35,18 +33,9 @@ export const generateRepository = async (context: RenderContext<ModelConfig>) =>
 };
 
 export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>) => {
-  const modelOutputPath = getDDDRepositoryImplOutputPath(context);
+  const dddRepositoryImplOutputPath = getDDDRepositoryImplOutputPath(context);
   const template = await renderImplRepository(context);
-  await saveToFile(template, modelOutputPath, false);
-};
-
-export const generateAggregateRepository = async (context: RenderContext<ModelConfig>) => {
-  const modelOutputPath = getDDDAggregateRepositoryOutputPath(context);
-  const implModelOutputPath = getDDDAggregateRepositoryImplOutputPath(context);
-  const template = await renderRepository(context);
-  const implTemplate = await renderImplRepository(context);
-  await saveToFile(template, modelOutputPath);
-  await saveToFile(implTemplate, implModelOutputPath);
+  await saveToFile(template, dddRepositoryImplOutputPath, false);
 };
 
 /**
@@ -82,6 +71,7 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
   context.fullPath = outputDir
   return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
 }
+
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getDDDRepositoryOutputDir(context)
   const fileName = capitalizeJavaStyle(context.resourceConfig.name);
@@ -95,23 +85,5 @@ const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => 
   return path.join(
     outputDir,
     `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`,
-  );
-}
-
-const getDDDAggregateRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDAggregateRepositoryOutputDir(context)
-  context.fullPath = outputDir
-  return path.join(
-    outputDir,
-    `${context.resourceConfig.name}AggregateDomain${REPOSITORY_SUFFIX}`,
-  );
-}
-
-const getDDDAggregateRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDAggregateRepositoryImplOutputDir(context)
-  context.fullPath = outputDir
-  return path.join(
-    outputDir,
-    `${context.resourceConfig.name}AggregateDomain${REPOSITORY_IMPL_SUFFIX}`,
   );
 }
