@@ -208,8 +208,7 @@ export const getDDDCommandOutputDir = (context: RenderContext<DTOBaseConfig | De
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.COMMANDS,
-    DIRECTORIES.COMMANDS,
+    DIRECTORIES.COMMANDS
   );
 
 export const getDDDCommandHandlerOutputDir = (
@@ -221,7 +220,6 @@ export const getDDDCommandHandlerOutputDir = (
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
     DIRECTORIES.COMMANDS,
-    DIRECTORIES.HANDLERS,
   );
 
 export const getDDDTestCommandHandlerOutputDir = (
@@ -232,8 +230,7 @@ export const getDDDTestCommandHandlerOutputDir = (
     getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.COMMANDS,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.COMMANDS
   );
 
 export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -242,8 +239,7 @@ export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | Dele
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERIES,
-    DIRECTORIES.QUERIES,
+    DIRECTORIES.QUERIES
   );
 
 export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -252,8 +248,7 @@ export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERIES,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.QUERIES
   );
 
 export const getDDDTestQueryHandlerOutputDir = (
@@ -265,7 +260,6 @@ export const getDDDTestQueryHandlerOutputDir = (
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
     DIRECTORIES.QUERIES,
-    DIRECTORIES.HANDLERS,
   );
 
 export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -274,8 +268,7 @@ export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | Dele
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.EVENTS,
+    DIRECTORIES.EVENTS
   );
 
 export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -284,8 +277,7 @@ export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.EVENTS
   );
 
 export const getDDDTestEventHandlerOutputDir = (
@@ -296,8 +288,7 @@ export const getDDDTestEventHandlerOutputDir = (
     getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.EVENTS
   );
 
 export const getDDDValueObjectOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>

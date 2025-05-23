@@ -10,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.commands.handlers.*;
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
 
 @ExtendWith(MockitoExtension.class)
 public class {{capitalize resourceConfig.name}}CommandHandlerTest {
