@@ -17,14 +17,14 @@ public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHand
   private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}QueryHandler.class);
 
 
-   public {{capitalize resourceConfig.name}}QueryHandler() {
+  public {{capitalize resourceConfig.name}}QueryHandler() {
 
-   }
+  }
 
    @IgrpQueryHandler
-   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
-      // TODO: Implement the query handling logic here
-      return null;
-   }
+  public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
+    // TODO: Implement the query handling logic here
+    return null;
+  }
 
 }
