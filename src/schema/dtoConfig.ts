@@ -126,6 +126,11 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
+    },
     type: {
       type: "string",
       errorMessage: 'The type must be valid.'
@@ -203,6 +208,11 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       type: "string",
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
+    },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
     },
     type: {
       type: "string",

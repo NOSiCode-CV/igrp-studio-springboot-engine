@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(IgrpResponseStatusException.class)
-  public ResponseEntity<Object> handleIgrpException(IgrpResponseStatusException ex) {
+    @ExceptionHandler(IgrpResponseStatusException.class)
+    public ResponseEntity<Object> handleIgrpException(IgrpResponseStatusException ex) {
 
-    var problem = ex.getProblem();
+        var problem = ex.getProblem();
 
-    return ResponseEntity
-            .status(problem.getStatus())
-            .body(problem);
-  }
+        return ResponseEntity
+                .status(problem.status())
+                .body(problem);
+    }
 
   @ExceptionHandler(ClassCastException.class)
   public ResponseEntity<Object> handleClassCastException(ClassCastException ex) {

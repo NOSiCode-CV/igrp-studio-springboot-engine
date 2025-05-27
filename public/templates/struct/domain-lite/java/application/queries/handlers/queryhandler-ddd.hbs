@@ -6,8 +6,6 @@ import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
 {{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
 
 @Service

@@ -46,11 +46,11 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     @GeneratedValue(strategy = GenerationType.{{this.generationType}})
     @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
     private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
-
     @NotBlank(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{else}}
-    @NotNull(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'Text')}}{{#if this.defaultValue}}
+    @NotNull(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{/if}}{{/if}}{{#if (eq this.type 'text')}}{{#if this.defaultValue}}
     @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
-    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}, length={{this.length}}{{/if}})
+    @Lob
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}, columnDefinition="TEXT"{{#if this.length}}{{/if}})
     private String {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if this.defaultValue}}
     @ColumnDefault("'{{this.defaultValue}}'"){{/if}}
   {{#if (eq this.type "file")}}
@@ -79,7 +79,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}){{#if this.relation.joinTable}}
     @JoinTable(
             name = "{{this.relation.joinTable}}"{{#if this.name}},
-            joinColumns = @JoinColumn(name = "{{toLowerCase ../resourceConfig.name}}_id"){{/if}}{{#if this.relation.inverseJoinColumn}},
+            joinColumns = @JoinColumn(name = "{{removeEntitySufix ../resourceConfig.name}}_id"){{/if}}{{#if this.relation.inverseJoinColumn}},
             inverseJoinColumns = @JoinColumn(name = "{{toLowerCase this.relation.inverseJoinColumn}}"){{/if}}
     ){{/if}}
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
@@ -118,7 +118,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private Set<{{this.entity}}> {{fullCamelCaseAndPluralize this.entity}};
+   private Set<{{this.entity}}> {{fullCamelCaseAndPluralizeAndRemoveEntitySufix this.entity}};
   {{/if}}
 
 {{/each}}

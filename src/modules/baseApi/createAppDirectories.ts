@@ -42,10 +42,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
 
@@ -58,17 +56,9 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       commandPath,
       queryPath,
 
-      path.join(commandPath, DIRECTORIES.COMMANDS),
-      path.join(commandPath, DIRECTORIES.HANDLERS),
-      path.join(queryPath, DIRECTORIES.QUERIES),
-      path.join(queryPath, DIRECTORIES.HANDLERS),
-
       path.join(applicationPath, DIRECTORIES.DTO),
 
       eventPath,
-
-      path.join(eventPath, DIRECTORIES.EVENTS),
-      path.join(eventPath, DIRECTORIES.HANDLERS),
 
       path.join(domainPath, DIRECTORIES.MODELS),
       path.join(domainPath, DIRECTORIES.REPOSITORY),
@@ -77,6 +67,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
 
     ];
 
@@ -96,10 +88,8 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
     const paths = [
 
       igrpSharedPath,
-      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
@@ -125,7 +115,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       )
 
     return paths
-
   }
 
 };

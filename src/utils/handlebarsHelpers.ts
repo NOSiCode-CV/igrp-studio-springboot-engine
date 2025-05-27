@@ -141,6 +141,27 @@ Handlebars.registerHelper('isAttributesEmpty', function (attributes: JavaAttribu
 });
 
 
+Handlebars.registerHelper('removeEntitySufix', function (entityName: string) {
+
+  if (entityName.endsWith('Entity')) {
+
+    entityName = entityName.replace(/Entity$/, '');
+
+  }
+  return toLowerCase(entityName);
+});
+
+Handlebars.registerHelper('fullCamelCaseAndPluralizeAndRemoveEntitySufix', function (entityName: string) {
+
+  if (entityName.endsWith('Entity')) {
+
+    entityName = entityName.replace(/Entity$/, '');
+  }
+
+  return fullCamelCaseAndPluralize(entityName);
+});
+
+
 Handlebars.registerHelper(
   'importsTypes',
   function (

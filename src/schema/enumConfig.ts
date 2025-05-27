@@ -127,6 +127,11 @@ const enumSchema: JSONSchemaType<EnumConfig> = {
       nullable: true,
       errorMessage: 'The id if provided must be a string.'
     },
+    version: {
+      type: "string",
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.'
+    },
     type: {
       type: 'string',
       const: 'enum',

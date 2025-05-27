@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import cv.igrp.framework.core.domain.CommandBus;
 import cv.igrp.framework.core.domain.QueryBus;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.commands.commands.*;
+resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
+resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
 
 
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module true}}

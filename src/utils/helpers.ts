@@ -1,4 +1,4 @@
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS, PROJECT_STRUCTURE_STYLE } from './constants';
+import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PARTIALS } from './constants';
 import path from 'path';
 import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
@@ -39,23 +39,6 @@ export const loadPartials = async (): Promise<void> => {
   } catch (error) {
     console.error('Error loading partials:', error);
   }
-};
-
-export const getPackage = async (outputDir: string) => {
-  const baseApiPath = path.join(outputDir, DIRECTORIES.BASE_API);
-
-  if (!(await fs.pathExists(baseApiPath))) {
-    throw ERROR_MESSAGE.BASE_API_NOT_FOUND;
-  }
-
-  const baseApi = await fs.readJSON(baseApiPath);
-  const { group, packageName } = baseApi;
-
-  if (!group || !packageName) {
-    throw ERROR_MESSAGE.INVALID_API_CONFIG;
-  }
-
-  return `${group}.${packageName}`;
 };
 
 export const getPackageNameFromConfig = function (config: ApiConfig) {
@@ -115,8 +98,9 @@ export const getDDDModelOutputDir = (context: RenderContext<ModelConfig | Delete
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.MODELS,
+    DIRECTORIES.INFRASTRUCTURE,
+    DIRECTORIES.PERSISTENCE,
+    DIRECTORIES.ENTITY
   );
 
 export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig | DeleteConfig>) =>
@@ -124,7 +108,8 @@ export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig | D
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
-    DIRECTORIES.DOMAIN,
+    DIRECTORIES.INFRASTRUCTURE,
+    DIRECTORIES.PERSISTENCE,
     DIRECTORIES.REPOSITORY,
   );
 
@@ -135,29 +120,7 @@ export const getDDDRepositoryImplOutputDir = (context: RenderContext<ModelConfig
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.INFRASTRUCTURE,
     DIRECTORIES.PERSISTENCE,
-  );
-
-export const getDDDAggregateRepositoryOutputDir = (
-  context: RenderContext<ModelConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.REPOSITORIES,
-    context.resourceConfig.name.toLowerCase(),
-  );
-
-export const getDDDAggregateRepositoryImplOutputDir = (
-  context: RenderContext<ModelConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.INFRASTRUCTURE,
-    DIRECTORIES.DATABASE,
-    DIRECTORIES.IMPLEMENTATION,
-    context.resourceConfig.name.toLowerCase(),
+    DIRECTORIES.REPOSITORY,
   );
 
 export const getDtoOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -192,24 +155,13 @@ export const getDDDEnumOutputDir = (context: RenderContext<EnumConfig | DeleteCo
     DIRECTORIES.CONSTANTS,
   );
 
-export const getDDDDataObjectOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.INFRASTRUCTURE,
-    DIRECTORIES.DATABASE,
-    DIRECTORIES.DATA_OBJECT,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
 export const getDDDCommandOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.COMMANDS,
-    DIRECTORIES.COMMANDS,
+    DIRECTORIES.COMMANDS
   );
 
 export const getDDDCommandHandlerOutputDir = (
@@ -221,7 +173,6 @@ export const getDDDCommandHandlerOutputDir = (
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
     DIRECTORIES.COMMANDS,
-    DIRECTORIES.HANDLERS,
   );
 
 export const getDDDTestCommandHandlerOutputDir = (
@@ -232,8 +183,7 @@ export const getDDDTestCommandHandlerOutputDir = (
     getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.COMMANDS,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.COMMANDS
   );
 
 export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -242,8 +192,7 @@ export const getDDDQueryOutputDir = (context: RenderContext<DTOBaseConfig | Dele
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERIES,
-    DIRECTORIES.QUERIES,
+    DIRECTORIES.QUERIES
   );
 
 export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -252,8 +201,7 @@ export const getDDDQueryHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERIES,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.QUERIES
   );
 
 export const getDDDTestQueryHandlerOutputDir = (
@@ -265,7 +213,6 @@ export const getDDDTestQueryHandlerOutputDir = (
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.APPLICATION,
     DIRECTORIES.QUERIES,
-    DIRECTORIES.HANDLERS,
   );
 
 export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -274,8 +221,7 @@ export const getDDDEventOutputDir = (context: RenderContext<DTOBaseConfig | Dele
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.EVENTS,
+    DIRECTORIES.EVENTS
   );
 
 export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
@@ -284,8 +230,7 @@ export const getDDDEventHandlerOutputDir = (context: RenderContext<DTOBaseConfig
     getMainPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.HANDLERS,
+    DIRECTORIES.EVENTS
   );
 
 export const getDDDTestEventHandlerOutputDir = (
@@ -296,94 +241,7 @@ export const getDDDTestEventHandlerOutputDir = (
     getTestPath(context.baseConfig.group, context.baseConfig.packageName),
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
-    DIRECTORIES.EVENTS,
-    DIRECTORIES.HANDLERS,
-  );
-
-export const getDDDValueObjectOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.AGGREGATE,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
-export const getDDDDomainEntityOutputDir = (context: RenderContext<DTOBaseConfig | DeleteConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.AGGREGATE,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
-export const getDDDAggregateRootOutputDir = (
-  context: RenderContext<DTOBaseConfig | ControllerConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.AGGREGATE,
-    context.resourceConfig.name.toLowerCase(),
-  );
-
-export const getDDDAggregateElementsOutputDir = (
-  context: RenderContext<DTOBaseConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.AGGREGATE,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
-export const getDDDDataTransferObjectOutputDir = (
-  context: RenderContext<DTOBaseConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERY,
-    DIRECTORIES.DTO,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
-export const getDDDConverterOutputDir = (context: RenderContext<ModelConfig | DeleteConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.INFRASTRUCTURE,
-    DIRECTORIES.DATABASE,
-    DIRECTORIES.CONVERTER,
-    context.resourceConfig.module!.toLowerCase(),
-  );
-
-export const getDDDAggDomainConverterOutputDir = (
-  context: RenderContext<ModelConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERY,
-    DIRECTORIES.ASSEMBLER,
-    context.resourceConfig.name!.toLowerCase(),
-  );
-
-export const getDDDDomainConverterOutputDir = (
-  context: RenderContext<ModelConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.APPLICATION,
-    DIRECTORIES.QUERY,
-    DIRECTORIES.ASSEMBLER,
-    context.resourceConfig.module!.toLowerCase(),
+    DIRECTORIES.EVENTS
   );
 
 export const getControllerConfigPath = (module: string, controller: string, output: string) =>
@@ -481,15 +339,6 @@ export const getDDDTestServiceDir = (context: RenderContext<ControllerConfig | M
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.DOMAIN,
     DIRECTORIES.SERVICE,
-  );
-
-export const getDDDServiceImplDir = (context: RenderContext<ControllerConfig | ModelConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    DIRECTORIES.DOMAIN,
-    DIRECTORIES.IMPLEMENTATION,
-    context.resourceConfig.name.toLowerCase(),
   );
 
 export const loadConfig = async function <T>(basePath: string): Promise<T[]> {

@@ -1,7 +1,6 @@
 import {
   ApiConfig,
   BaseApiConfig,
-  Body,
   ControllerAction,
   ControllerConfig, CrudControllerConfig,
   DdlConfig,
@@ -26,9 +25,7 @@ import {
   DIRECTORIES,
   ERROR_MESSAGE,
   GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES,
   GENERIC_COLLECTION_TYPES,
-  GENERIC_MODEL_ATTRIBUTE_TYPES,
   HTTP_HEADER_TYPES,
   HTTP_METHOD_TYPES,
   MIME_TYPES,
@@ -58,7 +55,6 @@ import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
 import { cleaner } from './modules/common/cleanerConfigFile';
 
 import { checkDuplicated } from './modules/common/checkDuplicates';
-import { capitalizeResponse } from './utils/capitalizeStrings';
 import { generateServiceInmpl } from './modules/controller/generateService';
 import { generateValidatorDTO } from './modules/dto/generateDTOCustomValidator';
 import { savePermission } from './modules/permission/savePermissionConfig';
@@ -113,7 +109,6 @@ export function getPaths(): PathConfig {
       springDependencies: path.join(__dirname, '../public/spring_dependencies/spring-dependencies.json')
     }
   }
-
 }
 
 /**
@@ -404,6 +399,12 @@ export const addModel = async (dirty: ModelConfig, basePath: string) => {
     baseConfig,
     fullPath: basePath,
   };
+
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    context.resourceConfig.name = context.resourceConfig.name.endsWith('Entity')
+      ? context.resourceConfig.name
+      : `${context.resourceConfig.name}Entity`;
+  }
 
   await generateModel(context);
 
@@ -1191,7 +1192,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
               required: true,
             }
           ]
-
       }
 
       const attributes = [
@@ -1201,8 +1201,6 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
         ...pathVariables,
         ...pageable,
       ];
-
-      //console.log('attributes:: ', attributes);
 
       await addDTO({
         type: act.method === 'GET' ? 'query' : 'command',
@@ -1224,12 +1222,7 @@ export const addController = async (dirty: ControllerConfig, basePath: string, c
 
     await generateTestServiceInmpl(context);
   }
-
-
-
 };
-
-
 
 export const addCrudController = async (dirty: CrudControllerConfig, basePath: string) => {
   /**

@@ -25,7 +25,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     throw new Error(`Unique constraint errors found:\n${errorsUniqueConstraints.join('\n')}`);
   }
 
-
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     // Before creating the model with the new configuration, the engine checks if a model directory already exists.
     // If it does, the old model directory will be deleted to ensure a clean setup for the new model.

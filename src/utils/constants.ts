@@ -565,6 +565,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'instant',
   'uri',
   'url',
+  'text'
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -575,7 +576,7 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
     'integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'
   ],
   text: [
-    'string', 'char'
+    'string', 'char', 'text'
   ],
   media: [
     'file', 'binary'
@@ -638,6 +639,12 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'Double', primitive: true },
     },
     string: {
+      java: { name: 'String', primitive: false },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'String', primitive: false },
+    },
+    text: {
       java: { name: 'String', primitive: false },
       dotnet: { name: 'string', primitive: false },
       python: { name: 'str', primitive: false },

@@ -35,7 +35,12 @@ export interface ApiConfig extends BaseApiConfig {
   packageName: string;
 }
 
-export interface BaseApiConfig extends IdentifiableElement {
+export interface VersionedConfig {
+  version?: string
+}
+
+
+export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   type: 'springboot';
   workspaceId?: string;
   name: string;
@@ -53,7 +58,7 @@ export interface BaseApiConfig extends IdentifiableElement {
   enableGraalVm: boolean;
 }
 
-export interface ModelConfig extends IdentifiableElement {
+export interface ModelConfig extends IdentifiableElement, VersionedConfig {
   type: 'model';
   name: string;
   tableName: string;
@@ -118,7 +123,7 @@ export interface JavaAttribute {
   module?: string;
 }
 
-export interface DTOBaseConfig extends IdentifiableElement {
+export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
   type: ObjectTypes;
   name: string;
   module?: string;
@@ -227,7 +232,7 @@ export interface IModelPermission {
   permissions: string[];
 }
 
-export interface ControllerConfig extends IdentifiableElement {
+export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;
   basePath: string;
@@ -286,7 +291,7 @@ export interface ISelectPermissions {
   value: string;
 }
 
-export interface EnumConfig extends IdentifiableElement {
+export interface EnumConfig extends IdentifiableElement, VersionedConfig {
   type: 'enum';
   name: string;
   module?: string;
@@ -371,7 +376,7 @@ export interface PropertySchemaField extends SchemaField {
   default?: any;
 }
 
-export interface BaseBody extends IdentifiableElement {
+export interface BaseBody extends IdentifiableElement, VersionedConfig {
   name?: string;
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
