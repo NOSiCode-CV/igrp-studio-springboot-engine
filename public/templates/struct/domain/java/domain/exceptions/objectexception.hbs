@@ -13,13 +13,13 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{normalizeDto resour
 @SuppressWarnings({"unchecked", "unused"})
 public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException {
 
-    public {{capitalize resourceConfig.name}}Exception(IgrpProblem<{{normalizeDto resourceConfig.body}}> problem) {
-        super(problem);
-    }
+  public {{capitalize resourceConfig.name}}Exception(IgrpProblem<{{normalizeDto resourceConfig.body}}> problem) {
+    super(problem);
+  }
 
-    @Override
-    public IgrpProblem<{{normalizeDto resourceConfig.body}}> getProblem() {
-        return (IgrpProblem<{{normalizeDto resourceConfig.body}}>) super.getProblem();
-    }
+  @Override
+  public IgrpProblem<{{normalizeDto resourceConfig.body}}> getProblem() {
+    return (IgrpProblem<{{normalizeDto resourceConfig.body}}>) super.getProblem();
+  }
 
 }
