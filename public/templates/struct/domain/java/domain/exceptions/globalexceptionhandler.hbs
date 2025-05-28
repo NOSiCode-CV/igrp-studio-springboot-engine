@@ -1,44 +1,40 @@
 {{>package-java}}
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(IgrpResponseStatusException.class)
-    public ResponseEntity<Object> handleIgrpException(IgrpResponseStatusException ex) {
-
-        var problem = ex.getProblem();
-
-        return ResponseEntity
-                .status(problem.status())
-                .body(problem);
+    public ProblemDetail handleIgrpResponseStatusException(IgrpResponseStatusException ex) {
+        LOGGER.error(ex.getMessage(), ex);
+        return ex.getBody();
     }
 
-  @ExceptionHandler(ClassCastException.class)
-  public ResponseEntity<Object> handleClassCastException(ClassCastException ex) {
+    @ExceptionHandler(ClassCastException.class)
+    public ProblemDetail handleClassCastException(ClassCastException ex) {
 
-      var stackTrace = ex.getStackTrace();
+        var stackTrace = ex.getStackTrace();
 
-      var origin = stackTrace.length > 0 ? stackTrace[0] : null;
+        var origin = stackTrace.length > 0 ? stackTrace[0] : null;
 
-      var detailedMessage = ex.getMessage();
+        var detailedMessage = ex.getMessage();
 
-      if (origin != null) {
+        if (origin != null) {
         detailedMessage += " at " + origin.getClassName() + "." + origin.getMethodName() +
         "(" + origin.getFileName() + ":" + origin.getLineNumber() + ")";
-      }
+        }
 
-      var problem = new IgrpProblem<>(
-              HttpStatus.INTERNAL_SERVER_ERROR,
-              HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-              detailedMessage
-      );
+        LOGGER.error("CLASS CAST EXCEPTION: {}", detailedMessage, ex);
 
-      return ResponseEntity.status(problem.status()).body(problem);
-  }
+        return ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }
