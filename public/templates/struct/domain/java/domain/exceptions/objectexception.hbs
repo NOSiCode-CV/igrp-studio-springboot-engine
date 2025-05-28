@@ -1,9 +1,11 @@
 {{> package-java }}
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.{{normalizeDto resourceConfig.body}};
 {{#ifNot (eq resourceConfig.module "Shared")}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpProblem;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpResponseStatusException;
 {{/ifNot}}
 {{else}}
@@ -13,13 +15,28 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.{{normalizeDto resour
 @SuppressWarnings({"unchecked", "unused"})
 public class {{capitalize resourceConfig.name}}Exception extends IgrpResponseStatusException {
 
-    public {{capitalize resourceConfig.name}}Exception(IgrpProblem<{{normalizeDto resourceConfig.body}}> problem) {
-        super(problem);
+    public {{capitalize resourceConfig.name}}Exception(HttpStatusCode status) {
+        super(status);
     }
 
-    @Override
-    public IgrpProblem<{{normalizeDto resourceConfig.body}}> getProblem() {
-        return (IgrpProblem<{{normalizeDto resourceConfig.body}}>) super.getProblem();
+    public {{capitalize resourceConfig.name}}Exception(HttpStatusCode status, ProblemDetail body, Throwable cause) {
+        super(status, body, cause);
     }
 
+    public static {{capitalize resourceConfig.name}}Exception of(HttpStatus status) {
+        return new {{capitalize resourceConfig.name}}Exception(status);
+    }
+
+    public static {{capitalize resourceConfig.name}}Exception of(HttpStatus status, String title) {
+        var problemDetail = ProblemDetail.forStatus(status);
+        problemDetail.setTitle(title);
+        return new IgrpResponseStatusException(status, problemDetail, null);
+    }
+
+    public static <T> {{capitalize resourceConfig.name}}Exception of(HttpStatus status, String title, T details) {
+        var problemDetail = ProblemDetail.forStatus(status);
+        problemDetail.setTitle(title);
+        problemDetail.setProperties(Map.of("details", details));
+        return new {{capitalize resourceConfig.name}}Exception(status, problemDetail, null);
+    }
 }

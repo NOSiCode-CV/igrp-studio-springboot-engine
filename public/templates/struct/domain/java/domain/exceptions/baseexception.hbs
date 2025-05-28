@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class IgrpResponseStatusException extends ErrorResponseException {
 
-    private IgrpResponseStatusException(HttpStatusCode status) {
+    public IgrpResponseStatusException(HttpStatusCode status) {
         super(status);
     }
 
-    private IgrpResponseStatusException(HttpStatusCode status, ProblemDetail body, Throwable cause) {
+    public IgrpResponseStatusException(HttpStatusCode status, ProblemDetail body, Throwable cause) {
         super(status, body, cause);
     }
 
