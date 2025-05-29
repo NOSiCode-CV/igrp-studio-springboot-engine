@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringEventBus implements EventBus {
 
-   private final ApplicationEventPublisher publisher;
+  private final ApplicationEventPublisher publisher;
 
-   public SpringEventBus(ApplicationEventPublisher publisher) {
-      this.publisher = publisher;
-   }
+  public SpringEventBus(ApplicationEventPublisher publisher) {
+    this.publisher = publisher;
+  }
 
-   @Override
-   public void publish(Event event) {
-      publisher.publishEvent(event);
-   }
+  @Override
+  public void publish(Event event) {
+    publisher.publishEvent(event);
+  }
 
 }

@@ -19,7 +19,7 @@ public class {{resourceConfig.name}}DO extends DataObject<{{keyType resourceConf
     {{#each this.annotations}}
       @{{this.annotation}}
     {{/each}}
-    private {{{resolve-type this}}} {{this.name}};
+  private {{{resolve-type this}}} {{this.name}};
   {{/each}}
 
 }
