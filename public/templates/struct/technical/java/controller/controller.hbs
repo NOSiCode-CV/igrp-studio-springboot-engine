@@ -42,8 +42,11 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
+
       ResponseEntity<{{{resolveResponse responses}}}> response = queryBus.handle(query);
-      LOGGER.debug("Operation finished - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
+      LOGGER.debug("Operation finished");
+
       return ResponseEntity.status(response.getStatusCode())
               .headers(response.getHeaders())
               .body(response.getBody());
@@ -59,8 +62,11 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
+
        ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
+
        LOGGER.debug("Operation finished - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
         return ResponseEntity.status(response.getStatusCode())
               .headers(response.getHeaders())
               .body(response.getBody());
@@ -77,7 +83,9 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
     {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
+
    LOGGER.debug("Operation finished - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
    return response;
 {{/if}}
   }
