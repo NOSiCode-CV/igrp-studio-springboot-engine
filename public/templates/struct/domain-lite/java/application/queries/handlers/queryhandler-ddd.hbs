@@ -5,10 +5,10 @@ import cv.igrp.framework.core.domain.QueryHandler;
 import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 {{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
 
-@Service
+@Component
 public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHandler<{{capitalize
    resourceConfig.name}}Query, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>>{
 
