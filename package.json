@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.0.2-alpha.3",
+  "version": "0.0.2-alpha.4",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -66,9 +66,7 @@
     },
     ".": {
       "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js",
-      "types": "./dist/index.d.ts",
-      "constants": "./dist/utils/constants.d.ts"
+      "require": "./dist/index.cjs.js"
     }
   }
 }
