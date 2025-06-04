@@ -74,7 +74,6 @@ Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
 Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
 Handlebars.registerHelper('wrapInCurlyBraces', wrapInCurlyBraces);
-Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);
 Handlebars.registerHelper('cleanStr', function (str) {
   return new Handlebars.SafeString(str);
 });
