@@ -502,7 +502,7 @@ export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z_]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
-  PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_/]*$',
+  PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9-/]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
   PATH_PATTERN: '^$|^/?[A-Za-z_{][A-Za-z0-9_{}/-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
