@@ -39,6 +39,20 @@ export function formatTypeName(type: string | undefined): string {
   return capitalize((type ?? '').replace(/dto$/i, '') + 'DTO');
 }
 
+export function getCollectionTypeInitializer(collectionType: string): string {
+  switch (collectionType) {
+    case 'collection':
+      return ` = new ArrayList<>()`;
+    case 'map':
+      return `= new HashMap<>()`;
+    case 'list':
+      return `= new ArrayList<>()`;
+    case 'set':
+      return ` = new HashSet<>()`;
+    default:
+      return "";
+  }
+}
 
 export function wrapCollectionType(type: string, collectionType: string): string {
   switch (collectionType) {

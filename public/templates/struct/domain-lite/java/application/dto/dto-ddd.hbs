@@ -29,7 +29,7 @@ public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{
   {{/each}}
   {{{resolve-annotations this}}}
   {{{is-nested-object this}}}
-  private {{{resolve-type this}}} {{this.name}};
+  private {{{resolve-type this}}} {{this.name}} {{{getCollectionTypeInitializer this}}};
 {{/each}}
 
 }

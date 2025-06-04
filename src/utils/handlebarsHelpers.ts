@@ -23,7 +23,12 @@ import {
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
 import { getPackageNameFromConfig } from './helpers';
-import { capitalizeResponse, formatTypeName, wrapCollectionType } from './capitalizeStrings';
+import {
+  capitalizeResponse,
+  formatTypeName,
+  getCollectionTypeInitializer,
+  wrapCollectionType,
+} from './capitalizeStrings';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 import {
   capitalize,
@@ -394,8 +399,6 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   if (!config.attributes) return null;
   if (!Array.isArray(config.attributes)) return null;
 
-  //console.log('resourceConfig:: ', config)
-
   const isDDDStyle =
     baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
@@ -466,12 +469,27 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   // Import Collection Types
   config.attributes
     .filter((it: JavaAttribute) => it.collectionType)
-    .forEach((attr: JavaAttribute) =>
-      imports.add(
-        GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(attr.collectionType!)?.java
-          .technical,
-      ),
-    );
+    .forEach((attr: JavaAttribute) => {
+
+      let baseCollectionImport = GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(
+        attr.collectionType!,
+      )?.java.technical;
+
+      imports.add(baseCollectionImport);
+
+      if (attr.objectType == 'dto' && (baseCollectionImport == 'import java.util.List;' || baseCollectionImport == 'java.util.Collection;')) {
+        imports.add('import java.util.ArrayList;');
+      }
+
+      if (attr.objectType == 'dto' && baseCollectionImport == 'java.util.Map;') {
+        imports.add('import java.util.HashMap;');
+      }
+
+      if (attr.objectType == 'dto' && baseCollectionImport == 'java.util.Set;') {
+        imports.add('import java.util.HashSet;');
+      }
+
+    });
 
   return Array.from(imports)
     .filter((e) => e)
@@ -494,6 +512,11 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   }
 
   return wrapCollectionType(attributeType, t1.collectionType);
+});
+
+Handlebars.registerHelper('getCollectionTypeInitializer', function (this: any, t1: any) {
+  if (!t1.type) return t1.type;
+  return getCollectionTypeInitializer(t1.collectionType);
 });
 
 Handlebars.registerHelper('model-imports', function (this: any, config: ModelConfig) {
