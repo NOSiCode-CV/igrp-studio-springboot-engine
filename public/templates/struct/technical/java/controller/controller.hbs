@@ -31,7 +31,9 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{> controller-action-definition baseConfig=../baseConfig}}
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
   {{#if (eq method "GET")}}
-      LOGGER.debug("Operation started - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
+      LOGGER.debug("Operation started");
+
       final var query = new {{capitalize actionName}}Query(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
@@ -51,7 +53,9 @@ public class {{capitalize resourceConfig.name}}Controller {
               .headers(response.getHeaders())
               .body(response.getBody());
   {{else}}
-      LOGGER.debug("Operation started - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
+      LOGGER.debug("Operation started");
+
       final var command = new {{capitalize actionName}}Command(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
@@ -65,14 +69,16 @@ public class {{capitalize resourceConfig.name}}Controller {
 
        ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
 
-       LOGGER.debug("Operation finished - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+       LOGGER.debug("Operation finished");
 
         return ResponseEntity.status(response.getStatusCode())
               .headers(response.getHeaders())
               .body(response.getBody());
   {{/if}}
 {{else}}
-    LOGGER.debug("Operation started - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+
+    LOGGER.debug("Operation started");
+
     var response = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
     {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
     {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
