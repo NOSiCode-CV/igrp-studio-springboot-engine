@@ -1,5 +1,9 @@
 import {
-  loadDTOConfig, loadEnumConfig, loadModelConfig, loadResponseConfig, replaceTemplate,
+  loadDTOConfig,
+  loadEnumConfig,
+  loadModelConfig,
+  loadResponseConfig,
+  replaceTemplate,
 } from '../../utils/helpers';
 import {
   DeleteConfig,
@@ -24,32 +28,33 @@ import { normalizeName } from '../dto/saveDTOConfig';
 import { addDTO, addEnum, addModel, addResponse, deleteElement } from '../../index';
 
 /**
-* @param {RenderContext<MoveConfig>} context - Context for the deletion of configuration.
-* @param {boolean} force - Delete without checking dependency.
+ * @param {RenderContext<MoveConfig>} context - Context for the deletion of configuration.
+ * @param {boolean} force - Delete without checking dependency.
  */
 export const moveElementConfig = async (context: RenderContext<MoveConfig>, force: boolean) => {
-
   const deleteConfig: DeleteConfig = {
     name: context.resourceConfig.name,
     module: context.resourceConfig.sourceModule,
-    type: context.resourceConfig.type
-  }
+    type: context.resourceConfig.type,
+  };
 
   const deleteContext: RenderContext<DeleteConfig> = {
     ...context,
-    resourceConfig: deleteConfig
-  }
+    resourceConfig: deleteConfig,
+  };
 
-  const module = context.resourceConfig.sourceModule
+  const module = context.resourceConfig.sourceModule;
 
-  if(context.resourceConfig.type === 'dto' || context.resourceConfig.type === 'filter') {
-
+  if (context.resourceConfig.type === 'dto' || context.resourceConfig.type === 'filter') {
     if (!force) {
       await checkDependencyInDTO(deleteContext);
       await checkDependencyInController(deleteContext);
     }
 
-    context.resourceConfig.name = normalizeName(context.resourceConfig.name, context.resourceConfig.type)
+    context.resourceConfig.name = normalizeName(
+      context.resourceConfig.name,
+      context.resourceConfig.type,
+    );
 
     const element: DTOConfig = await loadDTOConfig(
       context.resourceConfig.type,
@@ -57,20 +62,18 @@ export const moveElementConfig = async (context: RenderContext<MoveConfig>, forc
       context.resourceConfig.name,
     );
 
-    element.module = context.resourceConfig.destinationModule
+    element.module = context.resourceConfig.destinationModule;
 
-    await addDTO(element, context.basePath)
+    await addDTO(element, context.basePath);
 
-    await deleteElement(deleteConfig, context.basePath)
-
+    await deleteElement(deleteConfig, context.basePath);
   }
 
-  if(context.resourceConfig.type === 'enum') {
-
-    if(!force) {
-      await checkDTODependencyEnum(deleteContext)
-      await checkModelDependencyEnum(deleteContext)
-      await checkControllerDependencyEnum(deleteContext)
+  if (context.resourceConfig.type === 'enum') {
+    if (!force) {
+      await checkDTODependencyEnum(deleteContext);
+      await checkModelDependencyEnum(deleteContext);
+      await checkControllerDependencyEnum(deleteContext);
     }
 
     const element: EnumConfig = await loadEnumConfig(
@@ -78,18 +81,16 @@ export const moveElementConfig = async (context: RenderContext<MoveConfig>, forc
       context.resourceConfig.name,
     );
 
-    element.module = context.resourceConfig.destinationModule
+    element.module = context.resourceConfig.destinationModule;
 
-    await addEnum(element, context.basePath)
+    await addEnum(element, context.basePath);
 
-    await deleteElement(deleteConfig, context.basePath)
-
+    await deleteElement(deleteConfig, context.basePath);
   }
 
-  if(context.resourceConfig.type === 'model') {
-
-    if(!force) {
-      await checkModelDependencyModel(deleteContext)
+  if (context.resourceConfig.type === 'model') {
+    if (!force) {
+      await checkModelDependencyModel(deleteContext);
     }
 
     const element: ModelConfig = await loadModelConfig(
@@ -97,16 +98,14 @@ export const moveElementConfig = async (context: RenderContext<MoveConfig>, forc
       context.resourceConfig.name,
     );
 
-    element.module = context.resourceConfig.destinationModule
+    element.module = context.resourceConfig.destinationModule;
 
-    await addModel(element, context.basePath)
+    await addModel(element, context.basePath);
 
-    await deleteElement(deleteConfig, context.basePath)
-
+    await deleteElement(deleteConfig, context.basePath);
   }
 
-  if(context.resourceConfig.type === 'response') {
-
+  if (context.resourceConfig.type === 'response') {
     if (!force) {
       await checkDTODependencyResponse(deleteContext);
       await checkControllerDependencyResponse(deleteContext);
@@ -118,12 +117,10 @@ export const moveElementConfig = async (context: RenderContext<MoveConfig>, forc
       context.resourceConfig.name,
     );
 
-    element.module = context.resourceConfig.destinationModule
+    element.module = context.resourceConfig.destinationModule;
 
-    await addResponse(element, context.basePath)
+    await addResponse(element, context.basePath);
 
-    await deleteElement(deleteConfig, context.basePath)
-
+    await deleteElement(deleteConfig, context.basePath);
   }
-
 };

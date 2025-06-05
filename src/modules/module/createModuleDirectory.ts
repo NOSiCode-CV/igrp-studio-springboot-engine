@@ -19,7 +19,6 @@ export const createModuleDirectory = async (context: RenderContext<ModuleConfig>
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] => {
-
   context.resourceConfig.name = normalizePackageName(context.resourceConfig.name).toLowerCase();
 
   const { group, packageName } = context.baseConfig;
@@ -70,18 +69,18 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
     ];
   }
-    return [
-      igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpSharedPath, DIRECTORIES.MODELS),
-      path.join(igrpSharedPath, DIRECTORIES.DTO),
+  return [
+    igrpSharedPath,
+    path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+    path.join(igrpSharedPath, DIRECTORIES.MODELS),
+    path.join(igrpSharedPath, DIRECTORIES.DTO),
 
-      path.join(mainPath, DIRECTORIES.MODELS),
-      path.join(mainPath, DIRECTORIES.SERVICES),
-      path.join(mainPath, DIRECTORIES.CONTROLLERS),
-      path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
-      path.join(mainPath, DIRECTORIES.SECURITY),
-    ];
+    path.join(mainPath, DIRECTORIES.MODELS),
+    path.join(mainPath, DIRECTORIES.SERVICES),
+    path.join(mainPath, DIRECTORIES.CONTROLLERS),
+    path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
+    path.join(mainPath, DIRECTORIES.SECURITY),
+  ];
 };
 
 /**

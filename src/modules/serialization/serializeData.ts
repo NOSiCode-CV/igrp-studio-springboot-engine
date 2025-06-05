@@ -1,11 +1,14 @@
 import {
+  Attribute,
+  DdlConfig,
+  DTOConfig,
+  JavaAttribute,
   JsonConfig,
+  ModelConfig,
+  PropertySchemaField,
+  ResponseConfig,
   SqlConfig,
   XmlConfig,
-  DTOConfig,
-  ModelConfig,
-  ResponseConfig,
-  JavaAttribute, PropertySchemaField, Attribute, DdlConfig,
 } from '../../interfaces/types';
 import { DIRECTORIES, TYPESCRIPT_TYPES } from '../../utils/constants';
 import {
@@ -69,15 +72,12 @@ export const serializeData = async (config: JsonConfig | XmlConfig | SqlConfig |
   }
 
   if ('ddl' in config && config.ddl) {
-
     const ddlData = parseDdlScript(config.ddl);
 
     if (config.type === 'model') {
       return mapDdlToModelConfig(ddlData, config);
     }
-
   }
-
 };
 
 const mapJsonToDtoConfig = (jsonData: any, config: JsonConfig): DTOConfig => {
@@ -99,30 +99,30 @@ const mapJsonToDtoConfig = (jsonData: any, config: JsonConfig): DTOConfig => {
 };
 
 const mapJsonToModelConfig = (jsonData: any, config: JsonConfig): ModelConfig => {
-  const attributes: Attribute[] = Object.keys(jsonData).map((key) => (key.toLowerCase() === 'id' ?
-    {
-      name: key,
-      type: typeof jsonData[key] == 'number' ? 'long' : 'string',
-      primaryKey: true,
-      generationType: 'AUTO',
-      nullable: false
-    }
-    : {
-    name: key,
-    type: TYPESCRIPT_TYPES.get(typeof jsonData[key])?.generic.name ?? 'object',
-    nullable: true, // Default to true; adjust based on actual data
-  }));
+  const attributes: Attribute[] = Object.keys(jsonData).map((key) =>
+    key.toLowerCase() === 'id'
+      ? {
+          name: key,
+          type: typeof jsonData[key] == 'number' ? 'long' : 'string',
+          primaryKey: true,
+          generationType: 'AUTO',
+          nullable: false,
+        }
+      : {
+          name: key,
+          type: TYPESCRIPT_TYPES.get(typeof jsonData[key])?.generic.name ?? 'object',
+          nullable: true, // Default to true; adjust based on actual data
+        },
+  );
 
-  if(attributes.filter(it => it.name.toLowerCase() == "id").length == 0)
-    attributes.push(
-      {
-        name: "id",
-        type: 'integer',
-        primaryKey: true,
-        generationType: 'IDENTITY',
-        nullable: false
-      }
-    )
+  if (attributes.filter((it) => it.name.toLowerCase() == 'id').length == 0)
+    attributes.push({
+      name: 'id',
+      type: 'integer',
+      primaryKey: true,
+      generationType: 'IDENTITY',
+      nullable: false,
+    });
 
   return {
     id: generateElementId(),
@@ -148,7 +148,8 @@ const mapJsonToResponseConfig = (jsonData: any, config: JsonConfig): ResponseCon
       type: type === 'object' ? (Array.isArray(value) ? 'array' : 'object') : type,
       objectType: type === 'object' ? 'dto' : 'java',
       required: true, // Default to true; adjust based on actual data
-      properties: type === 'object' && !Array.isArray(value) ? mapJsonToProperties(value) : undefined,
+      properties:
+        type === 'object' && !Array.isArray(value) ? mapJsonToProperties(value) : undefined,
       items: Array.isArray(value) ? { type: typeof value[0] } : undefined,
     };
   });
@@ -182,7 +183,8 @@ const mapJsonToProperties = (obj: any): { [key: string]: PropertySchemaField } =
       type: type === 'object' ? (Array.isArray(value) ? 'array' : 'object') : type,
       objectType: type === 'object' ? 'dto' : 'java',
       required: true, // Default to true; adjust based on actual data
-      properties: type === 'object' && !Array.isArray(value) ? mapJsonToProperties(value) : undefined,
+      properties:
+        type === 'object' && !Array.isArray(value) ? mapJsonToProperties(value) : undefined,
       items: Array.isArray(value) ? { type: typeof value[0] } : undefined,
     };
   });
@@ -190,7 +192,10 @@ const mapJsonToProperties = (obj: any): { [key: string]: PropertySchemaField } =
   return properties;
 };
 
-const mapSqlToDtoConfig = (sqlData: { columns: string[]; table: string }, config: SqlConfig): DTOConfig => {
+const mapSqlToDtoConfig = (
+  sqlData: { columns: string[]; table: string },
+  config: SqlConfig,
+): DTOConfig => {
   const attributes: JavaAttribute[] = sqlData.columns.map((column) => ({
     name: column,
     type: 'string', // Default to 'string'; adjust based on actual data
@@ -216,8 +221,10 @@ const mapSqlToModelConfig = (
     const [value, alias] = column.split(/\s+AS\s+/i);
     const type = inferTypeFromValue(value.trim());
 
-    if(!value || !alias) {
-      throw Error("Invalid or unsupported SQL SELECT command format. Please check if the values and the alias are defined correctly!")
+    if (!value || !alias) {
+      throw Error(
+        'Invalid or unsupported SQL SELECT command format. Please check if the values and the alias are defined correctly!',
+      );
     }
 
     if (alias.trim().toLowerCase() === 'id') {
@@ -228,7 +235,6 @@ const mapSqlToModelConfig = (
         generationType: 'AUTO',
         nullable: false,
       };
-
     } else {
       return {
         name: alias.trim(),
@@ -259,7 +265,10 @@ const mapSqlToModelConfig = (
   };
 };
 
-const mapSqlToResponseConfig = (sqlData: { columns: string[]; table: string }, config: SqlConfig): ResponseConfig => {
+const mapSqlToResponseConfig = (
+  sqlData: { columns: string[]; table: string },
+  config: SqlConfig,
+): ResponseConfig => {
   const properties: { [key: string]: PropertySchemaField } = {};
 
   // Map each column to a PropertySchemaField
@@ -307,30 +316,30 @@ const mapXmlToDtoConfig = (xmlData: any, config: XmlConfig): DTOConfig => {
 };
 
 const mapXmlToModelConfig = (xmlData: any, config: XmlConfig): ModelConfig => {
-  const attributes: Attribute[] = Object.keys(xmlData).map((key) => (key.toLowerCase() === 'id' ?
-    {
-      name: key,
-      type: typeof xmlData[key] == 'number' ? 'long' : 'string',
-      primaryKey: true,
-      generationType: 'AUTO',
-      nullable: false,
-    }
-    : {
-    name: key,
-    type: TYPESCRIPT_TYPES.get(typeof xmlData[key])?.generic.name ?? 'object',
-    nullable: true,
-  }));
+  const attributes: Attribute[] = Object.keys(xmlData).map((key) =>
+    key.toLowerCase() === 'id'
+      ? {
+          name: key,
+          type: typeof xmlData[key] == 'number' ? 'long' : 'string',
+          primaryKey: true,
+          generationType: 'AUTO',
+          nullable: false,
+        }
+      : {
+          name: key,
+          type: TYPESCRIPT_TYPES.get(typeof xmlData[key])?.generic.name ?? 'object',
+          nullable: true,
+        },
+  );
 
-  if(attributes.filter(it => it.name.toLowerCase() == "id").length == 0)
-    attributes.push(
-      {
-        name: "id",
-        type: 'integer',
-        primaryKey: true,
-        generationType: 'IDENTITY',
-        nullable: false
-      }
-    )
+  if (attributes.filter((it) => it.name.toLowerCase() == 'id').length == 0)
+    attributes.push({
+      name: 'id',
+      type: 'integer',
+      primaryKey: true,
+      generationType: 'IDENTITY',
+      nullable: false,
+    });
 
   return {
     id: generateElementId(),
@@ -356,7 +365,8 @@ const mapXmlToResponseConfig = (xmlData: any, config: XmlConfig): ResponseConfig
       type: type === 'object' ? (Array.isArray(value) ? 'array' : 'object') : type,
       objectType: type === 'object' ? 'dto' : 'java',
       required: true, // Default to true; adjust based on actual data
-      properties: type === 'object' && !Array.isArray(value) ? mapXmlToProperties(value) : undefined,
+      properties:
+        type === 'object' && !Array.isArray(value) ? mapXmlToProperties(value) : undefined,
       items: Array.isArray(value) ? { type: typeof value[0] } : undefined,
     };
   });
@@ -390,7 +400,8 @@ const mapXmlToProperties = (obj: any): { [key: string]: PropertySchemaField } =>
       type: type === 'object' ? (Array.isArray(value) ? 'array' : 'object') : type,
       objectType: type === 'object' ? 'dto' : 'java',
       required: true, // Default to true; adjust based on actual data
-      properties: type === 'object' && !Array.isArray(value) ? mapXmlToProperties(value) : undefined,
+      properties:
+        type === 'object' && !Array.isArray(value) ? mapXmlToProperties(value) : undefined,
       items: Array.isArray(value) ? { type: typeof value[0] } : undefined,
     };
   });
@@ -398,13 +409,21 @@ const mapXmlToProperties = (obj: any): { [key: string]: PropertySchemaField } =>
   return properties;
 };
 
-const mapDdlToModelConfig = (ddlData: { columns: string; table: string }, config: DdlConfig): ModelConfig => {
-
+const mapDdlToModelConfig = (
+  ddlData: { columns: string; table: string },
+  config: DdlConfig,
+): ModelConfig => {
   // Split column definitions into individual lines
   const columnLines = ddlData.columns
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('constraint') && !line.startsWith('primary key') && !line.startsWith('check'));
+    .filter(
+      (line) =>
+        line.length > 0 &&
+        !line.startsWith('constraint') &&
+        !line.startsWith('primary key') &&
+        !line.startsWith('check'),
+    );
 
   // Map columns to attributes
   const attributes: Attribute[] = columnLines.map((line) => {
@@ -429,21 +448,25 @@ const mapDdlToModelConfig = (ddlData: { columns: string; table: string }, config
       nullable: isNullable,
       unique: isUnique,
       primaryKey: isPrimaryKey,
-      generationType: isPrimaryKey? (isIdentity? 'IDENTITY' : isSerial? 'SEQUENCE' : 'AUTO') : undefined,
+      generationType: isPrimaryKey
+        ? isIdentity
+          ? 'IDENTITY'
+          : isSerial
+            ? 'SEQUENCE'
+            : 'AUTO'
+        : undefined,
       defaultValue,
     };
   });
 
-  if(attributes.filter(it => it.name.toLowerCase() == "id").length == 0)
-    attributes.push(
-      {
-        name: "id",
-        type: 'integer',
-        primaryKey: true,
-        generationType: 'IDENTITY',
-        nullable: false
-      }
-    )
+  if (attributes.filter((it) => it.name.toLowerCase() == 'id').length == 0)
+    attributes.push({
+      name: 'id',
+      type: 'integer',
+      primaryKey: true,
+      generationType: 'IDENTITY',
+      nullable: false,
+    });
 
   return {
     id: generateElementId(),

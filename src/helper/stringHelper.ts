@@ -24,10 +24,7 @@ export function revertCapitalize(str: string): string {
 
 export function capitalizeJavaStyle(str: string): string {
   if (str.includes('_')) {
-    return str
-      .split('_')
-      .map(singleCapitalize)
-      .join('');
+    return str.split('_').map(singleCapitalize).join('');
   }
   return singleCapitalize(str);
 }
@@ -122,5 +119,3 @@ export function sanitizeHeaderName(headerName: string): string {
 export function wrapInCurlyBraces(str: string): string {
   return `{${str}}`;
 }
-
-

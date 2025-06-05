@@ -1,50 +1,53 @@
-import { BaseApiConfig } from "../interfaces/types";
-import { ajvInstance } from "../utils/ajv-instance";
-import { JSONSchemaType, ValidateFunction } from "ajv";
-import { DATABASE_TYPES, PATTERNS } from "../utils/constants";
+import { BaseApiConfig } from '../interfaces/types';
+import { ajvInstance } from '../utils/ajv-instance';
+import { JSONSchemaType, ValidateFunction } from 'ajv';
+import { DATABASE_TYPES, PATTERNS } from '../utils/constants';
 import { Dependency } from '../interfaces/springDependencyTypes';
 
 export const dependencySchema: JSONSchemaType<Dependency> = {
   type: 'object',
   properties: {
     name: {
-      type: "string",
+      type: 'string',
       nullable: false,
-      errorMessage: "The 'name' attribute must be a valid string."
+      errorMessage: "The 'name' attribute must be a valid string.",
     },
     groupId: {
-      type: "string",
-      pattern: "^[a-zA-Z0-9._]+$",
+      type: 'string',
+      pattern: '^[a-zA-Z0-9._]+$',
       errorMessage: {
-        pattern: "The 'groupId' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
-      }
+        pattern:
+          "The 'groupId' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols.",
+      },
     },
     artifactId: {
-      type: "string",
-      pattern: "^[a-zA-Z0-9._-]+$",
+      type: 'string',
+      pattern: '^[a-zA-Z0-9._-]+$',
       errorMessage: {
-        pattern: "The 'artifactId' attribute cannot be empty and must only contain alphanumeric characters without spaces or special characters."
-      }
+        pattern:
+          "The 'artifactId' attribute cannot be empty and must only contain alphanumeric characters without spaces or special characters.",
+      },
     },
     scope: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
-        pattern: "The 'scope' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
-      }
+        pattern:
+          "The 'scope' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.",
+      },
     },
     version: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: "The 'version' attribute must be a valid string."
+      errorMessage: "The 'version' attribute must be a valid string.",
     },
     bom: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: "The 'bom' attribute must be a valid string."
+      errorMessage: "The 'bom' attribute must be a valid string.",
     },
   },
-  required: ["name", "groupId", "artifactId", "scope"],
+  required: ['name', 'groupId', 'artifactId', 'scope'],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -53,105 +56,119 @@ export const dependencySchema: JSONSchemaType<Dependency> = {
       artifactId: "The 'artifactId' attribute is required and cannot be empty.",
       scope: "The 'scope' attribute is required and cannot be empty.",
     },
-    additionalProperties: "Extra attributes are not allowed in the dependency configuration."
-  }
+    additionalProperties: 'Extra attributes are not allowed in the dependency configuration.',
+  },
 };
 
 const apiSchema: JSONSchemaType<BaseApiConfig> = {
   type: 'object',
   properties: {
     id: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The project id if provided must be a string.'
+      errorMessage: 'The project id if provided must be a string.',
     },
     version: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The version if provided must be a string.'
+      errorMessage: 'The version if provided must be a string.',
     },
     workspaceId: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The workspace id if provided must be a string.'
+      errorMessage: 'The workspace id if provided must be a string.',
     },
     type: {
-      type: "string",
-      const: "springboot",
-      errorMessage: "The 'type' attribute must have the value 'springboot'."
+      type: 'string',
+      const: 'springboot',
+      errorMessage: "The 'type' attribute must have the value 'springboot'.",
     },
     name: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: {
-        pattern: "The 'name' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed."
-      }
+        pattern:
+          "The 'name' attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed.",
+      },
     },
     group: {
-      type: "string",
-      pattern: "^[a-zA-Z0-9._]+$",
+      type: 'string',
+      pattern: '^[a-zA-Z0-9._]+$',
       errorMessage: {
-        pattern: "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols."
-      }
+        pattern:
+          "The 'group' attribute  cannot be empty and must only contain alphanumeric characters without spaces or special symbols.",
+      },
     },
     artifact: {
-      type: "string",
-      pattern: "^[a-zA-Z0-9._-]+$",
+      type: 'string',
+      pattern: '^[a-zA-Z0-9._-]+$',
       errorMessage: {
-        pattern: "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters."
-      }
+        pattern:
+          "The 'artifact' attribute cannot be empty and must only contain alphanumeric characters whithout spaces or special characters.",
+      },
     },
 
     database: {
-      type: "string",
+      type: 'string',
       enum: DATABASE_TYPES,
       errorMessage: {
-        enum: "The 'database' attribute cannot be empty and must be one of the following: 'Postgresql', 'MySQL', 'H2' or 'Oracle'."
-      }
+        enum: "The 'database' attribute cannot be empty and must be one of the following: 'Postgresql', 'MySQL', 'H2' or 'Oracle'.",
+      },
     },
     description: {
-      type: "string",
+      type: 'string',
       nullable: true,
       errorMessage: {
-        type: "The 'description' attribute must be a valid string."
-      }
+        type: "The 'description' attribute must be a valid string.",
+      },
     },
     package: {
-      type: "string",
-      nullable: true
+      type: 'string',
+      nullable: true,
     },
     projectStructureStyle: {
-      type: "string",
-      nullable: false
+      type: 'string',
+      nullable: false,
     },
     enableObservability: {
-      type: "boolean",
-      nullable: false
+      type: 'boolean',
+      nullable: false,
     },
     enableEntityRevision: {
-      type: "boolean",
-      nullable: false
+      type: 'boolean',
+      nullable: false,
     },
     igrpCoreVersion: {
-      type: "string",
-      nullable: false
+      type: 'string',
+      nullable: false,
     },
     springBootVersion: {
-      type: "string",
-      nullable: true
+      type: 'string',
+      nullable: true,
     },
     dependencies: {
-      type: "array",
+      type: 'array',
       nullable: true,
       items: dependencySchema,
-      errorMessage: 'The dependencies must be an array of valid dependency definitions.'
+      errorMessage: 'The dependencies must be an array of valid dependency definitions.',
     },
     enableGraalVm: {
-      type: "boolean",
-      nullable: false
+      type: 'boolean',
+      nullable: false,
     },
   },
-  required: ["type", "name", "group", "artifact", "database", "projectStructureStyle", "enableObservability", "igrpCoreVersion", "enableEntityRevision", "enableGraalVm"],
+  required: [
+    'type',
+    'name',
+    'group',
+    'artifact',
+    'database',
+    'projectStructureStyle',
+    'enableObservability',
+    'igrpCoreVersion',
+    'enableEntityRevision',
+    'enableGraalVm',
+  ],
   additionalProperties: false,
   errorMessage: {
     required: {
@@ -160,16 +177,18 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       group: "The 'group' attribute is required and must be provided.",
       artifact: "The 'artifact' attribute is required and cannot be empty.",
       database: "The 'database' attribute is required and must specify a valid database type.",
-      projectStructureStyle: "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
-      enableObservability: "The 'enableObservability' attribute is required and must specify a valid boolean type.",
-      dependencies: "The 'dependencies' attribute is required and must specify an array of valid dependencies.",
-      enableGraalVm: "The 'enableGraalVm' attribute is required and must specify a valid boolean type."
+      projectStructureStyle:
+        "The 'projectStructureStyle' attribute is required and must specify a valid database type.",
+      enableObservability:
+        "The 'enableObservability' attribute is required and must specify a valid boolean type.",
+      dependencies:
+        "The 'dependencies' attribute is required and must specify an array of valid dependencies.",
+      enableGraalVm:
+        "The 'enableGraalVm' attribute is required and must specify a valid boolean type.",
     },
-    additionalProperties: "Extra attributes are not allowed in the API configuration."
-  }
+    additionalProperties: 'Extra attributes are not allowed in the API configuration.',
+  },
 };
 
-
-export const apiValidation: ValidateFunction<BaseApiConfig> = ajvInstance.compile<BaseApiConfig>(apiSchema);
-
-
+export const apiValidation: ValidateFunction<BaseApiConfig> =
+  ajvInstance.compile<BaseApiConfig>(apiSchema);

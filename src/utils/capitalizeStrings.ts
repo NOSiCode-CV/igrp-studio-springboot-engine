@@ -3,11 +3,11 @@ import { capitalize } from '../helper/stringHelper';
 import { GENERIC_TYPES } from './constants';
 
 export const capitalizeResponse = (responses?: { [p: string]: Body }): string => {
-
   if (!responses || Object.keys(responses).length !== 1) return '?';
 
   const singleBody = responses[Object.keys(responses)[0]];
-  const content = singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
+  const content =
+    singleBody?.content['application/json'] ?? singleBody?.content['multipart/form-data'];
   const schema = content?.schema;
 
   if (!schema) return '?';
@@ -17,16 +17,14 @@ export const capitalizeResponse = (responses?: { [p: string]: Body }): string =>
   if (schema.type === 'object') {
     resolvedType = formatTypeName(singleBody?.name);
   } else {
-
     if (schema.objectType === 'dto') {
-      resolvedType = formatTypeName(schema.type)
+      resolvedType = formatTypeName(schema.type);
     } else {
       resolvedType = GENERIC_TYPES.get(schema.type)?.java.name ?? capitalize(schema.type);
 
       if (schema.type != 'binary') {
         resolvedType = capitalize(resolvedType);
       }
-
     }
   }
 
@@ -50,7 +48,7 @@ export function getCollectionTypeInitializer(collectionType: string): string {
     case 'set':
       return ` = new HashSet<>()`;
     default:
-      return "";
+      return '';
   }
 }
 

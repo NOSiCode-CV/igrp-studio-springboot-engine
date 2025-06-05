@@ -470,14 +470,17 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   config.attributes
     .filter((it: JavaAttribute) => it.collectionType)
     .forEach((attr: JavaAttribute) => {
-
       let baseCollectionImport = GENERIC_IMPORTS(packageNameFromConfig, attr.collectionType!).get(
         attr.collectionType!,
       )?.java.technical;
 
       imports.add(baseCollectionImport);
 
-      if (attr.objectType == 'dto' && (baseCollectionImport == 'import java.util.List;' || baseCollectionImport == 'java.util.Collection;')) {
+      if (
+        attr.objectType == 'dto' &&
+        (baseCollectionImport == 'import java.util.List;' ||
+          baseCollectionImport == 'java.util.Collection;')
+      ) {
         imports.add('import java.util.ArrayList;');
       }
 
@@ -488,7 +491,6 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
       if (attr.objectType == 'dto' && baseCollectionImport == 'java.util.Set;') {
         imports.add('import java.util.HashSet;');
       }
-
     });
 
   return Array.from(imports)
@@ -682,8 +684,7 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
 });*/
 
 Handlebars.registerHelper('processImplementation', (type: string) => {
-  const resolvedType = GENERIC_TYPES.get(type)?.java.name ?? normalizeName(type, 'dto') + 'DTO';
-  return resolvedType;
+  return GENERIC_TYPES.get(type)?.java.name ?? normalizeName(type, 'dto') + 'DTO';
 });
 
 Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {

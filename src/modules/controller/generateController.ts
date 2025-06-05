@@ -18,21 +18,32 @@ const CONTROLLER_SUFFIX = 'Controller.java';
  * @param context
  */
 export const generateController = async (context: RenderContext<ControllerConfig>) => {
-
   context.resourceConfig.name = normalizeControllerName(context.resourceConfig.name);
 
   const controllerOutputPath = getControllerPath(context);
 
   const controller = await renderController(context);
 
-  await saveToFile(controller, controllerOutputPath, true, DIRECTORIES.CONTROLLER, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
+  await saveToFile(
+    controller,
+    controllerOutputPath,
+    true,
+    DIRECTORIES.CONTROLLER,
+    context.resourceConfig.id,
+    context.resourceConfig.module,
+    context.basePath,
+  );
 
   await saveControllerConfig(context.resourceConfig, context.basePath);
 
   // Once the controller has been generated, we will assign the necessary permissions to its endpoints.
   // This ensures that the newly created controller has the correct access rights configured
   // for each endpoint based on its defined permissions.
-  await updatePermissions(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath, context.resourceConfig.type);
+  await updatePermissions(
+    context.resourceConfig.module ?? DIRECTORIES.SHARED,
+    context.basePath,
+    context.resourceConfig.type,
+  );
 };
 
 const renderController = async (context: RenderContext<ControllerConfig>) => {
@@ -51,4 +62,3 @@ const getControllerPath = (context: RenderContext<ControllerConfig>) => {
     return path.join(outputDir, `${context.resourceConfig.name}${CONTROLLER_SUFFIX}`);
   }
 };
-

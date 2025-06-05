@@ -36,9 +36,8 @@ export interface ApiConfig extends BaseApiConfig {
 }
 
 export interface VersionedConfig {
-  version?: string
+  version?: string;
 }
-
 
 export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   type: 'springboot';
@@ -127,7 +126,7 @@ export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
   type: ObjectTypes;
   name: string;
   module?: string;
-  enableCustonValidation?: boolean
+  enableCustonValidation?: boolean;
   extends?: DTOParentReference;
 }
 
@@ -144,7 +143,7 @@ export interface DTOConfig extends DTOBaseConfig {
 export interface HandlerConfig extends DTOConfig {
   //response: JavaAttribute;
   //response: string;
-  response: { [p: string]: Body }
+  response: { [p: string]: Body };
 }
 
 export interface ExceptionConfig {
@@ -159,7 +158,7 @@ export interface UniqueConstraint {
 }
 
 export interface CascadeType {
-  type: CascadeTypes
+  type: CascadeTypes;
 }
 
 export interface JavaType {
@@ -173,8 +172,7 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
   type: ModelAttributeType;
@@ -219,7 +217,6 @@ export interface RelationReference {
   orphanRemoval?: boolean;
 }
 
-
 export interface Crud {
   enabled: boolean;
   path: string;
@@ -258,8 +255,8 @@ export interface ControllerAction {
 }
 
 export interface ModelAttribute {
-  name: string,
-  module?: string
+  name: string;
+  module?: string;
 }
 
 export interface MultipartFile {
@@ -318,7 +315,7 @@ export interface CrudModel {
 }
 
 interface Field {
-  name: string
+  name: string;
 }
 
 export interface CrudControllerConfig {
@@ -389,10 +386,10 @@ export interface Body extends BaseBody {
   module?: string;
 }
 
-export interface RequestConfig extends Body { }
+export interface RequestConfig extends Body {}
 
 export interface ResponseConfig extends Body {
-  type: 'response'
+  type: 'response';
   statusCode: string;
   template: 'classic' | 'record';
 }
@@ -438,21 +435,20 @@ export interface DdlConfig extends SerializationConfig {
 }
 
 export interface AttributeCategory {
-  name: string,
-  group: string
+  name: string;
+  group: string;
 }
 
 export interface PathConfig {
-  template: string,
-  partials: string,
-  springDependencies: string,
+  template: string;
+  partials: string;
+  springDependencies: string;
 }
 
 export interface RemovedRelationReference {
   entity: string;
   module: string;
 }
-
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

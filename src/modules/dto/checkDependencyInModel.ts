@@ -1,25 +1,32 @@
-import { DTOBaseConfig, RenderContext, JavaType } from "../../interfaces/types";
-import { getModelTypes } from "../model/helpers";
-import { getDTOTypes } from "./helpers";
+import { DTOBaseConfig, JavaType, RenderContext } from '../../interfaces/types';
+import { getModelTypes } from '../model/helpers';
+import { getDTOTypes } from './helpers';
 import { DIRECTORIES } from '../../utils/constants';
 
-export const checkDependencyInModel = async function(context: RenderContext<DTOBaseConfig>) {
-  const dtoTypes = await getDTOTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
-  const modelTypes = await getModelTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
-  const cfg = context.resourceConfig;  
-  dtoTypes.delete(cfg.name);  
+export const checkDependencyInModel = async function (context: RenderContext<DTOBaseConfig>) {
+  const dtoTypes = await getDTOTypes(
+    context.resourceConfig.module ?? DIRECTORIES.SHARED,
+    context.basePath,
+  );
+  const modelTypes = await getModelTypes(
+    context.resourceConfig.module ?? DIRECTORIES.SHARED,
+    context.basePath,
+  );
+  const cfg = context.resourceConfig;
+  dtoTypes.delete(cfg.name);
 
   const errors: Array<{ message: string }> = [];
 
   for (const dto of dtoTypes.values()) {
-    dto.attributes.map(attr => {
-      
+    dto.attributes.map((attr) => {
       if (attr.objectType === 'model') {
         let type: JavaType;
         type = { name: attr.type };
-        
+
         if (modelTypes.has(type.name)) {
-          errors.push({ message: `'model.${type.name}' is being used in 'dto.${dto.name}' on attribute '${attr.name}'` });
+          errors.push({
+            message: `'model.${type.name}' is being used in 'dto.${dto.name}' on attribute '${attr.name}'`,
+          });
         }
 
         // if (type.generics) {

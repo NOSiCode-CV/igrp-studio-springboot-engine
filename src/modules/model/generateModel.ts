@@ -1,8 +1,24 @@
-import { Attribute, ModelConfig, RemovedRelationReference, RenderContext } from '../../interfaces/types';
+import {
+  Attribute,
+  ModelConfig,
+  RemovedRelationReference,
+  RenderContext,
+} from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
+import {
+  DIRECTORIES,
+  ERROR_MESSAGE,
+  EXTENSIONS,
+  PROJECT_STRUCTURE_STYLE,
+  TEMPLATES,
+} from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
-import { getDDDModelOutputDir, getModelConfigPath, getModelOutputDir, loadModelConfig } from '../../utils/helpers';
+import {
+  getDDDModelOutputDir,
+  getModelConfigPath,
+  getModelOutputDir,
+  loadModelConfig,
+} from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
 import { updatePermissions } from '../permission/permissionManagement';
@@ -14,8 +30,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
 
   if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(context);
-  else
-    modelOutputPath = getModelOutputPath(context);
+  else modelOutputPath = getModelOutputPath(context);
 
   const template = await renderModel(context);
 
@@ -32,7 +47,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
   }
 
-  const { primaryKey } = context.resourceConfig
+  const { primaryKey } = context.resourceConfig;
 
   if (primaryKey) {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
@@ -43,20 +58,29 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   //finding remove relations before saving
   await findRemovedRelations(context);
 
-  await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
+  await saveToFile(
+    template,
+    modelOutputPath,
+    true,
+    DIRECTORIES.MODELS,
+    context.resourceConfig.id,
+    context.resourceConfig.module,
+    context.basePath,
+  );
 
   await saveModelConfig(context.resourceConfig, context.basePath);
 
-
   // Once the model has been generated, we will assign the necessary permissions to its endpoints.
-  // This ensures that the newly created model has the correct access rights configured 
+  // This ensures that the newly created model has the correct access rights configured
   // for each endpoint based on its defined permissions.
-  await updatePermissions(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath, context.resourceConfig.type);
-
+  await updatePermissions(
+    context.resourceConfig.module ?? DIRECTORIES.SHARED,
+    context.basePath,
+    context.resourceConfig.type,
+  );
 };
 
 async function findRemovedRelations(context: RenderContext<ModelConfig>) {
-
   const modulo = context.resourceConfig.module ?? DIRECTORIES.SHARED;
   const modelPath = getModelConfigPath(modulo, context.resourceConfig.name, context.basePath);
   const modelExists = await fs.pathExists(modelPath);
@@ -65,7 +89,10 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
   //console.log('---------------------------------------------------------------------')
   if (modelExists) {
     const modelDirPath = path.dirname(modelPath);
-    const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(modelDirPath, context.resourceConfig.name);
+    const oldModel: ModelConfig = await loadModelConfig<ModelConfig>(
+      modelDirPath,
+      context.resourceConfig.name,
+    );
     const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
 
     // console.log('old model:: ', oldModel)
@@ -73,15 +100,14 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
     // console.log('new Model:: ', newModel)
 
     for (const oldAttr of oldModel.attributes) {
-
       if (oldAttr.type === 'relation' && oldAttr.relation) {
-        const matchingAttr = newModel.attributes.find(attr => attr.name === oldAttr.name);
+        const matchingAttr = newModel.attributes.find((attr) => attr.name === oldAttr.name);
 
         if (!matchingAttr || matchingAttr.type !== 'relation' || !matchingAttr.relation) {
           const modulo = oldAttr.relation.module ?? DIRECTORIES.SHARED;
           const removedRelation: RemovedRelationReference = {
             entity: oldAttr.relation.entity,
-            module: modulo
+            module: modulo,
           };
           removedRelations.push(removedRelation);
         }
@@ -96,17 +122,13 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
       await removeRelationFromModel(context, removedRelation, context.resourceConfig.name);
     }
   }
-
-
-};
-
+}
 
 async function removeRelationFromModel(
   context: RenderContext<ModelConfig>,
   removedRelationReference: RemovedRelationReference,
-  modelToRemoveRelation: string
+  modelToRemoveRelation: string,
 ) {
-
   let modelOutputPath: string;
   const modelName = removedRelationReference.entity;
   const moduleName = removedRelationReference.module;
@@ -114,7 +136,6 @@ async function removeRelationFromModel(
   const modelPath = getModelConfigPath(moduleName, modelName, context.basePath);
   const modelDirPath = path.dirname(modelPath);
   const modelExists = await fs.pathExists(modelPath);
-
 
   if (!modelExists) {
     throw new Error(`relation reference model '${modelName}' not found in path ${modelPath}`);
@@ -125,13 +146,13 @@ async function removeRelationFromModel(
   // Remove relações com a entidade informada
   if (config.relationReference && Array.isArray(config.relationReference)) {
     config.relationReference = config.relationReference.filter(
-      (rel) => rel.entity !== modelToRemoveRelation
+      (rel) => rel.entity !== modelToRemoveRelation,
     );
   }
 
   const relationReferenceContext: RenderContext<ModelConfig> = {
     ...context,
-    resourceConfig: config
+    resourceConfig: config,
   };
 
   //console.log('relationReferenceContext: ', relationReferenceContext);
@@ -139,12 +160,19 @@ async function removeRelationFromModel(
   //await fs.writeJSON(modelPath, config, { spaces: 2 });
   if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(relationReferenceContext);
-  else
-    modelOutputPath = getModelOutputPath(relationReferenceContext);
+  else modelOutputPath = getModelOutputPath(relationReferenceContext);
 
   const template = await renderModel(relationReferenceContext);
 
-  await saveToFile(template, modelOutputPath, true, DIRECTORIES.MODELS, relationReferenceContext.resourceConfig.id, relationReferenceContext.resourceConfig.module, relationReferenceContext.basePath);
+  await saveToFile(
+    template,
+    modelOutputPath,
+    true,
+    DIRECTORIES.MODELS,
+    relationReferenceContext.resourceConfig.id,
+    relationReferenceContext.resourceConfig.module,
+    relationReferenceContext.basePath,
+  );
 
   await saveModelConfig(relationReferenceContext.resourceConfig, relationReferenceContext.basePath);
 
@@ -160,16 +188,15 @@ async function removeRelationFromModel(
  * @throws - Throws an error if the model configuration is invalid or has no attributes.
  */
 const renderModel = async (context: RenderContext<ModelConfig>) => {
-
-  context.dateTimeAttributes = dateTimeUniqueAttributes(context.resourceConfig.attributes)
-  context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes)
+  context.dateTimeAttributes = dateTimeUniqueAttributes(context.resourceConfig.attributes);
+  context.mathAttributes = mathUniquesAttributes(context.resourceConfig.attributes);
 
   if (context.resourceConfig.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
   // Validação e renderização de cada atributo com seu valor padrão
-  context.resourceConfig.attributes.forEach(attribute => {
+  context.resourceConfig.attributes.forEach((attribute) => {
     if (attribute.defaultValue) {
       renderColumnWithDefault(attribute);
     }
@@ -179,7 +206,6 @@ const renderModel = async (context: RenderContext<ModelConfig>) => {
   context.uniqueConstraints = context.resourceConfig.uniqueConstraints || [];
 
   return await renderTemplate(TEMPLATES.DOMAIN_MODEL, context);
-
 };
 
 const renderPrimaryKey = async (context: RenderContext<ModelConfig>) => {
@@ -207,33 +233,44 @@ const dateTimeUniqueAttributes = (attributes: Attribute[]) => {
 // Verefica existencia de atributos de alta precisão
 const mathUniquesAttributes = (attributes: Attribute[]) => {
   let mathAttributes: string[] = [];
-  attributes.forEach(attribute => {
-    if (attribute.type === "BigInteger" || attribute.type === "BigDecimal") {
-      mathAttributes.push(attribute.type)
+  attributes.forEach((attribute) => {
+    if (attribute.type === 'BigInteger' || attribute.type === 'BigDecimal') {
+      mathAttributes.push(attribute.type);
     }
-  })
+  });
 
-  return [...new Set(mathAttributes)]
-}
+  return [...new Set(mathAttributes)];
+};
 
 const validateColumnDefault = (attribute: Attribute) => {
   const { type, defaultValue } = attribute;
 
-  if (defaultValue) { // Só valida se defaultValue estiver presente
-    if (['integer', 'biginteger', 'bigdecimal', 'long', 'double', 'float', 'short', 'byte'].includes(type)) {
+  if (defaultValue) {
+    // Só valida se defaultValue estiver presente
+    if (
+      ['integer', 'biginteger', 'bigdecimal', 'long', 'double', 'float', 'short', 'byte'].includes(
+        type,
+      )
+    ) {
       // Verifica se o valor padrão é um número válido
       if (isNaN(Number(defaultValue))) {
-        throw new Error(`The default value "${defaultValue}" is not valid for the numeric type ${type}.`);
+        throw new Error(
+          `The default value "${defaultValue}" is not valid for the numeric type ${type}.`,
+        );
       }
     } else if (type === 'String') {
       // Verifica se o valor padrão é uma string válida (permite espaço no meio)
       if (!/^\S.*\S$/.test(defaultValue)) {
-        throw new Error(`The default value "${defaultValue}" is not valid for the string type ${type}.`);
+        throw new Error(
+          `The default value "${defaultValue}" is not valid for the string type ${type}.`,
+        );
       }
     } else if (type === 'Boolean') {
       // Verifica se o valor padrão é "true" ou "false"
       if (!['true', 'false'].includes(defaultValue.toLowerCase())) {
-        throw new Error(`The default value "${defaultValue}" is not valid for the boolean type ${type}.`);
+        throw new Error(
+          `The default value "${defaultValue}" is not valid for the boolean type ${type}.`,
+        );
       }
     } else {
       //console.warn(`No specific validation for the type ${type}.`);
@@ -253,15 +290,17 @@ const renderColumnWithDefault = (attribute: Attribute) => {
 
 // Função para validar as colunas de uniqueConstraints
 function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
-  const attributeNames = modelConfig.attributes.map(attr => attr.name); // Pegar todos os nomes dos atributos
+  const attributeNames = modelConfig.attributes.map((attr) => attr.name); // Pegar todos os nomes dos atributos
   const erros: string[] = [];
 
   // Verificar cada uniqueConstraint
   if (modelConfig.uniqueConstraints) {
-    modelConfig.uniqueConstraints.forEach(constraint => {
-      constraint.columns.forEach(column => {
+    modelConfig.uniqueConstraints.forEach((constraint) => {
+      constraint.columns.forEach((column) => {
         if (!attributeNames.includes(column)) {
-          erros.push(`A coluna '${column}' definida em uniqueConstraints não corresponde a nenhum atributo.`);
+          erros.push(
+            `A coluna '${column}' definida em uniqueConstraints não corresponde a nenhum atributo.`,
+          );
         }
       });
     });
@@ -272,50 +311,40 @@ function validarUniqueConstraints(modelConfig: ModelConfig): string[] {
 
 // Caminho onde o arquivo é salvo
 const getModelOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getModelOutputDir(context)
+  const outputDir = getModelOutputDir(context);
   const fileName = capitalizeJavaStyle(context.resourceConfig.name);
-  context.fullPath = outputDir
+  context.fullPath = outputDir;
   return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
-}
+};
 
 // Caminho onde o arquivo é salvo
 const getDDDModelOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDModelOutputDir(context)
+  const outputDir = getDDDModelOutputDir(context);
   const fileName = capitalizeJavaStyle(context.resourceConfig.name);
-  context.fullPath = outputDir
+  context.fullPath = outputDir;
   return path.join(outputDir, `${fileName}${EXTENSIONS.JAVA}`);
-}
+};
 
 const getPrimaryKeyModelOutputPath = (context: RenderContext<ModelConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    const outputDir = getDDDModelOutputDir(context)
-    context.fullPath = outputDir
-    return path.join(
-      outputDir,
-      `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
-    );
+    const outputDir = getDDDModelOutputDir(context);
+    context.fullPath = outputDir;
+    return path.join(outputDir, `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`);
+  } else {
+    const outputDir = getModelOutputDir(context);
+    context.fullPath = outputDir;
+    return path.join(outputDir, `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`);
   }
-  else {
-    const outputDir = getModelOutputDir(context)
-    context.fullPath = outputDir
-    return path.join(
-      outputDir,
-      `${context.resourceConfig.name}PrimaryKey${EXTENSIONS.JAVA}`,
-    );
-  }
-}
+};
 
 const modelDirectory = (context: RenderContext<ModelConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    const outputDir = getDDDModelOutputDir(context)
-    context.fullPath = outputDir
+    const outputDir = getDDDModelOutputDir(context);
+    context.fullPath = outputDir;
+    return path.join(outputDir);
+  } else {
+    const outputDir = getModelOutputDir(context);
+    context.fullPath = outputDir;
     return path.join(outputDir);
   }
-  else {
-    const outputDir = getModelOutputDir(context)
-    context.fullPath = outputDir
-    return path.join(outputDir);
-  }
-}
-
-
+};

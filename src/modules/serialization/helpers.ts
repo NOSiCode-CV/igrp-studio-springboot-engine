@@ -12,7 +12,9 @@ export const parseSqlCommand = (sql: string): { columns: string[]; table: string
   // Extract the SELECT clause and table name
   const selectClauseMatch = sql.match(/SELECT\s+([\s\S]+?)\s+FROM\s+([^\s;]+)/i);
   if (!selectClauseMatch) {
-    throw new Error('Invalid or Unsupported SQL SELECT command format. Supported format: SELECT value AS column_name FROM table_name');
+    throw new Error(
+      'Invalid or Unsupported SQL SELECT command format. Supported format: SELECT value AS column_name FROM table_name',
+    );
   }
 
   const selectClause = selectClauseMatch[1].trim();
@@ -71,7 +73,8 @@ export const inferTypeFromValue = (value: string): string => {
   ) {
     return 'datetime'; // Date or timestamp
   }
-  if (/^-?\d+$/.test(value)) { // Supports negative numbers too
+  if (/^-?\d+$/.test(value)) {
+    // Supports negative numbers too
     const num = BigInt(value); // Use BigInt to handle large numbers
     if (num >= -2147483648n && num <= 2147483647n) {
       return 'integer'; // Java Integer range

@@ -46,10 +46,9 @@ export const generateRepositoryImpl = async (context: RenderContext<ModelConfig>
  * @throws - Throws an error if the model configuration is invalid or if CRUD is not specified.
  */
 export const renderRepository = async (context: RenderContext<ModelConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return await renderTemplate(TEMPLATES.DDD_AGGREGATE_REPOSITORY, context);
-  else
-    return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
+  else return await renderTemplate(TEMPLATES.DOMAIN_REPOSITORY, context);
 };
 
 export const renderImplRepository = async (context: RenderContext<ModelConfig>) => {
@@ -67,23 +66,20 @@ export const renderDDDRepository = async (context: RenderContext<ModelConfig>) =
  * @returns The full path where the repository file will be saved.
  */
 const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getModelOutputDir(context)
-  context.fullPath = outputDir
+  const outputDir = getModelOutputDir(context);
+  context.fullPath = outputDir;
   return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
-}
+};
 
 const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDRepositoryOutputDir(context)
+  const outputDir = getDDDRepositoryOutputDir(context);
   const fileName = capitalizeJavaStyle(context.resourceConfig.name);
-  context.fullPath = outputDir
+  context.fullPath = outputDir;
   return path.join(outputDir, `${REPOSITORY_PREFIX}${fileName}${REPOSITORY_SUFFIX}`);
-}
+};
 
 const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDRepositoryImplOutputDir(context)
-  context.fullPath = outputDir
-  return path.join(
-    outputDir,
-    `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`,
-  );
-}
+  const outputDir = getDDDRepositoryImplOutputDir(context);
+  context.fullPath = outputDir;
+  return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
+};

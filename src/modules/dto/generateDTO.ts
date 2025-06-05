@@ -10,15 +10,20 @@ import { renderTemplate } from '../common/renderTemplate';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
-  EXTENSIONS, GENERIC_TYPES,
+  EXTENSIONS,
+  GENERIC_TYPES,
   PACKAGE_NS,
-  PACKAGES, PROJECT_STRUCTURE_STYLE,
+  PACKAGES,
+  PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
 } from '../../utils/constants';
 import { saveToFile } from '../common/saveToFile';
 import {
   getDDDCommandOutputDir,
-  getDDDDtoOutputDir, getDDDEventOutputDir, getDDDQueryOutputDir, getDtoOutputDir,
+  getDDDDtoOutputDir,
+  getDDDEventOutputDir,
+  getDDDQueryOutputDir,
+  getDtoOutputDir,
   getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
@@ -31,52 +36,56 @@ export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
   const template = await _renderDTO(context);
 
-  await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, context.resourceConfig.id, context.resourceConfig.module, context.basePath);
+  await saveToFile(
+    template,
+    modelOutputPath,
+    true,
+    DIRECTORIES.DTO,
+    context.resourceConfig.id,
+    context.resourceConfig.module,
+    context.basePath,
+  );
 };
 
 /**
  * Generates the DTO in the API using the provided configuration.
- * WARN: this is for internal use only 
+ * WARN: this is for internal use only
  * @param context - The configuration of the DTO including the DTO name and attributes.
  * @returns - A string representing the DTO generated from the template.
  * @throws - Throws an error if the DTO configuration is invalid or has no attributes.
  */
 export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
-
   if (context.resourceConfig.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
   let tn;
 
   switch (context.resourceConfig.type) {
-    case "dto":
+    case 'dto':
       if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
-      else
-        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      else tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
-    case "response":
+    case 'response':
       if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_DTO[context.resourceConfig.template];
-      else
-        tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
+      else tn = TEMPLATES.DOMAIN_DTO[context.resourceConfig.template];
       break;
-    case "filter":
+    case 'filter':
       if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
         tn = TEMPLATES.DDD_LITE_FILTER;
-      else
-        tn = TEMPLATES.DOMAIN_FILTER;
+      else tn = TEMPLATES.DOMAIN_FILTER;
       break;
     /*case "dataobject":
       tn = TEMPLATES.DDD_DATA_OBJECT_DTO[context.resourceConfig.template];
       break;*/
-    case "command":
+    case 'command':
       tn = TEMPLATES.DDD_LITE_COMMAND[context.resourceConfig.template];
       break;
-    case "query":
+    case 'query':
       tn = TEMPLATES.DDD_LITE_QUERY[context.resourceConfig.template];
       break;
-    case "event":
+    case 'event':
       tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
       break;
     /*case "valueobject":
@@ -111,8 +120,14 @@ export const transformDTOConfig = async function (
 
     let typeNotFound = false;
     if (attr.objectType === PACKAGE_NS.java) {
-      const jtOpt: { java: { name: string, primitive: boolean, namespace?: string }, dotnet: { name: string, primitive: boolean, namespace?: string }, python: { name: string, primitive: boolean, namespace?: string }, kotlin: { name: string, primitive: boolean, namespace?: string } } | undefined =
-        GENERIC_TYPES.get(type.name)
+      const jtOpt:
+        | {
+            java: { name: string; primitive: boolean; namespace?: string };
+            dotnet: { name: string; primitive: boolean; namespace?: string };
+            python: { name: string; primitive: boolean; namespace?: string };
+            kotlin: { name: string; primitive: boolean; namespace?: string };
+          }
+        | undefined = GENERIC_TYPES.get(type.name);
       if (jtOpt) {
         const jt = jtOpt.java;
         if (!jt.primitive && jt.namespace && jt.namespace != 'java.lang') {
@@ -136,14 +151,13 @@ export const transformDTOConfig = async function (
         typeNotFound = true;
       }
     } else if (attr.objectType === PACKAGE_NS.dto && attr.type != 'object') {
-
       dtypes = await getDTOTypes(attr.module ?? config.module ?? DIRECTORIES.SHARED, basePath);
 
-      const dt = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
+      const dt = dtypes.get(normalizeName(type.name!, 'dto') + 'DTO');
 
       if (!dt) {
         dtypes = await getDTOTypes(DIRECTORIES.SHARED, basePath);
-        const dtype = dtypes.get(normalizeName(type.name!, 'dto') + "DTO");
+        const dtype = dtypes.get(normalizeName(type.name!, 'dto') + 'DTO');
         if (!dtype) {
           typeNotFound = true;
         }
@@ -156,7 +170,6 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.DTO}`;
         }
       }
-
     } else if (attr.objectType === PACKAGE_NS.enum) {
       if (etypes === undefined) {
         etypes = await getEnumTypes(config.module ?? DIRECTORIES.SHARED, basePath);
@@ -179,12 +192,9 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
-
-    }
-    else if (attr.objectType === PACKAGE_NS.dto && attr.type === 'object') {
+    } else if (attr.objectType === PACKAGE_NS.dto && attr.type === 'object') {
       typeNotFound = false;
-    }
-    else {
+    } else {
       typeNotFound = true;
     }
 
@@ -198,7 +208,7 @@ export const transformDTOConfig = async function (
   }
 
   // normalize the name of the DTO
-  ncfg.name = normalizeName(config.name, config.type)
+  ncfg.name = normalizeName(config.name, config.type);
 
   if (errors.length > 0) {
     throw errors;
@@ -210,55 +220,37 @@ export const transformDTOConfig = async function (
 const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     switch (context.resourceConfig.type) {
-      case "dto": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
+      case 'dto': {
+        const outputDir = getDDDDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       }
-      case "response": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
+      case 'response': {
+        const outputDir = getDDDDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       }
-      case "filter": {
-        const outputDir = getDDDDtoOutputDir(context)
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`,
-        );
+      case 'filter': {
+        const outputDir = getDDDDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       }
       /*case "dataobject":
         return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
-      case "command": {
+      case 'command': {
         const outputDir = getDDDCommandOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`,
-        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}Command${EXTENSIONS.JAVA}`);
       }
-      case "query": {
+      case 'query': {
         const outputDir = getDDDQueryOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`,
-        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}Query${EXTENSIONS.JAVA}`);
       }
-      case "event": {
+      case 'event': {
         const outputDir = getDDDEventOutputDir(context);
-        context.fullPath = outputDir
-        return path.join(
-          outputDir,
-          `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`,
-        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
       }
       /*case "valueobject":
         return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
@@ -267,7 +259,7 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
     }
   } else {
     const outputDir = getDtoOutputDir(context);
-    context.fullPath = outputDir
+    context.fullPath = outputDir;
     return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
   }
 };

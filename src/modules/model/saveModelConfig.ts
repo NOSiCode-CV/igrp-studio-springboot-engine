@@ -11,12 +11,20 @@ import { capitalizeJavaStyle } from '../../helper/stringHelper';
  * @throws Throws an error if the model configuration or output directory is invalid.
  */
 export const saveModelConfig = async (config: ModelConfig, basePath: string) => {
-  
   if (config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
   const fileName = capitalizeJavaStyle(config.name);
   const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
-  await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_MODEL, config.id, config.module, basePath, EXTENSIONS.JSON);
+  await saveToFile(
+    JSON.stringify(config),
+    output,
+    true,
+    DIRECTORIES.CONFIG_MODEL,
+    config.id,
+    config.module,
+    basePath,
+    EXTENSIONS.JSON,
+  );
 };
