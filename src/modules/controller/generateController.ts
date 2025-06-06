@@ -24,11 +24,21 @@ export const generateController = async (context: RenderContext<ControllerConfig
 
   const controller = await renderController(context);
 
+  /* await saveToFile(
+     controller,
+     controllerOutputPath,
+     true,
+     DIRECTORIES.CONTROLLER,
+     context.resourceConfig.id,
+     context.resourceConfig.module,
+     context.basePath,
+   );*/
+
   await saveToFile(
     controller,
     controllerOutputPath,
     true,
-    DIRECTORIES.CONTROLLER,
+    DIRECTORIES.REST,
     context.resourceConfig.id,
     context.resourceConfig.module,
     context.basePath,

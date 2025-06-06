@@ -34,6 +34,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+  const interfacePath = path.join(sharedPath, DIRECTORIES.INTERFACE);
   const igrpSharedPath = path.join(igrpstudioPath, DIRECTORIES.SHARED);
 
   if (config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
@@ -49,6 +50,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       applicationPath,
       domainPath,
       infraPath,
+      interfacePath,
 
       commandPath,
       queryPath,
@@ -61,11 +63,13 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(domainPath, DIRECTORIES.REPOSITORY),
       path.join(domainPath, DIRECTORIES.SERVICE),
 
-      path.join(infraPath, DIRECTORIES.CONTROLLER),
+      //path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
       path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
       path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
+
+      path.join(interfacePath, DIRECTORIES.REST)
     ];
 
     if (config.enableObservability)

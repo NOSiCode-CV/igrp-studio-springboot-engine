@@ -34,12 +34,13 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
   const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(modulePath, DIRECTORIES.INFRASTRUCTURE);
+  const interfacePath = path.join(modulePath, DIRECTORIES.INTERFACE);
   const igrpSharedPath = path.join(igrpstudioPath, context.resourceConfig.name);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     return [
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
 
@@ -53,6 +54,9 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       infraPath,
       path.join(infraPath, DIRECTORIES.REPOSITORIES),
 
+      interfacePath,
+      path.join(interfacePath, DIRECTORIES.REST),
+
       commandPath,
       queryPath,
 
@@ -62,7 +66,7 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
       path.join(domainPath, DIRECTORIES.REPOSITORY),
       path.join(domainPath, DIRECTORIES.SERVICE),
 
-      path.join(infraPath, DIRECTORIES.CONTROLLER),
+      /// path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
       path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),

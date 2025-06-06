@@ -30,6 +30,8 @@ export const DIRECTORIES = {
   APPLICATION: 'application',
   DOMAIN: 'domain',
   INFRASTRUCTURE: 'infrastructure',
+  INTERFACE: 'interfaces',
+  REST: 'rest',
   COMMAND: 'command',
   COMMANDS: 'commands',
   QUERY: 'query',

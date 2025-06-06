@@ -260,7 +260,7 @@ export const getControllerDir = (
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name.toLowerCase(),
   );
-export const getDDDControllerDir = (
+/*export const getDDDControllerDir = (
   context: RenderContext<ControllerConfig | ModelConfig | DeleteConfig>,
 ) =>
   path.join(
@@ -269,6 +269,17 @@ export const getDDDControllerDir = (
     context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
     DIRECTORIES.INFRASTRUCTURE,
     DIRECTORIES.CONTROLLER,
+  );*/
+
+export const getDDDControllerDir = (
+  context: RenderContext<ControllerConfig | ModelConfig | DeleteConfig>,
+) =>
+  path.join(
+    context.basePath,
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+    DIRECTORIES.INTERFACE,
+    DIRECTORIES.REST,
   );
 
 export const getExceptionDir = (context: RenderContext<ExceptionConfig>) =>
