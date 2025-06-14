@@ -20,7 +20,7 @@ export const saveResponseConfig = async (config: ResponseConfig, basePath: strin
     basePath,
   );
   await saveToFile(
-    JSON.stringify(config),
+    JSON.stringify(config, null, 2),
     output,
     true,
     DIRECTORIES.CONFIG_RESPONSE,

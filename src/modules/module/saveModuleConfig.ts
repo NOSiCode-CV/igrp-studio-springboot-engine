@@ -24,7 +24,7 @@ export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, bas
     context.resourceConfig.name,
     `${context.resourceConfig.type}${EXTENSIONS.JSON}`,
   );
-  await saveToFile(JSON.stringify(context.resourceConfig), baseApiFileOutputPah);
+  await saveToFile(JSON.stringify(context.resourceConfig, null, 2), baseApiFileOutputPah);
 };
 
 const generateBaseModuleFiles = (context: RenderContext<ModuleConfig>): BASE_API_FILES => {
