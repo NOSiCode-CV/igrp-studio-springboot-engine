@@ -21,7 +21,7 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
     basePath,
   );
   await saveToFile(
-    JSON.stringify(config),
+    JSON.stringify(config, null, 2),
     output,
     true,
     DIRECTORIES.CONFIG_DTO,

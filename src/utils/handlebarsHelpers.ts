@@ -632,7 +632,7 @@ Handlebars.registerHelper('formatAttribute', function (value) {
     if (Object.values(value).every((val) => typeof val === 'string')) {
       return `"${Object.values(value).join('')}"`; // Join characters and return as a single string
     }
-    return JSON.stringify(value); // Otherwise, return the object as a string
+    return JSON.stringify(value, null, 2); // Otherwise, return the object as a string
   } else {
     return value.toString(); // Return the value as-is if it doesn't match the above types
   }

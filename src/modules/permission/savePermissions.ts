@@ -13,5 +13,5 @@ export const saveAllPermissions = async (basePath: string) => {
 
   const output = path.join(basePath, DIRECTORIES.IGRPSTUDIO, 'permissions.json');
 
-  await saveToFile(JSON.stringify(permissions), output);
+  await saveToFile(JSON.stringify(permissions, null, 2), output);
 };

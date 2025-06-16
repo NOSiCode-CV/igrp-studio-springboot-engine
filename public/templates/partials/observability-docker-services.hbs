@@ -1,5 +1,5 @@
 otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.82.0
+    image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     restart: always
     command:
@@ -16,7 +16,7 @@ otel-collector:
       - ${OTEL_ZPAGES_PORT}:${OTEL_ZPAGES_PORT} # zpages extension
 
 prometheus:
-  image: prom/prometheus:v2.51.2
+  image: prom/prometheus:latest
   container_name: prometheus
   ports:
     - ${PROMETHEUS_SERVICE_EXTERNAL_PORT}:${PROMETHEUS_SERVICE_INTERNAL_PORT}
@@ -25,7 +25,7 @@ prometheus:
   command: "--config.file=/etc/prometheus/prometheus.yml"
 
 promtail:
-  image: grafana/promtail:3.0.0
+  image: grafana/promtail:latest
   container_name: promtail
   environment:
     - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_INTERNAL_PORT}
@@ -37,7 +37,7 @@ promtail:
   command: "--config.expand-env=true --config.file=/etc/promtail/docker-config.yml"
 
 loki:
-  image: grafana/loki:3.0.0
+  image: grafana/loki:latest
   container_name: loki
   command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
   ports:
@@ -46,7 +46,7 @@ loki:
     - promtail
 
 tempo:
-  image: grafana/tempo:2.4.1
+  image: grafana/tempo:latest
   container_name: tempo
   command: "-config.expand-env=true -config.file /etc/tempo-config.yml"
   environment:
@@ -59,7 +59,7 @@ tempo:
     - ./monitoring/tempo/tempo.yml:/etc/tempo-config.yml
 
 grafana:
-  image: grafana/grafana:10.4.2
+  image: grafana/grafana:latest
   container_name: grafana
   ports:
     - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}

@@ -11,5 +11,5 @@ import { getPermissionConfigPath } from '../../utils/helpers';
 export const savePermission = async (config: PermissionConfig, basePath: string) => {
   const output = getPermissionConfigPath(config.name, basePath);
 
-  await saveToFile(JSON.stringify(config), output);
+  await saveToFile(JSON.stringify(config, null, 2), output);
 };

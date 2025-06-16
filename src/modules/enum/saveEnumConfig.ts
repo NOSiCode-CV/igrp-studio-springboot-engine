@@ -16,7 +16,7 @@ export const saveEnumConfig = async (config: EnumConfig, basePath: string) => {
 
   const output = getEnumConfigPath(basePath, config.module ?? DIRECTORIES.SHARED, config.name);
   await saveToFile(
-    JSON.stringify(config),
+    JSON.stringify(config, null, 2),
     output,
     true,
     DIRECTORIES.CONFIG_ENUM,
