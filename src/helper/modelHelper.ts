@@ -64,8 +64,6 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
     if (attribute.relation?.type === 'OneToMany' || attribute.relation?.type === 'ManyToMany') {
       const collectionType =
         attribute.relation?.type === 'ManyToMany' ? 'java.util.Set' : 'java.util.List';
-      //console.log(collectionType);
-      //console.log(attribute.relation.type);
 
       imports.push(`import ${collectionType};`);
 

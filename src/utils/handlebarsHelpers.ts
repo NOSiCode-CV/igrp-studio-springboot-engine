@@ -17,7 +17,7 @@ import {
 import {
   DIRECTORIES,
   GENERIC_IMPORTS,
-  GENERIC_TYPES,
+  GENERIC_TYPES, PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
@@ -430,6 +430,14 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
         imports.add(isDDDStyle ? objectImports.java.domain : objectImports.java.technical);
         continue;
       }
+    }
+
+    if (attr.type === 'model') {
+      const importPath = isDDDStyle
+        ? `${packageNameFromConfig}.${attr.module ?? DIRECTORIES.SHARED}.infrastructure.persistence.entity.${attr.type}`
+        : `${packageNameFromConfig}.${PACKAGES.MODELS}.${attr.type.toLowerCase()}.${attr.type}`;
+      imports.add(`import ${importPath};`);
+      continue;
     }
 
     if (attr.type === 'object') {
