@@ -112,6 +112,7 @@ export const PARTIALS = [
   'security-maven-dependencies.hbs',
   'spring-maven-dependencies.hbs',
   'spring-entity-revision-dependencies.hbs',
+  'spring-cloud-dependencies.hbs',
   'graal-vm-plugin.hbs',
   'graal-vm-observability-dependencies.hbs',
 ];

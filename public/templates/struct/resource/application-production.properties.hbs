@@ -1,3 +1,8 @@
+# Eureka Configurations
+eureka.client.enabled=false
+# Spring Cloud Kubernetes
+spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED}
+
 # Logging Levels
 #sets the baseline logging level for the entire application
 logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
@@ -13,7 +18,6 @@ spring.datasource.password=${DATABASE_PASSWORD}
 spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
 
 # JPA and Hibernate settings
-spring.jpa.open-in-view=false
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
 {{#if baseConfig.enableEntityRevision}}

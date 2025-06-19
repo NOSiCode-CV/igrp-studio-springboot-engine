@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>{{baseConfig.springBootVersion}}</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>{{baseConfig.group}}</groupId>
 	<artifactId>{{baseConfig.artifact}}</artifactId>
@@ -43,13 +43,13 @@
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
     {{> igrp-maven-dependencies}}
+    {{> spring-cloud-dependencies}}
   {{#if baseConfig.enableObservability}}
        {{#if baseConfig.enableGraalVm}}
 		 {{> graal-vm-observability-dependencies}}
 	   {{/if}}
 		{{> observability-maven-dependencies}}
   {{/if}}
-
   
     {{#if baseConfig.dependencies}}
       {{#each baseConfig.dependencies}}
@@ -63,6 +63,17 @@
       {{/each}}
     {{/if}}
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 	<build>
 		<plugins>
 			{{#if baseConfig.enableGraalVm}}

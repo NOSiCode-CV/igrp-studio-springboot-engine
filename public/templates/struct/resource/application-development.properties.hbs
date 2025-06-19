@@ -3,6 +3,14 @@ spring.config.import=optional:file:.env[.properties]
 
 server.port=${SERVICE_PORT}
 
+# Eureka Configurations
+eureka.client.enabled=false
+eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+eureka.instance.prefer-ip-address=true
+eureka.client.register-with-eureka=true
+# Spring Cloud Kubernetes
+spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED:false}
+
 # Logging Levels
 #sets the baseline logging level for the entire application
 logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
