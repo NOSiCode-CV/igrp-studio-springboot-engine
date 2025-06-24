@@ -1,5 +1,5 @@
 # Use an official Maven image with JDK 21 to build the application
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.10-eclipse-temurin-21-alpine AS build
 
 # Define build-time argument
 ARG OTEL_TRACES_EXPORTER
@@ -24,7 +24,7 @@ WORKDIR $APP_HOME
 RUN mvn package -DskipTests
 
 # Runtime image
-FROM maven:3.9.9-eclipse-temurin-21-alpine
+FROM maven:3.9.10-eclipse-temurin-21-alpine
 
 # Define runtime environment variable
 ENV OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
