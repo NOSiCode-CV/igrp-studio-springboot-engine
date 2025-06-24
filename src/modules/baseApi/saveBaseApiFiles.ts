@@ -42,6 +42,9 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
   let files: BASE_API_FILES = [];
 
+  const igrpstudioSharedPath = path.join(context.basePath, DIRECTORIES.IGRPSTUDIO, DIRECTORIES.SHARED);
+  //console.log('igrpstudioPath:: ' + igrpstudioSharedPath);
+
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
     const configPath = path.join(sharedPath, 'config');
@@ -152,6 +155,32 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.DDD_SPRING_QUERY_BUS,
         name: COMMON_FILES.SPRING_QUERY_BUS,
       },
+
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.DTO),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.SERVICE),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      }
     );
   } else {
     const configPath = path.join(mainPath, 'config');
@@ -239,6 +268,16 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
       },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.DTO),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      }
     );
   }
 

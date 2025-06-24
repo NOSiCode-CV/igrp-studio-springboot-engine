@@ -25,7 +25,56 @@ export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, bas
     `${context.resourceConfig.type}${EXTENSIONS.JSON}`,
   );
   await saveToFile(JSON.stringify(context.resourceConfig, null, 2), baseApiFileOutputPah);
+
+  const gitkeepFiles = generateGitKeepFile(context);
+  await saveBaseApiFiles(gitkeepFiles, context);
 };
+
+const generateGitKeepFile = (context: RenderContext<ModuleConfig>): BASE_API_FILES => {
+  const moduleName = context.resourceConfig.name;
+
+  const resolvePath = (templatePath: string) =>
+    path.join(context.basePath, templatePath.replace('{{module}}', moduleName));
+
+  const modulePath = path.join(context.basePath, moduleName);
+  const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
+
+  const files: BASE_API_FILES = [
+    {
+      output: resolvePath(DIRECTORIES.CONFIG_MODEL),
+      template: TEMPLATES.GITKEEPFILE,
+      name: COMMON_FILES.GITKEEPFILE,
+    },
+    {
+      output: resolvePath(DIRECTORIES.CONFIG_DTO),
+      template: TEMPLATES.GITKEEPFILE,
+      name: COMMON_FILES.GITKEEPFILE,
+    },
+  ];
+
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    files.push(
+      {
+        output: path.join(domainPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.SERVICE),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      }
+    );
+  }
+
+  return files;
+};
+
 
 const generateBaseModuleFiles = (context: RenderContext<ModuleConfig>): BASE_API_FILES => {
   context.baseConfig.name = capitalize(context.baseConfig.name);

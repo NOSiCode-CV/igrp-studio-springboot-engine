@@ -367,6 +367,8 @@ export const TEMPLATES = {
 
   VALIDATOR_DTO_INTERFACE: 'struct/technical/java/dto/dtoValidatorInterface.hbs',
   VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs',
+
+  GITKEEPFILE: 'struct/gitKeepFile.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -487,6 +489,8 @@ export const COMMON_FILES = {
   INGRESS: 'ingress.yaml',
   CLUSTER: 'cluster.yaml',
   SERVICE_K8S: 'service.yaml',
+
+  GITKEEPFILE: '.gitkeep',
 };
 
 export const HELPER_FILES = {
