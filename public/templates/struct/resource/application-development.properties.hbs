@@ -68,9 +68,11 @@ spring.data.rest.detection-strategy=annotated
 # Authentication
 auth.jwt.issuer=${AUTH_JWT_ISSUER}
 
-# Documentation
+# Swagger Documentation
 springdoc.swagger-ui.enabled=${ENABLE_SWAGGER:true}
 springdoc.swagger-ui.operationsSorter=method
+springdoc.swagger-ui.tryItOutEnabled=true
+springdoc.swagger-ui.docExpansion=none
 
 {{#if baseConfig.enableObservability}}
 # Observability
