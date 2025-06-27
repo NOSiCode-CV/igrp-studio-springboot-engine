@@ -10,9 +10,9 @@ import jakarta.validation.constraints.*;
 import {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.application.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
+{{#if resourceConfig.extends}}import lombok.EqualsAndHashCode;{{/if}}
 {{#if resourceConfig.attributes}}
 {{> lombok-java-annotations}}
-{{#if resourceConfig.extends}}import lombok.EqualsAndHashCode;{{resourceConfig.extends.name}}{{/if}}
 {{/if}}
 
 {{#each resourceConfig.annotations}}
@@ -21,7 +21,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.ap
 {{#if resourceConfig.enableCustonValidation}}
 @{{resolve-interface-custon-validator-name resourceConfig.name}}
 {{/if}}
-{{#if resourceConfig.extends}}@EqualsAndHashCode(callSuper = true){{resourceConfig.extends.name}}{{/if}}
+{{#if resourceConfig.extends}}@EqualsAndHashCode(callSuper = true){{/if}}
 @IgrpDTO
 public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}}{
 
