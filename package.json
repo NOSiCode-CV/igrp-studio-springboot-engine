@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.0.2-alpha.7",
+  "version": "0.0.2-alpha.8",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
