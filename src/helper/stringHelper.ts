@@ -1,4 +1,4 @@
-import pluralize from 'pluralize';
+import pluralize from 'inflection';
 
 export function singleCapitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -80,26 +80,6 @@ export function lowercaseAndPluralize(str: string): string {
   return lowerStr + 's';
 }
 
-/*export function fullCamelCaseAndPluralize(str: string): string {
-  if (!str) return '';
-
-  const lowerStr = str
-    .toLowerCase()
-    .split('_')
-    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join('');
-
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
-}*/
-
 export function fullCamelCaseAndPluralize(str: string): string {
   if (!str) return '';
 
@@ -109,7 +89,7 @@ export function fullCamelCaseAndPluralize(str: string): string {
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
     .join('');
 
-  return pluralize(lowerStr);
+  return pluralize.pluralize(lowerStr);
 }
 
 export function sanitizeHeaderName(headerName: string): string {
