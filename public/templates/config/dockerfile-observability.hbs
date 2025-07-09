@@ -13,12 +13,16 @@ ARG OTEL_ENABLED
 ENV APP_HOME /app
 ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
 
-# Copy the pom.xml and source code
-COPY src $APP_HOME/src
+# Copy the pom.xml first for better layer caching
 COPY pom.xml $APP_HOME/pom.xml
-COPY opentelemetry-javaagent.jar $APP_HOME/opentelemetry-javaagent.jar
 
+# Download dependencies separately to leverage Docker cache
 WORKDIR $APP_HOME
+RUN mvn dependency:go-offline
+
+# Copy the source code and OpenTelemetry agent
+COPY src $APP_HOME/src
+COPY opentelemetry-javaagent.jar $APP_HOME/opentelemetry-javaagent.jar
 
 # Package the application
 RUN mvn package -DskipTests
@@ -34,6 +38,9 @@ ENV OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT}
 ENV OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
 ENV OTEL_ENABLED=${OTEL_ENABLED}
 ENV SPRING_ACTIVE_PROFILE=${SPRING_ACTIVE_PROFILE}
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
+                -XX:+UseStringDeduplication \
+                -XX:-HeapDumpOnOutOfMemoryError"
 
 # Set the working directory
 WORKDIR /app
@@ -53,7 +60,8 @@ CMD ["sh", "-c", "if [ \"$OTEL_ENABLED\" != \"false\" ]; then \
   -Dotel.logs.exporter=${OTEL_LOGS_EXPORTER} \
   -Dotel.exporter.otlp.endpoint=${OTEL_COLLECTOR_ENDPOINT} \
   -Dotel.service.name=${OTEL_SERVICE_NAME} \
+   ${JAVA_OPTS} \
   -jar /app/app.jar; \
 else \
-  java -jar /app/app.jar; \
+  java ${JAVA_OPTS} -jar /app/app.jar; \
 fi"]
