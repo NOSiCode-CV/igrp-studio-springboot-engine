@@ -3,7 +3,7 @@ import { Dependency, SpringInitializerData } from '../interfaces/springDependenc
 import fs, { pathExists } from 'fs-extra';
 import { getPaths } from '../index';
 
-export const SPRING_BOOT_VERSION = '3.5.0';
+export const SPRING_BOOT_VERSION = '3.5.3';
 export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = `https://start.spring.io/dependencies?bootVersion=${SPRING_BOOT_VERSION}`;
 
 export async function getSpringInitializerDependencies(): Promise<Dependency[]> {
