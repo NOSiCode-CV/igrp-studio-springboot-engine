@@ -1,4 +1,4 @@
-otel-collector:
+otel-collector-{{toLowerCase baseConfig.name}}-api-service:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     restart: always
@@ -15,7 +15,7 @@ otel-collector:
       - ${OTEL_HTTP_PORT}:${OTEL_HTTP_PORT} # OTLP http receiver
       - ${OTEL_ZPAGES_PORT}:${OTEL_ZPAGES_PORT} # zpages extension
 
-prometheus:
+prometheus-{{toLowerCase baseConfig.name}}-api-service:
   image: prom/prometheus:latest
   container_name: prometheus
   ports:
@@ -24,7 +24,7 @@ prometheus:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   command: "--config.file=/etc/prometheus/prometheus.yml"
 
-promtail:
+promtail-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/promtail:latest
   container_name: promtail
   environment:
@@ -36,16 +36,16 @@ promtail:
     - /var/run/docker.sock:/var/run/docker.sock
   command: "--config.expand-env=true --config.file=/etc/promtail/docker-config.yml"
 
-loki:
+loki-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/loki:latest
   container_name: loki
   command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
   ports:
     - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
   depends_on:
-    - promtail
+    - promtail-{{toLowerCase baseConfig.name}}-api-service
 
-tempo:
+tempo-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/tempo:latest
   container_name: tempo
   command: "-config.expand-env=true -config.file /etc/tempo-config.yml"
@@ -58,13 +58,13 @@ tempo:
   volumes:
     - ./monitoring/tempo/tempo.yml:/etc/tempo-config.yml
 
-grafana:
+grafana-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/grafana:latest
   container_name: grafana
   ports:
     - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}
   volumes:
-    - grafana_data:/var/lib/grafana
+    - grafana-data-{{toLowerCase baseConfig.name}}-api-service:/var/lib/grafana
   environment:
     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}

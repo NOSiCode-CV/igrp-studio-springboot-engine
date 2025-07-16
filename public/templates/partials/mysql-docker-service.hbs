@@ -1,4 +1,4 @@
-mysql:
+mysql-'{{toLowerCase baseConfig.name}}-api-service':
     image: mysql:8.0
     container_name: mysql
     environment:
@@ -8,5 +8,5 @@ mysql:
     ports:
       - ${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}
     volumes:
-      - mysql-data-8:/var/lib/mysql
+      - mysql-data-8-{{toLowerCase baseConfig.name}}-api-service:/var/lib/mysql
     restart: unless-stopped
