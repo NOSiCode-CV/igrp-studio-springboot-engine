@@ -484,21 +484,19 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
 
       imports.add(baseCollectionImport);
 
-      if (
-        attr.objectType == 'dto' &&
-        (baseCollectionImport == 'import java.util.List;' ||
-          baseCollectionImport == 'java.util.Collection;')
-      ) {
-        imports.add('import java.util.ArrayList;');
+      switch (attr.collectionType) {
+        case 'list':
+        case 'collection':
+          imports.add('import java.util.ArrayList;');
+          break;
+        case 'set':
+          imports.add('import java.util.HashSet;');
+          break;
+        case 'map':
+          imports.add('import java.util.HashMap;');
+          break;
       }
 
-      if (attr.objectType == 'dto' && baseCollectionImport == 'java.util.Map;') {
-        imports.add('import java.util.HashMap;');
-      }
-
-      if (attr.objectType == 'dto' && baseCollectionImport == 'java.util.Set;') {
-        imports.add('import java.util.HashSet;');
-      }
     });
 
   return Array.from(imports)
