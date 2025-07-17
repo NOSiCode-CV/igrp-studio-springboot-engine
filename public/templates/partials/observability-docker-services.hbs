@@ -1,6 +1,6 @@
 otel-collector-{{toLowerCase baseConfig.name}}-api-service:
     image: otel/opentelemetry-collector-contrib:latest
-    container_name: otel-collector
+    container_name: otel-collector-{{toLowerCase baseConfig.name}}-api-service
     restart: always
     command:
       - --config=/etc/otelcol-cont/otel-collector.yml
@@ -17,7 +17,7 @@ otel-collector-{{toLowerCase baseConfig.name}}-api-service:
 
 prometheus-{{toLowerCase baseConfig.name}}-api-service:
   image: prom/prometheus:latest
-  container_name: prometheus
+  container_name: prometheus-{{toLowerCase baseConfig.name}}-api-service
   ports:
     - ${PROMETHEUS_SERVICE_EXTERNAL_PORT}:${PROMETHEUS_SERVICE_INTERNAL_PORT}
   volumes:
@@ -26,7 +26,7 @@ prometheus-{{toLowerCase baseConfig.name}}-api-service:
 
 promtail-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/promtail:latest
-  container_name: promtail
+  container_name: promtail-{{toLowerCase baseConfig.name}}-api-service
   environment:
     - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_INTERNAL_PORT}
     - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_INTERNAL_PORT}
@@ -38,7 +38,7 @@ promtail-{{toLowerCase baseConfig.name}}-api-service:
 
 loki-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/loki:latest
-  container_name: loki
+  container_name: loki-{{toLowerCase baseConfig.name}}-api-service
   command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
   ports:
     - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
@@ -47,7 +47,7 @@ loki-{{toLowerCase baseConfig.name}}-api-service:
 
 tempo-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/tempo:latest
-  container_name: tempo
+  container_name: tempo-{{toLowerCase baseConfig.name}}-api-service
   command: "-config.expand-env=true -config.file /etc/tempo-config.yml"
   environment:
     - TEMPO_SERVICE_HTTP_PORT=${TEMPO_SERVICE_HTTP_PORT}
@@ -60,7 +60,7 @@ tempo-{{toLowerCase baseConfig.name}}-api-service:
 
 grafana-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/grafana:latest
-  container_name: grafana
+  container_name: grafana-{{toLowerCase baseConfig.name}}-api-service
   ports:
     - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}
   volumes:

@@ -33,8 +33,10 @@
     </repository>
   </repositories>
 	<properties>
-		<java.version>23</java.version>
-	    <spring-cloud.version>2025.0.0</spring-cloud.version>
+    <igrp.version>{{baseConfig.version}}</igrp.version>
+    <java.version>{{baseConfig.javaVersion}}</java.version>
+    <spring-cloud.version>{{baseConfig.springCloudVersion}}</spring-cloud.version>
+    <springdoc.version>{{baseConfig.springDocVersion}}</springdoc.version>
 	</properties>
 	<dependencies>
 		{{> spring-maven-dependencies}}
@@ -84,6 +86,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 </project>

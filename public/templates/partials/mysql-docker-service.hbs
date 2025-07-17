@@ -1,6 +1,6 @@
-mysql-'{{toLowerCase baseConfig.name}}-api-service':
+mysql-{{toLowerCase baseConfig.name}}-api-service:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql-{{toLowerCase baseConfig.name}}-api-service
     environment:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}

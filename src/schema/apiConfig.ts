@@ -86,11 +86,18 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       type: 'boolean',
       nullable: false,
     },
-    igrpCoreVersion: {
+    javaVersion: {
       type: 'string',
-      nullable: false,
+      nullable: true,
     },
-    springBootVersion: {
+    springDocVersion: {
+      type: 'string',
+      nullable: true,
+    },
+    springCloudVersion: {
+      type: 'string',
+      nullable: true,
+    },  springBootVersion: {
       type: 'string',
       nullable: true,
     },
@@ -114,7 +121,6 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
     'database',
     'projectStructureStyle',
     'enableObservability',
-    'igrpCoreVersion',
     'enableGraalVm',
   ],
   additionalProperties: false,

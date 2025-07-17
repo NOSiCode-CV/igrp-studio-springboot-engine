@@ -239,6 +239,7 @@ export const TEMPLATES = {
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
 
   ENV_FILE: 'config/env.hbs',
+  ENV_EXAMPLE_FILE: 'config/env.example.hbs',
   CONFIG_MVNW: 'config/mvnw',
   CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
@@ -373,6 +374,7 @@ export const TEMPLATES = {
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -386,6 +388,7 @@ export const CONFIG_FILES = [
 
 export const CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -399,6 +402,7 @@ export const CONFIG_FILES_GRAALVM = [
 
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -411,6 +415,7 @@ export const OBSERVABILITY_CONFIG_FILES = [
 
 export const OBSERVABILITY_CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },

@@ -8,6 +8,13 @@
   "files": [
     "/dist"
   ],
+  "custom": {
+    "igrpVersion": "0.1.0-beta.1",
+    "javaVersion": "23",
+    "springBootVersion": "3.5.3",
+    "springCloudVersion": "2025.0.0",
+    "springDocVersion": "2.8.9"
+  },
   "scripts": {
     "test": "jest",
     "build": "env-cmd -f .env.production tsc && vite build",
