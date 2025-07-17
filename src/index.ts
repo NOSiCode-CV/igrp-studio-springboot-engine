@@ -91,7 +91,6 @@ import { isPageable } from './helper/logicalHelper';
 import { generateCrudController } from './modules/crudController/generateCrudController';
 import {
   getSpringInitializerDependencies,
-  SPRING_BOOT_VERSION,
 } from './helper/springInitializerHelper';
 import { Dependency } from './interfaces/springDependencyTypes';
 import { moveElementConfig } from './modules/move/moveElementConfig';
@@ -163,6 +162,8 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
   if (!valid && apiValidation.errors) throw apiValidation.errors;
 
+  const packageJson = require('../package.json');
+
   const config: ApiConfig = {
     type: baseConfig.type,
     name: baseConfig.name,
@@ -175,8 +176,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     projectStructureStyle: baseConfig.projectStructureStyle,
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
-    igrpCoreVersion: baseConfig.igrpCoreVersion,
-    springBootVersion: baseConfig.springBootVersion || SPRING_BOOT_VERSION,
+    version: packageJson.custom?.igrpVersion,
     dependencies: baseConfig.dependencies,
     enableGraalVm: baseConfig.enableGraalVm,
   };
@@ -190,6 +190,11 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
   }
 
   await saveBaseApiFileConfig(config, basePath);
+
+  config.javaVersion =  packageJson.custom?.javaVersion;
+  config.springBootVersion =  packageJson.custom?.springBootVersion;
+  config.springDocVersion =  packageJson.custom?.springDocVersion;
+  config.springCloudVersion =  packageJson.custom?.springCloudVersion;
 
   const context: RenderContext = {
     resourceConfig: undefined, // On base API, there is no specific config.

@@ -51,10 +51,12 @@ export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   projectStructureStyle: ProjectStructureStyle;
   enableObservability: boolean;
   enableEntityRevision: boolean;
-  igrpCoreVersion: string;
-  springBootVersion?: string;
   dependencies?: Dependency[];
   enableGraalVm: boolean;
+  javaVersion?: string;
+  springDocVersion?: string;
+  springCloudVersion?: string;
+  springBootVersion?: string;
 }
 
 export interface ModelConfig extends IdentifiableElement, VersionedConfig {

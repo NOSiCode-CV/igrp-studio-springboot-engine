@@ -1,5 +1,5 @@
 # Use an official Maven image with JDK 21 to build the application
-FROM maven:3.9.10-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.10-eclipse-temurin-24-alpine AS build
 
 # Define build-time argument
 ARG SERVICE_NAME
@@ -22,7 +22,7 @@ COPY src $APP_HOME/src
 RUN mvn package -DskipTests
 
 # Runtime image
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:23-jre-alpine
 
 # Define runtime environment variable
 ENV SERVICE_NAME=${SERVICE_NAME}
