@@ -31,13 +31,16 @@ export const saveModuleConfig = async (context: RenderContext<ModuleConfig>, bas
 };
 
 const generateGitKeepFile = (context: RenderContext<ModuleConfig>): BASE_API_FILES => {
-  const moduleName = context.resourceConfig.name;
+  const { name: moduleName } = context.resourceConfig;
+  const { group, packageName, projectStructureStyle } = context.baseConfig;
+  const basePath = context.basePath;
+
+  const mainPath = path.join(basePath, getMainPath(group, packageName));
+  const modulePath = path.join(mainPath, moduleName);
+  const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
 
   const resolvePath = (templatePath: string) =>
-    path.join(context.basePath, templatePath.replace('{{module}}', moduleName));
-
-  const modulePath = path.join(context.basePath, moduleName);
-  const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
+    path.join(basePath, templatePath.replace('{{module}}', moduleName));
 
   const files: BASE_API_FILES = [
     {
@@ -52,7 +55,7 @@ const generateGitKeepFile = (context: RenderContext<ModuleConfig>): BASE_API_FIL
     },
   ];
 
-  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+  if (projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     files.push(
       {
         output: path.join(domainPath, DIRECTORIES.MODELS),
@@ -66,6 +69,11 @@ const generateGitKeepFile = (context: RenderContext<ModuleConfig>): BASE_API_FIL
       },
       {
         output: path.join(domainPath, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.EVENTS),
         template: TEMPLATES.GITKEEPFILE,
         name: COMMON_FILES.GITKEEPFILE,
       }
