@@ -176,7 +176,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     projectStructureStyle: baseConfig.projectStructureStyle,
     enableObservability: baseConfig.enableObservability,
     enableEntityRevision: baseConfig.enableEntityRevision,
-    version: packageJson.custom?.igrpVersion,
+    version: baseConfig.version ?? packageJson.custom?.igrpVersion,
     dependencies: baseConfig.dependencies,
     enableGraalVm: baseConfig.enableGraalVm,
   };
