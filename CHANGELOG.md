@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [0.1.0] - 2025-07-17
+## [0.1.0] - 2025-07-18
 
 ### 🔧 Project Structure Refactoring
 
@@ -18,9 +18,51 @@ A major restructuring of the project was performed to improve clarity, modularit
 
 #### Adjustment to the pom.xml file:
 
-- Remove field `springBootVersion`
+- Add the following properties:
+  - `<igrp.version>0.1.0-beta.1</igrp.version>` - Used by IGRP framework dependencies, for example:
+    ```xml
+    <!-- IGRP dependencies -->
+    <dependency>
+        <groupId>cv.igrp.framework</groupId>
+        <artifactId>core</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
 
-- Rename field `igrpCoreVersion` to `version` and set it to `0.1.0-beta.1`
+    <dependency>
+        <groupId>cv.igrp.framework</groupId>
+        <artifactId>stereotype</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
+
+    <!-- IGRP File Libraries -->
+    <dependency>
+        <groupId>cv.igrp.platform</groupId>
+        <artifactId>filemanager</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>cv.igrp.framework.filemanager</groupId>
+        <artifactId>minio</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
+
+    <!-- IGRP Report Libraries -->
+    <dependency>
+        <groupId>cv.igrp.platform</groupId>
+        <artifactId>report</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>cv.igrp.framework.report</groupId>
+        <artifactId>jasper</artifactId>
+        <version>${igrp.version}</version>
+    </dependency>
+    ```
+  - `<java.version>23</java.version>` - Specifies the Java version for the project
+  - `<spring-cloud.version>2025.0.0</spring-cloud.version>` - Used by Spring Cloud dependencies
+  - `<springdoc.version>2.8.9</springdoc.version>` - Used by SpringDoc OpenAPI UI
 
 
 #### ✅ Domain Layer
