@@ -1,54 +1,133 @@
-# Changelog
+# CHANGELOG
 
-All notable changes to this project will be documented in this file.
+## [0.1.0] - 2025-07-17
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### 🔧 Project Structure Refactoring
 
-## [Unreleased]
+A major restructuring of the project was performed to improve clarity, modularity, and encourage a clean separation between persistence and business logic, following clean architecture and DDD principles.
 
-### Added
+---
 
-- v0.0.2 Soon.
+### ♻️ Main Changes
 
-### Changed
+#### Adjustment to the structure of the .igrpstudio/baseApi.json file:
 
-- Soon
+- Remove field `springBootVersion`
 
-### Removed
+- Rename field `igrpCoreVersion` to `version` and set it to `0.1.0-beta.1`
 
-- Soon
+#### Adjustment to the pom.xml file:
 
-## [0.0.1] - 2025-01-31
+- Remove field `springBootVersion`
 
-### Added
+- Rename field `igrpCoreVersion` to `version` and set it to `0.1.0-beta.1`
 
-- First version to the repository
 
-### Fixed
+#### ✅ Domain Layer
 
-- None
+- The `domain` package was **redefined** to serve strictly as the space for business logic implementation.
+- Subpackages such as `model`, `repository`, `service`, and `events` remain present but are now **empty by default**, allowing developers to structure their logic intentionally.
+- The previously generated CRUD interface that was placed in `domain/repository` (which exposed CRUD operations over the persistence entity) was **removed**, eliminating persistence concerns from the domain.
 
-### Changed
+#### ✅ Persistence Layer
 
-- None
+- The persistence entity was moved from `domain/model` to `persistence/entity` and renamed with the suffix `Entity`.
+- JPA repositories were organized under `persistence/repository`, keeping the naming convention based on the entity name (e.g., `XEntityRepository`).
 
-### Removed
+#### ✅ Application Layer
 
-- None
+- The `handlers` subpackages inside `application/commands` and `application/queries` were removed.
+- Handlers are now placed directly within their respective `commands` or `queries` packages to simplify structure.
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.3.0...v1.0.0
-[0.3.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.8...v0.1.0
-[0.0.8]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.7...v0.0.8
-[0.0.7]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.6...v0.0.7
-[0.0.6]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.5...v0.0.6
-[0.0.5]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.3...v0.0.4
-[0.0.3]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.2...v0.0.3
-[0.0.2]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.0.1
+#### ✅ Interface Layer
+
+- Controllers were moved from `infrastructure/controller` to `interfaces/rest` for a clearer representation of the system's entry points.
+
+---
+
+####
+
+Added .env.example to the project root as a template for environment variables.
+
+This file serves as a base reference for developers to create their own .env file.
+
+Note: This does not affect existing projects — only new ones will include this file automatically.
+
+Updated .gitignore and .dockerignore to:
+
+- Ignore .env (to avoid leaking local secrets).
+- Include .env.example (so the template is tracked and shared).
+
+### 📁 Before
+
+```
+application/
+└── commands/
+    ├── commands/
+    │   └── SomeCommand.java
+    └── handlers/
+        └── SomeCommandHandler.java
+
+└── queries/
+    ├── queries/
+    │   └── SomeQuery.java
+    └── handlers/
+        └── SomeQueryHandler.java
+
+domain/
+  ├── model/
+  │   └── <Entity.java>
+  ├── repository/
+  │   └── I<EntityRepository.java>
+  ├── service/
+  └── events/
+
+infrastructure/
+├── persistence/
+│   └── <EntityRepository.java>  (JPA repository)
+└── controller/
+    └── <Controller.java>
+```
+
+---
+
+### 📁 After
+
+```
+application/
+  ├── commands/
+  │   ├── SomeCommand.java
+  │   └── SomeCommandHandler.java
+  ├── queries/
+  │   ├── SomeQuery.java
+  │   └── SomeQueryHandler.java
+
+domain/
+  ├── model/
+  ├── repository/
+  ├── service/
+  └── events/
+  (all empty by default – for business logic only)
+
+persistence/
+  ├── entity/
+  │   └── <EntityEntity.java>
+  └── repository/
+      └── <EntityEntityRepository.java>
+
+interfaces/
+  └── rest/
+      └── <Controller.java>
+```
+
+---
+
+### 🎯 Purpose
+
+- Establish a **clear separation of concerns** between layers.
+- **Isolate domain logic** from infrastructure and persistence.
+- **Simplify folder structure** to enhance readability and maintainability.
+- Provide a clean starting point for developers to **define business logic manually**.
+
+---
+
