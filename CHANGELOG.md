@@ -1,106 +1,117 @@
-# CHANGELOG
+# Changelog
 
-## [0.1.0] - 2025-07-18
+All notable changes to the IGRP Spring Engine project will be documented in this file.
 
-### 🔧 Project Structure Refactoring
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-A major restructuring of the project was performed to improve clarity, modularity, and encourage a clean separation between persistence and business logic, following clean architecture and DDD principles.
+## [Unreleased]
 
----
+### Added
+- Future features and improvements will be listed here before they are released
 
-### ♻️ Main Changes
+### Changed
+- Upcoming changes to existing functionality will be listed here
 
-#### Adjustment to the structure of the .igrpstudio/baseApi.json file:
+### Deprecated
+- Soon-to-be removed features will be listed here
 
-- Remove field `springBootVersion`
+### Removed
+- Features that have been removed will be listed here
 
-- Rename field `igrpCoreVersion` to `version` and set it to `0.1.0-beta.1`
+### Fixed
+- Bug fixes will be listed here
 
-#### Adjustment to the pom.xml file:
+### Security
+- Security improvements will be listed here
 
-- Add the following properties:
-  - `<igrp.version>0.1.0-beta.1</igrp.version>` - Used by IGRP framework dependencies, for example:
-    ```xml
-    <!-- IGRP dependencies -->
-    <dependency>
-        <groupId>cv.igrp.framework</groupId>
-        <artifactId>core</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
+## [0.1.0-beta.1] - 2025-07-18
 
-    <dependency>
-        <groupId>cv.igrp.framework</groupId>
-        <artifactId>stereotype</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
+### Added
+- `.env.example` file to the project root as a template for environment variables
+  - Serves as a base reference for developers to create their own `.env` file
+  - Note: This does not affect existing projects — only new ones will include this file automatically
+- Updated `.gitignore` and `.dockerignore` to:
+  - Ignore `.env` (to avoid leaking local secrets)
+  - Include `.env.example` (so the template is tracked and shared)
 
-    <!-- IGRP File Libraries -->
-    <dependency>
-        <groupId>cv.igrp.platform</groupId>
-        <artifactId>filemanager</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
+### Changed
+- **🔧 Project Structure Refactoring**
+  - Major restructuring of the project to improve clarity, modularity, and encourage clean separation between persistence and business logic
+  - Follows clean architecture and Domain-Driven Design (DDD) principles
 
-    <dependency>
-        <groupId>cv.igrp.framework.filemanager</groupId>
-        <artifactId>minio</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
+- **Configuration Changes**
+  - Adjustment to the structure of the `.igrpstudio/baseApi.json` file:
+    - Removed field `springBootVersion`
+    - Renamed field `igrpCoreVersion` to `version` and set it to `0.1.0-beta.1`
+  
+  - Adjustment to the `pom.xml` file:
+    - Added the following properties:
+      - `<igrp.version>0.1.0-beta.1</igrp.version>` - Used by IGRP framework dependencies, for example:
+        ```xml
+        <!-- IGRP dependencies -->
+        <dependency>
+            <groupId>cv.igrp.framework</groupId>
+            <artifactId>core</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
 
-    <!-- IGRP Report Libraries -->
-    <dependency>
-        <groupId>cv.igrp.platform</groupId>
-        <artifactId>report</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>cv.igrp.framework</groupId>
+            <artifactId>stereotype</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
 
-    <dependency>
-        <groupId>cv.igrp.framework.report</groupId>
-        <artifactId>jasper</artifactId>
-        <version>${igrp.version}</version>
-    </dependency>
-    ```
-  - `<java.version>23</java.version>` - Specifies the Java version for the project
-  - `<spring-cloud.version>2025.0.0</spring-cloud.version>` - Used by Spring Cloud dependencies
-  - `<springdoc.version>2.8.9</springdoc.version>` - Used by SpringDoc OpenAPI UI
+        <!-- IGRP File Libraries -->
+        <dependency>
+            <groupId>cv.igrp.platform</groupId>
+            <artifactId>filemanager</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>cv.igrp.framework.filemanager</groupId>
+            <artifactId>minio</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
 
-#### ✅ Domain Layer
+        <!-- IGRP Report Libraries -->
+        <dependency>
+            <groupId>cv.igrp.platform</groupId>
+            <artifactId>report</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
 
-- The `domain` package was **redefined** to serve strictly as the space for business logic implementation.
-- Subpackages such as `model`, `repository`, `service`, and `events` remain present but are now **empty by default**, allowing developers to structure their logic intentionally.
-- The previously generated CRUD interface that was placed in `domain/repository` (which exposed CRUD operations over the persistence entity) was **removed**, eliminating persistence concerns from the domain.
+        <dependency>
+            <groupId>cv.igrp.framework.report</groupId>
+            <artifactId>jasper</artifactId>
+            <version>${igrp.version}</version>
+        </dependency>
+        ```
+      - `<java.version>23</java.version>` - Specifies the Java version for the project
+      - `<spring-cloud.version>2025.0.0</spring-cloud.version>` - Used by Spring Cloud dependencies
+      - `<springdoc.version>2.8.9</springdoc.version>` - Used by SpringDoc OpenAPI UI
 
-#### ✅ Persistence Layer
+- **Architecture Layer Changes**
+  - **Domain Layer**:
+    - The `domain` package was redefined to serve strictly as the space for business logic implementation
+    - Subpackages such as `model`, `repository`, `service`, and `events` remain present but are now empty by default, allowing developers to structure their logic intentionally
+    - The previously generated CRUD interface that was placed in `domain/repository` (which exposed CRUD operations over the persistence entity) was removed, eliminating persistence concerns from the domain
 
-- The persistence entity was moved from `domain/model` to `persistence/entity` and renamed with the suffix `Entity`.
-- JPA repositories were organized under `persistence/repository`, keeping the naming convention based on the entity name (e.g., `XEntityRepository`).
+  - **Persistence Layer**:
+    - The persistence entity was moved from `domain/model` to `persistence/entity` and renamed with the suffix `Entity`
+    - JPA repositories were organized under `persistence/repository`, keeping the naming convention based on the entity name (e.g., `XEntityRepository`)
 
-#### ✅ Application Layer
+  - **Application Layer**:
+    - The `handlers` subpackages inside `application/commands` and `application/queries` were removed
+    - Handlers are now placed directly within their respective `commands` or `queries` packages to simplify structure
 
-- The `handlers` subpackages inside `application/commands` and `application/queries` were removed.
-- Handlers are now placed directly within their respective `commands` or `queries` packages to simplify structure.
+  - **Interface Layer**:
+    - Controllers were moved from `infrastructure/controller` to `interfaces/rest` for a clearer representation of the system's entry points
 
-#### ✅ Interface Layer
+### Directory Structure Changes
 
-- Controllers were moved from `infrastructure/controller` to `interfaces/rest` for a clearer representation of the system's entry points.
-
----
-
-####
-
-Added .env.example to the project root as a template for environment variables.
-
-This file serves as a base reference for developers to create their own .env file.
-
-Note: This does not affect existing projects — only new ones will include this file automatically.
-
-Updated .gitignore and .dockerignore to:
-
-- Ignore .env (to avoid leaking local secrets).
-- Include .env.example (so the template is tracked and shared).
-
-### 📁 Before
+#### Before
 
 ```
 application/
@@ -131,9 +142,7 @@ infrastructure/
     └── <Controller.java>
 ```
 
----
-
-### 📁 After
+#### After
 
 ```
 application/
@@ -162,14 +171,12 @@ interfaces/
       └── <Controller.java>
 ```
 
----
+### Purpose of Changes
 
-### 🎯 Purpose
+- Establish a clear separation of concerns between layers
+- Isolate domain logic from infrastructure and persistence
+- Simplify folder structure to enhance readability and maintainability
+- Provide a clean starting point for developers to define business logic manually
 
-- Establish a **clear separation of concerns** between layers.
-- **Isolate domain logic** from infrastructure and persistence.
-- **Simplify folder structure** to enhance readability and maintainability.
-- Provide a clean starting point for developers to **define business logic manually**.
-
----
-
+[Unreleased]: https://github.com/yourusername/spring-engine/compare/v0.1.0-beta.1...HEAD
+[0.1.0-beta.1]: https://github.com/yourusername/spring-engine/releases/tag/v0.1.0-beta.1
