@@ -25,7 +25,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.validator.{{resolve-inte
 {{/if}}
 {{#if resourceConfig.extends}}@EqualsAndHashCode(callSuper = true){{/if}}
 @IgrpDTO
-public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}}{
+public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}} {
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}

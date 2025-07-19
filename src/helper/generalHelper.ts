@@ -46,9 +46,9 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
   // Required validation
   if (attribute.required) {
     if (attribute.type === 'string') {
-      annotations.push(`@NotBlank(message = "The field <${attribute.name}> is required.")`);
+      annotations.push(`@NotBlank(message = "The field <${attribute.name}> is required")`);
     } else {
-      annotations.push(`@NotNull(message = "The field <${attribute.name}> is required.")`);
+      annotations.push(`@NotNull(message = "The field <${attribute.name}> is required")`);
     }
   }
 
@@ -57,7 +57,7 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
     if (attribute.minLength !== undefined)
       annotations.push(
         `@Size(${[
-          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters."`,
+          `min = ${attribute.minLength}, message = "The field length <${attribute.name}> must be at least ${attribute.minLength} characters"`,
         ]
           .filter(Boolean)
           .join(', ')})`,
@@ -65,7 +65,7 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
     if (attribute.maxLength !== undefined)
       annotations.push(
         `@Size(${[
-          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters."`,
+          `max = ${attribute.maxLength}, message = "The field length <${attribute.name}> cannot be more than ${attribute.maxLength} characters"`,
         ]
           .filter(Boolean)
           .join(', ')})`,
@@ -88,8 +88,8 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
     if (attribute.positive) {
       annotations.push(
         attribute.minLength === 0
-          ? `@PositiveOrZero(message = "<${attribute.name}> must be greater than or equal to zero.")`
-          : `@Positive(message = "<${attribute.name}> must be greater than zero.")`,
+          ? `@PositiveOrZero(message = "<${attribute.name}> must be greater than or equal to zero")`
+          : `@Positive(message = "<${attribute.name}> must be greater than zero")`,
       );
     }
   }
@@ -98,24 +98,24 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
   if (['Date', 'LocalDate', 'LocalDateTime', 'ZonedDateTime'].includes(attribute.type)) {
     if (attribute.before) {
       annotations.push(
-        `@Past(message = "The date <${attribute.name}> must be before today's date.")`,
+        `@Past(message = "The date <${attribute.name}> must be before today's date")`,
       );
     }
     if (attribute.after) {
       annotations.push(
-        `@Future(message = "The date <${attribute.name}> must be after today's date.")`,
+        `@Future(message = "The date <${attribute.name}> must be after today's date")`,
       );
     }
   }
 
   // Email validation
   if (attribute.isEmail) {
-    annotations.push(`@Email(message = "Invalid email format for field <${attribute.name}>.")`);
+    annotations.push(`@Email(message = "Invalid email format for field <${attribute.name}>")`);
   }
 
   // URL validation
   if (attribute.isUrl) {
-    annotations.push(`@URL(message = "Invalid URL format for field <${attribute.name}>.")`);
+    annotations.push(`@URL(message = "Invalid URL format for field <${attribute.name}>")`);
   }
 
   // Return the generated annotations as a joined string
