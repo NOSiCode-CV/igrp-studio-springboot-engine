@@ -101,7 +101,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
 
 {{~#each resourceConfig.relationReference ~}}
   {{#if (eq this.type 'OneToOne') }}
-   @OneToOne(mappedBy = "{{toFullCamelCaseFromSnakeCase this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
+   @OneToOne(mappedBy = "{{toFullCamelCaseFromSnakeCase this.mappedBy}}"{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.orphanRemoval}}, orphanRemoval = true{{/if}})
    private {{this.entity}} {{toFullCamelCaseFromSnakeCase this.fieldName}};
   {{/if}}
   {{#if (eq this.type 'OneToMany') }}
