@@ -20,7 +20,7 @@
     "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
     "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
-    "build-and-deploy": "npm run build && npm run deploy"
+    "release": "npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",
