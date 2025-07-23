@@ -46,7 +46,9 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if (and this.skipFieldRevision this.primaryKey)}}@NotAudited{{/if~}}
     {{#if this.primaryKey}}
     @Id
+    {{#unless (eq this.generationType "NONE")}}
     @GeneratedValue(strategy = GenerationType.{{this.generationType}})
+    {{/unless}}
     @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
     private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
     @NotBlank(message = "{{toFullCamelCaseFromSnakeCase this.name}} is mandatory"){{else}}

@@ -1138,4 +1138,4 @@ export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DE
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 
-export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const;
+export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO', 'NONE'] as const;
