@@ -41,10 +41,10 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   }
 
   if (context.baseConfig.projectStructureStyle != PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    // Before creating the model with the new configuration, the engine checks if a model directory already exists.
-    // If it does, the old model directory will be deleted to ensure a clean setup for the new model.
+    // Ensure the model directory exists before continuing.
+    // If it already exists, nothing happens; if not, it will be created.
     const modelDirector = modelDirectory(context);
-    if (await fs.pathExists(modelDirector)) await fs.rm(modelDirector, { recursive: true });
+    await fs.ensureDir(modelDirector);
   }
 
   const { primaryKey } = context.resourceConfig;
