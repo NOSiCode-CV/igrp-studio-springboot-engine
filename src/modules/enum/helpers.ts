@@ -1,6 +1,6 @@
 import { toLowerCase } from '../../helper/stringHelper';
 import { EnumConfig } from '../../interfaces/types';
-import { loadEnumConfig, loadEnumConfigs } from '../../utils/helpers';
+import { loadEnumConfigs } from '../../utils/helpers';
 
 export const getEnumTypes = async function (
   module: string,
@@ -10,14 +10,6 @@ export const getEnumTypes = async function (
   const types: Map<string, EnumConfig> = new Map<string, EnumConfig>();
   configs.forEach((cfg) => types.set(`${cfg.name}`, cfg));
   return types;
-};
-
-export const getEnumAttributes = async function (
-  name: string,
-  basePath: string,
-): Promise<String[]> {
-  const configs: EnumConfig = await loadEnumConfig(basePath, name);
-  return configs.values.map((it) => it.name);
 };
 
 export const verifyEnumAttributes = async function (config: EnumConfig): Promise<EnumConfig> {

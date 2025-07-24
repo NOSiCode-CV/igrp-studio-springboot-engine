@@ -369,13 +369,5 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         }),
       );
     }
-    /*await Promise.all(
-      CONFIG_BINARY_FILES.map(async (file) => {
-        const outputPath = path.join(context.basePath, file.output);
-        const templatePath = path.join(TEMPLATE_DIR, file.template);
-        const binaryContent = await fs.readFile(templatePath);
-        await saveBinaryToFile(binaryContent, outputPath, false);
-      })
-    );*/
   }
 };

@@ -1,16 +1,10 @@
 import { ModelConfig, RenderContext } from '../../interfaces/types';
 import { renderTemplate } from '../common/renderTemplate';
 import { PROJECT_STRUCTURE_STYLE, TEMPLATES } from '../../utils/constants';
-import {
-  getDDDRepositoryImplOutputDir,
-  getDDDRepositoryOutputDir,
-  getModelOutputDir,
-} from '../../utils/helpers';
+import { getDDDRepositoryImplOutputDir, getModelOutputDir } from '../../utils/helpers';
 import path from 'path';
 import { saveToFile } from '../common/saveToFile';
-import { capitalizeJavaStyle } from '../../helper/stringHelper';
 
-const REPOSITORY_PREFIX = 'I';
 const REPOSITORY_SUFFIX = 'Repository.java';
 
 /**
@@ -20,12 +14,7 @@ const REPOSITORY_SUFFIX = 'Repository.java';
  * @throws - Throws an error if the model configuration is invalid.
  */
 export const generateRepository = async (context: RenderContext<ModelConfig>) => {
-  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    // prevent generation of repository for aggregate root entities
-    //const modelOutputPath = getDDDRepositoryOutputPath(context);
-    //const dddTemplate = await renderDDDRepository(context);
-    //await saveToFile(dddTemplate, modelOutputPath, false);
-  } else {
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.TECHNICAL) {
     const modelOutputPath = getRepositoryOutputPath(context);
     const template = await renderRepository(context);
     await saveToFile(template, modelOutputPath, false);
@@ -55,10 +44,6 @@ export const renderImplRepository = async (context: RenderContext<ModelConfig>) 
   return await renderTemplate(TEMPLATES.DDD_LITE_REPOSITORY_IMPL, context);
 };
 
-export const renderDDDRepository = async (context: RenderContext<ModelConfig>) => {
-  return await renderTemplate(TEMPLATES.DDD_LITE_REPOSITORY, context);
-};
-
 /**
  * Gets the output path for the generated repository file.
  *
@@ -69,13 +54,6 @@ const getRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
   const outputDir = getModelOutputDir(context);
   context.fullPath = outputDir;
   return path.join(outputDir, `${context.resourceConfig.name}${REPOSITORY_SUFFIX}`);
-};
-
-const getDDDRepositoryOutputPath = (context: RenderContext<ModelConfig>) => {
-  const outputDir = getDDDRepositoryOutputDir(context);
-  const fileName = capitalizeJavaStyle(context.resourceConfig.name);
-  context.fullPath = outputDir;
-  return path.join(outputDir, `${REPOSITORY_PREFIX}${fileName}${REPOSITORY_SUFFIX}`);
 };
 
 const getDDDRepositoryImplOutputPath = (context: RenderContext<ModelConfig>) => {

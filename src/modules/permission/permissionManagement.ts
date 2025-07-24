@@ -1,6 +1,5 @@
 import {
   loadControllerConfigs,
-  loadModelConfigs,
   loadPermissionConfigs,
 } from '../../utils/helpers';
 import { savePermission } from './savePermissionConfig';
@@ -21,7 +20,6 @@ import { saveAllPermissions } from './savePermissions';
 ) => {
   const permissions = await loadPermissionConfigs(basePath);
   const controllers = await loadControllerConfigs(module, basePath);
-  const models = await loadModelConfigs(module, basePath);
 
   // rebuilding the permissions from controller actions
   const updatedPermissions: Record<string, { name: string; endpoints: any[] }> = {};
@@ -62,47 +60,7 @@ import { saveAllPermissions } from './savePermissions';
 
       await savePermission(permission, basePath);
     }
-  } /*else {
-    if (type === 'model') {
-
-      for (const model of models) {
-        if (model.crud && model.crud.permissions && model.crud.permissions.length > 0)
-        for (const p of model.crud.permissions) {
-          for (const permissionName of p.permissions) {
-            
-              if (!updatedPermissions[permissionName]) {
-                updatedPermissions[permissionName] = {
-                  name: permissionName,
-                  endpoints: [],
-                };
-              }
-              updatedPermissions[permissionName].endpoints.push({
-                type: 'model',
-                resource: model.name,
-                method: p.method,
-                path: model.crud.path,
-              });
-              
-          }
-        }
-      }
-
-      // cleaning and saving the updated permissions
-      for (const permission of permissions) {
-        const updatedPermission = updatedPermissions[permission.name];
-        const controllerPermissions = permission.endpoints.filter(m => m.type === 'controller')
-        
-        if (updatedPermission) {
-          permission.endpoints = updatedPermission.endpoints.concat(controllerPermissions);
-
-        } else {
-          permission.endpoints = controllerPermissions; 
-        }
-        
-        await savePermission(permission, basePath);
-      }
-    }
-  }*/
+  }
 
   await saveAllPermissions(basePath);
 };

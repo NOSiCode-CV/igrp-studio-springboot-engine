@@ -14,15 +14,6 @@ export const getDTOTypes = async function (
   return types;
 };
 
-export const getDTOAttributes = async function (
-  type: ObjectTypes,
-  basePath: string,
-  name: string,
-): Promise<JavaAttribute[]> {
-  const configs: DTOConfig = await loadDTOConfig(type, basePath, name);
-  return configs.attributes;
-};
-
 export const normalizeInterfaceValidatorName = (name: string): string => {
   return `I${name}DTO${DTO_INTERFACE_VALIDATOR_SUFFIX}`;
 };

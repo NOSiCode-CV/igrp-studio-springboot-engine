@@ -252,10 +252,6 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
       }
-      /*case "valueobject":
-        return path.join(getDDDValueObjectOutputDir(context), `${context.resourceConfig.name}ValueObject${EXTENSIONS.JAVA}`);
-      case "domainentity":
-        return path.join(getDDDDomainEntityOutputDir(context), `${context.resourceConfig.name}DomainEntity${EXTENSIONS.JAVA}`);*/
     }
   } else {
     const outputDir = getDtoOutputDir(context);

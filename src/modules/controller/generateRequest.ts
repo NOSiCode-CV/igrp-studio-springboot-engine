@@ -35,35 +35,6 @@ import { normalizeName } from '../dto/saveDTOConfig';
 import { capitalize } from '../../helper/stringHelper';
 import { getEnumTypes } from '../enum/helpers';
 
-/*export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
-
-  for (const action of context.resourceConfig.actions) {
-
-    if (!action.requestBody ||
-      (!Object.keys(action.requestBody.content).includes("application/json")
-        && !Object.keys(action.requestBody.content).includes("multipart/form-data"))
-      || (action.requestBody.content["application/json"] ?? action.requestBody.content["multipart/form-data"]).schema.objectType
-    ) continue
-
-    const dtoContext: RenderContext<DTOConfig> = {
-      baseConfig: context.baseConfig,
-      basePath: context.basePath,
-      resourceConfig: await transformSchemaDTOConfig(action, context.baseConfig, context.basePath),
-      fullPath: context.basePath,
-    };
-
-    //await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
-
-    const modelOutputPath = getDTOOutputPath(dtoContext);
-    const template = await _renderDTO(dtoContext);
-
-    await saveToFile(template, modelOutputPath, true, DIRECTORIES.DTO, dtoContext.resourceConfig.id, dtoContext.resourceConfig.module, context.basePath);
-
-    return dtoContext;
-
-  }
-};*/
-
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
   const dtoConfigMap = new Map<string, RenderContext<DTOConfig>>();
 
@@ -79,8 +50,6 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
     if (!hasJson && !hasMultipart) continue;
 
     const bodyContent = content['application/json'] ?? content['multipart/form-data'];
-    //const isObjectType = bodyContent?.schema?.objectType;
-    //if (isObjectType) continue;
 
     const isTypeObject = bodyContent?.schema?.type;
 
@@ -101,8 +70,6 @@ export const generateRequest = async (context: RenderContext<ControllerConfig>) 
       resourceConfig: transformedConfig,
       fullPath: context.basePath,
     };
-
-    //await saveDTOConfig(dtoContext.resourceConfig, context.basePath);
 
     const modelOutputPath = getDTOOutputPath(dtoContext);
     const template = await _renderDTO(dtoContext);
@@ -183,7 +150,6 @@ export const transformSchemaDTOConfig = async function (
   const bodyCfg = structuredClone(config);
   const ncfg: DTOConfig = {
     type: 'dto',
-    // name: capitalize(action.actionName) + "Request",
     name: name,
     template: 'classic',
     module: module ?? DIRECTORIES.SHARED,
@@ -325,8 +291,6 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       }
-      /*case "dataobject":
-        return path.join(getDDDDataObjectOutputDir(context), `${context.resourceConfig.name}DO${EXTENSIONS.JAVA}`);*/
       case 'command': {
         const outputDir = getDDDCommandOutputDir(context);
         context.fullPath = outputDir;

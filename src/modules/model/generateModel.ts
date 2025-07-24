@@ -95,10 +95,6 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
     );
     const newModel: ModelConfig = { ...context.resourceConfig }; // getting the new model
 
-    // console.log('old model:: ', oldModel)
-    // console.log('---------------------------------------------------------------------')
-    // console.log('new Model:: ', newModel)
-
     for (const oldAttr of oldModel.attributes) {
       if (oldAttr.type === 'relation' && oldAttr.relation) {
         const matchingAttr = newModel.attributes.find((attr) => attr.name === oldAttr.name);
@@ -114,8 +110,6 @@ async function findRemovedRelations(context: RenderContext<ModelConfig>) {
       }
     }
   }
-
-  // console.log('removedRelations : ', removedRelations);
 
   if (removedRelations.length > 0) {
     for (const removedRelation of removedRelations) {
@@ -155,9 +149,6 @@ async function removeRelationFromModel(
     resourceConfig: config,
   };
 
-  //console.log('relationReferenceContext: ', relationReferenceContext);
-
-  //await fs.writeJSON(modelPath, config, { spaces: 2 });
   if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(relationReferenceContext);
   else modelOutputPath = getModelOutputPath(relationReferenceContext);
@@ -175,10 +166,6 @@ async function removeRelationFromModel(
   );
 
   await saveModelConfig(relationReferenceContext.resourceConfig, relationReferenceContext.basePath);
-
-  /*console.log(
-    `Relações com a entidade '${modelToRemoveRelation}' removidas do modelo '${modelName}' e arquivo salvo com sucesso.`
-  );*/
 }
 
 /**

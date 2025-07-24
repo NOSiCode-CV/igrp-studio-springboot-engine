@@ -103,16 +103,6 @@ export const getDDDModelOutputDir = (context: RenderContext<ModelConfig | Delete
     DIRECTORIES.ENTITY,
   );
 
-export const getDDDRepositoryOutputDir = (context: RenderContext<ModelConfig | DeleteConfig>) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
-    DIRECTORIES.INFRASTRUCTURE,
-    DIRECTORIES.PERSISTENCE,
-    DIRECTORIES.REPOSITORY,
-  );
-
 export const getDDDRepositoryImplOutputDir = (context: RenderContext<ModelConfig | DeleteConfig>) =>
   path.join(
     context.basePath,
@@ -260,16 +250,6 @@ export const getControllerDir = (
     DIRECTORIES.CONTROLLERS,
     context.resourceConfig.name.toLowerCase(),
   );
-/*export const getDDDControllerDir = (
-  context: RenderContext<ControllerConfig | ModelConfig | DeleteConfig>,
-) =>
-  path.join(
-    context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
-    context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
-    DIRECTORIES.INFRASTRUCTURE,
-    DIRECTORIES.CONTROLLER,
-  );*/
 
 export const getDDDControllerDir = (
   context: RenderContext<ControllerConfig | ModelConfig | DeleteConfig>,
@@ -620,8 +600,4 @@ export const validateAnnotations = (attribute: any) => {
  */
 export const getDirectoryPath = (filePath: string): string => {
   return path.dirname(filePath);
-};
-
-export const isResponseCollection = (type: string): boolean => {
-  return type === 'array';
 };
