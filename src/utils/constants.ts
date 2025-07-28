@@ -409,7 +409,7 @@ export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
@@ -422,7 +422,7 @@ export const OBSERVABILITY_CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
   // { template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM, output: 'config/OtelConfig.java' }
 ];
