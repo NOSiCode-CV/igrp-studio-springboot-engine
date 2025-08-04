@@ -65,7 +65,7 @@ public class {{resourceConfig.name}}Entity extends EntityBase<{{resourceConfig.n
   @JoinColumn(name = "{{this.joinColumn}}"){{/if}}
   private {{this.entity}} {{toCamelCase this.entity}};{{else if (eq this.relationType 'OneToMany') }}
   @OneToMany(mappedBy = "{{this.mappedBy}}")
-  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}};
+  private List<{{this.entity}}> {{lowercaseAndPluralize this.entity}} = new ArrayList<>();
   {{else if (eq this.relationType 'ManyToOne') }}
   @ManyToOne{{#if this.joinColumn}}
   @JoinColumn(name = "{{toLowerCase this.joinColumn}}"){{/if}}

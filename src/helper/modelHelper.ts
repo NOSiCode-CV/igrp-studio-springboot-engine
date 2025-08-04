@@ -67,6 +67,8 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
 
       imports.push(`import ${collectionType};`);
 
+      if (collectionType === 'java.util.List') imports.push(`import java.util.ArrayList;`);
+
       if (attribute.relation?.cardinality === 'twoWay' && attribute.relation?.orphanRemoval) {
         imports.push(
           'import org.hibernate.annotations.OnDelete;',
