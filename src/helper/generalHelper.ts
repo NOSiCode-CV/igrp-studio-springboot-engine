@@ -45,10 +45,12 @@ export function resolveAnnotations(attribute: any, basePath: any): string {
 
   // Required validation
   if (attribute.required) {
-    if (attribute.type === 'string') {
+    if (attribute.type === 'string' && (!attribute.collectionType || attribute.collectionType === 'none')) {
       annotations.push(`@NotBlank(message = "The field <${attribute.name}> is required")`);
     } else {
       annotations.push(`@NotNull(message = "The field <${attribute.name}> is required")`);
+      if (attribute.collectionType === 'list')
+        annotations.push(`@NotEmpty(message = "The field <${attribute.name}> must not be empty")`);
     }
   }
 
