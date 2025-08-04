@@ -93,7 +93,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
 
-   LOGGER.debug("Operation finished - Endpoint: {}, Action: {}", "{{capitalize ../resourceConfig.name}}Controller", "{{actionName}}");
+    LOGGER.debug("Operation finished");
 
    return response;
 {{/if}}
