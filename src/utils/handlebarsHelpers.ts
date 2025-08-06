@@ -120,6 +120,11 @@ Handlebars.registerHelper('is-nested-object', function (attribute: JavaAttribute
   return '';
 });
 
+Handlebars.registerHelper('isNotBlank', function (str: string): boolean {
+  if (str === null || str === undefined) return false;
+  return str.trim().length > 0;
+});
+
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
 
