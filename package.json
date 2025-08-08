@@ -19,8 +19,8 @@
     "test": "jest",
     "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
-    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
-    "release": "npm run build && npm run deploy"
+    "deploy": "pnpm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
+    "release": "pnpm build && pnpm deploy"
   },
   "repository": {
     "type": "git",
@@ -44,9 +44,7 @@
     "fast-xml-parser": "^5.2.5",
     "fs-extra": "^11.3.1",
     "inflection": "^3.0.2",
-    "sass": "^1.90.0",
-    "source-map-loader": "^5.0.0",
-    "ts-loader": "^9.5.2"
+    "sass": "^1.90.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -58,12 +56,12 @@
     "eslint": "^9.32.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "handlebars": "^4.7.8",
     "jest": "^30.0.5",
-    "path-browserify": "^1.0.1",
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.1",
-    "vite": "^7.0.6",
+    "vite": "^7.1.1",
     "vite-plugin-dts": "^4.5.4"
   },
   "type": "commonjs",
