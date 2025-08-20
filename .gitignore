@@ -72,5 +72,3 @@ Thumbs.db
 .LSOverride
 
 yarn.lock
-pnpm-lock.yaml
-pnpm-workspace.yaml

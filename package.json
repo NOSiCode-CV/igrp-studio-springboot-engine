@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.5",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -19,8 +19,8 @@
     "test": "jest",
     "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
-    "deploy": "pnpm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
-    "release": "pnpm build && pnpm deploy"
+    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
+    "release": "npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",
