@@ -19,6 +19,8 @@ spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}
 
 # JPA and Hibernate settings
 spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=${ENABLE_HIBERNATE_SQL:false}
+spring.jpa.properties.hibernate.format_sql=${ENABLE_HIBERNATE_FORMAT_SQL:false}
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
 {{#if baseConfig.enableEntityRevision}}
 # Entity Revision
