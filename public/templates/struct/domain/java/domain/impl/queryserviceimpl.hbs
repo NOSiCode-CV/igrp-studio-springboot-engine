@@ -1,7 +1,6 @@
 {{> package-java }}
 
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.handlers.*;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.application.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

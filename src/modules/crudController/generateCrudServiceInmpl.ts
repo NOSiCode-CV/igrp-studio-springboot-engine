@@ -19,20 +19,19 @@ export const generateCrudServiceInmpl = async (context: RenderContext<CrudContro
 };
 
 export const renderServiceImpl = async (context: RenderContext<CrudControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     return await renderTemplate(TEMPLATES.DDD_CMD_SERVICE_IMPL, context);
-  else
-    return await renderTemplate(TEMPLATES.DOMAIN_CRUD_SERVICE, context);
+  else return await renderTemplate(TEMPLATES.DOMAIN_CRUD_SERVICE, context);
 };
 
 const getServiceImplPath = (context: RenderContext<CrudControllerConfig>) => {
-  if(context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-    const outputDir = getDDDServiceDir(context)
-    context.fullPath = outputDir
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const outputDir = getDDDServiceDir(context);
+    context.fullPath = outputDir;
     return path.join(outputDir, `${context.resourceConfig.name}${CMD_SERVICE_SUFFIX}`);
   } else {
-    const outputDir = getServiceDir(context)
-    context.fullPath = outputDir
+    const outputDir = getServiceDir(context);
+    context.fullPath = outputDir;
     return path.join(outputDir, `${context.resourceConfig.name}${SERVICE_SUFFIX}`);
   }
 };

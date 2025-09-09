@@ -4,10 +4,10 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.aggregate.{{resour
 
 public interface {{resourceConfig.name}}AggregateDomainRepository {
 
-   {{#if (keyType resourceConfig)}}
-   {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
-   {{/if}}
+  {{#if (keyType resourceConfig)}}
+  {{keyType resourceConfig}} findById({{keyType resourceConfig}} id);
+  {{/if}}
 
-   void save({{resourceConfig.name}}AggregateRoot aggregate);
+  void save({{resourceConfig.name}}AggregateRoot aggregate);
 
 }

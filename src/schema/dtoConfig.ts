@@ -1,218 +1,284 @@
-import { ajvInstance } from "../utils/ajv-instance";
-import { JSONSchemaType, ValidateFunction } from "ajv";
+import { ajvInstance } from '../utils/ajv-instance';
+import { JSONSchemaType, ValidateFunction } from 'ajv';
 import { AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute } from '../interfaces/types';
-import { PATTERNS } from "../utils/constants";
+import { PATTERNS } from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {
-  type: "string",
+  type: 'string',
   nullable: false,
   pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-  errorMessage: 'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
-}
+  errorMessage:
+    'The attribute type must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+};
 
 const attributeSchema: JSONSchemaType<JavaAttribute> = {
-  type: "object",
+  type: 'object',
   properties: {
     type: {
-      type: "string",
-      oneOf: genericAttributeSchema.oneOf
+      type: 'string',
+      oneOf: genericAttributeSchema.oneOf,
     },
     name: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.'
+      errorMessage:
+        'The attribute name must contain only alphabetic characters and cannot contain spaces or special characters.',
     },
     objectType: {
-      type: "string",
+      type: 'string',
       enum: ['model', 'dto', 'java', 'enum'],
-      errorMessage: 'The abbreviated namespace must model, dto, java.'
+      errorMessage: 'The abbreviated namespace must model, dto, java.',
     },
     required: {
-      type: "boolean",
+      type: 'boolean',
       nullable: false,
-      errorMessage: 'The required attribute must be a boolean value.'
+      errorMessage: 'The required attribute must be a boolean value.',
     },
     before: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The before attribute must be a boolean value.'
+      errorMessage: 'The before attribute must be a boolean value.',
     },
     after: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The after attribute must be a boolean value.'
+      errorMessage: 'The after attribute must be a boolean value.',
     },
     positive: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The positive attribute must be a boolean value.'
+      errorMessage: 'The positive attribute must be a boolean value.',
     },
     maxLength: {
-      type: "number",
+      type: 'number',
       nullable: true,
-      errorMessage: 'The max length must be a number.'
+      errorMessage: 'The max length must be a number.',
     },
     minLength: {
-      type: "number",
+      type: 'number',
       nullable: true,
-      errorMessage: 'The min length must be a number.'
+      errorMessage: 'The min length must be a number.',
     },
     regex: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The regex must be a string.'
+      errorMessage: 'The regex must be a string.',
     },
     isEmail: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The isEmail attribute must be a boolean value.'
+      errorMessage: 'The isEmail attribute must be a boolean value.',
     },
     isUrl: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The isUrl attribute must be a boolean value.'
+      errorMessage: 'The isUrl attribute must be a boolean value.',
     },
     collectionType: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The collectionType attribute must be a string value.'
+      errorMessage: 'The collectionType attribute must be a string value.',
     },
     primaryKey: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'The primary key, if provided, must be a valid boolean.'
+      errorMessage: 'The primary key, if provided, must be a valid boolean.',
     },
     response: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The response, if provided, must be a valid string.'
+      errorMessage: 'The response, if provided, must be a valid string.',
     },
     module: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
+      errorMessage:
+        'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true,
     },
     jsonAttributeName: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.PARAMS_VALIDATION,
-      errorMessage: 'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
+      errorMessage:
+        'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true,
     },
     xmlAttributeName: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.PARAMS_VALIDATION,
-      errorMessage: 'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
+      errorMessage:
+        'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true,
     },
   },
-  required: ["type", "name", "objectType", "required"],
+  required: ['type', 'name', 'objectType', 'required'],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The attribute type is required.',
       name: 'The attribute name is required.',
-      required: 'The attribute required is required.'
+      required: 'The attribute required is required.',
     },
-    additionalProperties: 'No additional properties are allowed in the attribute schema.'
-  }
+    additionalProperties: 'No additional properties are allowed in the attribute schema.',
+  },
 };
 
 const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
-  type: "object",
+  type: 'object',
   properties: {
     id: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The id if provided must be a string.'
+      errorMessage: 'The id if provided must be a string.',
+    },
+    version: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.',
     },
     type: {
-      type: "string",
-      errorMessage: 'The type must be valid.'
+      type: 'string',
+      errorMessage: 'The type must be valid.',
     },
     name: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+      errorMessage:
+        'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
     },
     enableCustonValidation: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'enable custon validation must be a boolean value.'
+      errorMessage: 'enable custon validation must be a boolean value.',
     },
     template: {
-      type: "string",
+      type: 'string',
       enum: ['record', 'classic'],
-      errorMessage: 'The acceptable template are: record, classic.'
+      errorMessage: 'The acceptable template are: record, classic.',
     },
     attributes: {
-      type: "array",
+      type: 'array',
       items: attributeSchema,
-      errorMessage: 'The attributes must be an array of valid attribute definitions.'
+      errorMessage: 'The attributes must be an array of valid attribute definitions.',
     },
     module: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
+      errorMessage:
+        'The module name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true,
     },
     response: {
-      type: "object",
+      type: 'object',
       nullable: true,
-      errorMessage: 'The response, if provided, must be a valid object'
+      errorMessage: 'The response, if provided, must be a valid object',
+    },
+    extends: {
+      type: 'object',
+      nullable: true,
+      properties: {
+        name: {
+          type: 'string',
+          errorMessage: 'The name field of extends must be a string.',
+        },
+        module: {
+          type: 'string',
+          pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+          errorMessage:
+            'The module name in extends must follow the naming convention (only alphabetic characters allowed).',
+        },
+      },
+      required: ['name', 'module'], // Ensure both name and module are required when extends is provided
+      errorMessage: {
+        required: {
+          name: 'The name field in extends is required.',
+          module: 'The module field in extends is required.',
+        },
+      },
     },
   },
-  required: ["type", "template", "name", "attributes"],
+  required: ['type', 'template', 'name', 'attributes'],
   additionalProperties: false,
   errorMessage: {
     required: {
       type: 'The type field is required and must be "model".',
       name: 'The name field is required and must follow the naming convention.',
-      attributes: 'The attributes field is required and cannot be empty.'
+      attributes: 'The attributes field is required and cannot be empty.',
     },
-    additionalProperties: 'No additional properties are allowed in the model configuration schema.'
-  }
+    additionalProperties: 'No additional properties are allowed in the model configuration schema.',
+  },
 };
 
 const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
-  type: "object",
+  type: 'object',
   properties: {
     id: {
-      type: "string",
+      type: 'string',
       nullable: true,
-      errorMessage: 'The id if provided must be a string.'
+      errorMessage: 'The id if provided must be a string.',
+    },
+    version: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The version if provided must be a string.',
     },
     type: {
-      type: "string",
-      const: "dto",
-      errorMessage: 'The type must be "dto".'
+      type: 'string',
+      const: 'dto',
+      errorMessage: 'The type must be "dto".',
     },
     name: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.'
+      errorMessage:
+        'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
     },
     module: {
-      type: "string",
+      type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
-      nullable: true
+      errorMessage:
+        'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      nullable: true,
     },
     enableCustonValidation: {
-      type: "boolean",
+      type: 'boolean',
       nullable: true,
-      errorMessage: 'enable custon validation must be a boolean value.'
-    }
+      errorMessage: 'enable custon validation must be a boolean value.',
+    },
+    extends: {
+      type: 'object',
+      nullable: true,
+      properties: {
+        name: {
+          type: 'string',
+          errorMessage: 'The name field of extends must be a string.',
+        },
+        module: {
+          type: 'string',
+          pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+          errorMessage:
+            'The module name in extends must follow the naming convention (only alphabetic characters allowed).',
+        },
+      },
+      required: ['name', 'module'], // Ensure both name and module are required when extends is provided
+      errorMessage: {
+        required: {
+          name: 'The name field in extends is required.',
+          module: 'The module field in extends is required.',
+        },
+      },
+    },
   },
-  required: ["type", "name"],
+  required: ['type', 'name'],
   additionalProperties: true,
   errorMessage: {
     required: {
       type: 'The type field is required and must be "model".',
       name: 'The name field is required and must follow the naming convention.',
     },
-    additionalProperties: 'No additional properties are allowed in the model configuration schema.'
-  }
+    additionalProperties: 'No additional properties are allowed in the model configuration schema.',
+  },
 };
 
-export const validateDTOConfig: ValidateFunction<DTOConfig> = ajvInstance.compile<DTOConfig>(dtoConfigSchema);
+export const validateDTOConfig: ValidateFunction<DTOConfig> =
+  ajvInstance.compile<DTOConfig>(dtoConfigSchema);

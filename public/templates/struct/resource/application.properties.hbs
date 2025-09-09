@@ -1,6 +1,10 @@
 # General
 spring.config.import=optional:file:.env[.properties]
+spring.jpa.open-in-view=false
 
 spring.application.name={{baseConfig.name}}
 # Default profile
 spring.profiles.active=${SPRING_ACTIVE_PROFILE:development}
+
+server.shutdown=graceful
+management.endpoint.health.probes.enabled=true

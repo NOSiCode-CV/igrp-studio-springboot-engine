@@ -1,5 +1,6 @@
 {{#if (eq baseConfig.database "Postgresql")}}
 POSTGRES_SERVICE_NAME=postgres
+# Use <localhost> to conect to a database in docker with api outside, use <host.docker.internal> when running the full app, database inside docker desktop locally
 POSTGRES_HOST=host.docker.internal
 POSTGRES_INTERNAL_PORT=5432
 POSTGRES_EXTERNAL_PORT=5432

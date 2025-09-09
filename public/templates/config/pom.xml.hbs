@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>{{baseConfig.springBootVersion}}</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>{{baseConfig.group}}</groupId>
 	<artifactId>{{baseConfig.artifact}}</artifactId>
@@ -33,7 +33,10 @@
     </repository>
   </repositories>
 	<properties>
-		<java.version>21</java.version>
+    <igrp.version>{{baseConfig.version}}</igrp.version>
+    <java.version>{{baseConfig.javaVersion}}</java.version>
+    <spring-cloud.version>{{baseConfig.springCloudVersion}}</spring-cloud.version>
+    <springdoc.version>{{baseConfig.springDocVersion}}</springdoc.version>
 	</properties>
 	<dependencies>
 		{{> spring-maven-dependencies}}
@@ -43,13 +46,13 @@
 		{{> oauth-maven-dependencies}}
 		{{> generic-maven-dependencies}}
     {{> igrp-maven-dependencies}}
+    {{> spring-cloud-dependencies}}
   {{#if baseConfig.enableObservability}}
        {{#if baseConfig.enableGraalVm}}
 		 {{> graal-vm-observability-dependencies}}
 	   {{/if}}
 		{{> observability-maven-dependencies}}
   {{/if}}
-
   
     {{#if baseConfig.dependencies}}
       {{#each baseConfig.dependencies}}
@@ -63,6 +66,17 @@
       {{/each}}
     {{/if}}
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 	<build>
 		<plugins>
 			{{#if baseConfig.enableGraalVm}}
@@ -72,6 +86,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 </project>

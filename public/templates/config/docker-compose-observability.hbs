@@ -19,7 +19,13 @@ services:
     env_file:
       - .env
     depends_on:
-      - {{#if (eq baseConfig.database "Postgresql")}}postgres{{else if (eq baseConfig.database "MySQL")}}mysql{{else if (eq baseConfig.database "Oracle")}}oracle{{/if}}
+    {{#if (eq baseConfig.database 'Postgresql')}}
+      - postgres-{{toLowerCase baseConfig.name}}-api-service
+    {{else if (eq baseConfig.database 'MySQL')}}
+      - mysql-{{toLowerCase baseConfig.name}}-api-service
+    {{else if (eq baseConfig.database 'Oracle')}}
+      - oracle-{{toLowerCase baseConfig.name}}-api-service
+    {{/if}}
     environment:
       - SERVER_PORT=${SERVICE_PORT}
       - SERVICE_NAME={{toLowerCase baseConfig.name}}-service

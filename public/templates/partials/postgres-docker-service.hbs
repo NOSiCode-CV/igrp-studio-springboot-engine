@@ -1,6 +1,6 @@
-postgres:
-    image: postgres:14-alpine
-    container_name: postgres
+postgres-{{toLowerCase baseConfig.name}}-api-service:
+    image: postgres:17-alpine
+    container_name: postgres-{{toLowerCase baseConfig.name}}-api-service
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -8,5 +8,5 @@ postgres:
     ports:
       - ${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}
     volumes:
-      - postgres-data-14:/var/lib/postgresql/data
+      - postgres-data-17-{{toLowerCase baseConfig.name}}-api-service:/var/lib/postgresql/data
     restart: unless-stopped

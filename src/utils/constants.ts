@@ -1,4 +1,4 @@
-import { ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
+import { ConfigTypes, ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
 import { normalizeName } from '../modules/dto/saveDTOConfig';
 
 export const DIRECTORIES = {
@@ -30,6 +30,8 @@ export const DIRECTORIES = {
   APPLICATION: 'application',
   DOMAIN: 'domain',
   INFRASTRUCTURE: 'infrastructure',
+  INTERFACE: 'interfaces',
+  REST: 'rest',
   COMMAND: 'command',
   COMMANDS: 'commands',
   QUERY: 'query',
@@ -110,8 +112,9 @@ export const PARTIALS = [
   'security-maven-dependencies.hbs',
   'spring-maven-dependencies.hbs',
   'spring-entity-revision-dependencies.hbs',
+  'spring-cloud-dependencies.hbs',
   'graal-vm-plugin.hbs',
-  'graal-vm-observability-dependencies.hbs'
+  'graal-vm-observability-dependencies.hbs',
 ];
 
 export const ERROR_MESSAGE = {
@@ -236,6 +239,7 @@ export const TEMPLATES = {
   IGRP_CONTROLLER: 'igrpstudio/controller.hbs',
 
   ENV_FILE: 'config/env.hbs',
+  ENV_EXAMPLE_FILE: 'config/env.example.hbs',
   CONFIG_MVNW: 'config/mvnw',
   CONFIG_MVN_WRAPPER: 'config/mvn-wrapper.properties.hbs',
   CONFIG_POM_XML: 'config/pom.xml.hbs',
@@ -362,13 +366,15 @@ export const TEMPLATES = {
   CONFIG_SERVICE: 'config/k8s/serviceyaml.hbs',
   CONFIG_CLUSTER: 'config/k8s/clusteryaml.hbs',
 
-
   VALIDATOR_DTO_INTERFACE: 'struct/technical/java/dto/dtoValidatorInterface.hbs',
-  VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs'
+  VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs',
+
+  GITKEEPFILE: 'struct/gitKeepFile.hbs',
 };
 
 export const CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -382,6 +388,7 @@ export const CONFIG_FILES = [
 
 export const CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
@@ -393,28 +400,29 @@ export const CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
-
 export const OBSERVABILITY_CONFIG_FILES = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
 ];
 
 export const OBSERVABILITY_CONFIG_FILES_GRAALVM = [
   { template: TEMPLATES.ENV_FILE, output: '.env' },
+  { template: TEMPLATES.ENV_EXAMPLE_FILE, output: '.env.example' },
   //{ template: TEMPLATES.CONFIG_MVN_WRAPPER, output: '.mvn/wrapper/maven-wrapper.properties' },
   { template: TEMPLATES.CONFIG_POM_XML, output: 'pom.xml' },
   //{ template: TEMPLATES.CONFIG_MVNW_CMD, output: 'mvnw.cmd' },
   { template: TEMPLATES.CONFIG_DOCKER_FILE_GRAALVM_OBSERVABILITY, output: 'Dockerfile' },
   { template: TEMPLATES.CONFIG_DOCKER_COMPOSE, output: 'docker-compose.yml' },
   { template: TEMPLATES.CONFIG_GITIGNORE, output: '.gitignore' },
-  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: 'gitlab-ci.yaml' },
+  { template: TEMPLATES.CONFIG_GITLABCIYAML, output: '.gitlab-ci.yaml' },
   { template: TEMPLATES.CONFIG_DOCKERIGNORE, output: '.dockerignore' },
   // { template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM, output: 'config/OtelConfig.java' }
 ];
@@ -486,6 +494,8 @@ export const COMMON_FILES = {
   INGRESS: 'ingress.yaml',
   CLUSTER: 'cluster.yaml',
   SERVICE_K8S: 'service.yaml',
+
+  GITKEEPFILE: '.gitkeep',
 };
 
 export const HELPER_FILES = {
@@ -502,7 +512,7 @@ export const PATTERNS = {
   NOT_EMPTY: '^.+$',
   NO_SPACE_AND_HYPHEN: '^[^\\s-][a-zA-Z_]*$',
   NAME_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_]*$',
-  PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9_/]*$',
+  PATH_SLASH_VALIDATION_PATTERN: '^[A-Za-z][A-Za-z0-9-/]*$',
   RELATIONS_PATTERN: '^$|^[A-Za-z_][A-Za-z0-9_]*$',
   PATH_PATTERN: '^$|^/?[A-Za-z_{][A-Za-z0-9_{}/-]*$',
   NAMESPACE_VALIDATION_PATTERN: '^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+[0-9a-z_]$',
@@ -564,30 +574,19 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'file',
   'instant',
   'uri',
-  'url'
+  'url',
+  'text',
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
-  timing: [
-    'date', 'datetime', 'time', 'instant'
-  ],
-  numeric: [
-    'integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'
-  ],
-  text: [
-    'string', 'char'
-  ],
-  media: [
-    'file', 'binary'
-  ],
-  misc: [
-    'uuid',
-  ],
-  generic: [
-    'object'
-  ],
-  uri: ['url', 'uri']
-}
+  timing: ['date', 'datetime', 'time', 'instant'],
+  numeric: ['integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'],
+  text: ['string', 'char', 'text'],
+  media: ['file', 'binary'],
+  misc: ['uuid', 'boolean'],
+  generic: ['object'],
+  uri: ['url', 'uri'],
+};
 
 const NO_OBJECT_ATTRIBUTE_TYPES = GENERIC_ATTRIBUTE_TYPES.filter((type) => type !== 'object');
 
@@ -638,6 +637,12 @@ export const GENERIC_TYPES: Map<
       kotlin: { name: 'Double', primitive: true },
     },
     string: {
+      java: { name: 'String', primitive: false },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'String', primitive: false },
+    },
+    text: {
       java: { name: 'String', primitive: false },
       dotnet: { name: 'string', primitive: false },
       python: { name: 'str', primitive: false },
@@ -694,7 +699,7 @@ export const GENERIC_TYPES: Map<
     },
     uri: {
       java: { name: 'URI', primitive: false, namespace: 'java.net' },
-      dotnet: { name: "Uri", primitive: false, namespace: "System" },
+      dotnet: { name: 'Uri', primitive: false, namespace: 'System' },
       python: { name: 'URI', primitive: false, namespace: 'urllib.parse' },
       kotlin: { name: 'URI', primitive: false, namespace: 'java.net' },
     },
@@ -790,129 +795,137 @@ export const GENERIC_TYPES: Map<
   }),
 );
 
-export const GENERIC_IMPORTS = (packageNameFromConfig: string, type: string, module?: string): Map<
+export const GENERIC_IMPORTS = (
+  packageNameFromConfig: string,
+  type: string,
+  module?: string,
+): Map<
   string,
-  { java: ImportTypeMetadata; dotnet: ImportTypeMetadata; python: ImportTypeMetadata; kotlin: ImportTypeMetadata }
-> => new Map(
-  Object.entries({
-    model: {
-      java: {
-        domain: `import ${packageNameFromConfig}.${module}.domain.${PACKAGES.MODELS}.${type};`,
-        technical: `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${type};`
+  {
+    java: ImportTypeMetadata;
+    dotnet: ImportTypeMetadata;
+    python: ImportTypeMetadata;
+    kotlin: ImportTypeMetadata;
+  }
+> =>
+  new Map(
+    Object.entries({
+      model: {
+        java: {
+          domain: `import ${packageNameFromConfig}.${module}.domain.${PACKAGES.MODELS}.${type};`,
+          technical: `import ${packageNameFromConfig}.${PACKAGES.MODELS}.${type};`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    dto: {
-      java: {
-        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
-        technical: `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`
+      dto: {
+        java: {
+          domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
+          technical: `import ${packageNameFromConfig}.${PACKAGES.DTO}.${normalizeName(type, 'dto') + 'DTO'};`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    enum: {
-      java: {
-        domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.CONSTANTS}.${type};`,
-        technical: `import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${type};`
+      enum: {
+        java: {
+          domain: `import ${packageNameFromConfig}.${module}.application.${PACKAGES.CONSTANTS}.${type};`,
+          technical: `import ${packageNameFromConfig}.${PACKAGES.CONSTANTS}.${type};`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    file: {
-      java: {
-        domain:
-          `import org.hibernate.annotations.JdbcType;`
-          + '\n' +
-          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`,
-        technical:
-          `import org.hibernate.annotations.JdbcType;`
-          + '\n' +
-          `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`
+      file: {
+        java: {
+          domain:
+            `import org.hibernate.annotations.JdbcType;` +
+            '\n' +
+            `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`,
+          technical:
+            `import org.hibernate.annotations.JdbcType;` +
+            '\n' +
+            `import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    binary: {
-      java: {
-        domain: `import org.hibernate.annotations.JdbcType;`,
-        technical: `import org.hibernate.annotations.JdbcType;`
+      binary: {
+        java: {
+          domain: `import org.hibernate.annotations.JdbcType;`,
+          technical: `import org.hibernate.annotations.JdbcType;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    list: {
-      java: {
-        domain: `import java.util.List;`,
-        technical: `import java.util.List;`
+      list: {
+        java: {
+          domain: `import java.util.List;`,
+          technical: `import java.util.List;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    collection: {
-      java: {
-        domain: `import java.util.Collection;`,
-        technical: `import java.util.Collection;`
+      collection: {
+        java: {
+          domain: `import java.util.Collection;`,
+          technical: `import java.util.Collection;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    pageable: {
-      java: {
-        domain: `import org.springframework.data.domain.Page;`,
-        technical: `import org.springframework.data.domain.Page;`
+      pageable: {
+        java: {
+          domain: `import org.springframework.data.domain.Page;`,
+          technical: `import org.springframework.data.domain.Page;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    map: {
-      java: {
-        domain: `import java.util.Map;`,
-        technical: `import java.util.Map;`
+      map: {
+        java: {
+          domain: `import java.util.Map;`,
+          technical: `import java.util.Map;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    set: {
-      java: {
-        domain: `import java.util.Set;`,
-        technical: `import java.util.Set;`
+      set: {
+        java: {
+          domain: `import java.util.Set;`,
+          technical: `import java.util.Set;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    jsonProperty: {
-      java: {
-        domain: 'import com.fasterxml.jackson.annotation.JsonProperty;',
-        technical: 'import com.fasterxml.jackson.annotation.JsonProperty;'
+      jsonProperty: {
+        java: {
+          domain: 'import com.fasterxml.jackson.annotation.JsonProperty;',
+          technical: 'import com.fasterxml.jackson.annotation.JsonProperty;',
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-    xmlProperty: {
-      java: {
-        domain: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
-        technical: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;'
+      xmlProperty: {
+        java: {
+          domain: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
+          technical: 'import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;',
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
       },
-      dotnet: {},
-      python: {},
-      kotlin: {},
-    },
-
-  }),
-);
-
+    }),
+  );
 
 export const TYPESCRIPT_TYPES: Map<
   string,
@@ -1001,6 +1014,17 @@ export const CONFIG_TYPES = [
   'filter',
   'response',
 ] as const;
+
+export const configTypeMapping: Record<ConfigTypes, string> = {
+  dto: 'dto',
+  controller: 'controllers',
+  model: 'models',
+  module: 'module',
+  enum: 'enum',
+  filter: 'filter',
+  response: 'response',
+};
+
 export const HTTP_METHOD_TYPES = [
   'GET',
   'POST',
@@ -1114,4 +1138,4 @@ export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DE
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file'] as const;
 
-export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO'] as const;
+export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO', 'NONE'] as const;

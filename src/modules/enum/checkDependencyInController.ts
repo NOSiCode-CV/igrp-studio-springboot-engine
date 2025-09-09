@@ -1,28 +1,36 @@
 import { DeleteConfig, EnumConfig, RenderContext } from '../../interfaces/types';
-import { getControllerTypes } from "../controller/getControllerTypes";
+import { getControllerTypes } from '../controller/getControllerTypes';
 import { DIRECTORIES } from '../../utils/constants';
 import { capitalize } from '../../helper/stringHelper';
 
-export const checkDependencyInController = async function (context: RenderContext<EnumConfig>  | RenderContext<DeleteConfig>) {
-
-  const enumName = context.resourceConfig.name
+export const checkDependencyInController = async function (
+  context: RenderContext<EnumConfig> | RenderContext<DeleteConfig>,
+) {
+  const enumName = context.resourceConfig.name;
   /**
    * get all controllers types
    */
-  const controllerTypes = await getControllerTypes(context.resourceConfig.module ?? DIRECTORIES.SHARED, context.basePath);
+  const controllerTypes = await getControllerTypes(
+    context.resourceConfig.module ?? DIRECTORIES.SHARED,
+    context.basePath,
+  );
   const errors: Array<{ message: string }> = [];
 
   for (const controller of controllerTypes.values()) {
     for (const action of controller.actions) {
-      if(action.responses)
+      if (action.responses)
         for (const response of Object.values(action.responses)) {
-          if (response.name === enumName || response.content["application/json"]?.schema?.type == enumName || response.content["multipart/form-data"]?.schema?.type == enumName) {
+          if (
+            response.name === enumName ||
+            response.content['application/json']?.schema?.type == enumName ||
+            response.content['multipart/form-data']?.schema?.type == enumName
+          ) {
             errors.push({
               message: `ENUM '${enumName}' is being used as a response in controller '${controller.name}' in action '${action.actionName}'.`,
             });
           }
         }
-      if (capitalize(action.actionName) + "Request" === enumName) {
+      if (capitalize(action.actionName) + 'Request' === enumName) {
         errors.push({
           message: `ENUM '${enumName}' is being used as a requestBody in controller '${controller.name}' in action '${action.actionName}'.`,
         });

@@ -15,20 +15,20 @@ import javax.transaction.Transactional;
 @Service
 public class {{resourceConfig.name}}AggregateService {
 
-   private final {{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository;
+  private final {{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository;
 
-   public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository) {
-      this.{{toCamelCase resourceConfig.name}}AggregateRootRepository = {{toCamelCase resourceConfig.name}}AggregateRootRepository;
-   }
+  public {{resourceConfig.name}}AggregateService({{resourceConfig.name}}AggregateDomainRepository {{toCamelCase resourceConfig.name}}AggregateRootRepository) {
+    this.{{toCamelCase resourceConfig.name}}AggregateRootRepository = {{toCamelCase resourceConfig.name}}AggregateRootRepository;
+  }
 
-   {{#each resourceConfig.actions}}
+  {{#each resourceConfig.actions}}
      {{#ifNot (eq this.method "GET")}}
-   @Transactional
-   public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
-      {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
-      aggregate.handle(cmd);
-      {{toCamelCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
-   }
+  @Transactional
+  public void handle{{this.actionName}}Command({{this.actionName}}Command cmd) {
+    {{resourceConfig.name}}AggregateRoot aggregate = new {{resourceConfig.name}}AggregateRoot(cmd.getId(), "", new {{#each resourceConfig.attributes}}{{#if this.isEntity}}{{this.type}}{{/if}}{{/each}});
+    aggregate.handle(cmd);
+    {{toCamelCase resourceConfig.name}}AggregateRootRepository.save(aggregate);
+  }
      {{/ifNot}}
-   {{/each}}
+  {{/each}}
 }

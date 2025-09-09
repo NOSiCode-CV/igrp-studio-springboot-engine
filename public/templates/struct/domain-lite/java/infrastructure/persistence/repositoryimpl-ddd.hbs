@@ -1,9 +1,11 @@
 {{> package-java }}
 
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.domain.models.{{capitalize resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase resourceConfig.module}}{{else}}shared{{/if}}.infrastructure.persistence.entity.{{capitalize resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpResponseStatusException;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.http.HttpStatus;
 {{#if resourceConfig.crud}}
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -21,6 +23,11 @@ public interface {{capitalizeJavaStyle resourceConfig.name}}Repository extends
     JpaSpecificationExecutor<{{resourceConfig.name}}>{{#if resourceConfig.revision ~}},
     RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
 {
+
+      default {{resourceConfig.name}} findByIdOrThrow({{keyType resourceConfig}} id) {
+          return this.findById(id)
+          .orElseThrow(() -> IgrpResponseStatusException.of(HttpStatus.NOT_FOUND,"{{resourceConfig.name}} not found for id: " + id));
+      }
 
   {{#if resourceConfig.crud.disabledMethods}}
   {{#each resourceConfig.crud.disabledMethods}}

@@ -14,7 +14,6 @@ const domainApiConfig: BaseApiConfig = {
   projectStructureStyle: 'domain',
   enableObservability: true,
   enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-alpha",
   enableGraalVm: false
 };
 
@@ -28,7 +27,6 @@ const technicalApiConfig: BaseApiConfig = {
   projectStructureStyle: 'technical',
   enableObservability: true,
   enableEntityRevision: false,
-  igrpCoreVersion: "0.0.1-alpha",
   enableGraalVm: true
 };
 
@@ -42,8 +40,6 @@ const testApiConfig: BaseApiConfig = {
   projectStructureStyle: "domain",
   enableObservability: true,
   enableEntityRevision: true,
-  igrpCoreVersion: "0.0.1-alpha",
-  springBootVersion: "3.4.3",
   enableGraalVm: true
 }
 

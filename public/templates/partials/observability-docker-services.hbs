@@ -1,6 +1,6 @@
-otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.82.0
-    container_name: otel-collector
+otel-collector-{{toLowerCase baseConfig.name}}-api-service:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector-{{toLowerCase baseConfig.name}}-api-service
     restart: always
     command:
       - --config=/etc/otelcol-cont/otel-collector.yml
@@ -15,18 +15,18 @@ otel-collector:
       - ${OTEL_HTTP_PORT}:${OTEL_HTTP_PORT} # OTLP http receiver
       - ${OTEL_ZPAGES_PORT}:${OTEL_ZPAGES_PORT} # zpages extension
 
-prometheus:
-  image: prom/prometheus:v2.51.2
-  container_name: prometheus
+prometheus-{{toLowerCase baseConfig.name}}-api-service:
+  image: prom/prometheus:latest
+  container_name: prometheus-{{toLowerCase baseConfig.name}}-api-service
   ports:
     - ${PROMETHEUS_SERVICE_EXTERNAL_PORT}:${PROMETHEUS_SERVICE_INTERNAL_PORT}
   volumes:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   command: "--config.file=/etc/prometheus/prometheus.yml"
 
-promtail:
-  image: grafana/promtail:3.0.0
-  container_name: promtail
+promtail-{{toLowerCase baseConfig.name}}-api-service:
+  image: grafana/promtail:latest
+  container_name: promtail-{{toLowerCase baseConfig.name}}-api-service
   environment:
     - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_INTERNAL_PORT}
     - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_INTERNAL_PORT}
@@ -36,18 +36,18 @@ promtail:
     - /var/run/docker.sock:/var/run/docker.sock
   command: "--config.expand-env=true --config.file=/etc/promtail/docker-config.yml"
 
-loki:
-  image: grafana/loki:3.0.0
-  container_name: loki
+loki-{{toLowerCase baseConfig.name}}-api-service:
+  image: grafana/loki:latest
+  container_name: loki-{{toLowerCase baseConfig.name}}-api-service
   command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
   ports:
     - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
   depends_on:
-    - promtail
+    - promtail-{{toLowerCase baseConfig.name}}-api-service
 
-tempo:
-  image: grafana/tempo:2.4.1
-  container_name: tempo
+tempo-{{toLowerCase baseConfig.name}}-api-service:
+  image: grafana/tempo:latest
+  container_name: tempo-{{toLowerCase baseConfig.name}}-api-service
   command: "-config.expand-env=true -config.file /etc/tempo-config.yml"
   environment:
     - TEMPO_SERVICE_HTTP_PORT=${TEMPO_SERVICE_HTTP_PORT}
@@ -58,13 +58,13 @@ tempo:
   volumes:
     - ./monitoring/tempo/tempo.yml:/etc/tempo-config.yml
 
-grafana:
-  image: grafana/grafana:10.4.2
-  container_name: grafana
+grafana-{{toLowerCase baseConfig.name}}-api-service:
+  image: grafana/grafana:latest
+  container_name: grafana-{{toLowerCase baseConfig.name}}-api-service
   ports:
     - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}
   volumes:
-    - grafana_data:/var/lib/grafana
+    - grafana-data-{{toLowerCase baseConfig.name}}-api-service:/var/lib/grafana
   environment:
     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}

@@ -35,7 +35,11 @@ export interface ApiConfig extends BaseApiConfig {
   packageName: string;
 }
 
-export interface BaseApiConfig extends IdentifiableElement {
+export interface VersionedConfig {
+  version?: string;
+}
+
+export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   type: 'springboot';
   workspaceId?: string;
   name: string;
@@ -47,13 +51,15 @@ export interface BaseApiConfig extends IdentifiableElement {
   projectStructureStyle: ProjectStructureStyle;
   enableObservability: boolean;
   enableEntityRevision: boolean;
-  igrpCoreVersion: string;
-  springBootVersion?: string;
   dependencies?: Dependency[];
   enableGraalVm: boolean;
+  javaVersion?: string;
+  springDocVersion?: string;
+  springCloudVersion?: string;
+  springBootVersion?: string;
 }
 
-export interface ModelConfig extends IdentifiableElement {
+export interface ModelConfig extends IdentifiableElement, VersionedConfig {
   type: 'model';
   name: string;
   tableName: string;
@@ -118,11 +124,17 @@ export interface JavaAttribute {
   module?: string;
 }
 
-export interface DTOBaseConfig extends IdentifiableElement {
+export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
   type: ObjectTypes;
   name: string;
   module?: string;
-  enableCustonValidation?: boolean
+  enableCustonValidation?: boolean;
+  extends?: DTOParentReference;
+}
+
+export interface DTOParentReference {
+  name: string;
+  module: string;
 }
 
 export interface DTOConfig extends DTOBaseConfig {
@@ -133,7 +145,7 @@ export interface DTOConfig extends DTOBaseConfig {
 export interface HandlerConfig extends DTOConfig {
   //response: JavaAttribute;
   //response: string;
-  response: { [p: string]: Body }
+  response: { [p: string]: Body };
 }
 
 export interface ExceptionConfig {
@@ -148,7 +160,7 @@ export interface UniqueConstraint {
 }
 
 export interface CascadeType {
-  type: CascadeTypes
+  type: CascadeTypes;
 }
 
 export interface JavaType {
@@ -162,8 +174,7 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
 
 export interface Attribute {
   type: ModelAttributeType;
@@ -208,7 +219,6 @@ export interface RelationReference {
   orphanRemoval?: boolean;
 }
 
-
 export interface Crud {
   enabled: boolean;
   path: string;
@@ -221,7 +231,7 @@ export interface IModelPermission {
   permissions: string[];
 }
 
-export interface ControllerConfig extends IdentifiableElement {
+export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;
   basePath: string;
@@ -247,8 +257,8 @@ export interface ControllerAction {
 }
 
 export interface ModelAttribute {
-  name: string,
-  module?: string
+  name: string;
+  module?: string;
 }
 
 export interface MultipartFile {
@@ -280,7 +290,7 @@ export interface ISelectPermissions {
   value: string;
 }
 
-export interface EnumConfig extends IdentifiableElement {
+export interface EnumConfig extends IdentifiableElement, VersionedConfig {
   type: 'enum';
   name: string;
   module?: string;
@@ -307,7 +317,7 @@ export interface CrudModel {
 }
 
 interface Field {
-  name: string
+  name: string;
 }
 
 export interface CrudControllerConfig {
@@ -365,7 +375,7 @@ export interface PropertySchemaField extends SchemaField {
   default?: any;
 }
 
-export interface BaseBody extends IdentifiableElement {
+export interface BaseBody extends IdentifiableElement, VersionedConfig {
   name?: string;
   content: {
     [contentType: string]: SchemaContent; // e.g., "application/json"
@@ -378,10 +388,10 @@ export interface Body extends BaseBody {
   module?: string;
 }
 
-export interface RequestConfig extends Body { }
+export interface RequestConfig extends Body {}
 
 export interface ResponseConfig extends Body {
-  type: 'response'
+  type: 'response';
   statusCode: string;
   template: 'classic' | 'record';
 }
@@ -427,21 +437,20 @@ export interface DdlConfig extends SerializationConfig {
 }
 
 export interface AttributeCategory {
-  name: string,
-  group: string
+  name: string;
+  group: string;
 }
 
 export interface PathConfig {
-  template: string,
-  partials: string,
-  springDependencies: string,
+  template: string;
+  partials: string;
+  springDependencies: string;
 }
 
 export interface RemovedRelationReference {
   entity: string;
   module: string;
 }
-
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

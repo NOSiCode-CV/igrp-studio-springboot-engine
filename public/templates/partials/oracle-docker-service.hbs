@@ -1,6 +1,6 @@
-oracle:
+oracle-{{toLowerCase baseConfig.name}}-api-service:
     image: gvenzl/oracle-xe:21-slim
-    container_name: oracle
+    container_name: oracle-{{toLowerCase baseConfig.name}}-api-service
     environment:
       ORACLE_PASSWORD: ${ORACLE_PASSWORD}
       ORACLE_DATABASE: ${ORACLE_DATABASE}
@@ -8,5 +8,5 @@ oracle:
     ports:
       - ${ORACLE_EXTERNAL_PORT}:${ORACLE_INTERNAL_PORT}
     volumes:
-      - oracle-data-21:/opt/oracle/oradata
+      - oracle-data-21-{{toLowerCase baseConfig.name}}-api-service:/opt/oracle/oradata
     restart: unless-stopped

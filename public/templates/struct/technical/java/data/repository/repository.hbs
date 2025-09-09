@@ -1,8 +1,10 @@
 {{> package-java }}
 
+import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.IgrpResponseStatusException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import org.springframework.http.HttpStatus;
 {{#if resourceConfig.crud}}import org.springframework.data.rest.core.annotation.RepositoryRestResource;{{/if}}
 {{~#if resourceConfig.revision}}import org.springframework.data.repository.history.RevisionRepository;{{/if}}
 {{#if resourceConfig.crud.disabledMethods}}{{else~}}import java.util.Optional;{{~/if}}
@@ -15,5 +17,10 @@ public interface {{capitalizeJavaStyle resourceConfig.name}}Repository extends
     JpaSpecificationExecutor<{{resourceConfig.name}}>{{#if resourceConfig.revision}},{{~/if}}
     {{#if resourceConfig.revision~}}RevisionRepository<{{resourceConfig.name}}, {{keyType resourceConfig}}, Integer> {{~/if}}
 {
+
+    default {{resourceConfig.name}} findByIdOrThrow({{keyType resourceConfig}} id) {
+        return this.findById(id)
+                .orElseThrow(() -> IgrpResponseStatusException.of(HttpStatus.NOT_FOUND,"{{resourceConfig.name}} not found for id: " + id));
+    }
 
 }

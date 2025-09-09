@@ -1,16 +1,15 @@
-import { ISelectPermissions, PermissionConfig } from "../../interfaces/types";
-import { loadPermissionConfigs } from "../../utils/helpers";
+import { ISelectPermissions, PermissionConfig } from '../../interfaces/types';
+import { loadPermissionConfigs } from '../../utils/helpers';
 
-
-export const getAllPermissions = async(basePath: string) => {
+export const getAllPermissions = async (basePath: string) => {
   const permissionsType = await loadPermissionConfigs(basePath);
-  const selectPermissions: ISelectPermissions[] = []
+  const selectPermissions: ISelectPermissions[] = [];
   permissionsType.map((p: PermissionConfig) => {
     selectPermissions.push({
       label: p.name.charAt(0).toUpperCase() + p.name.slice(1),
-      value: p.name
-    })
-  })
+      value: p.name,
+    });
+  });
 
   return selectPermissions;
-}
+};

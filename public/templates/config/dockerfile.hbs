@@ -1,5 +1,5 @@
 # Use an official Maven image with JDK 21 to build the application
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.10-eclipse-temurin-24-alpine AS build
 
 # Define build-time argument
 ARG SERVICE_NAME
@@ -8,21 +8,28 @@ ARG SERVICE_NAME
 ENV APP_HOME /app
 ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
 
-# Copy the pom.xml and source code
-COPY src $APP_HOME/src
+# Copy the pom.xml first for better layer caching
 COPY pom.xml $APP_HOME/pom.xml
 
+# Download dependencies separately to leverage Docker cache
 WORKDIR $APP_HOME
+RUN mvn dependency:go-offline
+
+# Copy the source code
+COPY src $APP_HOME/src
 
 # Package the application
 RUN mvn package -DskipTests
 
 # Runtime image
-FROM maven:3.9.9-eclipse-temurin-21-alpine
+FROM eclipse-temurin:23-jre-alpine
 
 # Define runtime environment variable
 ENV SERVICE_NAME=${SERVICE_NAME}
-ENV SPRING_PROFILES_ACTIVE=docker
+ENV SPRING_PROFILES_ACTIVE=${SPRING_ACTIVE_PROFILE}
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
+                -XX:+UseStringDeduplication \
+                -XX:-HeapDumpOnOutOfMemoryError"
 
 # Set the working directory
 WORKDIR /app
@@ -35,4 +42,4 @@ COPY --from=build /app/target/*.jar /app/app.jar
 EXPOSE ${SERVICE_PORT}
 
 # Command to run the application
-CMD ["sh", "-c", "java -jar /app/app.jar"]
+CMD ["sh", "-c", "java ${JAVA_OPTS} -jar /app/app.jar"]

@@ -1,9 +1,14 @@
 import {
-  ModelConfig,
+  BaseApiConfig,
   ControllerConfig,
+  CrudControllerConfig,
   DTOConfig,
+  EnumConfig,
+  ModelConfig,
   ModuleConfig,
-  BaseApiConfig, EnumConfig, RequestConfig, ResponseConfig, SerializationConfig, CrudControllerConfig,
+  RequestConfig,
+  ResponseConfig,
+  SerializationConfig,
 } from '../../interfaces/types';
 
 export const cleaner = (config: BaseApiConfig | ModelConfig | ControllerConfig | DTOConfig | ModuleConfig | EnumConfig | RequestConfig | ResponseConfig | SerializationConfig | CrudControllerConfig) => {

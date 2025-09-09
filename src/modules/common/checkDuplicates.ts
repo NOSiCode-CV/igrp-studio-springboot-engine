@@ -1,10 +1,13 @@
 import {
-  ControllerAction,
-  RequestParams,
-  PathVariables,
   Attribute,
+  Body,
+  ControllerAction,
+  CrudModel,
+  EnumValue,
   JavaAttribute,
-  EnumValue, SchemaContent, Body, CrudModel,
+  PathVariables,
+  RequestParams,
+  SchemaContent,
 } from '../../interfaces/types';
 
 export const checkDuplicated = (attrs?: Attribute[], actions?: ControllerAction[], dto?: JavaAttribute[], values?: EnumValue[], schema?: SchemaContent, crudModels?: CrudModel[]): void => {

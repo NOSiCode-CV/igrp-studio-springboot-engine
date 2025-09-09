@@ -20,7 +20,6 @@ import java.util.Map;
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.modelName}}.{{capitalize this.modelName}};
 import {{../baseConfig.group}}.{{../baseConfig.packageName}}.models.{{toLowerCase this.modelName}}.{{capitalize this.modelName}}Repository;
 {{/each}}
-import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.IgrpProblem;
 {{#if (or resourceConfig.methods.read resourceConfig.methods.delete)}}
 import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.Get{{capitalize resourceConfig.name}}ByIdException;
 {{/if}}
@@ -89,11 +88,10 @@ public class {{capitalize resourceConfig.name}}Service implements I{{capitalize 
 
   {{#each resourceConfig.models}}
     {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
-      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
-        new IgrpProblem<>(
+      .orElseThrow(() -> Get{{capitalize ../resourceConfig.name}}ByIdException.of(
                 HttpStatus.BAD_REQUEST,
                 "{{this.modelName}} was not found",
-                new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+                new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!"))
       );
 
     {{#each this.fields}}
@@ -117,11 +115,10 @@ public class {{capitalize resourceConfig.name}}Service implements I{{capitalize 
   {{#each resourceConfig.models}}
 
     {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
-      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
-          new IgrpProblem<>(
+      .orElseThrow(() -> Get{{capitalize ../resourceConfig.name}}ByIdException.of(
                   HttpStatus.BAD_REQUEST,
                   "{{this.modelName}} was not found",
-                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!"))
       );
 
     {{#each this.fields}}
@@ -150,11 +147,10 @@ public class {{capitalize resourceConfig.name}}Service implements I{{capitalize 
 
     {{#each resourceConfig.models}}
     {{capitalize this.modelName}} {{toCamelCase this.modelName}} = {{toCamelCase this.modelName}}Repository.findById({{toCamelCase this.modelName}}Id)
-      .orElseThrow(() -> new Get{{capitalize ../resourceConfig.name}}ByIdException(
-          new IgrpProblem<>(
+      .orElseThrow(() -> Get{{capitalize ../resourceConfig.name}}ByIdException.of(
                   HttpStatus.BAD_REQUEST,
                   "{{this.modelName}} was not found",
-                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!")))
+                  new {{capitalize ../resourceConfig.name}}NotFoundDTO("{{capitalize this.modelName}} <" + {{toCamelCase this.modelName}}Id + "> was not found!"))
       );
 
     {{toCamelCase this.modelName}}Repository.delete({{toCamelCase this.modelName}});

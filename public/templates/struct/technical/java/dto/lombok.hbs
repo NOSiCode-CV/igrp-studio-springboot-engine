@@ -1,8 +1,12 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+
 {{> package-java }}
 
 import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
+{{#if resourceConfig.extends}}import lombok.EqualsAndHashCode;{{/if}}
 {{#if resourceConfig.attributes}}
 {{> lombok-java-imports}}
 {{/if}}
@@ -19,15 +23,16 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.validator.{{resolve-inte
 {{#if resourceConfig.enableCustonValidation}}
 @{{resolve-interface-custon-validator-name resourceConfig.name}}
 {{/if}}
+{{#if resourceConfig.extends}}@EqualsAndHashCode(callSuper = true){{/if}}
 @IgrpDTO
-public class {{resourceConfig.name}}DTO {
+public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}} {
 
     {{#each resourceConfig.attributes}}
     {{#each this.annotations}}
     @{{this.annotation}}
     {{/each}}
     {{{resolve-annotations this}}}
-    private {{{resolve-type this}}} {{this.name}};
+    private {{{resolve-type this}}} {{this.name}} {{{getCollectionTypeInitializer this}}};
 
     {{/each}}
 }

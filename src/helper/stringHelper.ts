@@ -1,5 +1,11 @@
+import pluralize from 'inflection';
+
 export function singleCapitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function lowerCaseFirstLetter(name: string): string {
+  return name.charAt(0).toLowerCase() + name.slice(1);
 }
 
 export function capitalize(str: string): string {
@@ -9,12 +15,16 @@ export function capitalize(str: string): string {
     .join('');
 }
 
+export function revertCapitalize(str: string): string {
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '');
+}
+
 export function capitalizeJavaStyle(str: string): string {
   if (str.includes('_')) {
-    return str
-      .split('_')
-      .map(singleCapitalize)
-      .join('');
+    return str.split('_').map(singleCapitalize).join('');
   }
   return singleCapitalize(str);
 }
@@ -79,15 +89,7 @@ export function fullCamelCaseAndPluralize(str: string): string {
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
     .join('');
 
-  if (lowerStr.endsWith('y') && !/[aeiou]y$/.test(lowerStr)) {
-    return lowerStr.replace(/y$/, 'ies');
-  }
-
-  if (/[sxz]$/.test(lowerStr) || /[ch]$/.test(lowerStr)) {
-    return lowerStr + 'es';
-  }
-
-  return lowerStr + 's';
+  return pluralize.pluralize(lowerStr);
 }
 
 export function sanitizeHeaderName(headerName: string): string {

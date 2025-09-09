@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.0.1-alpha.75",
+  "version": "0.1.0-beta.1",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -8,11 +8,19 @@
   "files": [
     "/dist"
   ],
+  "custom": {
+    "igrpVersion": "0.1.0-beta.1",
+    "javaVersion": "23",
+    "springBootVersion": "3.5.4",
+    "springCloudVersion": "2025.0.0",
+    "springDocVersion": "2.8.9"
+  },
   "scripts": {
     "test": "jest",
     "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
-    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
+    "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
+    "release": "npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",
@@ -32,30 +40,31 @@
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
-    "axios": "^1.8.3",
-    "fast-xml-parser": "^4.3.2",
-    "fs-extra": "^11.2.0",
-    "sass": "^1.77.8",
+    "axios": "^1.11.0",
+    "fast-xml-parser": "^5.2.5",
+    "fs-extra": "^11.3.0",
+    "inflection": "^3.0.2",
+    "sass": "^1.89.2",
     "source-map-loader": "^5.0.0",
-    "ts-loader": "^9.5.1"
+    "ts-loader": "^9.5.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^20.14.11",
-    "@typescript-eslint/eslint-plugin": "^7.17.0",
-    "@typescript-eslint/parser": "^7.17.0",
-    "eslint": "^8.57.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "env-cmd": "^10.1.0",
+    "eslint": "^9.32.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "handlebars": "^4.7.8",
-    "jest": "^29.7.0",
+    "jest": "^30.0.5",
     "path-browserify": "^1.0.1",
-    "prettier": "^3.3.3",
-    "ts-jest": "^29.2.3",
-    "vite": "^5.4.2",
-    "vite-plugin-dts": "^4.0.3",
-    "env-cmd": "^10.1.0"
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
+    "vite": "^7.0.6",
+    "vite-plugin-dts": "^4.5.4"
   },
   "type": "commonjs",
   "exports": {
@@ -64,9 +73,7 @@
     },
     ".": {
       "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js",
-      "types": "./dist/index.d.ts",
-      "constants": "./dist/utils/constants.d.ts"
+      "require": "./dist/index.cjs.js"
     }
   }
 }

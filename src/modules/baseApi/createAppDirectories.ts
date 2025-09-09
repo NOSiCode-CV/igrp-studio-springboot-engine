@@ -20,7 +20,6 @@ export const createAppDirectories = async (context: RenderContext) => {
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
-
   const { group, packageName } = config;
 
   const mainPath = path.join(basePath, getMainPath(group, packageName));
@@ -35,17 +34,14 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+  const interfacePath = path.join(sharedPath, DIRECTORIES.INTERFACE);
   const igrpSharedPath = path.join(igrpstudioPath, DIRECTORIES.SHARED);
 
-  if(config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-
+  if (config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const paths = [
-
       igrpSharedPath,
-      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
 
@@ -54,52 +50,43 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       applicationPath,
       domainPath,
       infraPath,
+      interfacePath,
 
       commandPath,
       queryPath,
-
-      path.join(commandPath, DIRECTORIES.COMMANDS),
-      path.join(commandPath, DIRECTORIES.HANDLERS),
-      path.join(queryPath, DIRECTORIES.QUERIES),
-      path.join(queryPath, DIRECTORIES.HANDLERS),
 
       path.join(applicationPath, DIRECTORIES.DTO),
 
       eventPath,
 
-      path.join(eventPath, DIRECTORIES.EVENTS),
-      path.join(eventPath, DIRECTORIES.HANDLERS),
-
       path.join(domainPath, DIRECTORIES.MODELS),
       path.join(domainPath, DIRECTORIES.REPOSITORY),
       path.join(domainPath, DIRECTORIES.SERVICE),
 
-      path.join(infraPath, DIRECTORIES.CONTROLLER),
+      //path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
 
+      path.join(interfacePath, DIRECTORIES.REST)
     ];
 
-    if(config.enableObservability)
+    if (config.enableObservability)
       paths.push(
         path.join(monitoringPath, DIRECTORIES.COLLECTOR),
         path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
         path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
         path.join(monitoringPath, DIRECTORIES.PROMTAIL),
         path.join(monitoringPath, DIRECTORIES.TEMPO),
-      )
+      );
 
-    return paths
-
+    return paths;
   } else {
-
     const paths = [
-
       igrpSharedPath,
-      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
@@ -112,22 +99,19 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
 
       path.join(testPath, DIRECTORIES.REPOSITORIES),
       path.join(testPath, DIRECTORIES.SERVICES),
-
     ];
 
-    if(config.enableObservability)
+    if (config.enableObservability)
       paths.push(
         path.join(monitoringPath, DIRECTORIES.COLLECTOR),
         path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
         path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
         path.join(monitoringPath, DIRECTORIES.PROMTAIL),
         path.join(monitoringPath, DIRECTORIES.TEMPO),
-      )
+      );
 
-    return paths
-
+    return paths;
   }
-
 };
 
 /**

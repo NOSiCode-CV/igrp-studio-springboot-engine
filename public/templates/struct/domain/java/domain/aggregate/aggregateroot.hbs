@@ -5,34 +5,34 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public abstract class AggregateRoot<R, T> {
 
-   @AggregateIdentifier
-   private final T id;
+  @AggregateIdentifier
+  private final T id;
 
-   public AggregateRoot(T id) {
-      this.id = id;
-   }
+  public AggregateRoot(T id) {
+    this.id = id;
+  }
 
-   public T getId() {
-      return id;
-   }
+  public T getId() {
+    return id;
+  }
 
-   @Override
-   public boolean equals(Object other) {
-      if (other == null || getClass() != other.getClass()) {
-         return false;
-      }
+  @Override
+  public boolean equals(Object other) {
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
 
-      AggregateRoot<?, ?> that = (AggregateRoot<?, ?>) other;
+    AggregateRoot<?, ?> that = (AggregateRoot<?, ?>) other;
 
-      return new EqualsBuilder()
-                     .append(this.id, that.id)
-                     .isEquals();
-   }
+    return new EqualsBuilder()
+                 .append(this.id, that.id)
+                 .isEquals();
+  }
 
-   @Override
-   public int hashCode() {
-      return new HashCodeBuilder()
-                   .append(id)
-                   .toHashCode();
-   }
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder()
+               .append(id)
+               .toHashCode();
+  }
 }

@@ -1,16 +1,16 @@
 import path from 'path';
 import { RenderContext } from '../../interfaces/types';
 import {
-  DIRECTORIES,
-  TEMPLATES,
   COMMON_FILES,
   CONFIG_FILES,
-  OBSERVABILITY_CONFIG_FILES,
+  CONFIG_FILES_GRAALVM,
+  DIRECTORIES,
   OBSERVABILITY_BINARY_FILES,
+  OBSERVABILITY_CONFIG_FILES,
+  OBSERVABILITY_CONFIG_FILES_GRAALVM,
   OBSERVABILITY_YAML_CONFIG_FILES,
   PROJECT_STRUCTURE_STYLE,
-  OBSERVABILITY_CONFIG_FILES_GRAALVM,
-  CONFIG_FILES_GRAALVM,
+  TEMPLATES,
 } from '../../utils/constants';
 import { capitalize } from '../../helper/stringHelper';
 import { renderTemplate } from '../common/renderTemplate';
@@ -29,7 +29,6 @@ export const saveFileConfig = async (context: RenderContext) => {
 };
 
 const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
-
   context.baseConfig.name = capitalize(context.baseConfig.name);
   context.baseConfig.package = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
   const name = `${capitalize(context.baseConfig.name)}${APPLICATION_SUFFIX}`;
@@ -38,13 +37,15 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 
   const mainPath = path.join(
     context.basePath,
-    getMainPath(context.baseConfig.group, context.baseConfig.packageName)
+    getMainPath(context.baseConfig.group, context.baseConfig.packageName),
   );
 
   let files: BASE_API_FILES = [];
 
-  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+  const igrpstudioSharedPath = path.join(context.basePath, DIRECTORIES.IGRPSTUDIO, DIRECTORIES.SHARED);
+  //console.log('igrpstudioPath:: ' + igrpstudioSharedPath);
 
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
     const configPath = path.join(sharedPath, 'config');
     const securityPath = path.join(sharedPath, 'security');
@@ -55,36 +56,43 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
     const kubernetesPath = path.join(context.basePath, 'k8s');
 
     if (context.baseConfig.enableGraalVm) {
-      files.push(
-        {
-          output: configPath,
-          template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
-          name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE
-        }
-      );
+      files.push({
+        output: configPath,
+        template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
+        name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE,
+      });
 
       if (context.baseConfig.enableObservability) {
-
-        files.push(
-          {
-            output: configPath,
-            template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
-            name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE
-          }
-        );
+        files.push({
+          output: configPath,
+          template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
+          name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE,
+        });
       }
     }
 
     files.push(
       { output: mainPath, template: TEMPLATES.APPLICATION, name: name },
 
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
+      {
+        output: kubernetesPath,
+        template: TEMPLATES.CONFIG_DEPLOYMENT,
+        name: COMMON_FILES.DEPLOYMENT,
+      },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S },
+      {
+        output: kubernetesPath,
+        template: TEMPLATES.CONFIG_SERVICE,
+        name: COMMON_FILES.SERVICE_K8S,
+      },
 
       // DOMAIN LAYER
-      { output: eventPath, template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER, name: COMMON_FILES.EVENT_PUBLISHER },
+      {
+        output: eventPath,
+        template: TEMPLATES.DDD_LITE_EVENT_PUBLISHER,
+        name: COMMON_FILES.EVENT_PUBLISHER,
+      },
 
       {
         output: configPath,
@@ -137,59 +145,79 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
       },
       {
-        output: exceptionsPath,
-        template: TEMPLATES.IGRP_PROBLEM,
-        name: COMMON_FILES.IGRP_PROBLEM,
-      },
-      {
         output: path.join(infraPath, DIRECTORIES.SPRING),
         template: TEMPLATES.DDD_SPRING_COMMAND_BUS,
-        name: COMMON_FILES.SPRING_COMMAND_BUS
+        name: COMMON_FILES.SPRING_COMMAND_BUS,
       },
 
       {
         output: path.join(infraPath, DIRECTORIES.SPRING),
         template: TEMPLATES.DDD_SPRING_QUERY_BUS,
-        name: COMMON_FILES.SPRING_QUERY_BUS
+        name: COMMON_FILES.SPRING_QUERY_BUS,
+      },
+
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.DTO),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.SERVICE),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
       }
     );
-
   } else {
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
     const exceptionPath = path.join(mainPath, 'exceptions');
     const kubernetesPath = path.join(context.basePath, 'k8s');
 
-
     if (context.baseConfig.enableGraalVm) {
-      files.push(
-        {
-          output: configPath,
-          template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
-          name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE
-        }
-      );
+      files.push({
+        output: configPath,
+        template: TEMPLATES.ENVER_HINTS_GRAALVM_CONFIG,
+        name: COMMON_FILES.ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE,
+      });
 
       if (context.baseConfig.enableObservability) {
-
-        files.push(
-          {
-            output: configPath,
-            template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
-            name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE
-          }
-        );
+        files.push({
+          output: configPath,
+          template: TEMPLATES.OPEN_TELEMETRY_CONFIG_GRAALVM,
+          name: COMMON_FILES.OPEN_TELEMETRY_CONFIG_JAVA_FILE,
+        });
       }
     }
 
-
     files.push(
-
       { output: mainPath, template: TEMPLATES.APPLICATION, name: name },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_DEPLOYMENT, name: COMMON_FILES.DEPLOYMENT },
+      {
+        output: kubernetesPath,
+        template: TEMPLATES.CONFIG_DEPLOYMENT,
+        name: COMMON_FILES.DEPLOYMENT,
+      },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
       { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_SERVICE, name: COMMON_FILES.SERVICE_K8S },
+      {
+        output: kubernetesPath,
+        template: TEMPLATES.CONFIG_SERVICE,
+        name: COMMON_FILES.SERVICE_K8S,
+      },
       {
         output: configPath,
         template: TEMPLATES.DOMAIN_MODEL_AUDIT,
@@ -237,13 +265,18 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       },
       {
         output: exceptionPath,
-        template: TEMPLATES.IGRP_PROBLEM,
-        name: COMMON_FILES.IGRP_PROBLEM,
-      },
-      {
-        output: exceptionPath,
         template: TEMPLATES.IGRP_RESPONSE_STATUS_EXCEPTION,
         name: COMMON_FILES.IGRP_RESPONSE_STATUS_EXCEPTION,
+      },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.DTO),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
+      },
+      {
+        output: path.join(igrpstudioSharedPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.GITKEEPFILE,
+        name: COMMON_FILES.GITKEEPFILE,
       }
     );
   }
@@ -254,15 +287,15 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
 function getSubfolder(file: { template: string; output: string }) {
   switch (file.template) {
     case TEMPLATES.MONITORING_COLLECTOR:
-      return "collector"
+      return 'collector';
     case TEMPLATES.MONITORING_PROMETHEUS:
-      return "prometheus"
+      return 'prometheus';
     case TEMPLATES.MONITORING_PROMTAIL:
-      return "promtail"
+      return 'promtail';
     case TEMPLATES.MONITORING_TEMPO:
-      return "tempo"
+      return 'tempo';
     default:
-      return ""
+      return '';
   }
 }
 
@@ -316,10 +349,9 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         const templatePath = path.join(getPaths().template, file.template);
         const binaryContent = await fs.readFile(templatePath);
         await saveBinaryToFile(binaryContent, outputPath, false);
-      })
+      }),
     );
   } else {
-
     if (context.baseConfig.enableGraalVm) {
       await Promise.all(
         CONFIG_FILES_GRAALVM.map(async (file) => {
@@ -337,13 +369,5 @@ const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderCon
         }),
       );
     }
-    /*await Promise.all(
-      CONFIG_BINARY_FILES.map(async (file) => {
-        const outputPath = path.join(context.basePath, file.output);
-        const templatePath = path.join(TEMPLATE_DIR, file.template);
-        const binaryContent = await fs.readFile(templatePath);
-        await saveBinaryToFile(binaryContent, outputPath, false);
-      })
-    );*/
   }
 };

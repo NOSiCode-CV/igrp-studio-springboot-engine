@@ -10,11 +10,19 @@ import { getEnumConfigPath } from '../../utils/helpers';
  * @throws Throws an error if the enum configuration or output directory is invalid.
  */
 export const saveEnumConfig = async (config: EnumConfig, basePath: string) => {
-  
   if (config.values.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
 
   const output = getEnumConfigPath(basePath, config.module ?? DIRECTORIES.SHARED, config.name);
-  await saveToFile(JSON.stringify(config), output, true, DIRECTORIES.CONFIG_ENUM, config.id, config.module, basePath, EXTENSIONS.JSON);
+  await saveToFile(
+    JSON.stringify(config, null, 2),
+    output,
+    true,
+    DIRECTORIES.CONFIG_ENUM,
+    config.id,
+    config.module,
+    basePath,
+    EXTENSIONS.JSON,
+  );
 };

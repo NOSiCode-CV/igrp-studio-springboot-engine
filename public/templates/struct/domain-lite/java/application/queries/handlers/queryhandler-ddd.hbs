@@ -1,26 +1,30 @@
 {{> package-java }}
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import cv.igrp.framework.core.domain.QueryHandler;
 import cv.igrp.framework.stereotype.IgrpQueryHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.queries.queries.{{resourceConfig.name}}Query;
+import org.springframework.stereotype.Component;
+
 {{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
 
-@Service
+@Component
 public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHandler<{{capitalize
    resourceConfig.name}}Query, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>>{
 
-   public {{capitalize resourceConfig.name}}QueryHandler() {
+  private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}QueryHandler.class);
 
-   }
+
+  public {{capitalize resourceConfig.name}}QueryHandler() {
+
+  }
 
    @IgrpQueryHandler
-   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
-      // TODO: Implement the query handling logic here
-      return null;
-   }
+  public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
+    // TODO: Implement the query handling logic here
+    return null;
+  }
 
 }

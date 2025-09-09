@@ -1,10 +1,11 @@
 import {
+  ControllerAction,
   ControllerConfig,
   CrudControllerConfig,
-  ControllerAction,
   HttpMethod,
+  JavaAttribute,
+  PathVariables,
   RenderContext,
-  JavaAttribute, PathVariables,
 } from '../../interfaces/types';
 import { loadModelConfigs } from '../../utils/helpers';
 import { addController, addDTO } from '../../index';
@@ -15,7 +16,6 @@ import { generateCrudServiceInmpl } from './generateCrudServiceInmpl';
 import { toCamelCase } from '../../helper/stringHelper';
 
 export const generateCrudController = async (config: CrudControllerConfig, basePath: string) => {
-
   const baseConfig = await getBaseApiConfig(basePath);
 
   let dtoFields: JavaAttribute[] = [];
@@ -23,25 +23,22 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
 
   // Step 1: Load model configurations, get attributes and generate DTO
   for (const model of config.models) {
-
     const models = await loadModelConfigs(model.module ?? DIRECTORIES.SHARED, basePath);
     const modelConfig = models.find((it) => it.id === model.modelName);
 
-    if(!modelConfig) throw Error("Model with id <" + model.modelName + "> was not found!")
+    if (!modelConfig) throw Error('Model with id <' + model.modelName + '> was not found!');
 
-    model.modelName = modelConfig.name
+    model.modelName = modelConfig.name;
 
-    pathVariables.push(
-      {
-        type: 'string',
-        name: `${toCamelCase(model.modelName)}Id`,
-        isRequired: true,
-      },
-    )
+    pathVariables.push({
+      type: 'string',
+      name: `${toCamelCase(model.modelName)}Id`,
+      isRequired: true,
+    });
 
     modelConfig.attributes
-      .filter((attr) => (model.fields.map((f) => f.name)).includes(attr.name))
-      .forEach(field => (
+      .filter((attr) => model.fields.map((f) => f.name).includes(attr.name))
+      .forEach((field) =>
         dtoFields.push({
           name: field.name,
           type: field.type,
@@ -50,19 +47,25 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
           module: field.module,
           maxLength: field.length,
           primaryKey: field.primaryKey,
-          collectionType: ['ManyToMany', 'ManyToOne', 'OneToMany'].includes(field.relation?.type ?? '') ? 'collection' : undefined
-        } as JavaAttribute)
-      ));
-
+          collectionType: ['ManyToMany', 'ManyToOne', 'OneToMany'].includes(
+            field.relation?.type ?? '',
+          )
+            ? 'collection'
+            : undefined,
+        } as JavaAttribute),
+      );
   }
 
-  await addDTO({
-    type: 'dto',
-    name: `${config.name}DTO`,
-    template: 'classic',
-    module: config.module ?? DIRECTORIES.SHARED,
-    attributes: dtoFields
-  }, basePath);
+  await addDTO(
+    {
+      type: 'dto',
+      name: `${config.name}DTO`,
+      template: 'classic',
+      module: config.module ?? DIRECTORIES.SHARED,
+      attributes: dtoFields,
+    },
+    basePath,
+  );
 
   // Step 2: Generate controller actions based on selected HTTP methods
   const controllerActions: ControllerAction[] = [];
@@ -77,7 +80,7 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
             schema: {
               type: `${config.name}DTO`,
               objectType: 'dto',
-              module: config.module ?? DIRECTORIES.SHARED
+              module: config.module ?? DIRECTORIES.SHARED,
             },
           },
         },
@@ -89,7 +92,7 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
               schema: {
                 type: `${config.name}DTO`,
                 objectType: 'dto',
-                module: config.module ?? DIRECTORIES.SHARED
+                module: config.module ?? DIRECTORIES.SHARED,
               },
             },
           },
@@ -111,30 +114,30 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
               schema: {
                 type: `${config.name}DTO`,
                 objectType: 'dto',
-                module: config.module ?? DIRECTORIES.SHARED
+                module: config.module ?? DIRECTORIES.SHARED,
               },
             },
           },
         },
-        "404": {
+        '404': {
           id: generateElementId(),
           name: `${config.name}NotFound`,
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
+                type: 'object',
                 properties: {
                   message: {
-                    type: "string",
+                    type: 'string',
                     description: `Error message indicating ${config.name} was not found`,
                   },
                 },
               },
             },
           },
-        }
+        },
       },
-    },);
+    });
   }
 
   if (config.methods.update) {
@@ -148,7 +151,7 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
             schema: {
               type: `${config.name}DTO`,
               objectType: 'dto',
-              module: config.module ?? DIRECTORIES.SHARED
+              module: config.module ?? DIRECTORIES.SHARED,
             },
           },
         },
@@ -160,7 +163,7 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
               schema: {
                 type: `${config.name}DTO`,
                 objectType: 'dto',
-                module: config.module ?? DIRECTORIES.SHARED
+                module: config.module ?? DIRECTORIES.SHARED,
               },
             },
           },
@@ -221,5 +224,4 @@ export const generateCrudController = async (config: CrudControllerConfig, baseP
 
   // Generate service implementation
   await generateCrudServiceInmpl(implContext);
-
 };

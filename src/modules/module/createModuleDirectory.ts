@@ -34,97 +34,57 @@ const getDirectoriesToCreate = (context: RenderContext<ModuleConfig>): string[] 
   const domainPath = path.join(modulePath, DIRECTORIES.DOMAIN);
   const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
   const infraPath = path.join(modulePath, DIRECTORIES.INFRASTRUCTURE);
+  const interfacePath = path.join(modulePath, DIRECTORIES.INTERFACE);
   const igrpSharedPath = path.join(igrpstudioPath, context.resourceConfig.name);
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     return [
       igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+      //path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
 
       modulePath,
 
       applicationPath,
+      path.join(applicationPath, DIRECTORIES.DTO),
+
       domainPath,
+
       infraPath,
+      path.join(infraPath, DIRECTORIES.REPOSITORIES),
+
+      interfacePath,
+      path.join(interfacePath, DIRECTORIES.REST),
 
       commandPath,
       queryPath,
 
-      path.join(commandPath, DIRECTORIES.COMMANDS),
-      path.join(commandPath, DIRECTORIES.HANDLERS),
-      path.join(queryPath, DIRECTORIES.QUERIES),
-      path.join(queryPath, DIRECTORIES.HANDLERS),
-
-      path.join(applicationPath, DIRECTORIES.DTO),
-
       eventPath,
-
-      path.join(eventPath, DIRECTORIES.EVENTS),
-      path.join(eventPath, DIRECTORIES.HANDLERS),
 
       path.join(domainPath, DIRECTORIES.MODELS),
       path.join(domainPath, DIRECTORIES.REPOSITORY),
       path.join(domainPath, DIRECTORIES.SERVICE),
 
-      path.join(infraPath, DIRECTORIES.CONTROLLER),
+      /// path.join(infraPath, DIRECTORIES.CONTROLLER),
       path.join(infraPath, DIRECTORIES.MESSAGING),
       path.join(infraPath, DIRECTORIES.PERSISTENCE),
-
-      /*
-
-      FULL DDD
-
-      path.join(basePath, DIRECTORIES.RESOURCES),
-
-      path.join(mainPath, DIRECTORIES.API),
-      path.join(mainPath, DIRECTORIES.APPLICATION),
-      path.join(mainPath, DIRECTORIES.DOMAIN),
-      path.join(mainPath, DIRECTORIES.INFRASTRUCTURE),
-
-      path.join(apiPath, DIRECTORIES.CONTROLLER),
-
-      path.join(applicationPath, DIRECTORIES.COMMAND),
-      path.join(applicationPath, DIRECTORIES.QUERY),
-
-      path.join(queryPath, DIRECTORIES.ASSEMBLER),
-      path.join(queryPath, DIRECTORIES.DTO),
-
-      path.join(domainPath, DIRECTORIES.AGGREGATE),
-      path.join(domainPath, DIRECTORIES.EVENT),
-      path.join(domainPath, DIRECTORIES.EXCEPTIONS),
-      path.join(domainPath, DIRECTORIES.IMPLEMENTATION),
-      path.join(domainPath, DIRECTORIES.REPOSITORIES),
-      path.join(domainPath, DIRECTORIES.SERVICE),
-
-      path.join(infraPath, DIRECTORIES.CACHE),
-      path.join(infraPath, DIRECTORIES.DATABASE),
-      path.join(infraPath, DIRECTORIES.SPRING),
-
-      path.join(testPath, DIRECTORIES.REPOSITORIES),
-      path.join(testPath, DIRECTORIES.SERVICES),
-
-      path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpstudioPath, DIRECTORIES.MODELS),
-
-      */
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
     ];
   }
-    return [
-      igrpSharedPath,
-      path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
-      path.join(igrpSharedPath, DIRECTORIES.MODELS),
-      path.join(igrpSharedPath, DIRECTORIES.DTO),
-      //path.join(igrpSharedPath, DIRECTORIES.ENUM),
+  return [
+    igrpSharedPath,
+    path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
+    path.join(igrpSharedPath, DIRECTORIES.MODELS),
+    path.join(igrpSharedPath, DIRECTORIES.DTO),
 
-      path.join(mainPath, DIRECTORIES.MODELS),
-      path.join(mainPath, DIRECTORIES.SERVICES),
-      path.join(mainPath, DIRECTORIES.CONTROLLERS),
-      path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
-      path.join(mainPath, DIRECTORIES.SECURITY),
-    ];
+    path.join(mainPath, DIRECTORIES.MODELS),
+    path.join(mainPath, DIRECTORIES.SERVICES),
+    path.join(mainPath, DIRECTORIES.CONTROLLERS),
+    path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
+    path.join(mainPath, DIRECTORIES.SECURITY),
+  ];
 };
 
 /**

@@ -8,13 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class {{resourceConfig.name}}EventHandler {
 
-   public {{resourceConfig.name}}EventHandler() {
+  public {{resourceConfig.name}}EventHandler() {
 
-   }
+  }
 
-   @EventListener
-   public void handle({{resourceConfig.name}}Event event) {
-      // TODO: Implement the event handling logic here
-   }
-
+  @EventListener
+  public void handle({{resourceConfig.name}}Event event) {
+    // TODO: Implement the event handling logic here
+  }
 }

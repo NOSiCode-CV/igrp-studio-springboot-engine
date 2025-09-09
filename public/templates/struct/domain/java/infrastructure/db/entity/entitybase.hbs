@@ -10,55 +10,55 @@ import org.slf4j.LoggerFactory;
 @MappedSuperclass
 public abstract class EntityBase<T extends EntityBase<T, ID>, ID> {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   private ID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private ID id;
 
-   private static final Logger log = LoggerFactory.getLogger(EntityBase.class);
+  private static final Logger log = LoggerFactory.getLogger(EntityBase.class);
 
-   /**
-   * Gets the unique identifier of the entity.
-   *
-   * @return the entity ID
-   */
-   public ID getId() {
-      return id;
-   }
+  /**
+  * Gets the unique identifier of the entity.
+  *
+  * @return the entity ID
+  */
+  public ID getId() {
+    return id;
+  }
 
-   /**
-   * Compares identity with another entity of the same type.
-   *
-   * @param that the other entity
-   * @return true if identities match
-   */
-   public boolean sameIdentityAs(T that) {
-      return this.equals(that);
-   }
+  /**
+  * Compares identity with another entity of the same type.
+  *
+  * @param that the other entity
+  * @return true if identities match
+  */
+  public boolean sameIdentityAs(T that) {
+    return this.equals(that);
+  }
 
-   @Override
-   public boolean equals(Object other) {
-      if (this == other) return true;
-      if (other == null || getClass() != other.getClass()) return false;
-      EntityBase<?, ?> that = (EntityBase<?, ?>) other;
-      checkIdentity(this);
-      checkIdentity(that);
-      return id != null && id.equals(that.id);
-   }
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) return true;
+    if (other == null || getClass() != other.getClass()) return false;
+    EntityBase<?, ?> that = (EntityBase<?, ?>) other;
+    checkIdentity(this);
+    checkIdentity(that);
+    return id != null && id.equals(that.id);
+  }
 
-   /**
-   * Verifies that the entity has an identity.
-   *
-   * @param entity the entity to check
-   * @throws IllegalStateException if identity is missing
-   */
-   private void checkIdentity(EntityBase<?, ?> entity) {
-      if (entity.id == null) {
-         throw new IllegalStateException("Entity identity is not set: " + entity);
-      }
-   }
+  /**
+  * Verifies that the entity has an identity.
+  *
+  * @param entity the entity to check
+  * @throws IllegalStateException if identity is missing
+  */
+  private void checkIdentity(EntityBase<?, ?> entity) {
+    if (entity.id == null) {
+      throw new IllegalStateException("Entity identity is not set: " + entity);
+    }
+  }
 
-   @Override
-   public int hashCode() {
-      return (id != null ? id.hashCode() : 0);
-   }
+  @Override
+  public int hashCode() {
+    return (id != null ? id.hashCode() : 0);
+  }
 }

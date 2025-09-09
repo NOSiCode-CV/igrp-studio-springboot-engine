@@ -4,34 +4,20 @@ import fs from 'fs';
 import { DIRECTORIES, HELPER_FILES } from '../../utils/constants';
 
 /**
- * Normalizes a given string to make it a valid folder name.
- */
-function normalizeJarPath(jarPath: string): string {
-  const jarName = path.basename(jarPath, '.jar');
-  return jarName.replace(/\s+/g, '-');
-}
-
-/**
  * Executes the Jar Inspector Java JAR file with the given arguments.
  */
 export const runJarInspector = async (basePath: string, jarPath: string) => {
-
-  const outputJsonPath = path.join(
-    basePath,
-    DIRECTORIES.IGRPSTUDIO
-  );
+  const outputJsonPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
 
   const igrpSharedPath = path.join(outputJsonPath, DIRECTORIES.SHARED);
 
   const paths = [
-
     outputJsonPath,
     igrpSharedPath,
     path.join(igrpSharedPath, DIRECTORIES.CONTROLLERS),
     path.join(igrpSharedPath, DIRECTORIES.MODELS),
-    path.join(igrpSharedPath, DIRECTORIES.DTO)
-
-  ]
+    path.join(igrpSharedPath, DIRECTORIES.DTO),
+  ];
 
   const outputDir = path.dirname(igrpSharedPath);
   if (!fs.existsSync(outputDir)) {
