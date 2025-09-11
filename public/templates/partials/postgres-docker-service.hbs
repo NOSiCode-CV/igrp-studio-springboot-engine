@@ -6,7 +6,7 @@ postgres-{{toLowerCase baseConfig.name}}-api-service:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DATABASE}
     ports:
-      - ${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - postgres-data-17-{{toLowerCase baseConfig.name}}-api-service:/var/lib/postgresql/data
     restart: unless-stopped

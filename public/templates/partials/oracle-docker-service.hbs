@@ -6,7 +6,7 @@ oracle-{{toLowerCase baseConfig.name}}-api-service:
       ORACLE_DATABASE: ${ORACLE_DATABASE}
       ORACLE_USER: ${ORACLE_USER}
     ports:
-      - ${ORACLE_EXTERNAL_PORT}:${ORACLE_INTERNAL_PORT}
+      - ${ORACLE_PORT}:${ORACLE_PORT}
     volumes:
       - oracle-data-21-{{toLowerCase baseConfig.name}}-api-service:/opt/oracle/oradata
     restart: unless-stopped
