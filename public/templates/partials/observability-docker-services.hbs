@@ -28,8 +28,8 @@ promtail-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/promtail:latest
   container_name: promtail-{{toLowerCase baseConfig.name}}-api-service
   environment:
-    - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_PORT}
-    - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_PORT}
+    - PROMTAIL_SERVICE_PORT=${PROMTAIL_SERVICE_PORT}
+    - LOKI_SERVICE_PORT=${LOKI_SERVICE_PORT}
   volumes:
     - ./monitoring/promtail/promtail-docker-config.yml:/etc/promtail/docker-config.yml
     - /var/lib/docker/containers:/var/lib/docker/containers:ro
