@@ -19,7 +19,7 @@ prometheus-{{toLowerCase baseConfig.name}}-api-service:
   image: prom/prometheus:latest
   container_name: prometheus-{{toLowerCase baseConfig.name}}-api-service
   ports:
-    - ${PROMETHEUS_SERVICE_EXTERNAL_PORT}:${PROMETHEUS_SERVICE_INTERNAL_PORT}
+    - ${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}
   volumes:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   command: "--config.file=/etc/prometheus/prometheus.yml"
@@ -28,8 +28,8 @@ promtail-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/promtail:latest
   container_name: promtail-{{toLowerCase baseConfig.name}}-api-service
   environment:
-    - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_INTERNAL_PORT}
-    - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_INTERNAL_PORT}
+    - PROMTAIL_SERVICE_INTERNAL_PORT=${PROMTAIL_SERVICE_PORT}
+    - LOKI_SERVICE_INTERNAL_PORT=${LOKI_SERVICE_PORT}
   volumes:
     - ./monitoring/promtail/promtail-docker-config.yml:/etc/promtail/docker-config.yml
     - /var/lib/docker/containers:/var/lib/docker/containers:ro
@@ -41,7 +41,7 @@ loki-{{toLowerCase baseConfig.name}}-api-service:
   container_name: loki-{{toLowerCase baseConfig.name}}-api-service
   command: "-config.expand-env=true -config.file=/etc/loki/local-config.yaml"
   ports:
-    - ${LOKI_SERVICE_EXTERNAL_PORT}:${LOKI_SERVICE_INTERNAL_PORT}
+    - ${LOKI_SERVICE_PORT}:${LOKI_SERVICE_PORT}
   depends_on:
     - promtail-{{toLowerCase baseConfig.name}}-api-service
 
@@ -62,7 +62,7 @@ grafana-{{toLowerCase baseConfig.name}}-api-service:
   image: grafana/grafana:latest
   container_name: grafana-{{toLowerCase baseConfig.name}}-api-service
   ports:
-    - ${GRAFANA_SERVICE_EXTERNAL_PORT}:${GRAFANA_SERVICE_INTERNAL_PORT}
+    - ${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}
   volumes:
     - grafana-data-{{toLowerCase baseConfig.name}}-api-service:/var/lib/grafana
   environment:
