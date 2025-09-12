@@ -4,10 +4,12 @@ spring.config.import=optional:file:.env[.properties]
 server.port=${SERVICE_PORT}
 
 # Eureka Configurations
-eureka.client.enabled=false
-eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
-eureka.instance.prefer-ip-address=true
+spring.cloud.refresh.enabled=false
+eureka.client.service-url.defaultZone=http://igrp-eureka:8761/eureka/
 eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=false
+eureka.instance.prefer-ip-address=true
+
 # Spring Cloud Kubernetes
 spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED:false}
 
@@ -67,7 +69,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConf
 spring.data.rest.detection-strategy=annotated
 
 # Authentication
-auth.jwt.issuer=${AUTH_JWT_ISSUER}
+spring.security.oauth2.resourceserver.jwt.issuer-uri=${AUTH_JWT_ISSUER}
 
 # Swagger Documentation
 springdoc.swagger-ui.enabled=${ENABLE_SWAGGER:true}
