@@ -89,12 +89,12 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};{{else}}
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}} = new HashSet<>();{{else}}
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}} = new HashSet<>();
   {{/if~}}
   {{/if~}}
   {{/if~}}
@@ -122,7 +122,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private Set<{{this.entity}}> {{fullCamelCaseAndPluralizeAndRemoveEntitySufix this.entity}};
+   private Set<{{this.entity}}> {{fullCamelCaseAndPluralizeAndRemoveEntitySufix this.entity}} = new HashSet<>();
   {{/if}}
 
 {{/each}}

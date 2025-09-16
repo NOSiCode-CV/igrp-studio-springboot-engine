@@ -68,6 +68,7 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
       imports.push(`import ${collectionType};`);
 
       if (collectionType === 'java.util.List') imports.push(`import java.util.ArrayList;`);
+      if (collectionType === 'java.util.Set') imports.push(`import java.util.HashSet;`);
 
       if (attribute.relation?.cardinality === 'twoWay' && attribute.relation?.orphanRemoval) {
         imports.push(
@@ -113,6 +114,7 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
   modelConfig.relationReference?.forEach((rel) => {
     if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne') {
       const collectionType = rel.type === 'ManyToMany' ? 'java.util.Set' : 'java.util.List';
+      if (collectionType === 'java.util.Set') imports.push(`import java.util.HashSet;`);
       imports.push(`import ${collectionType};`);
 
       if (rel.orphanRemoval) {
