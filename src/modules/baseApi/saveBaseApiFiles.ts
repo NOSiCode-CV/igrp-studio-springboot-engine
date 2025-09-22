@@ -140,6 +140,16 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         name: COMMON_FILES.IGRP_AUTHORIZATION_SERVICE,
       },
       {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_AUTHENTICATION_HELPER,
+        name: COMMON_FILES.IGRP_AUTHENTICATION_HELPER,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.CONFIG_AUTHORIZATION_CONFIG,
+        name: COMMON_FILES.IGRP_AUTHORIZATION_CONFIG,
+      },
+      {
         output: exceptionsPath,
         template: TEMPLATES.GLOBAL_EXCEPTION_HANDLER,
         name: COMMON_FILES.GLOBAL_EXCEPTION_HANDLER,
