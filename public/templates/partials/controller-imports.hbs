@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import cv.igrp.framework.core.domain.CommandBus;
 import cv.igrp.framework.core.domain.QueryBus;
@@ -18,7 +19,6 @@ import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.modu
 resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
 import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
 resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
-
 
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module true}}
 {{else}}

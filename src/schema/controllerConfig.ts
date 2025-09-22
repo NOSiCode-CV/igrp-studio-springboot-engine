@@ -461,6 +461,13 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage:
         'The path attribute must only contain characters without spaces or special characters.',
     },
+    permission: {
+      type: 'string',
+      pattern: PATTERNS.PATH_PATTERN,
+      nullable: true,
+      errorMessage:
+        'The path attribute must only contain characters without spaces or special characters.',
+    },
     actionName: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
@@ -567,6 +574,11 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       nullable: true,
       errorMessage:
         'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.',
+    },
+    globalPermission: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The global permission must be a valid string',
     },
     basePath: {
       type: 'string',

@@ -1,10 +1,3 @@
-import {
-  loadControllerConfigs,
-  loadPermissionConfigs,
-} from '../../utils/helpers';
-import { savePermission } from './savePermissionConfig';
-import { saveAllPermissions } from './savePermissions';
-
 /**
  * Assigns the appropriate permissions to an element (model or controller) by adding new endpoints
  * or removing outdated ones. This function checks the permissions configuration and updates it
@@ -18,7 +11,7 @@ import { saveAllPermissions } from './savePermissions';
   basePath: string,
   type: 'model' | 'controller',
 ) => {
-  const permissions = await loadPermissionConfigs(basePath);
+  /*  const permissions = await loadPermissionConfigs(basePath);
   const controllers = await loadControllerConfigs(module, basePath);
 
   // rebuilding the permissions from controller actions
@@ -62,5 +55,5 @@ import { saveAllPermissions } from './savePermissions';
     }
   }
 
-  await saveAllPermissions(basePath);
+  await saveAllPermissions(basePath);*/
 };

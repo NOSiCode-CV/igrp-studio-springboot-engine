@@ -8,6 +8,9 @@
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
+{{#if (isNotBlank resourceConfig.globalPermission)}}
+@PreAuthorize("@igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
+{{/if}}
 @Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
@@ -18,6 +21,11 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{>controller-constructor}}
 
   {{#each resourceConfig.actions}}
+    {{#if (isNotBlank permission)}}
+      {{#if (or (isNotBlank path) (ne permission ../resourceConfig.globalPermission))}}
+  @PreAuthorize("@igrpAuthorization.checkPermission('{{#if (isNotBlank path)}}{{path}}{{else}}{{../resourceConfig.basePath}}{{/if}}', '{{permission}}')")
+      {{/if}}
+    {{/if}}
   @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}

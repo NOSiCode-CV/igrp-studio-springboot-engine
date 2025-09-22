@@ -256,6 +256,7 @@ export const TEMPLATES = {
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+  CONFIG_AUTHORIZATION_SECURITY: 'config/igrp-authorization-service.hbs',
   OPEN_TELEMETRY_CONFIG_GRAALVM: 'config/open-telemetry-config-graalvm.hbs',
   ENVER_HINTS_GRAALVM_CONFIG: 'config/enver-hints-graalvm-config.hbs',
 
@@ -462,6 +463,7 @@ export const COMMON_FILES = {
   OPEN_TELEMETRY_CONFIG_JAVA_FILE: 'OtelConfig.java',
   ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
+  IGRP_AUTHORIZATION_SERVICE: 'IgrpAuthorizationService.java',
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',
   IGRP_PROBLEM: 'IgrpProblem.java',
