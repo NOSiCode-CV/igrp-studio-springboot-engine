@@ -1,4 +1,4 @@
-import pluralize from 'inflection';
+import pluralize from 'pluralize';
 
 export function singleCapitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -89,7 +89,7 @@ export function fullCamelCaseAndPluralize(str: string): string {
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)))
     .join('');
 
-  return pluralize.pluralize(lowerStr);
+  return pluralize(lowerStr);
 }
 
 export function sanitizeHeaderName(headerName: string): string {

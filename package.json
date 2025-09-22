@@ -44,6 +44,7 @@
     "fast-xml-parser": "^5.2.5",
     "fs-extra": "^11.3.0",
     "inflection": "^3.0.2",
+    "pluralize": "^8.0.0",
     "sass": "^1.89.2",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.5.2"
@@ -52,6 +53,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.2.0",
+    "@types/pluralize": "^0.0.33",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "env-cmd": "^10.1.0",
