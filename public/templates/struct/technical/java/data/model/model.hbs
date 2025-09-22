@@ -115,7 +115,7 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private List<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}};
+   private List<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}} = new ArrayList<>();
   {{/if}}
   {{#if (eq this.type 'ManyToMany') }}
    @ManyToMany(mappedBy = "{{fullCamelCaseAndPluralize this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})

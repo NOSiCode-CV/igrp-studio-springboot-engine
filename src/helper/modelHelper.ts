@@ -115,6 +115,7 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
     if (rel.type === 'ManyToMany' || rel.type === 'OneToMany' || rel.type === 'ManyToOne') {
       const collectionType = rel.type === 'ManyToMany' ? 'java.util.Set' : 'java.util.List';
       if (collectionType === 'java.util.Set') imports.push(`import java.util.HashSet;`);
+      if (collectionType === 'java.util.List') imports.push(`import java.util.ArrayList;`);
       imports.push(`import ${collectionType};`);
 
       if (rel.orphanRemoval) {
