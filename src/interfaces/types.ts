@@ -174,7 +174,7 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
 
 export interface Attribute {
   type: ModelAttributeType;
@@ -389,7 +389,7 @@ export interface Body extends BaseBody {
   module?: string;
 }
 
-export interface RequestConfig extends Body {}
+export interface RequestConfig extends Body { }
 
 export interface ResponseConfig extends Body {
   type: 'response';
@@ -452,6 +452,11 @@ export interface RemovedRelationReference {
   entity: string;
   module: string;
 }
+
+export interface EngineConfigurationSettings {
+  environment?: string
+}
+
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

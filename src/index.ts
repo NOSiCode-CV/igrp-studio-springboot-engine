@@ -20,6 +20,7 @@ import {
   ResponseConfig,
   SqlConfig,
   XmlConfig,
+  EngineConfigurationSettings
 } from './interfaces/types';
 import {
   CATEGORIZED_ATTRIBUTE_TYPES,
@@ -96,9 +97,12 @@ import { Dependency } from './interfaces/springDependencyTypes';
 import { moveElementConfig } from './modules/move/moveElementConfig';
 import { moveValidation } from './schema/moveConfig';
 import { verifyEnumAttributes } from './modules/enum/helpers';
+import defaultEngineModule from './config/default';
+import { configurationAsObject, setConfiguration } from './config';
+import { engineConfigurationRegistrationValidate } from './schema/engineConfigurationRegisterConfig';
 
 export function getPaths(): PathConfig {
-  const environment = process.env.VITE_ENGINE_IGRP_STUDIO_ENV;
+  const environment = loadEngineConfiguration().environment;
 
   if (environment === 'production') {
     return {
@@ -117,6 +121,23 @@ export function getPaths(): PathConfig {
     };
   }
 }
+
+
+export const setEngineConfiguration = (config: EngineConfigurationSettings) => {
+  const isConfigValid = engineConfigurationRegistrationValidate(config);
+
+  if (!isConfigValid && engineConfigurationRegistrationValidate.errors)
+    throw engineConfigurationRegistrationValidate.errors;
+
+  setConfiguration((e) => defaultEngineModule.register(e, config))
+
+}
+
+export const loadEngineConfiguration = (name?: string) => {
+  return configurationAsObject(name);
+}
+
+
 
 /**
  * Main Function that creates the base api
@@ -191,10 +212,10 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
   await saveBaseApiFileConfig(config, basePath);
 
-  config.javaVersion =  packageJson.custom?.javaVersion;
-  config.springBootVersion =  packageJson.custom?.springBootVersion;
-  config.springDocVersion =  packageJson.custom?.springDocVersion;
-  config.springCloudVersion =  packageJson.custom?.springCloudVersion;
+  config.javaVersion = packageJson.custom?.javaVersion;
+  config.springBootVersion = packageJson.custom?.springBootVersion;
+  config.springDocVersion = packageJson.custom?.springDocVersion;
+  config.springCloudVersion = packageJson.custom?.springCloudVersion;
 
   const context: RenderContext = {
     resourceConfig: undefined, // On base API, there is no specific config.
@@ -828,8 +849,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   } catch (e) {
@@ -839,8 +860,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   }
@@ -1164,32 +1185,32 @@ export const addController = async (
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
         ? [
-            {
-              name: act.modelAttribute.name.toLowerCase(),
-              type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
-              objectType: 'dto',
-              required: false,
-              module: act.modelAttribute.module,
-            },
-          ]
+          {
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            required: false,
+            module: act.modelAttribute.module,
+          },
+        ]
         : [];
 
       const pathVariables = act?.pathVariables
         ? act.pathVariables.map((e) => ({
-            name: e.name,
-            type: e.type,
-            objectType: 'java',
-            required: true,
-          }))
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
         : [];
 
       const requestParams = act?.requestParams
         ? act.requestParams.map((e) => ({
-            name: e.name,
-            type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-            objectType: 'java',
-            required: true,
-          }))
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
         : [];
 
       if (schema && type !== 'object' && !objectType) {
