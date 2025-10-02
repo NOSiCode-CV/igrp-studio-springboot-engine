@@ -468,6 +468,14 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
       errorMessage:
         'The path attribute must only contain characters without spaces or special characters.',
     },
+    roles: {
+      type: 'array',
+      nullable: true,
+      items: {
+        type: 'string',
+      },
+      errorMessage: "The 'roles' field must be an array of strings",
+    },
     actionName: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
@@ -579,6 +587,14 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
       type: 'string',
       nullable: true,
       errorMessage: 'The global permission must be a valid string',
+    },
+    globalRoles: {
+      type: 'array',
+      nullable: true,
+      items: {
+        type: 'string',
+      },
+      errorMessage: "The 'globalRoles' field must be an array of strings",
     },
     basePath: {
       type: 'string',

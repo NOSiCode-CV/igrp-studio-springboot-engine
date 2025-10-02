@@ -8,8 +8,17 @@
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-{{#if (isNotBlank resourceConfig.globalPermission)}}
+{{!-- MUDANÇA AQUI: Usar 'isNotEmpty' para o array 'globalRoles' e 'isNotBlank' para a string 'globalPermission' --}}
+{{#if (and (isNotBlank resourceConfig.globalPermission) (isNotEmpty resourceConfig.globalRoles))}}
+@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
+{{else}}
+  {{#if (isNotBlank resourceConfig.globalPermission)}}
 @PreAuthorize("@igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
+  {{/if}}
+  {{!-- MUDANÇA AQUI: Usar 'isNotEmpty' para o array 'globalRoles' --}}
+  {{#if (isNotEmpty resourceConfig.globalRoles)}}
+@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}})")
+  {{/if}}
 {{/if}}
 @Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
@@ -19,13 +28,19 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{>controller-injection}}
 
   {{>controller-constructor}}
-
   {{#each resourceConfig.actions}}
-    {{#if (isNotBlank permission)}}
-      {{#if (or (isNotBlank path) (ne permission ../resourceConfig.globalPermission))}}
+   {{#if (or (isNotBlank permission) (isNotEmpty roles))}}
+    {{#if (and (isNotBlank permission) (isNotEmpty roles))}}
+  @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission('{{#if (isNotBlank path)}}{{path}}{{else}}{{../resourceConfig.basePath}}{{/if}}', '{{permission}}')")
+    {{else}}
+      {{#if (isNotBlank permission)}}
   @PreAuthorize("@igrpAuthorization.checkPermission('{{#if (isNotBlank path)}}{{path}}{{else}}{{../resourceConfig.basePath}}{{/if}}', '{{permission}}')")
       {{/if}}
+      {{#if (isNotEmpty roles)}}
+  @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}})")
+      {{/if}}
     {{/if}}
+  {{/if}}
   @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}

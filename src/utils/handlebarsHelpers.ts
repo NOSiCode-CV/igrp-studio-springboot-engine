@@ -123,7 +123,26 @@ Handlebars.registerHelper('is-nested-object', function (attribute: JavaAttribute
 Handlebars.registerHelper('isNotBlank', function (str: string): boolean {
   if (str === null || str === undefined) return false;
   return str.trim().length > 0;
+
 });
+
+Handlebars.registerHelper('isNotEmpty', function (arr: any[]): boolean {
+  if (arr === null || arr === undefined) {
+    return false;
+  }
+  return Array.isArray(arr) && arr.length > 0;
+});
+
+Handlebars.registerHelper('join', function (arr: any[], separator: string, options: Handlebars.HelperOptions) {
+  if (!Array.isArray(arr)) {
+    return '';
+  }
+  const sep = typeof separator === 'string' ? separator : ',';
+  const result = arr.map(item => options.fn(item)).join(sep);
+  return new Handlebars.SafeString(result);
+});
+
+
 
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);

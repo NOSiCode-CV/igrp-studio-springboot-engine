@@ -238,12 +238,14 @@ export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   actions: ControllerAction[];
   module?: string;
   globalPermission?: string;
+  globalRoles?: string[];
   description: string;
 }
 
 export interface ControllerAction {
   path?: string;
   permission?: string;
+  roles?: string[];
   actionName: string;
   method: HttpMethod;
   headers?: HttpHeader[];
