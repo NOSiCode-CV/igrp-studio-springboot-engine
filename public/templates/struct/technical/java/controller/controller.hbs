@@ -8,14 +8,12 @@
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-{{!-- MUDANÇA AQUI: Usar 'isNotEmpty' para o array 'globalRoles' e 'isNotBlank' para a string 'globalPermission' --}}
 {{#if (and (isNotBlank resourceConfig.globalPermission) (isNotEmpty resourceConfig.globalRoles))}}
 @PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
 {{else}}
   {{#if (isNotBlank resourceConfig.globalPermission)}}
 @PreAuthorize("@igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
   {{/if}}
-  {{!-- MUDANÇA AQUI: Usar 'isNotEmpty' para o array 'globalRoles' --}}
   {{#if (isNotEmpty resourceConfig.globalRoles)}}
 @PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}})")
   {{/if}}
