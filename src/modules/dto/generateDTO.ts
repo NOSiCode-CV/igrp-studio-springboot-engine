@@ -192,11 +192,7 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
-    } else if (attr.objectType === PACKAGE_NS.dto && attr.type === 'object') {
-      typeNotFound = false;
-    } else {
-      typeNotFound = true;
-    }
+    } else typeNotFound = !(attr.objectType === PACKAGE_NS.dto && attr.type === 'object');
 
     if (typeNotFound) {
       errors.push({

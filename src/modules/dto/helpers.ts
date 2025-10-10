@@ -1,5 +1,5 @@
-import { DTOConfig, JavaAttribute, ObjectTypes } from '../../interfaces/types';
-import { loadDTOConfig, loadDTOConfigs } from '../../utils/helpers';
+import { DTOConfig } from '../../interfaces/types';
+import { loadDTOConfigs } from '../../utils/helpers';
 import { normalizeName } from './saveDTOConfig';
 
 export const DTO_INTERFACE_VALIDATOR_SUFFIX = 'Validator';
