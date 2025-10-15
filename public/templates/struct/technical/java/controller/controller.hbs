@@ -54,9 +54,7 @@ public class {{capitalize resourceConfig.name}}Controller {
 
       ResponseEntity<{{{resolveResponse responses}}}> response = queryBus.handle(query);
 
-      return ResponseEntity.status(response.getStatusCode())
-              .headers(response.getHeaders())
-              .body(response.getBody());
+      return response;
   {{else}}
 
       final var command = new {{capitalize actionName}}Command(
@@ -72,9 +70,7 @@ public class {{capitalize resourceConfig.name}}Controller {
 
        ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
 
-        return ResponseEntity.status(response.getStatusCode())
-              .headers(response.getHeaders())
-              .body(response.getBody());
+       return response;
   {{/if}}
 {{else}}
 
@@ -89,7 +85,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
 
-   return response;
+      return response;
 {{/if}}
   }
 
