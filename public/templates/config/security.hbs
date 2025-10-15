@@ -76,10 +76,14 @@ public class SecurityConfig {
         );
 
         // Configure authorization rules and policy enforcement
-        http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.GET).permitAll()  // Allow GET requests to specified URLs without authentication
-                        .anyRequest().authenticated()  // Require authentication for all other requests
+                http.authorizeHttpRequests((authorize) -> authorize
+                          .requestMatchers(
+                              "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                              "/swagger-resources/**", "/webjars/**", "/actuator/**"
+                          )
+                          .permitAll()
+                          .anyRequest()
+                          .authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
                     response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"Restricted Content\"");
