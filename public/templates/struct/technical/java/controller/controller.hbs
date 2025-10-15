@@ -14,8 +14,6 @@
 @Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}Controller.class);
-
   {{>controller-injection}}
 
   {{>controller-constructor}}
@@ -43,8 +41,6 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
   {{#if (eq method "GET")}}
 
-      LOGGER.debug("Operation started");
-
       final var query = new {{capitalize actionName}}Query(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
@@ -58,14 +54,10 @@ public class {{capitalize resourceConfig.name}}Controller {
 
       ResponseEntity<{{{resolveResponse responses}}}> response = queryBus.handle(query);
 
-      LOGGER.debug("Operation finished");
-
       return ResponseEntity.status(response.getStatusCode())
               .headers(response.getHeaders())
               .body(response.getBody());
   {{else}}
-
-      LOGGER.debug("Operation started");
 
       final var command = new {{capitalize actionName}}Command(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
@@ -80,15 +72,11 @@ public class {{capitalize resourceConfig.name}}Controller {
 
        ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
 
-       LOGGER.debug("Operation finished");
-
         return ResponseEntity.status(response.getStatusCode())
               .headers(response.getHeaders())
               .body(response.getBody());
   {{/if}}
 {{else}}
-
-    LOGGER.debug("Operation started");
 
     var response = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
     {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
@@ -100,8 +88,6 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#each pathVariables}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each~}}
     {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
-
-    LOGGER.debug("Operation finished");
 
    return response;
 {{/if}}
