@@ -629,8 +629,6 @@ Handlebars.registerHelper('and', function (...args) {
 });
 
 Handlebars.registerHelper('formatAttribute', function (value) {
-  // TODO : 09-12-2024 - 16:55 - handle non-string values
-
   if (typeof value === 'string') {
     return `"${value}"`; // If it's a string, wrap it in quotes
   } else if (typeof value === 'number') {
@@ -644,9 +642,8 @@ Handlebars.registerHelper('formatAttribute', function (value) {
       return `"${Object.values(value).join('')}"`; // Join characters and return as a single string
     }
     return JSON.stringify(value, null, 2); // Otherwise, return the object as a string
-  } else {
-    return value.toString(); // Return the value as-is if it doesn't match the above types
   }
+    return value.toString();
 });
 
 Handlebars.registerHelper('mapHeaderToOption', function (config: HttpHeader): string {
@@ -669,30 +666,6 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (str == '?') return '?';
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
-
-/*Handlebars.registerHelper('processImplementation', (type: string) => {
-  let primitiveTypes: string[] = ['integer', 'boolean', 'string', 'byte'];
-
-  if (primitiveTypes.includes(type)) {
-    return capitalize(type);
-  } else if (type == 'object') return 'object';
-  else {
-    return normalizeName(type, 'dto') + 'DTO';
-  }
-});*/
-
-/*Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
-  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
-
-  if (objType === 'dto') return 'object';
-
-  if (primitiveTypes.includes(type)) {
-    return capitalize(type);
-  } else if (type === 'object' && (!objType || objType.trim() === '')) return 'object';
-  else {
-    return normalizeName(type, 'dto') + 'DTO';
-  }
-});*/
 
 Handlebars.registerHelper('processImplementation', (type: string) => {
   return GENERIC_TYPES.get(type)?.java.name ?? normalizeName(type, 'dto') + 'DTO';
@@ -724,13 +697,6 @@ Handlebars.registerHelper(
   },
 );
 
-/*Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
-  // console.log('SchemaContent:: ', content);
-  if (!content) return false;
-  const schema = content['application/json'] ?? content['multipart/form-data'];
-  return !!schema.schema.objectType;
-});*/
-
 Handlebars.registerHelper(
   'addValidAnnotation',
   (content: { [p: string]: SchemaContent }): boolean => {
@@ -738,41 +704,9 @@ Handlebars.registerHelper(
     const schema = content['application/json'];
     if (!schema) return false;
 
-    if (schema.schema.type !== 'object' && !schema.schema.objectType) {
-      return false;
-    }
-
-    //if (schema.schema.collectionType != 'none') return false;
-
-    return true;
+    return !(schema.schema.type !== 'object' && !schema.schema.objectType);
   },
 );
-
-/*Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }, name?: string): string => {
-  if (!content) return '';
-
-  const jsonContent = content['application/json'] ?? content['multipart/form-data'];
-  if (!jsonContent || !jsonContent.schema) return '';
-
-  const schema = jsonContent.schema;
-
-  let resolvedType: string;
-
-  if (schema.type === 'object') {
-
-    resolvedType = formatTypeName(name);
-  } else {
-    if (schema.objectType === 'dto') {
-      resolvedType = formatTypeName(schema.type);
-    } else {
-      resolvedType = capitalize(schema.type);
-    }
-  }
-
-  const responseCollectionType: string = schema.collectionType ?? 'none';
-
-  return wrapCollectionType(resolvedType, responseCollectionType);
-});*/
 
 Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: string): string => {
   if (!pRequestBody) return '';
@@ -799,8 +733,6 @@ Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: 
       resolvedType = capitalize(schema.type);
     }
   }
-
-  //console.log('resolvedType: ', resolvedType);
 
   const responseCollectionType: string = schema.collectionType ?? 'none';
 

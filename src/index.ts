@@ -533,8 +533,6 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  //console.log('config: ', config)
-
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
@@ -1154,7 +1152,7 @@ export const addController = async (
       let requestBodyAttributes: JavaAttribute[] = [];
 
       if (objectType) {
-        console.log(objectType);
+
         const dto = await requestDtoConfig(module, context, act);
         requestBodyAttributes = [
           {
