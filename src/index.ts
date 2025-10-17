@@ -1108,8 +1108,8 @@ export const addController = async (
 
   //config.actions = upperCaseResponse(config.actions);
 
-   //console.log('DADOS A SEREM VALIDADOS:', JSON.stringify(config, null, 2));
-   
+  //console.log('DADOS A SEREM VALIDADOS:', JSON.stringify(config, null, 2));
+
   const isConfigValid = validateController(config);
 
   if (!isConfigValid && validateController.errors) {
