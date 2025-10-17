@@ -17,19 +17,20 @@ import {
 import {
   DIRECTORIES,
   GENERIC_IMPORTS,
-  GENERIC_TYPES, PACKAGES,
+  GENERIC_TYPES,
+  PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { getPackageNameFromConfig } from './helpers';
+import {getPackageNameFromConfig} from './helpers';
 import {
   capitalizeResponse,
   formatTypeName,
   getCollectionTypeInitializer,
   wrapCollectionType,
 } from './capitalizeStrings';
-import { normalizeName } from '../modules/dto/saveDTOConfig';
+import {normalizeName} from '../modules/dto/saveDTOConfig';
 import {
   capitalize,
   capitalizeJavaStyle,
@@ -45,25 +46,14 @@ import {
   toUpperCase,
   wrapInCurlyBraces,
 } from '../helper/stringHelper';
-import { json } from '../helper/jsonHelper';
-import {
-  equals,
-  ifEquals,
-  ifNot,
-  isPageable,
-  isText,
-  not,
-  notEquals,
-} from '../helper/logicalHelper';
-import { keyTypeModel, modelImport } from '../helper/modelHelper';
-import { keyTypeDTO } from '../helper/dtoHelper';
-import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
-import { resolvePathVariables } from '../helper/controllerHelper';
-import { resolveImportReponse } from '../helper/responseHelper';
-import {
-  normalizeImplValidatorName,
-  normalizeInterfaceValidatorName,
-} from '../modules/dto/helpers';
+import {json} from '../helper/jsonHelper';
+import {equals, ifEquals, ifNot, isPageable, isText, not, notEquals,} from '../helper/logicalHelper';
+import {keyTypeModel, modelImport} from '../helper/modelHelper';
+import {keyTypeDTO} from '../helper/dtoHelper';
+import {resolveAnnotations, resolvePackage} from '../helper/generalHelper';
+import {resolvePathVariables} from '../helper/controllerHelper';
+import {resolveImportReponse} from '../helper/responseHelper';
+import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -108,6 +98,19 @@ Handlebars.registerHelper('resolve-mapping', resolvePathVariables);
 // GENERAL
 Handlebars.registerHelper('resolve-package', resolvePackage);
 Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
+
+
+Handlebars.registerHelper(
+    "hasQueryAndCommand",
+    function (actions: any[]) {
+      if (!Array.isArray(actions)) return { hasQuery: false, hasCommand: false };
+
+      const hasQuery = actions.some(a => a.method === "GET");
+      const hasCommand = actions.some(a => a.method !== "GET");
+
+      return { hasQuery, hasCommand };
+    }
+);
 
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);

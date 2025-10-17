@@ -11,13 +11,14 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-import cv.igrp.framework.core.domain.CommandBus;
+{{#with (hasQueryAndCommand resourceConfig.actions) as |methods|}}{{#if methods.hasQuery}}
 import cv.igrp.framework.core.domain.QueryBus;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;
-import {{baseConfig.group}}.{{baseConfig.packageName}}.{{#if resourceConfig.module}}{{toLowerCase
-resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
-
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.queries.*;
+{{/if}}
+{{#if methods.hasCommand}}
+import cv.igrp.framework.core.domain.CommandBus;
+import {{../baseConfig.group}}.{{../baseConfig.packageName}}.{{#if ../resourceConfig.module}}{{toLowerCase ../resourceConfig.module}}{{else}}shared{{/if}}.application.commands.*;{{/if}}
+{{/with}}
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module true}}
 {{else}}
 {{importsTypes resourceConfig.actions baseConfig.group baseConfig.packageName resourceConfig.module false}}
