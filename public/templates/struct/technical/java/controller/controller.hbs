@@ -25,24 +25,24 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{#if (or (isNotEmpty permission) (isNotEmpty roles))}}
           {{#if (and (isNotEmpty permission) (isNotEmpty roles))}}
               {{#if (isSinglePermission permission)}}
-      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
+   @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
               {{else}}
-      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
+   @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
               {{/if}}
           {{else}}
               {{#if (isNotEmpty permission)}}
                   {{#if (isSinglePermission permission)}}
-      @PreAuthorize("@igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
+   @PreAuthorize("@igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
                   {{else}}
-      @PreAuthorize("@igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
+   @PreAuthorize("@igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
                   {{/if}}
               {{/if}}
               {{#if (isNotEmpty roles)}}
-      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}})")
+   @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}})")
               {{/if}}
           {{/if}}
       {{/if}}
-      @{{ toTitleCase method}}Mapping({{#if path}}
+   @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}
