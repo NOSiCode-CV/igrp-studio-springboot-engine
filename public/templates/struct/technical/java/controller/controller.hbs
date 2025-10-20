@@ -8,15 +8,12 @@
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-{{#if (and (isNotBlank resourceConfig.globalPermission) (isNotEmpty resourceConfig.globalRoles))}}
-@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
-{{else}}
-  {{#if (isNotBlank resourceConfig.globalPermission)}}
-@PreAuthorize("@igrpAuthorization.checkPermission('{{resourceConfig.basePath}}', '{{resourceConfig.globalPermission}}')")
-  {{/if}}
-  {{#if (isNotEmpty resourceConfig.globalRoles)}}
-@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}})")
-  {{/if}}
+{{#if (and (isNotEmpty resourceConfig.globalPermission) (isNotEmpty resourceConfig.globalRoles))}}
+    {{#if (isSinglePermission resourceConfig.globalPermission)}}
+@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission(@permissions.get('{{resourceConfig.globalPermission.[0]}}'))")
+    {{else}}
+@PreAuthorize("hasAnyRole({{#join resourceConfig.globalRoles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkAnyPermission({{#each resourceConfig.globalPermission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
+    {{/if}}
 {{/if}}
 @Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
 public class {{capitalize resourceConfig.name}}Controller {
@@ -25,19 +22,27 @@ public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-constructor}}
   {{#each resourceConfig.actions}}
-   {{#if (or (isNotBlank permission) (isNotEmpty roles))}}
-    {{#if (and (isNotBlank permission) (isNotEmpty roles))}}
-  @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission('{{#if (isNotBlank path)}}{{path}}{{else}}{{../resourceConfig.basePath}}{{/if}}', '{{permission}}')")
-    {{else}}
-      {{#if (isNotBlank permission)}}
-  @PreAuthorize("@igrpAuthorization.checkPermission('{{#if (isNotBlank path)}}{{path}}{{else}}{{../resourceConfig.basePath}}{{/if}}', '{{permission}}')")
+      {{#if (or (isNotEmpty permission) (isNotEmpty roles))}}
+          {{#if (and (isNotEmpty permission) (isNotEmpty roles))}}
+              {{#if (isSinglePermission permission)}}
+      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
+              {{else}}
+      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}}) and @igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
+              {{/if}}
+          {{else}}
+              {{#if (isNotEmpty permission)}}
+                  {{#if (isSinglePermission permission)}}
+      @PreAuthorize("@igrpAuthorization.checkPermission(@permissions.get('{{permission.[0]}}'))")
+                  {{else}}
+      @PreAuthorize("@igrpAuthorization.checkAnyPermission({{#each permission}}@permissions.get('{{this}}'){{#unless @last}}, {{/unless}}{{/each}})")
+                  {{/if}}
+              {{/if}}
+              {{#if (isNotEmpty roles)}}
+      @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}})")
+              {{/if}}
+          {{/if}}
       {{/if}}
-      {{#if (isNotEmpty roles)}}
-  @PreAuthorize("hasAnyRole({{#join roles ","}}'{{this}}'{{/join}})")
-      {{/if}}
-    {{/if}}
-  {{/if}}
-  @{{ toTitleCase method}}Mapping({{#if path}}
+      @{{ toTitleCase method}}Mapping({{#if path}}
     value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}

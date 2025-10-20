@@ -112,6 +112,10 @@ Handlebars.registerHelper(
     }
 );
 
+Handlebars.registerHelper("isSinglePermission", function(array, options) {
+  return Array.isArray(array) && array.length === 1;
+});
+
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
 });

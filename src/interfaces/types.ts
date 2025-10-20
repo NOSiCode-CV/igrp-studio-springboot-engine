@@ -14,7 +14,7 @@ import {
   RELATIONSHIP_TYPES,
   STRUCT_TYPES,
 } from '../utils/constants';
-import { Dependency } from './springDependencyTypes';
+import {Dependency} from './springDependencyTypes';
 
 interface IdentifiableElement {
   id?: string;
@@ -237,14 +237,14 @@ export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   basePath: string;
   actions: ControllerAction[];
   module?: string;
-  globalPermission?: string;
+  globalPermission?: string[];
   globalRoles?: string[];
   description: string;
 }
 
 export interface ControllerAction {
   path?: string;
-  permission?: string;
+  permission?: string[];
   roles?: string[];
   actionName: string;
   method: HttpMethod;

@@ -1,6 +1,6 @@
-import { HTTP_HEADER_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, PATTERNS } from '../utils/constants';
-import { ajvInstance } from '../utils/ajv-instance';
-import { JSONSchemaType, ValidateFunction } from 'ajv';
+import {HTTP_HEADER_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, PATTERNS} from '../utils/constants';
+import {ajvInstance} from '../utils/ajv-instance';
+import {JSONSchemaType, ValidateFunction} from 'ajv';
 import {
   BaseBody,
   Body,
@@ -462,11 +462,12 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
         'The path attribute must only contain characters without spaces or special characters.',
     },
     permission: {
-      type: 'string',
-      pattern: PATTERNS.PATH_PATTERN,
+      type: 'array',
       nullable: true,
-      errorMessage:
-        'The path attribute must only contain characters without spaces or special characters.',
+      items: {
+        type: 'string',
+      },
+      errorMessage: "The 'permission' field must be an array of strings",
     },
     roles: {
       type: 'array',
@@ -584,9 +585,12 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
         'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.',
     },
     globalPermission: {
-      type: 'string',
+      type: 'array',
       nullable: true,
-      errorMessage: 'The global permission must be a valid string',
+      items: {
+        type: 'string',
+      },
+      errorMessage: "The 'globalPermission' field must be an array of strings",
     },
     globalRoles: {
       type: 'array',
