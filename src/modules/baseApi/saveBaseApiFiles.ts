@@ -1,5 +1,5 @@
 import path from 'path';
-import { RenderContext } from '../../interfaces/types';
+import {RenderContext} from '../../interfaces/types';
 import {
   COMMON_FILES,
   CONFIG_FILES,
@@ -12,12 +12,12 @@ import {
   PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
 } from '../../utils/constants';
-import { capitalize } from '../../helper/stringHelper';
-import { renderTemplate } from '../common/renderTemplate';
-import { getMainPath } from '../../utils/helpers';
-import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
+import {capitalize} from '../../helper/stringHelper';
+import {renderTemplate} from '../common/renderTemplate';
+import {getMainPath} from '../../utils/helpers';
+import {saveBinaryToFile, saveToFile} from '../common/saveToFile';
 import fs from 'fs-extra';
-import { getPaths } from '../../index';
+import {getPaths} from '../../index';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -138,21 +138,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: securityPath,
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
-      },
-      {
-        output: securityPath,
-        template: TEMPLATES.CONFIG_AUTHORIZATION_SECURITY,
-        name: COMMON_FILES.IGRP_AUTHORIZATION_SERVICE,
-      },
-      {
-        output: securityPath,
-        template: TEMPLATES.CONFIG_AUTHENTICATION_HELPER,
-        name: COMMON_FILES.IGRP_AUTHENTICATION_HELPER,
-      },
-      {
-        output: securityPath,
-        template: TEMPLATES.CONFIG_AUTHORIZATION_CONFIG,
-        name: COMMON_FILES.IGRP_AUTHORIZATION_CONFIG,
       },
       {
         output: exceptionsPath,
@@ -277,11 +262,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: securityPath,
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
-      },
-      {
-        output: securityPath,
-        template: TEMPLATES.CONFIG_AUTHORIZATION_SECURITY,
-        name: COMMON_FILES.IGRP_AUTHORIZATION_SERVICE,
       },
       {
         output: exceptionPath,

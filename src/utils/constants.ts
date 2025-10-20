@@ -1,5 +1,5 @@
-import { ConfigTypes, ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
-import { normalizeName } from '../modules/dto/saveDTOConfig';
+import {ConfigTypes, ImportTypeMetadata, TypeMetadata} from '../interfaces/types';
+import {normalizeName} from '../modules/dto/saveDTOConfig';
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -257,9 +257,9 @@ export const TEMPLATES = {
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
   SWAGGER_CONFIG: 'config/swagger-config.hbs',
-  CONFIG_AUTHORIZATION_SECURITY: 'config/igrp-authorization-service.hbs',
+  /*CONFIG_AUTHORIZATION_SECURITY: 'config/igrp-authorization-service.hbs',
   CONFIG_AUTHENTICATION_HELPER: 'config/authentication-helper.hbs',
-  CONFIG_AUTHORIZATION_CONFIG: 'config/authorization-config.hbs',
+  CONFIG_AUTHORIZATION_CONFIG: 'config/authorization-config.hbs',*/
   OPEN_TELEMETRY_CONFIG_GRAALVM: 'config/open-telemetry-config-graalvm.hbs',
   ENVER_HINTS_GRAALVM_CONFIG: 'config/enver-hints-graalvm-config.hbs',
 
@@ -467,9 +467,9 @@ export const COMMON_FILES = {
   ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
   SWAGGER_CONFIG: 'SwaggerConfig.java',
-  IGRP_AUTHORIZATION_SERVICE: 'IgrpAuthorizationService.java',
+  /*IGRP_AUTHORIZATION_SERVICE: 'IgrpAuthorizationService.java',
   IGRP_AUTHENTICATION_HELPER: 'AuthenticationHelper.java',
-  IGRP_AUTHORIZATION_CONFIG: 'AuthorizationConfig.java',
+  IGRP_AUTHORIZATION_CONFIG: 'AuthorizationConfig.java',*/
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',
   IGRP_PROBLEM: 'IgrpProblem.java',
