@@ -231,6 +231,22 @@ export interface IModelPermission {
   permissions: string[];
 }
 
+export interface AppExportsConfig {
+  permissionGroups: GroupPermissionDef[];
+}
+
+export interface GroupPermissionDef{
+  name: string;
+  permissions: PermissionDef[];
+  module?: string;
+}
+
+export interface PermissionDef {
+  name: string;
+  description: string;
+  enabled?: boolean;
+}
+
 export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;

@@ -100,6 +100,16 @@ Handlebars.registerHelper('resolve-package', resolvePackage);
 Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 
 
+
+Handlebars.registerHelper('toConstantName', function(name: string) {
+  return name.toUpperCase().replace(/\./g, '_');
+});
+
+Handlebars.registerHelper('hasEnabled', function (permission) {
+  return permission.hasOwnProperty('enabled');
+});
+
+
 Handlebars.registerHelper(
     "hasQueryAndCommand",
     function (actions: any[]) {

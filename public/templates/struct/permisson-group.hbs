@@ -1,0 +1,16 @@
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+package {{baseConfig.group}}.{{baseConfig.packageName}}.{{resourceConfig.module}}.infrastructure.authorization.permission;
+{{else}}
+package {{baseConfig.group}}.{{baseConfig.packageName}}.authorization.permission;
+{{/if}}
+import cv.igrp.framework.stereotype.IgrpPermission;
+
+public class {{resourceConfig.name}} {
+
+{{#each resourceConfig.permissions}}
+    @IgrpPermission(name = "{{this.name}}", description = "{{this.description}}"{{#if (hasEnabled this)}}, enabled = {{this.enabled}}{{/if}})
+    public static String {{toConstantName this.name}} = "{{this.name}}";
+
+{{/each}}
+
+}

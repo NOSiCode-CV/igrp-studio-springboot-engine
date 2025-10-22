@@ -60,6 +60,8 @@ export const DIRECTORIES = {
   MODULE: 'module',
   CONSTANTS: 'constants',
   KUBERNETES: 'k8s',
+  AUTHORIZATION : 'authorization',
+  PERMISSION: 'permission',
 };
 
 export const PACKAGES = {
@@ -374,6 +376,8 @@ export const TEMPLATES = {
   VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs',
 
   GITKEEPFILE: 'struct/gitKeepFile.hbs',
+
+  PERMISSION_GROUP: 'struct/permisson-group.hbs'
 };
 
 export const CONFIG_FILES = [
