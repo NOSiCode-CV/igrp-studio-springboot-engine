@@ -247,20 +247,25 @@ export interface PermissionDef {
   enabled?: boolean;
 }
 
+export interface PermissionsConfig {
+  items: string[];
+  operator?: 'AND' | 'OR';  // default 'OR'
+}
+
 export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;
   basePath: string;
   actions: ControllerAction[];
   module?: string;
-  globalPermission?: string[];
+  globalPermission?: PermissionsConfig;
   globalRoles?: string[];
   description: string;
 }
 
 export interface ControllerAction {
   path?: string;
-  permission?: string[];
+  permission?: PermissionsConfig;
   roles?: string[];
   actionName: string;
   method: HttpMethod;
