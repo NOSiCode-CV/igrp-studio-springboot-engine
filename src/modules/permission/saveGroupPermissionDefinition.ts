@@ -23,7 +23,7 @@ export const saveGroupPermissionDef = async (context: RenderContext<GroupPermiss
             DIRECTORIES.PERMISSION
         );
     } else {
-        outputDir = path.join(outputDir, DIRECTORIES.PERMISSION);
+        outputDir = path.join(outputDir, DIRECTORIES.AUTHORIZATION, DIRECTORIES.PERMISSION);
     }
 
     const outputPath = path.join(outputDir, `${context.resourceConfig.name}.java`);
