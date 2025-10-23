@@ -16,7 +16,7 @@ MYSQL_ROOT_PASSWORD=root
 {{else if (eq baseConfig.database "Oracle")}}
 ORACLE_HOST=host.docker.internal
 ORACLE_PORT=1521
-ORACLE_SERVICE_NAME=oracle
+ORACLE_SERVICE_NAME=XEPDB1
 ORACLE_DATABASE={{toLowerCase baseConfig.name}}_db
 ORACLE_USER=system
 ORACLE_PASSWORD=oracle

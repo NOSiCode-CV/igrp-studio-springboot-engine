@@ -35,7 +35,7 @@ spring.datasource.password=${MYSQL_PASSWORD}
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 {{/if}}
 {{#if (eq baseConfig.database "Oracle")}}
-spring.datasource.url=jdbc:oracle:thin:@${ORACLE_HOST}:${ORACLE_PORT}/${ORACLE_DATABASE}
+spring.datasource.url=jdbc:oracle:thin:@//${ORACLE_HOST}:${ORACLE_PORT}/${ORACLE_SERVICE_NAME}
 spring.datasource.username=${ORACLE_USER}
 spring.datasource.password=${ORACLE_PASSWORD}
 spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
