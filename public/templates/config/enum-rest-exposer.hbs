@@ -2,7 +2,10 @@
 
 import cv.igrp.framework.core.data.EnumItem;
 import cv.igrp.framework.core.domain.IgrpEnum;
-import cv.igrp.project_management.exceptions.IgrpResponseStatusException;
+{{#if (eq baseConfig.projectStructureStyle "technical")}}import {{baseConfig.group}}.{{baseConfig.packageName}}.exceptions.IgrpResponseStatusException;
+{{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.exceptions.IgrpResponseStatusException;
+{{/if}}
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -119,7 +122,7 @@ public class IgrpEnumDynamicRestExposer<E extends Enum<E> & IgrpEnum<String>> {
 
     Class<? extends E> enumClass = enumMap.get(enumName);
     if (enumClass == null)
-    throw IgrpResponseStatusException.notFound("Enum not found for name: %s".formatted(enumName));
+      throw IgrpResponseStatusException.notFound("Enum not found for name: %s".formatted(enumName));
 
     return Stream.of(enumClass.getEnumConstants())
         .map(constant -> new EnumItem<>(constant.getCode(), constant.getDescription()))
