@@ -188,6 +188,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       }
     );
   } else {
+
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
     const exceptionPath = path.join(mainPath, 'exceptions');
@@ -227,6 +228,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: configPath,
         template: TEMPLATES.DOMAIN_MODEL_AUDIT,
         name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.SWAGGER_CONFIG,
+        name: COMMON_FILES.SWAGGER_CONFIG,
       },
       {
         output: resourcePath,
