@@ -7,7 +7,9 @@ spring.application.name={{baseConfig.name}}
 spring.profiles.active=${SPRING_ACTIVE_PROFILE:development}
 server.shutdown=graceful
 management.endpoint.health.probes.enabled=true
-igrp.enum.exposer-path=${IGRP_ENUM_EXPOSER_PATH:api/enums}
+# Properties to control the automatic rest endpoint creation for enum values
+igrp.enum.exposer.enabled=${IGRP_ENUM_EXPOSER_ENABLED:true}
+igrp.enum.exposer.path=${IGRP_ENUM_EXPOSER_PATH:api/enums}
 # --------------------------------------------------------
 # Datasource
 # --------------------------------------------------------
