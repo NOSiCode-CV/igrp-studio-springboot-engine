@@ -131,6 +131,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       },
       {
         output: configPath,
+        template: TEMPLATES.ENUM_EXPOSER_CONFIG,
+        name: COMMON_FILES.ENUM_EXPOSER_CONFIG,
+      },
+      {
+        output: configPath,
         template: TEMPLATES.APPLICATION_AUDIT_AWARE,
         name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
       },
@@ -233,6 +238,11 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: configPath,
         template: TEMPLATES.SWAGGER_CONFIG,
         name: COMMON_FILES.SWAGGER_CONFIG,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.ENUM_EXPOSER_CONFIG,
+        name: COMMON_FILES.ENUM_EXPOSER_CONFIG,
       },
       {
         output: resourcePath,

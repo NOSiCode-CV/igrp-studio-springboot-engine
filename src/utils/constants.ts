@@ -259,6 +259,7 @@ export const TEMPLATES = {
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
   SWAGGER_CONFIG: 'config/swagger-config.hbs',
+  ENUM_EXPOSER_CONFIG: 'config/enum-rest-exposer.hbs',
   /*CONFIG_AUTHORIZATION_SECURITY: 'config/igrp-authorization-service.hbs',
   CONFIG_AUTHENTICATION_HELPER: 'config/authentication-helper.hbs',
   CONFIG_AUTHORIZATION_CONFIG: 'config/authorization-config.hbs',*/
@@ -471,6 +472,7 @@ export const COMMON_FILES = {
   ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
   SWAGGER_CONFIG: 'SwaggerConfig.java',
+  ENUM_EXPOSER_CONFIG: 'IgrpEnumDynamicRestExposer.java',
   /*IGRP_AUTHORIZATION_SERVICE: 'IgrpAuthorizationService.java',
   IGRP_AUTHENTICATION_HELPER: 'AuthenticationHelper.java',
   IGRP_AUTHORIZATION_CONFIG: 'AuthorizationConfig.java',*/
