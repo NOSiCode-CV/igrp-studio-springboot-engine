@@ -1,5 +1,5 @@
-import { ajvInstance } from '../utils/ajv-instance';
-import { JSONSchemaType, ValidateFunction } from 'ajv';
+import {ajvInstance} from '../utils/ajv-instance';
+import {JSONSchemaType, ValidateFunction} from 'ajv';
 import {
   Attribute,
   AttributeType,
@@ -265,6 +265,13 @@ const attributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       enum: GENERATION_TYPES,
       errorMessage: `The generation type, if provided, must be one of ${GENERATION_TYPES}`,
+    },
+    sequenceName: {
+      type: 'string',
+      nullable: true,
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage:
+          'The sequence name, if provided, must follow the naming convention (only alphabetic characters and underscores allowed).',
     },
     primaryKey: {
       type: 'boolean',

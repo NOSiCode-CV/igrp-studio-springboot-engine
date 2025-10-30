@@ -184,6 +184,7 @@ export interface Attribute {
   unique?: boolean;
   primaryKey?: boolean;
   generationType?: GenerationType;
+  sequenceName?: string;
   defaultValue?: string;
   module?: string;
   relation?: Relation;

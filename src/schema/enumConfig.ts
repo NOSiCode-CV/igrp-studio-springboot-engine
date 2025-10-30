@@ -1,8 +1,8 @@
-import { Attribute, EnumConfig, EnumValue } from '../interfaces/types';
-import { ajvInstance } from '../utils/ajv-instance';
-import { JSONSchemaType, ValidateFunction } from 'ajv';
-import { GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, PATTERNS } from '../utils/constants';
-import { relationSchema } from './modelConfig';
+import {Attribute, EnumConfig, EnumValue} from '../interfaces/types';
+import {ajvInstance} from '../utils/ajv-instance';
+import {JSONSchemaType, ValidateFunction} from 'ajv';
+import {GENERATION_TYPES, GENERIC_ATTRIBUTE_TYPES, PATTERNS} from '../utils/constants';
+import {relationSchema} from './modelConfig';
 
 const valueSchema: JSONSchemaType<EnumValue> = {
   type: 'object',
@@ -82,6 +82,13 @@ const enumAttributeSchema: JSONSchemaType<Attribute> = {
       nullable: true,
       enum: GENERATION_TYPES,
       errorMessage: `The generation type, if provided, must be one of ${GENERATION_TYPES}`,
+    },
+    sequenceName: {
+      type: 'string',
+      nullable: true,
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage:
+          'The sequence name, if provided, must follow the naming convention (only alphabetic characters and underscores allowed).',
     },
     primaryKey: {
       type: 'boolean',

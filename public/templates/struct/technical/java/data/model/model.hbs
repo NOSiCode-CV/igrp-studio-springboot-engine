@@ -46,7 +46,16 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if this.primaryKey}}
     @Id
     {{#unless (eq this.generationType "NONE")}}
+        {{#if (eq this.generationType "SEQUENCE")}}
+            {{#if this.sequenceName}}
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "{{toLowerCase this.sequenceName}}")
+    @SequenceGenerator(name = "{{toLowerCase this.sequenceName}}", sequenceName = "{{this.sequenceName}}", allocationSize = 1)
+            {{else}}
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+            {{/if}}
+        {{else}}
     @GeneratedValue(strategy = GenerationType.{{this.generationType}})
+        {{/if}}
     {{/unless}}
     @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
     private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
