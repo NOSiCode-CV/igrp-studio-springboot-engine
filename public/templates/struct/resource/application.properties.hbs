@@ -72,8 +72,6 @@ spring.data.rest.detection-strategy=annotated
 logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
 #targets the web layer, allowing control over HTTP request/response logs
 logging.level.org.springframework.web=${LOGGING_LEVEL_SPRING_WEB:INFO}
-#applies to our application-specific logic, providing detailed logging where needed
-logging.level.{{baseConfig.group}}.{{baseConfig.artifact}}=${LOGGING_LEVEL_APP:INFO}
 # ---------------------------------------------
 # Swagger Documentation
 # ---------------------------------------------
