@@ -11,6 +11,10 @@ management.endpoint.health.probes.enabled=true
 igrp.enum.exposer.enabled=${IGRP_ENUM_EXPOSER_ENABLED:true}
 igrp.enum.exposer.path=${IGRP_ENUM_EXPOSER_PATH:api/enums}
 # --------------------------------------------------------
+# IGRP ACCESS BASE URL
+# --------------------------------------------------------
+igrp.access.api.base-url=${IGRP_ACCESS_API_BASE_URL}
+# --------------------------------------------------------
 # Datasource
 # --------------------------------------------------------
 {{#if (eq baseConfig.database "Postgresql")}}
