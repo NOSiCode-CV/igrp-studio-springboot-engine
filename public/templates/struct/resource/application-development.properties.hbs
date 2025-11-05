@@ -1,4 +1,5 @@
 server.port=${SERVICE_PORT}
+spring.config.import=optional:file:.env[.properties]
 
 # Eureka Configurations
 eureka.client.enabled=true
