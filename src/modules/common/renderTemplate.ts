@@ -1,11 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { Handlebars } from '../../utils/handlebarsHelpers';
-import { DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATES } from '../../utils/constants';
-import { loadPartials } from '../../utils/helpers';
-import { getDTOTypes } from '../dto/helpers';
-import { getEnumTypes } from '../enum/helpers';
-import { getPaths } from '../../index';
+import {Handlebars} from '../../utils/handlebarsHelpers';
+import {DIRECTORIES, ERROR_MESSAGE, OBJECT_TYPES, TEMPLATES} from '../../utils/constants';
+import {loadPartials} from '../../utils/helpers';
+import {getDTOTypes} from '../dto/helpers';
+import {getEnumTypes} from '../enum/helpers';
+import {getPaths} from '../../index';
 
 export const cache: Record<string, any> = {};
 
@@ -28,7 +28,7 @@ export const renderTemplate = async (templateName: string, context: any) => {
   await loadPartials();
 
   if (templateName === TEMPLATES.APPLICATION_RESOURCES_BANNER) {
-    context.baseVersion = '0.0.1-alpha';
+    context.baseVersion = '0.1.0-beta';
   }
 
   if (
