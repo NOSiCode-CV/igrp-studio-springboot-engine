@@ -14,7 +14,6 @@ import {
   RELATIONSHIP_TYPES,
   STRUCT_TYPES,
 } from '../utils/constants';
-import {Dependency} from './springDependencyTypes';
 
 interface IdentifiableElement {
   id?: string;
@@ -481,6 +480,35 @@ export interface EngineConfigurationSettings {
   environment?: string
 }
 
+export interface Dependency {
+  name: string;
+  groupId: string;
+  artifactId: string;
+  scope: string;
+  version?: string;
+  bom?: string;
+}
+
+export interface SpringInitializerData {
+  bootVersion: string;
+  dependencies: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      scope: string;
+      version?: string;
+      bom?: string;
+    };
+  };
+  repositories: any;
+  boms: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      version: string;
+    };
+  };
+}
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
 export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];

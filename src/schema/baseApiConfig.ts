@@ -1,8 +1,7 @@
-import { BaseApiConfig } from '../interfaces/types';
+import { BaseApiConfig, Dependency } from '../interfaces/types';
 import { ajvInstance } from '../utils/ajv-instance';
 import { JSONSchemaType, ValidateFunction } from 'ajv';
 import { DATABASE_TYPES, PATTERNS } from '../utils/constants';
-import { Dependency } from '../interfaces/springDependencyTypes';
 
 export const dependencySchema: JSONSchemaType<Dependency> = {
   type: 'object',

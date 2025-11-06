@@ -7,6 +7,7 @@ import {
   CrudControllerConfig,
   DdlConfig,
   DeleteConfig,
+  Dependency,
   DTOConfig,
   EngineConfigurationSettings,
   EnumConfig,
@@ -22,7 +23,7 @@ import {
   RenderContext,
   ResponseConfig,
   SqlConfig,
-  XmlConfig
+  XmlConfig,
 } from './interfaces/types';
 import {
   CATEGORIZED_ATTRIBUTE_TYPES,
@@ -93,7 +94,6 @@ import {capitalize, capitalizeJavaStyle} from './helper/stringHelper';
 import {isPageable} from './helper/logicalHelper';
 import {generateCrudController} from './modules/crudController/generateCrudController';
 import {getSpringInitializerDependencies,} from './helper/springInitializerHelper';
-import {Dependency} from './interfaces/springDependencyTypes';
 import {moveElementConfig} from './modules/move/moveElementConfig';
 import {moveValidation} from './schema/moveConfig';
 import {verifyEnumAttributes} from './modules/enum/helpers';

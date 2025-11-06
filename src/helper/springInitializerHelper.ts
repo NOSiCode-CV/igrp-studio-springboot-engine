@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { Dependency, SpringInitializerData } from '../interfaces/springDependencyTypes';
 import fs, { pathExists } from 'fs-extra';
 import { getPaths } from '../index';
 
 // @ts-ignore
 import { custom } from '../../package.json';
+import { Dependency, SpringInitializerData } from '../interfaces/types';
 
 export const SPRING_BOOT_VERSION = custom?.springBootversion;
 export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = `https://start.spring.io/dependencies?bootVersion=${SPRING_BOOT_VERSION}`;
