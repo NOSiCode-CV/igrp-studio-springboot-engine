@@ -42,7 +42,7 @@ public class IgrpEnumDynamicRestExposer<E extends Enum<E> & IgrpEnum<String>> {
 
   private final Map<String, Class<? extends E>> enumMap = new HashMap<>();
 
-  @Value("${igrp.enum.exposer-path}")
+  @Value("${igrp.enum.exposer.path}")
   private String igrpEnumExposerPath;
 
   public IgrpEnumDynamicRestExposer(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping, OpenAPI openAPI) {
