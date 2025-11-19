@@ -1,6 +1,6 @@
 @Operation(
-  summary = "{{method}} method to handle operations for {{actionName}}",
-  description = "{{method}} method to handle operations for {{actionName}}"{{#if responses}},
+  summary = "{{method}} method to handle operations for {{normalizeActionNameDocumentation actionName}}",
+  description = "{{method}} method to handle operations for {{normalizeActionNameDocumentation actionName}}"{{#if responses}},
   responses = {
 {{#each responses}}
     @ApiResponse(
