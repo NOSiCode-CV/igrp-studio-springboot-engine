@@ -1,7 +1,7 @@
 import {addPermissionConfig, setEngineConfiguration} from '../src';
 import {GroupPermissionDef} from '../src/interfaces/types';
 // @ts-ignore
-import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR} from './outputDirPath';
+import {TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
 
 const groupPermissionDef: GroupPermissionDef = {
     name: 'AppPermissionTres',

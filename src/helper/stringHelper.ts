@@ -99,3 +99,9 @@ export function sanitizeHeaderName(headerName: string): string {
 export function wrapInCurlyBraces(str: string): string {
   return `{${str}}`;
 }
+
+export function normalizeConst(raw: string): string {
+  return raw
+      .toUpperCase()
+      .replace(/[^A-Z0-9_]/g, "_");
+}
