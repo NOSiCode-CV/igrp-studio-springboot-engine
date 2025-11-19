@@ -122,6 +122,19 @@ Handlebars.registerHelper(
     }
 );
 
+Handlebars.registerHelper("normalizeActionNameDocumentation", function(actionName: string) {
+  if (!actionName) return "";
+
+  // Adiciona espaço antes de letras maiúsculas (camelCase / PascalCase)
+  let withSpaces = actionName.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+
+  // Substitui underscores e múltiplos espaços por um único espaço
+  withSpaces = withSpaces.replace(/[_\s]+/g, " ");
+
+  // Maiúscula inicial, restante minúscula
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+});
+
 Handlebars.registerHelper("isSinglePermission", function(array, options) {
   return Array.isArray(array) && array.length === 1;
 });
