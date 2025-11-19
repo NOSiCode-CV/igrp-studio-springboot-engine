@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
-import {GroupPermissionDef, PermissionDef} from '../interfaces/types';
+import {ControllerConfig, GroupPermissionDef, PermissionDef} from '../interfaces/types';
+import {normalizeConst} from "../helper/stringHelper";
 
 /**
  * Extrair todas as permissões anotadas com @IgrpPermission dentro de uma classe Java.
@@ -41,3 +42,26 @@ export async function buildPermissionGroup(filePath: string): Promise<GroupPermi
 }
 
 
+function normalizePermissionItems(items?: string[] | null): null | undefined | string[] {
+    if (!items || items.length === 0) return items;
+    return items.map(item => (item ? normalizeConst(item) : item));
+}
+
+
+export function normalizePermissions(config: ControllerConfig): ControllerConfig {
+    if (!config) return config;
+
+    if (config.globalPermission) {
+        config.globalPermission.items = normalizePermissionItems(config.globalPermission.items) ?? [];
+    }
+
+    if (Array.isArray(config.actions)) {
+        for (const action of config.actions) {
+            if (action.permission) {
+                action.permission.items = normalizePermissionItems(action.permission.items) ?? [];
+            }
+        }
+    }
+
+    return config;
+}
