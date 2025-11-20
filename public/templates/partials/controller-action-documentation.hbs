@@ -1,6 +1,6 @@
 @Operation(
   summary = "{{method}} method to handle operations for {{normalizeActionNameDocumentation actionName}}",
-  description = "{{method}} method to handle operations for {{normalizeActionNameDocumentation actionName}}"{{#if responses}},
+  description = "{{#if permission}}{{#with (permissionData permission) as |perm|}}{{#if (eq perm.mode "ONLY")}}This Permission is required: {{perm.values}}{{else if (eq perm.mode "ALL")}}All of these Permissions are required: [{{perm.values}}]{{else}}Any of these Permissions is required: [{{perm.values}}]{{/if}}{{/with}}{{else}}{{method}} method to handle operations for {{normalizeActionNameDocumentation actionName}}{{/if}}"{{#if responses}},
   responses = {
 {{#each responses}}
     @ApiResponse(

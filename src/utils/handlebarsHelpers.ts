@@ -110,6 +110,19 @@ Handlebars.registerHelper('toConstantName', function(name: string) {
   return normalizeConst(name);
 });
 
+Handlebars.registerHelper("permissionData", function (perm) {
+  if (!perm || !perm.items || perm.items.length === 0) return null;
+
+  let mode = "ANY";
+  if (perm.items.length === 1) mode = "ONLY";
+  else if (perm.operator === "AND") mode = "ALL";
+
+  return {
+    mode,
+    values: perm.items.join(",")
+  };
+});
+
 Handlebars.registerHelper('hasEnabled', function (permission) {
   return permission.hasOwnProperty('enabled');
 });
