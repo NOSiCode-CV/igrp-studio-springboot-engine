@@ -101,7 +101,7 @@ import defaultEngineModule from './config/default';
 import {configurationAsObject, setConfiguration} from './config';
 import {engineConfigurationRegistrationValidate} from './schema/engineConfigurationRegisterConfig';
 import fs from "fs-extra";
-import {buildPermissionGroup, normalizePermissions} from "./utils/permissionParser";
+import {buildPermissionGroup} from "./utils/permissionParser";
 import {saveGroupPermissionDef} from "./modules/permission/saveGroupPermissionDefinition";
 
 export function getPaths(): PathConfig {
@@ -1123,7 +1123,6 @@ export const addController = async (
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
 
-  normalizePermissions(config); // normalize permissions name
 
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name);

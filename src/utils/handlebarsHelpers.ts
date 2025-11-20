@@ -38,6 +38,7 @@ import {
   fullCamelCaseAndPluralize,
   lowercaseAndPluralize,
   lowerCaseFirstLetter,
+  normalizeConst,
   sanitizeHeaderName,
   toCamelCase,
   toFullCamelCaseFromSnakeCase,
@@ -100,15 +101,18 @@ Handlebars.registerHelper('resolve-package', resolvePackage);
 Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 
 
+/*Handlebars.registerHelper('toConstantName', function(name: string) {
+  return name.toUpperCase().replace(/\./g, '_');
+});*/
 
 Handlebars.registerHelper('toConstantName', function(name: string) {
-  return name.toUpperCase().replace(/\./g, '_');
+  if (!name) return '';
+  return normalizeConst(name);
 });
 
 Handlebars.registerHelper('hasEnabled', function (permission) {
   return permission.hasOwnProperty('enabled');
 });
-
 
 Handlebars.registerHelper(
     "hasQueryAndCommand",
@@ -122,16 +126,18 @@ Handlebars.registerHelper(
     }
 );
 
+Handlebars.registerHelper("normalizePermission", function (raw: string) {
+  if (!raw) return "";
+  return normalizeConst(raw);
+});
+
 Handlebars.registerHelper("normalizeActionNameDocumentation", function(actionName: string) {
   if (!actionName) return "";
 
-  // Adiciona espaço antes de letras maiúsculas (camelCase / PascalCase)
   let withSpaces = actionName.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
 
-  // Substitui underscores e múltiplos espaços por um único espaço
   withSpaces = withSpaces.replace(/[_\s]+/g, " ");
 
-  // Maiúscula inicial, restante minúscula
   return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
 });
 
