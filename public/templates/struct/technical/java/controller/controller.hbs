@@ -49,9 +49,8 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
-      ResponseEntity<{{{resolveResponse responses}}}> response = queryBus.handle(query);
+      return queryBus.handle(query);
 
-      return response;
   {{else}}
 
       final var command = new {{capitalize actionName}}Command(
@@ -65,9 +64,8 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
-       ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
+      return commandBus.send(command);
 
-       return response;
   {{/if}}
 {{else}}
 
