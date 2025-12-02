@@ -5,7 +5,7 @@
 {{#each responses}}
     @ApiResponse(
         responseCode = "{{@key}}",
-        description = "{{this.description}}",
+        {{#if this.description}}description = "{{this.description}}",{{/if}}
         content = @Content(
             {{#each this.content}}
             mediaType = "{{@key}}",
