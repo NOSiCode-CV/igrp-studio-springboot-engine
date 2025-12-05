@@ -11,7 +11,10 @@
 {{#if (or (and resourceConfig.globalRoles resourceConfig.globalRoles.length) (and resourceConfig.globalPermission resourceConfig.globalPermission.items))}}
 @PreAuthorize("{{#if (and resourceConfig.globalRoles resourceConfig.globalRoles.length)}}hasAnyRole({{#each resourceConfig.globalRoles}}'{{this}}'{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{#if (and (and resourceConfig.globalRoles resourceConfig.globalRoles.length) (and resourceConfig.globalPermission resourceConfig.globalPermission.items))}} and {{/if}}{{#if (and resourceConfig.globalPermission resourceConfig.globalPermission.items)}}{{#if (eq resourceConfig.globalPermission.items.length 1)}}@igrpAuthorization.checkPermission(T(Permission).{{normalizePermission resourceConfig.globalPermission.items.[0]}}){{else if (eq resourceConfig.globalPermission.operator "AND")}}@igrpAuthorization.checkAllPermission({{#each resourceConfig.globalPermission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{else}}@igrpAuthorization.checkAnyPermission({{#each resourceConfig.globalPermission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{/if}}")
 {{/if}}
-@Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
+@Tag(
+    name = "{{#if baseConfig.module}}{{capitalize baseConfig.module}}{{else}}{{capitalize resourceConfig.name}}{{/if}}",
+    description = "Controller for handling {{resourceConfig.name}}"
+)
 public class {{capitalize resourceConfig.name}}Controller {
 
   {{>controller-injection}}
