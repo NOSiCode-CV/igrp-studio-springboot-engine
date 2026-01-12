@@ -13,7 +13,7 @@
     "javaVersion": "25",
     "springBootVersion": "3.5.8",
     "springCloudVersion": "2025.0.0",
-    "springDocVersion": "2.8.14"
+    "springDocVersion": "2.8.15"
   },
   "scripts": {
     "test": "jest",
