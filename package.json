@@ -11,7 +11,7 @@
   "custom": {
     "igrpVersion": "0.1.0-beta.1",
     "javaVersion": "25",
-    "springBootVersion": "3.5.8",
+    "springBootVersion": "3.5.9",
     "springCloudVersion": "2025.0.0",
     "springDocVersion": "2.8.15"
   },
