@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -61,6 +64,31 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("errors", errors);
 
         return problemDetail;
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ProblemDetail handleValidationException(
+    HandlerMethodValidationException ex
+    ) {
+
+    var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+    problem.setTitle("Validation failed");
+    problem.setDetail("One or more request fields are invalid");
+
+    var errors = ex.getParameterValidationResults().stream()
+    .flatMap(result -> result.getResolvableErrors().stream())
+    .map(error -> {
+    var map = new HashMap<String, String>();
+    map.put("field", error.getCodes() != null ? error.getCodes()[0] : "unknown");
+    map.put("message", error.getDefaultMessage());
+    return map;
+    })
+    .toList();
+
+    problem.setProperty("errors", errors);
+
+    return problem;
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
