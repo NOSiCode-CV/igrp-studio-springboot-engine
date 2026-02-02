@@ -16,6 +16,7 @@ export const saveEnumConfig = async (config: EnumConfig, basePath: string) => {
 
   const output = getEnumConfigPath(basePath, config.module ?? DIRECTORIES.SHARED, config.name);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     JSON.stringify(config, null, 2),
     output,

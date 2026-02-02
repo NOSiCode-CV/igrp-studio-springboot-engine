@@ -30,6 +30,7 @@ export const generateDTO = async (context: RenderContext<DTOConfig>) => {
 
   const template = await _renderDTO(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     modelOutputPath,
@@ -116,11 +117,11 @@ export const transformDTOConfig = async function (
     if (attr.objectType === PACKAGE_NS.java) {
       const jtOpt:
         | {
-            java: { name: string; primitive: boolean; namespace?: string };
-            dotnet: { name: string; primitive: boolean; namespace?: string };
-            python: { name: string; primitive: boolean; namespace?: string };
-            kotlin: { name: string; primitive: boolean; namespace?: string };
-          }
+          java: { name: string; primitive: boolean; namespace?: string };
+          dotnet: { name: string; primitive: boolean; namespace?: string };
+          python: { name: string; primitive: boolean; namespace?: string };
+          kotlin: { name: string; primitive: boolean; namespace?: string };
+        }
         | undefined = GENERIC_TYPES.get(type.name);
       if (jtOpt) {
         const jt = jtOpt.java;

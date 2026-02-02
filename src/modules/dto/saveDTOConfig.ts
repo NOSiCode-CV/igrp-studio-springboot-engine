@@ -21,6 +21,7 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
     basePath,
   );
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     JSON.stringify(config, null, 2),
     output,

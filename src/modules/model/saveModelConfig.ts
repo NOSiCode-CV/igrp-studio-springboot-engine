@@ -18,6 +18,7 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
   const fileName = capitalizeJavaStyle(config.name);
   const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     JSON.stringify(config),
     output,

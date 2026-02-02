@@ -36,12 +36,14 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   if (primaryKey) {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     const primaryKeyTemplate = await renderPrimaryKey(context);
+    // Override the file only if it is NOT readOnly
     await saveToFile(primaryKeyTemplate, primaryKeyPath, !context.resourceConfig.readOnly);
   }
 
   //finding remove relations before saving
   await findRemovedRelations(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     modelOutputPath,

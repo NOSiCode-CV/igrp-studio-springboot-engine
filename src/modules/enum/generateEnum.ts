@@ -10,6 +10,7 @@ export const generateEnum = async (context: RenderContext<EnumConfig>) => {
 
   const template = await _renderEnum(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     enumOutputPath,
