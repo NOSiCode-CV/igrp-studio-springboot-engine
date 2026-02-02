@@ -1,18 +1,20 @@
-import { EnumConfig, RenderContext } from '../../interfaces/types';
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
-} from '../../utils/constants';
-import { getDDDEnumOutputDir, getEnumOutputDir } from '../../utils/helpers';
-import { renderTemplate } from '../common/renderTemplate';
-import { saveToFile } from '../common/saveToFile';
+import {EnumConfig, RenderContext} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,} from '../../utils/constants';
+import {getDDDEnumOutputDir, getEnumOutputDir} from '../../utils/helpers';
+import {renderTemplate} from '../common/renderTemplate';
+import {saveToFile} from '../common/saveToFile';
 import path from 'path';
+import fs from 'fs-extra';
+import {saveEnumConfig} from './saveEnumConfig';
 
 export const generateEnum = async (context: RenderContext<EnumConfig>) => {
   const enumOutputPath = getEnumOutputPath(context);
+
+  if (context.resourceConfig.readOnly && await fs.pathExists(enumOutputPath)) {
+    await saveEnumConfig(context.resourceConfig, context.basePath);
+    return;
+  }
+
   const template = await _renderEnum(context);
 
   await saveToFile(

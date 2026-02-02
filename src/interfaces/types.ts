@@ -322,6 +322,7 @@ export interface EnumConfig extends IdentifiableElement, VersionedConfig {
   module?: string;
   values: EnumValue[];
   attributes?: Attribute[];
+  readOnly?: boolean;
 }
 
 export interface EnumValue {

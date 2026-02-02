@@ -1,7 +1,8 @@
-import { saveToFile } from '../common/saveToFile';
-import { EnumConfig } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
-import { getEnumConfigPath } from '../../utils/helpers';
+import {saveToFile} from '../common/saveToFile';
+import {EnumConfig} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS} from '../../utils/constants';
+import {getEnumConfigPath} from '../../utils/helpers';
+import * as fs from 'fs';
 
 /**
  * Generates and saves the configuration file of an enum.
@@ -15,6 +16,11 @@ export const saveEnumConfig = async (config: EnumConfig, basePath: string) => {
   }
 
   const output = getEnumConfigPath(basePath, config.module ?? DIRECTORIES.SHARED, config.name);
+
+  if (config.readOnly && fs.existsSync(output)) {
+    return;
+  }
+
   await saveToFile(
     JSON.stringify(config, null, 2),
     output,

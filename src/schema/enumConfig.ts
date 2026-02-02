@@ -172,6 +172,11 @@ const enumSchema: JSONSchemaType<EnumConfig> = {
       items: valueSchema,
       errorMessage: 'The values must be an array of valid enum values definitions.',
     },
+    readOnly: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'The readOnly field, if provided, must be a boolean value.',
+    },
   },
   required: ['values', 'name'],
   additionalProperties: false,
