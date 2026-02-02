@@ -2,7 +2,6 @@ import {saveToFile} from '../common/saveToFile';
 import {DTOConfig, ObjectTypes} from '../../interfaces/types';
 import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS} from '../../utils/constants';
 import {getDTOConfigPath} from '../../utils/helpers';
-import fs from 'fs-extra';
 
 /**
  * Generates and saves the configuration file of a DTO.
@@ -22,14 +21,10 @@ export const saveDTOConfig = async (config: DTOConfig, basePath: string) => {
     basePath,
   );
 
-  if (config.readOnly && (await fs.pathExists(output))) {
-    return;
-  }
-
   await saveToFile(
     JSON.stringify(config, null, 2),
     output,
-    true,
+    !config.readOnly,
     DIRECTORIES.CONFIG_DTO,
     config.id,
     config.module,

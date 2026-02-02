@@ -16,11 +16,6 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
     modelOutputPath = getDDDModelOutputPath(context);
   else modelOutputPath = getModelOutputPath(context);
 
-  if (context.resourceConfig.readOnly && await fs.pathExists(modelOutputPath)) {
-    await saveModelConfig(context.resourceConfig, context.basePath);
-    return;
-  }
-
   const template = await renderModel(context);
 
   const errorsUniqueConstraints = validarUniqueConstraints(context.resourceConfig);
@@ -41,7 +36,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   if (primaryKey) {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     const primaryKeyTemplate = await renderPrimaryKey(context);
-    await saveToFile(primaryKeyTemplate, primaryKeyPath);
+    await saveToFile(primaryKeyTemplate, primaryKeyPath, !context.resourceConfig.readOnly);
   }
 
   //finding remove relations before saving
@@ -50,7 +45,7 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   await saveToFile(
     template,
     modelOutputPath,
-    true,
+    !context.resourceConfig.readOnly,
     DIRECTORIES.MODELS,
     context.resourceConfig.id,
     context.resourceConfig.module,
