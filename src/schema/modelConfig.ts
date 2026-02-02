@@ -541,6 +541,11 @@ const modelConfigSchema: JSONSchemaType<ModelConfig> = {
         'The aggregate name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true,
     },
+    readOnly: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'The readOnly field, if provided, must be a boolean value.',
+    },
   },
   required: ['type', 'name', 'attributes', 'tableName'],
   additionalProperties: false,

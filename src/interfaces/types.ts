@@ -71,6 +71,7 @@ export interface ModelConfig extends IdentifiableElement, VersionedConfig {
   audit?: boolean;
   revision?: boolean;
   module?: string;
+  readOnly?: boolean;
 }
 
 export interface EntityIndex {
@@ -236,7 +237,7 @@ export interface AppExportsConfig {
   permissionGroups: GroupPermissionDef[];
 }
 
-export interface GroupPermissionDef{
+export interface GroupPermissionDef {
   name: string;
   permissions: PermissionDef[];
   module?: string;

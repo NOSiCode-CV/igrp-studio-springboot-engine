@@ -1,8 +1,9 @@
-import { saveToFile } from '../common/saveToFile';
-import { ModelConfig } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
-import { getModelConfigPath } from '../../utils/helpers';
-import { capitalizeJavaStyle } from '../../helper/stringHelper';
+import {saveToFile} from '../common/saveToFile';
+import {ModelConfig} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS} from '../../utils/constants';
+import {getModelConfigPath} from '../../utils/helpers';
+import {capitalizeJavaStyle} from '../../helper/stringHelper';
+import * as fs from 'fs';
 
 /**
  * Generates and saves the configuration file of a model.
@@ -17,6 +18,11 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
 
   const fileName = capitalizeJavaStyle(config.name);
   const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
+
+  if (config.readOnly && fs.existsSync(output)) {
+    return;
+  }
+
   await saveToFile(
     JSON.stringify(config),
     output,

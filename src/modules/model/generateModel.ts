@@ -1,29 +1,13 @@
-import {
-  Attribute,
-  ModelConfig,
-  RemovedRelationReference,
-  RenderContext,
-} from '../../interfaces/types';
-import { renderTemplate } from '../common/renderTemplate';
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
-} from '../../utils/constants';
-import { saveToFile } from '../common/saveToFile';
-import {
-  getDDDModelOutputDir,
-  getModelConfigPath,
-  getModelOutputDir,
-  loadModelConfig,
-} from '../../utils/helpers';
+import {Attribute, ModelConfig, RemovedRelationReference, RenderContext,} from '../../interfaces/types';
+import {renderTemplate} from '../common/renderTemplate';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,} from '../../utils/constants';
+import {saveToFile} from '../common/saveToFile';
+import {getDDDModelOutputDir, getModelConfigPath, getModelOutputDir, loadModelConfig,} from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
-import { updatePermissions } from '../permission/permissionManagement';
-import { saveModelConfig } from './saveModelConfig';
-import { capitalizeJavaStyle } from '../../helper/stringHelper';
+import {updatePermissions} from '../permission/permissionManagement';
+import {saveModelConfig} from './saveModelConfig';
+import {capitalizeJavaStyle} from '../../helper/stringHelper';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
@@ -31,6 +15,11 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   if (context.baseConfig.projectStructureStyle == PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN)
     modelOutputPath = getDDDModelOutputPath(context);
   else modelOutputPath = getModelOutputPath(context);
+
+  if (context.resourceConfig.readOnly && await fs.pathExists(modelOutputPath)) {
+    await saveModelConfig(context.resourceConfig, context.basePath);
+    return;
+  }
 
   const template = await renderModel(context);
 
