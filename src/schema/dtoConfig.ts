@@ -1,7 +1,7 @@
-import { ajvInstance } from '../utils/ajv-instance';
-import { JSONSchemaType, ValidateFunction } from 'ajv';
-import { AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute } from '../interfaces/types';
-import { PATTERNS } from '../utils/constants';
+import {ajvInstance} from '../utils/ajv-instance';
+import {JSONSchemaType, ValidateFunction} from 'ajv';
+import {AttributeType, DTOBaseConfig, DTOConfig, JavaAttribute} from '../interfaces/types';
+import {PATTERNS} from '../utils/constants';
 
 const genericAttributeSchema: JSONSchemaType<AttributeType> = {
   type: 'string',
@@ -151,6 +151,11 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
       nullable: true,
       errorMessage: 'enable custon validation must be a boolean value.',
     },
+    readOnly: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'readOnly must be a boolean value.',
+    },
     template: {
       type: 'string',
       enum: ['record', 'classic'],
@@ -244,6 +249,11 @@ const deletedDTOConfigSchema: JSONSchemaType<DTOBaseConfig> = {
       type: 'boolean',
       nullable: true,
       errorMessage: 'enable custon validation must be a boolean value.',
+    },
+    readOnly: {
+      type: 'boolean',
+      nullable: true,
+      errorMessage: 'readOnly must be a boolean value.',
     },
     extends: {
       type: 'object',

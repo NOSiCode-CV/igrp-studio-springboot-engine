@@ -1,39 +1,38 @@
+import {ApiConfig, DTOConfig, EnumConfig, JavaType, ModelConfig, RenderContext,} from '../../interfaces/types';
+import {renderTemplate} from '../common/renderTemplate';
 import {
-  ApiConfig,
-  DTOConfig,
-  EnumConfig,
-  JavaType,
-  ModelConfig,
-  RenderContext,
-} from '../../interfaces/types';
-import { renderTemplate } from '../common/renderTemplate';
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  GENERIC_TYPES,
-  PACKAGE_NS,
-  PACKAGES,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
+    DIRECTORIES,
+    ERROR_MESSAGE,
+    EXTENSIONS,
+    GENERIC_TYPES,
+    PACKAGE_NS,
+    PACKAGES,
+    PROJECT_STRUCTURE_STYLE,
+    TEMPLATES,
 } from '../../utils/constants';
-import { saveToFile } from '../common/saveToFile';
+import {saveToFile} from '../common/saveToFile';
 import {
-  getDDDCommandOutputDir,
-  getDDDDtoOutputDir,
-  getDDDEventOutputDir,
-  getDDDQueryOutputDir,
-  getDtoOutputDir,
-  getPackageNameFromConfig,
+    getDDDCommandOutputDir,
+    getDDDDtoOutputDir,
+    getDDDEventOutputDir,
+    getDDDQueryOutputDir,
+    getDtoOutputDir,
+    getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
-import { getModelTypes } from '../model/helpers';
-import { getDTOTypes } from './helpers';
-import { normalizeName } from './saveDTOConfig';
-import { getEnumTypes } from '../enum/helpers';
+import {getModelTypes} from '../model/helpers';
+import {getDTOTypes} from './helpers';
+import {normalizeName} from './saveDTOConfig';
+import {getEnumTypes} from '../enum/helpers';
+import fs from 'fs-extra';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
+
+  if (context.resourceConfig.readOnly && (await fs.pathExists(modelOutputPath))) {
+    return;
+  }
+
   const template = await _renderDTO(context);
 
   await saveToFile(

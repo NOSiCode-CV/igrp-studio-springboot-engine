@@ -128,6 +128,7 @@ export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
   name: string;
   module?: string;
   enableCustonValidation?: boolean;
+  readOnly?: boolean;
   extends?: DTOParentReference;
 }
 
