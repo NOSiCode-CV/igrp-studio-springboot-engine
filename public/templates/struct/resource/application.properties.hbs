@@ -80,16 +80,12 @@ springdoc.swagger-ui.tryItOutEnabled=true
 springdoc.swagger-ui.docExpansion=none
 {{#if baseConfig.enableObservability}}
 # Observability
-management.info.git.mode=full
-management.endpoints.web.exposure.include=*
-management.metrics.tags.application=${spring.application.name}
-management.tracing.enabled=false
-management.tracing.sampling.probability=1.0
-{{#if baseConfig.enableGraalVm}}
-# OpenTelemetry
-otel.traces.exporter=otlp
+otel.resource.attributes.service.name=${spring.application.name}
+otel.resource.attributes.deployment.environment=${spring.profiles.active}
+otel.logs.exporter=otlp
 otel.metrics.exporter=otlp
-otel.service.name=${OTEL_SERVICE_NAME}
+otel.traces.exporter=otlp
 otel.exporter.otlp.endpoint=${OTEL_COLLECTOR_ENDPOINT}
-{{/if}}
+otel.sdk.disabled=${OTEL_DISABLED:true}
+
 {{/if}}

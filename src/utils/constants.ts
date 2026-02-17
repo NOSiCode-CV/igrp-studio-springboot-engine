@@ -443,10 +443,8 @@ export const OBSERVABILITY_YAML_CONFIG_FILES = [
   { template: TEMPLATES.MONITORING_TEMPO, output: 'tempo.yml' },
 ];
 
-export const OBSERVABILITY_BINARY_FILES = [
-  { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' },
-  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
-];
+export const OBSERVABILITY_BINARY_FILES: { template: string; output: string }[] = [];
+
 
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES_FILE: 'application.properties',
