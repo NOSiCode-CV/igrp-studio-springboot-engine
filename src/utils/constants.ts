@@ -1,5 +1,5 @@
-import { ConfigTypes, ImportTypeMetadata, TypeMetadata } from '../interfaces/types';
-import { normalizeName } from '../modules/dto/saveDTOConfig';
+import {ConfigTypes, ImportTypeMetadata, TypeMetadata} from '../interfaces/types';
+import {normalizeName} from '../modules/dto/saveDTOConfig';
 
 export const DIRECTORIES = {
   BASE_API: '.igrpstudio/baseApi.json',
@@ -60,6 +60,8 @@ export const DIRECTORIES = {
   MODULE: 'module',
   CONSTANTS: 'constants',
   KUBERNETES: 'k8s',
+  AUTHORIZATION : 'authorization',
+  PERMISSION: 'permission',
 };
 
 export const PACKAGES = {
@@ -256,6 +258,11 @@ export const TEMPLATES = {
   CONFIG_GITLABCIYAML: 'config/gitlabciyaml.hbs',
   CONFIG_DOCKERIGNORE: 'config/dockerignore.hbs',
   CONFIG_SECURITY: 'config/security.hbs',
+  SWAGGER_CONFIG: 'config/swagger-config.hbs',
+  ENUM_EXPOSER_CONFIG: 'config/enum-rest-exposer.hbs',
+  /*CONFIG_AUTHORIZATION_SECURITY: 'config/igrp-authorization-service.hbs',
+  CONFIG_AUTHENTICATION_HELPER: 'config/authentication-helper.hbs',
+  CONFIG_AUTHORIZATION_CONFIG: 'config/authorization-config.hbs',*/
   OPEN_TELEMETRY_CONFIG_GRAALVM: 'config/open-telemetry-config-graalvm.hbs',
   ENVER_HINTS_GRAALVM_CONFIG: 'config/enver-hints-graalvm-config.hbs',
 
@@ -370,6 +377,8 @@ export const TEMPLATES = {
   VALIDATOR_DTO_IMPL: 'struct/technical/java/dto/dtoValidatorImpl.hbs',
 
   GITKEEPFILE: 'struct/gitKeepFile.hbs',
+
+  PERMISSION_GROUP: 'struct/permisson-group.hbs'
 };
 
 export const CONFIG_FILES = [
@@ -434,10 +443,8 @@ export const OBSERVABILITY_YAML_CONFIG_FILES = [
   { template: TEMPLATES.MONITORING_TEMPO, output: 'tempo.yml' },
 ];
 
-export const OBSERVABILITY_BINARY_FILES = [
-  { template: TEMPLATES.CONFIG_OTEL_AGENT, output: 'opentelemetry-javaagent.jar' },
-  //{ template: TEMPLATES.CONFIG_MVNW, output: 'mvnw' }
-];
+export const OBSERVABILITY_BINARY_FILES: { template: string; output: string }[] = [];
+
 
 export const COMMON_FILES = {
   APPLICATION_PROPERTIES_FILE: 'application.properties',
@@ -462,6 +469,11 @@ export const COMMON_FILES = {
   OPEN_TELEMETRY_CONFIG_JAVA_FILE: 'OtelConfig.java',
   ENVER_HINTS_GRAALVM_CONFIG_JAVA_FILE: 'EnversHints.java',
   APPLICATION_SECURITY: 'SecurityConfig.java',
+  SWAGGER_CONFIG: 'SwaggerConfig.java',
+  ENUM_EXPOSER_CONFIG: 'IgrpEnumDynamicRestExposer.java',
+  /*IGRP_AUTHORIZATION_SERVICE: 'IgrpAuthorizationService.java',
+  IGRP_AUTHENTICATION_HELPER: 'AuthenticationHelper.java',
+  IGRP_AUTHORIZATION_CONFIG: 'AuthorizationConfig.java',*/
   GLOBAL_EXCEPTION_HANDLER: 'GlobalExceptionHandler.java',
   IGRP_RESPONSE_STATUS_EXCEPTION: 'IgrpResponseStatusException.java',
   IGRP_PROBLEM: 'IgrpProblem.java',

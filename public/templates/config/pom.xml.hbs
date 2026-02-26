@@ -31,9 +31,13 @@
       <id>igrp-framework-releases</id>
       <url>https://sonatype.nosi.cv/repository/igrp-framework-releases/</url>
     </repository>
+    <repository>
+			<id>igrp-snapshots</id>
+			<url>https://sonatype.nosi.cv/repository/igrp-framework/</url>
+		</repository>
   </repositories>
 	<properties>
-    <igrp.version>{{baseConfig.version}}</igrp.version>
+    <igrp.version>0.1.0-beta.1</igrp.version>
     <java.version>{{baseConfig.javaVersion}}</java.version>
     <spring-cloud.version>{{baseConfig.springCloudVersion}}</spring-cloud.version>
     <springdoc.version>{{baseConfig.springDocVersion}}</springdoc.version>
@@ -75,6 +79,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      {{#if baseConfig.enableObservability}}
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-bom</artifactId>
+        <version>2.21.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      {{/if}}
     </dependencies>
   </dependencyManagement>
 	<build>
@@ -89,7 +102,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.14.1</version>
         <configuration>
           <annotationProcessorPaths>
             <path>

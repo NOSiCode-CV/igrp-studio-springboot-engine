@@ -1,5 +1,5 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
 
 {{> package-java }}
 
@@ -46,7 +46,16 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if this.primaryKey}}
     @Id
     {{#unless (eq this.generationType "NONE")}}
+        {{#if (eq this.generationType "SEQUENCE")}}
+            {{#if this.sequenceName}}
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "{{toLowerCase this.sequenceName}}")
+    @SequenceGenerator(name = "{{toLowerCase this.sequenceName}}", sequenceName = "{{this.sequenceName}}", allocationSize = 1)
+            {{else}}
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+            {{/if}}
+        {{else}}
     @GeneratedValue(strategy = GenerationType.{{this.generationType}})
+        {{/if}}
     {{/unless}}
     @Column(name = "{{toLowerCase this.name}}", unique = true, nullable = false)
     private {{resolve-type this}} {{toFullCamelCaseFromSnakeCase this.name}};{{else}}{{#if (eq this.nullable false)}}{{#if (isText-type this.type)}}
@@ -89,12 +98,12 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};{{else}}
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}} = new HashSet<>();{{else}}
     @ManyToMany(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
     {{#if (and (eq this.relation.cardinality 'twoWay') this.relation.orphanRemoval)}}
     @OnDelete(action = OnDeleteAction.SET_NULL)
     {{/if~}}
-    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}};
+    private Set<{{capitalize this.relation.entity}}> {{fullCamelCaseAndPluralize this.name}} = new HashSet<>();
   {{/if~}}
   {{/if~}}
   {{/if~}}
@@ -115,14 +124,14 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private List<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}};
+   private List<{{this.entity}}> {{fullCamelCaseAndPluralize this.fieldName}} = new ArrayList<>();
   {{/if}}
   {{#if (eq this.type 'ManyToMany') }}
    @ManyToMany(mappedBy = "{{fullCamelCaseAndPluralize this.mappedBy}}", fetch = FetchType.{{toUpperCase fetchType}}{{#if this.cascadeType}}, cascade = { {{#each  this.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}})
    {{#if this.orphanRemoval}}
    @OnDelete(action = OnDeleteAction.SET_NULL)
    {{/if~}}
-   private Set<{{this.entity}}> {{fullCamelCaseAndPluralizeAndRemoveEntitySufix this.entity}};
+   private Set<{{this.entity}}> {{fullCamelCaseAndPluralizeAndRemoveEntitySufix this.entity}} = new HashSet<>();
   {{/if}}
 
 {{/each}}

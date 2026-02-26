@@ -1,12 +1,5 @@
-import {
-  ApiConfig,
-  DTOConfig,
-  EnumConfig,
-  JavaType,
-  ModelConfig,
-  RenderContext,
-} from '../../interfaces/types';
-import { renderTemplate } from '../common/renderTemplate';
+import {ApiConfig, DTOConfig, EnumConfig, JavaType, ModelConfig, RenderContext,} from '../../interfaces/types';
+import {renderTemplate} from '../common/renderTemplate';
 import {
   DIRECTORIES,
   ERROR_MESSAGE,
@@ -17,7 +10,7 @@ import {
   PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
 } from '../../utils/constants';
-import { saveToFile } from '../common/saveToFile';
+import {saveToFile} from '../common/saveToFile';
 import {
   getDDDCommandOutputDir,
   getDDDDtoOutputDir,
@@ -27,19 +20,21 @@ import {
   getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
-import { getModelTypes } from '../model/helpers';
-import { getDTOTypes } from './helpers';
-import { normalizeName } from './saveDTOConfig';
-import { getEnumTypes } from '../enum/helpers';
+import {getModelTypes} from '../model/helpers';
+import {getDTOTypes} from './helpers';
+import {normalizeName} from './saveDTOConfig';
+import {getEnumTypes} from '../enum/helpers';
 
 export const generateDTO = async (context: RenderContext<DTOConfig>) => {
   const modelOutputPath = getDTOOutputPath(context);
+
   const template = await _renderDTO(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     modelOutputPath,
-    true,
+    !context.resourceConfig.readOnly,
     DIRECTORIES.DTO,
     context.resourceConfig.id,
     context.resourceConfig.module,
@@ -122,11 +117,11 @@ export const transformDTOConfig = async function (
     if (attr.objectType === PACKAGE_NS.java) {
       const jtOpt:
         | {
-            java: { name: string; primitive: boolean; namespace?: string };
-            dotnet: { name: string; primitive: boolean; namespace?: string };
-            python: { name: string; primitive: boolean; namespace?: string };
-            kotlin: { name: string; primitive: boolean; namespace?: string };
-          }
+          java: { name: string; primitive: boolean; namespace?: string };
+          dotnet: { name: string; primitive: boolean; namespace?: string };
+          python: { name: string; primitive: boolean; namespace?: string };
+          kotlin: { name: string; primitive: boolean; namespace?: string };
+        }
         | undefined = GENERIC_TYPES.get(type.name);
       if (jtOpt) {
         const jt = jtOpt.java;
@@ -192,11 +187,7 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
-    } else if (attr.objectType === PACKAGE_NS.dto && attr.type === 'object') {
-      typeNotFound = false;
-    } else {
-      typeNotFound = true;
-    }
+    } else typeNotFound = !(attr.objectType === PACKAGE_NS.dto && attr.type === 'object');
 
     if (typeNotFound) {
       errors.push({
@@ -209,6 +200,10 @@ export const transformDTOConfig = async function (
 
   // normalize the name of the DTO
   ncfg.name = normalizeName(config.name, config.type);
+
+  if (ncfg.extends) {
+    ncfg.extends.name = normalizeName(ncfg.extends.name, 'dto');
+  }
 
   if (errors.length > 0) {
     throw errors;

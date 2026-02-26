@@ -1,7 +1,6 @@
-
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-private final CommandBus commandBus;
-private final QueryBus queryBus;
+{{#if (eq baseConfig.projectStructureStyle "domain")}}{{#with (hasQueryAndCommand resourceConfig.actions) as |methods|}}{{#if methods.hasQuery}}
+private final QueryBus queryBus;{{/if}}{{#if methods.hasCommand}}
+private final CommandBus commandBus;{{/if}}{{/with}}
 {{else}}
 private final I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service;
 {{/if}}

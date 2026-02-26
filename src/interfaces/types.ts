@@ -14,7 +14,6 @@ import {
   RELATIONSHIP_TYPES,
   STRUCT_TYPES,
 } from '../utils/constants';
-import { Dependency } from './springDependencyTypes';
 
 interface IdentifiableElement {
   id?: string;
@@ -72,6 +71,7 @@ export interface ModelConfig extends IdentifiableElement, VersionedConfig {
   audit?: boolean;
   revision?: boolean;
   module?: string;
+  readOnly?: boolean;
 }
 
 export interface EntityIndex {
@@ -129,6 +129,7 @@ export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
   name: string;
   module?: string;
   enableCustonValidation?: boolean;
+  readOnly?: boolean;
   extends?: DTOParentReference;
 }
 
@@ -174,7 +175,7 @@ export interface JavaAttribute {
   objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
 
 export interface Attribute {
   type: ModelAttributeType;
@@ -184,6 +185,7 @@ export interface Attribute {
   unique?: boolean;
   primaryKey?: boolean;
   generationType?: GenerationType;
+  sequenceName?: string;
   defaultValue?: string;
   module?: string;
   relation?: Relation;
@@ -231,18 +233,42 @@ export interface IModelPermission {
   permissions: string[];
 }
 
+export interface AppExportsConfig {
+  permissionGroups: GroupPermissionDef[];
+}
+
+export interface GroupPermissionDef {
+  name: string;
+  permissions: PermissionDef[];
+  module?: string;
+}
+
+export interface PermissionDef {
+  name: string;
+  description: string;
+  enabled?: boolean;
+}
+
+export interface PermissionsConfig {
+  items: string[];
+  operator?: 'AND' | 'OR';  // default 'OR'
+}
+
 export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;
   basePath: string;
   actions: ControllerAction[];
   module?: string;
+  globalPermission?: PermissionsConfig;
+  globalRoles?: string[];
   description: string;
 }
 
 export interface ControllerAction {
   path?: string;
-  permissions?: string[];
+  permission?: PermissionsConfig;
+  roles?: string[];
   actionName: string;
   method: HttpMethod;
   headers?: HttpHeader[];
@@ -296,6 +322,7 @@ export interface EnumConfig extends IdentifiableElement, VersionedConfig {
   module?: string;
   values: EnumValue[];
   attributes?: Attribute[];
+  readOnly?: boolean;
 }
 
 export interface EnumValue {
@@ -388,7 +415,7 @@ export interface Body extends BaseBody {
   module?: string;
 }
 
-export interface RequestConfig extends Body {}
+export interface RequestConfig extends Body { }
 
 export interface ResponseConfig extends Body {
   type: 'response';
@@ -450,6 +477,40 @@ export interface PathConfig {
 export interface RemovedRelationReference {
   entity: string;
   module: string;
+}
+
+export interface EngineConfigurationSettings {
+  environment?: string
+}
+
+export interface Dependency {
+  name: string;
+  groupId: string;
+  artifactId: string;
+  scope: string;
+  version?: string;
+  bom?: string;
+}
+
+export interface SpringInitializerData {
+  bootVersion: string;
+  dependencies: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      scope: string;
+      version?: string;
+      bom?: string;
+    };
+  };
+  repositories: any;
+  boms: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      version: string;
+    };
+  };
 }
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];

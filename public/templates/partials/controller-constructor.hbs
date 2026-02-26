@@ -1,11 +1,10 @@
-
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
-public {{capitalize resourceConfig.name}}Controller(
-  CommandBus commandBus, QueryBus queryBus
-) {
-  this.commandBus = commandBus;
-  this.queryBus = queryBus;
+    {{#with (hasQueryAndCommand resourceConfig.actions) as |methods|}}
+public {{capitalize ../resourceConfig.name}}Controller({{#if methods.hasQuery}}QueryBus queryBus{{/if}}{{#if methods.hasCommand}}{{#if methods.hasQuery}}, {{/if}}CommandBus commandBus{{/if}}) {
+        {{#if methods.hasQuery}}this.queryBus = queryBus;{{/if}}
+        {{#if methods.hasCommand}}this.commandBus = commandBus;{{/if}}
 }
+    {{/with}}
 {{else}}
 public {{resourceConfig.name}}Controller(I{{resourceConfig.name}}Service {{toCamelCase resourceConfig.name}}Service){
   this.{{toCamelCase resourceConfig.name}}Service = {{toCamelCase resourceConfig.name}}Service;

@@ -2,22 +2,21 @@
 POSTGRES_SERVICE_NAME=postgres
 # Use <localhost> to conect to a database in docker with api outside, use <host.docker.internal> when running the full app, database inside docker desktop locally
 POSTGRES_HOST=host.docker.internal
-POSTGRES_INTERNAL_PORT=5432
-POSTGRES_EXTERNAL_PORT=5432
+POSTGRES_PORT=5432
 POSTGRES_DATABASE={{toLowerCase baseConfig.name}}_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 {{else if (eq baseConfig.database "MySQL")}}
+MYSQL_HOST=host.docker.internal
 MYSQL_SERVICE_NAME=mysql
-MYSQL_INTERNAL_PORT=3306
-MYSQL_EXTERNAL_PORT=3306
+MYSQL_PORT=3306
 MYSQL_DATABASE={{toLowerCase baseConfig.name}}_db
 MYSQL_PASSWORD=root
 MYSQL_ROOT_PASSWORD=root
 {{else if (eq baseConfig.database "Oracle")}}
-ORACLE_SERVICE_NAME=oracle
-ORACLE_INTERNAL_PORT=1521
-ORACLE_EXTERNAL_PORT=1521
+ORACLE_HOST=host.docker.internal
+ORACLE_PORT=1521
+ORACLE_SERVICE_NAME=XEPDB1
 ORACLE_DATABASE={{toLowerCase baseConfig.name}}_db
 ORACLE_USER=system
 ORACLE_PASSWORD=oracle

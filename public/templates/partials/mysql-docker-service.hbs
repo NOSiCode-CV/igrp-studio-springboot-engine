@@ -6,7 +6,7 @@ mysql-{{toLowerCase baseConfig.name}}-api-service:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - ${MYSQL_EXTERNAL_PORT}:${MYSQL_INTERNAL_PORT}
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     volumes:
       - mysql-data-8-{{toLowerCase baseConfig.name}}-api-service:/var/lib/mysql
     restart: unless-stopped

@@ -1,24 +1,20 @@
-import { EnumConfig, RenderContext } from '../../interfaces/types';
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
-} from '../../utils/constants';
-import { getDDDEnumOutputDir, getEnumOutputDir } from '../../utils/helpers';
-import { renderTemplate } from '../common/renderTemplate';
-import { saveToFile } from '../common/saveToFile';
+import {EnumConfig, RenderContext} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,} from '../../utils/constants';
+import {getDDDEnumOutputDir, getEnumOutputDir} from '../../utils/helpers';
+import {renderTemplate} from '../common/renderTemplate';
+import {saveToFile} from '../common/saveToFile';
 import path from 'path';
 
 export const generateEnum = async (context: RenderContext<EnumConfig>) => {
   const enumOutputPath = getEnumOutputPath(context);
+
   const template = await _renderEnum(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     enumOutputPath,
-    true,
+    !context.resourceConfig.readOnly,
     DIRECTORIES.ENUM,
     context.resourceConfig.id,
     context.resourceConfig.module,

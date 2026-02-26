@@ -1,5 +1,5 @@
 import path from 'path';
-import { RenderContext } from '../../interfaces/types';
+import {RenderContext} from '../../interfaces/types';
 import {
   COMMON_FILES,
   CONFIG_FILES,
@@ -12,12 +12,12 @@ import {
   PROJECT_STRUCTURE_STYLE,
   TEMPLATES,
 } from '../../utils/constants';
-import { capitalize } from '../../helper/stringHelper';
-import { renderTemplate } from '../common/renderTemplate';
-import { getMainPath } from '../../utils/helpers';
-import { saveBinaryToFile, saveToFile } from '../common/saveToFile';
+import {capitalize} from '../../helper/stringHelper';
+import {renderTemplate} from '../common/renderTemplate';
+import {getMainPath} from '../../utils/helpers';
+import {saveBinaryToFile, saveToFile} from '../common/saveToFile';
 import fs from 'fs-extra';
-import { getPaths } from '../../index';
+import {getPaths} from '../../index';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -126,6 +126,16 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       },
       {
         output: configPath,
+        template: TEMPLATES.SWAGGER_CONFIG,
+        name: COMMON_FILES.SWAGGER_CONFIG,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.ENUM_EXPOSER_CONFIG,
+        name: COMMON_FILES.ENUM_EXPOSER_CONFIG,
+      },
+      {
+        output: configPath,
         template: TEMPLATES.APPLICATION_AUDIT_AWARE,
         name: COMMON_FILES.APPLICATION_AUDIT_AWARE,
       },
@@ -183,6 +193,7 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
       }
     );
   } else {
+
     const configPath = path.join(mainPath, 'config');
     const securityPath = path.join(mainPath, 'security');
     const exceptionPath = path.join(mainPath, 'exceptions');
@@ -222,6 +233,16 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: configPath,
         template: TEMPLATES.DOMAIN_MODEL_AUDIT,
         name: COMMON_FILES.AUDIT_ENTITY,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.SWAGGER_CONFIG,
+        name: COMMON_FILES.SWAGGER_CONFIG,
+      },
+      {
+        output: configPath,
+        template: TEMPLATES.ENUM_EXPOSER_CONFIG,
+        name: COMMON_FILES.ENUM_EXPOSER_CONFIG,
       },
       {
         output: resourcePath,

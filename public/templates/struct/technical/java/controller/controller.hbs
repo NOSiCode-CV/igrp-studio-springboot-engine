@@ -1,5 +1,5 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
 
 {{> package-java }}
 
@@ -8,18 +8,24 @@
 @IgrpController
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
-@Tag(name = "{{capitalize resourceConfig.name}}", description = "{{resourceConfig.description}}")
+{{#if (or (and resourceConfig.globalRoles resourceConfig.globalRoles.length) (and resourceConfig.globalPermission resourceConfig.globalPermission.items))}}
+@PreAuthorize("{{#if (and resourceConfig.globalRoles resourceConfig.globalRoles.length)}}hasAnyRole({{#each resourceConfig.globalRoles}}'{{this}}'{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{#if (and (and resourceConfig.globalRoles resourceConfig.globalRoles.length) (and resourceConfig.globalPermission resourceConfig.globalPermission.items))}} and {{/if}}{{#if (and resourceConfig.globalPermission resourceConfig.globalPermission.items)}}{{#if (eq resourceConfig.globalPermission.items.length 1)}}@igrpAuthorization.checkPermission(T(Permission).{{normalizePermission resourceConfig.globalPermission.items.[0]}}){{else if (eq resourceConfig.globalPermission.operator "AND")}}@igrpAuthorization.checkAllPermission({{#each resourceConfig.globalPermission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{else}}@igrpAuthorization.checkAnyPermission({{#each resourceConfig.globalPermission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{/if}}")
+{{/if}}
+@Tag(
+    name = "{{#if resourceConfig.module}}{{capitalize resourceConfig.module}}{{else}}{{capitalize resourceConfig.name}}{{/if}}",
+    description = "{{resourceConfig.description}}"
+)
 public class {{capitalize resourceConfig.name}}Controller {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}Controller.class);
 
   {{>controller-injection}}
 
   {{>controller-constructor}}
-
   {{#each resourceConfig.actions}}
-  @{{ toTitleCase method}}Mapping({{#if path}}
-    value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
+      {{#if (or (and this.roles this.roles.length) (and this.permission this.permission.items))}}
+   @PreAuthorize("{{#if (and this.roles this.roles.length)}}hasAnyRole({{#each this.roles}}'{{this}}'{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{#if (and (and this.roles this.roles.length) (and this.permission this.permission.items))}} and {{/if}}{{#if (and this.permission this.permission.items)}}{{#if (eq this.permission.items.length 1)}}@igrpAuthorization.checkPermission(T(Permission).{{normalizePermission this.permission.items.[0]}}){{else if (eq this.permission.operator "AND")}}@igrpAuthorization.checkAllPermission({{#each this.permission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{else}}@igrpAuthorization.checkAnyPermission({{#each this.permission.items}}T(Permission).{{normalizePermission this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}{{/if}}")
+      {{/if}}
+   @{{ toTitleCase method}}Mapping({{#if path}}
+   value = "{{path}}"{{/if}}{{#if (and this.headers path)}}{{#if
     (containsContentHeader headers)}}, {{/if}}{{/if}}
     {{#if headers}}
     {{#each headers}}
@@ -35,8 +41,6 @@ public class {{capitalize resourceConfig.name}}Controller {
   {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
   {{#if (eq method "GET")}}
 
-      LOGGER.debug("Operation started");
-
       final var query = new {{capitalize actionName}}Query(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
       {{~#if requestBody}}{{#if (or modelAttribute pathVariables requestParams)}}, {{/if}}{{/if~}}
@@ -48,16 +52,9 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
-      ResponseEntity<{{{resolveResponse responses}}}> response = queryBus.handle(query);
+      return queryBus.handle(query);
 
-      LOGGER.debug("Operation finished");
-
-      return ResponseEntity.status(response.getStatusCode())
-              .headers(response.getHeaders())
-              .body(response.getBody());
   {{else}}
-
-      LOGGER.debug("Operation started");
 
       final var command = new {{capitalize actionName}}Command(
       {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
@@ -70,17 +67,10 @@ public class {{capitalize resourceConfig.name}}Controller {
       {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
       );
 
-       ResponseEntity<{{{resolveResponse responses}}}> response = commandBus.send(command);
+      return commandBus.send(command);
 
-       LOGGER.debug("Operation finished");
-
-        return ResponseEntity.status(response.getStatusCode())
-              .headers(response.getHeaders())
-              .body(response.getBody());
   {{/if}}
 {{else}}
-
-    LOGGER.debug("Operation started");
 
     var response = {{toCamelCase ../resourceConfig.name}}Service.{{toCamelCase actionName}}(
     {{~#if requestBody}}{{{resolve-body-name this.requestBody actionName}}}{{/if~}}
@@ -93,9 +83,7 @@ public class {{capitalize resourceConfig.name}}Controller {
     {{~#if (isPageable responses)}}{{#if (or requestBody modelAttribute requestParams pathVariables)}},{{/if}}pageable{{/if~}}
     );
 
-    LOGGER.debug("Operation finished");
-
-   return response;
+      return response;
 {{/if}}
   }
 

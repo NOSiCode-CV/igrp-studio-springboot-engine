@@ -1,59 +1,11 @@
 # Eureka Configurations
 eureka.client.enabled=false
+
 # Spring Cloud Kubernetes
-spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED}
-
-# Logging Levels
-#sets the baseline logging level for the entire application
-logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
-#targets the web layer, allowing control over HTTP request/response logs
-logging.level.org.springframework.web=${LOGGING_LEVEL_SPRING_WEB:INFO}
-#applies to our application-specific logic, providing detailed logging where needed
-logging.level.{{baseConfig.group}}.{{baseConfig.artifact}}=${LOGGING_LEVEL_APP:INFO}
-
-# Datasource configuration
-spring.datasource.url=${DATABASE_URL}
-spring.datasource.username=${DATABASE_USERNAME}
-spring.datasource.password=${DATABASE_PASSWORD}
-spring.datasource.driver-class-name={{#if (eq baseConfig.database "Postgresql")}}org.postgresql.Driver{{else if (eq baseConfig.database "MySQL")}}com.mysql.cj.jdbc.Driver{{else if (eq baseConfig.database "Oracle")}}oracle.jdbc.OracleDriver{{/if}}
-
-# JPA and Hibernate settings
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=${ENABLE_HIBERNATE_SQL:false}
-spring.jpa.properties.hibernate.format_sql=${ENABLE_HIBERNATE_FORMAT_SQL:false}
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.{{#if (eq baseConfig.database "Postgresql")}}PostgreSQLDialect{{else if (eq baseConfig.database "MySQL")}}MySQL8Dialect{{else if (eq baseConfig.database "Oracle")}}Oracle12cDialect{{/if}}
-{{#if baseConfig.enableEntityRevision}}
-# Entity Revision
-# Track entity names modified during a revision
-#spring.jpa.properties.org.hibernate.envers.track_entities_changed_in_revision=true
-# Enable withModifiedFlag globally
-#spring.jpa.properties.org.hibernate.envers.global_with_modified_flag=true
-# Set schema and catalog for audit tables
-#spring.jpa.properties.org.hibernate.envers.default_schema=audit_schema
-{{/if}}
-
-# Spring Data REST
-spring.data.rest.detection-strategy=annotated
+spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED:true}
 
 # Authentication
-auth.jwt.issuer=${AUTH_JWT_ISSUER}
+spring.security.oauth2.resourceserver.jwt.issuer-uri=${AUTH_JWT_ISSUER}
 
 # Swagger
 springdoc.swagger-ui.enabled=${ENABLE_SWAGGER:false}
-springdoc.swagger-ui.operationsSorter=method
-
-{{#if baseConfig.enableObservability}}
-# Observability
-management.info.git.mode=full
-management.endpoints.web.exposure.include=*
-management.metrics.tags.application=${spring.application.name}
-management.tracing.enabled=false
-management.tracing.sampling.probability=1.0
-{{#if baseConfig.enableGraalVm}}
-# OpenTelemetry
-otel.traces.exporter=otlp
-otel.metrics.exporter=otlp
-otel.service.name=${OTEL_SERVICE_NAME}
-otel.exporter.otlp.endpoint=${OTEL_COLLECTOR_ENDPOINT}
-{{/if}}
-{{/if}}

@@ -1,29 +1,13 @@
-import {
-  Attribute,
-  ModelConfig,
-  RemovedRelationReference,
-  RenderContext,
-} from '../../interfaces/types';
-import { renderTemplate } from '../common/renderTemplate';
-import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
-} from '../../utils/constants';
-import { saveToFile } from '../common/saveToFile';
-import {
-  getDDDModelOutputDir,
-  getModelConfigPath,
-  getModelOutputDir,
-  loadModelConfig,
-} from '../../utils/helpers';
+import {Attribute, ModelConfig, RemovedRelationReference, RenderContext,} from '../../interfaces/types';
+import {renderTemplate} from '../common/renderTemplate';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES,} from '../../utils/constants';
+import {saveToFile} from '../common/saveToFile';
+import {getDDDModelOutputDir, getModelConfigPath, getModelOutputDir, loadModelConfig,} from '../../utils/helpers';
 import path from 'path';
 import fs from 'fs-extra';
-import { updatePermissions } from '../permission/permissionManagement';
-import { saveModelConfig } from './saveModelConfig';
-import { capitalizeJavaStyle } from '../../helper/stringHelper';
+import {updatePermissions} from '../permission/permissionManagement';
+import {saveModelConfig} from './saveModelConfig';
+import {capitalizeJavaStyle} from '../../helper/stringHelper';
 
 export const generateModel = async (context: RenderContext<ModelConfig>) => {
   let modelOutputPath: string;
@@ -52,16 +36,18 @@ export const generateModel = async (context: RenderContext<ModelConfig>) => {
   if (primaryKey) {
     const primaryKeyPath = getPrimaryKeyModelOutputPath(context);
     const primaryKeyTemplate = await renderPrimaryKey(context);
-    await saveToFile(primaryKeyTemplate, primaryKeyPath);
+    // Override the file only if it is NOT readOnly
+    await saveToFile(primaryKeyTemplate, primaryKeyPath, !context.resourceConfig.readOnly);
   }
 
   //finding remove relations before saving
   await findRemovedRelations(context);
 
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     template,
     modelOutputPath,
-    true,
+    !context.resourceConfig.readOnly,
     DIRECTORIES.MODELS,
     context.resourceConfig.id,
     context.resourceConfig.module,

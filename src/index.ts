@@ -1,13 +1,17 @@
 import {
   ApiConfig,
+  AppExportsConfig,
   BaseApiConfig,
   ControllerAction,
   ControllerConfig,
   CrudControllerConfig,
   DdlConfig,
   DeleteConfig,
+  Dependency,
   DTOConfig,
+  EngineConfigurationSettings,
   EnumConfig,
+  GroupPermissionDef,
   HandlerConfig,
   JavaAttribute,
   JsonConfig,
@@ -37,68 +41,71 @@ import {
   RELATIONSHIP_TYPES,
   SCHEMA_TYPES,
 } from './utils/constants';
-import { apiValidation } from './schema/baseApiConfig';
+import {apiValidation} from './schema/baseApiConfig';
 import path from 'path';
-import { validateModelConfig } from './schema/modelConfig';
-import { checkIfDirectoryExists, checkIfDirectoryIsEmpty } from './utils/checkFiles';
-import { generateModel } from './modules/model/generateModel';
-import { validateController } from './schema/controllerConfig';
-import { saveFileConfig } from './modules/baseApi/saveBaseApiFiles';
-import { getBaseApiConfig } from './modules/common/getBaseApiConfig';
-import { generateRepository, generateRepositoryImpl } from './modules/model/generateRepository';
-import { saveBaseApiFileConfig } from './modules/baseApi/saveBaseApiConfig';
-import { generateController } from './modules/controller/generateController';
-import { createAppDirectories } from './modules/baseApi/createAppDirectories';
-import { generateServiceInterface } from './modules/controller/generateServiceInterface';
-import { normalizeName, saveDTOConfig } from './modules/dto/saveDTOConfig';
-import { generateDTO, transformDTOConfig } from './modules/dto/generateDTO';
-import { validateDTOConfig } from './schema/dtoConfig';
-import { getDTOTypes } from './modules/dto/helpers';
-import { checkPrimaryKeys } from './modules/model/checkPrimaryKeys';
-import { cleaner } from './modules/common/cleanerConfigFile';
+import {validateModelConfig} from './schema/modelConfig';
+import {checkIfDirectoryExists, checkIfDirectoryIsEmpty} from './utils/checkFiles';
+import {generateModel} from './modules/model/generateModel';
+import {validateController} from './schema/controllerConfig';
+import {saveFileConfig} from './modules/baseApi/saveBaseApiFiles';
+import {getBaseApiConfig} from './modules/common/getBaseApiConfig';
+import {generateRepository, generateRepositoryImpl} from './modules/model/generateRepository';
+import {saveBaseApiFileConfig} from './modules/baseApi/saveBaseApiConfig';
+import {generateController} from './modules/controller/generateController';
+import {createAppDirectories} from './modules/baseApi/createAppDirectories';
+import {generateServiceInterface} from './modules/controller/generateServiceInterface';
+import {normalizeName, saveDTOConfig} from './modules/dto/saveDTOConfig';
+import {generateDTO, transformDTOConfig} from './modules/dto/generateDTO';
+import {validateDTOConfig} from './schema/dtoConfig';
+import {getDTOTypes} from './modules/dto/helpers';
+import {checkPrimaryKeys} from './modules/model/checkPrimaryKeys';
+import {cleaner} from './modules/common/cleanerConfigFile';
 
-import { checkDuplicated } from './modules/common/checkDuplicates';
-import { generateServiceInmpl } from './modules/controller/generateService';
-import { generateValidatorDTO } from './modules/dto/generateDTOCustomValidator';
-import { savePermission } from './modules/permission/savePermissionConfig';
-import { validatePermission } from './schema/permissionConfig';
-import { deletePerm } from './modules/permission/deletePermission';
-import { generateHandlers } from './modules/handlers/generateHandlers';
-import { getMainPath, loadDTOConfig, normalizePackageName, replaceTemplate } from './utils/helpers';
-import { getAllPermissions } from './modules/permission/getPermissions';
-import { saveModuleConfig } from './modules/module/saveModuleConfig';
-import { createModuleDirectory } from './modules/module/createModuleDirectory';
-import { moduleValidation } from './schema/moduleConfig';
-import { createTestDirectories } from './modules/baseApi/createTestDirectories';
-import { saveBaseTestApiFileConfig } from './modules/baseApi/saveBaseTestApiFiles';
-import { enumValidation } from './schema/enumConfig';
-import { generateEnum } from './modules/enum/generateEnum';
-import { generateRequest } from './modules/controller/generateRequest';
-import { generateResponses } from './modules/controller/generateResponses';
-import { validateResponse } from './schema/requestConfig';
-import { saveResponseConfig } from './modules/response/saveResponseConfig';
-import { generateSingleResponse } from './modules/response/generateSingleResponse';
-import { deleteValidation } from './schema/deleteConfig';
-import { deleteElementConfig } from './modules/delete/deleteElementConfig';
-import { serializationValidation } from './schema/serializationConfig';
-import { serializeData } from './modules/serialization/serializeData';
-import { saveEnumConfig } from './modules/enum/saveEnumConfig';
-import { generateTestServiceInmpl } from './modules/test/generateTestService';
-import { generateTestHandlers } from './modules/test/generateTestHandlers';
-import { processTableName } from './modules/model/helpers';
-import { capitalize, capitalizeJavaStyle } from './helper/stringHelper';
-import { isPageable } from './helper/logicalHelper';
-import { generateCrudController } from './modules/crudController/generateCrudController';
-import {
-  getSpringInitializerDependencies,
-} from './helper/springInitializerHelper';
-import { Dependency } from './interfaces/springDependencyTypes';
-import { moveElementConfig } from './modules/move/moveElementConfig';
-import { moveValidation } from './schema/moveConfig';
-import { verifyEnumAttributes } from './modules/enum/helpers';
+import {checkDuplicated} from './modules/common/checkDuplicates';
+import {generateServiceInmpl} from './modules/controller/generateService';
+import {generateValidatorDTO} from './modules/dto/generateDTOCustomValidator';
+import {savePermission} from './modules/permission/savePermissionConfig';
+import {validatePermission} from './schema/permissionConfig';
+import {deletePerm} from './modules/permission/deletePermission';
+import {generateHandlers} from './modules/handlers/generateHandlers';
+import {getMainPath, loadDTOConfig, normalizePackageName, replaceTemplate} from './utils/helpers';
+import {getAllPermissions} from './modules/permission/getPermissions';
+import {saveModuleConfig} from './modules/module/saveModuleConfig';
+import {createModuleDirectory} from './modules/module/createModuleDirectory';
+import {moduleValidation} from './schema/moduleConfig';
+import {createTestDirectories} from './modules/baseApi/createTestDirectories';
+import {saveBaseTestApiFileConfig} from './modules/baseApi/saveBaseTestApiFiles';
+import {enumValidation} from './schema/enumConfig';
+import {generateEnum} from './modules/enum/generateEnum';
+import {generateRequest} from './modules/controller/generateRequest';
+import {generateResponses} from './modules/controller/generateResponses';
+import {validateResponse} from './schema/requestConfig';
+import {saveResponseConfig} from './modules/response/saveResponseConfig';
+import {generateSingleResponse} from './modules/response/generateSingleResponse';
+import {deleteValidation} from './schema/deleteConfig';
+import {deleteElementConfig} from './modules/delete/deleteElementConfig';
+import {serializationValidation} from './schema/serializationConfig';
+import {serializeData} from './modules/serialization/serializeData';
+import {saveEnumConfig} from './modules/enum/saveEnumConfig';
+import {generateTestServiceInmpl} from './modules/test/generateTestService';
+import {generateTestHandlers} from './modules/test/generateTestHandlers';
+import {processTableName} from './modules/model/helpers';
+import {capitalize, capitalizeJavaStyle} from './helper/stringHelper';
+import {isPageable} from './helper/logicalHelper';
+import {generateCrudController} from './modules/crudController/generateCrudController';
+import {getSpringInitializerDependencies,} from './helper/springInitializerHelper';
+import {moveElementConfig} from './modules/move/moveElementConfig';
+import {moveValidation} from './schema/moveConfig';
+import {verifyEnumAttributes} from './modules/enum/helpers';
+import defaultEngineModule from './config/default';
+import {configurationAsObject, setConfiguration} from './config';
+import {engineConfigurationRegistrationValidate} from './schema/engineConfigurationRegisterConfig';
+import fs from "fs-extra";
+import {buildPermissionGroup} from "./utils/permissionParser";
+import {saveGroupPermissionDef} from "./modules/permission/saveGroupPermissionDefinition";
 
 export function getPaths(): PathConfig {
-  const environment = process.env.VITE_ENGINE_IGRP_STUDIO_ENV;
+  const environment = loadEngineConfiguration().environment;
 
   if (environment === 'production') {
     return {
@@ -117,6 +124,23 @@ export function getPaths(): PathConfig {
     };
   }
 }
+
+
+export const setEngineConfiguration = (config: EngineConfigurationSettings) => {
+  const isConfigValid = engineConfigurationRegistrationValidate(config);
+
+  if (!isConfigValid && engineConfigurationRegistrationValidate.errors)
+    throw engineConfigurationRegistrationValidate.errors;
+
+  setConfiguration((e) => defaultEngineModule.register(e, config))
+
+}
+
+export const loadEngineConfiguration = (name?: string) => {
+  return configurationAsObject(name);
+}
+
+
 
 /**
  * Main Function that creates the base api
@@ -191,10 +215,10 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
 
   await saveBaseApiFileConfig(config, basePath);
 
-  config.javaVersion =  packageJson.custom?.javaVersion;
-  config.springBootVersion =  packageJson.custom?.springBootVersion;
-  config.springDocVersion =  packageJson.custom?.springDocVersion;
-  config.springCloudVersion =  packageJson.custom?.springCloudVersion;
+  config.javaVersion = packageJson.custom?.javaVersion;
+  config.springBootVersion = packageJson.custom?.springBootVersion;
+  config.springDocVersion = packageJson.custom?.springDocVersion;
+  config.springCloudVersion = packageJson.custom?.springCloudVersion;
 
   const context: RenderContext = {
     resourceConfig: undefined, // On base API, there is no specific config.
@@ -512,8 +536,6 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
   config.name = capitalize(config.name);
   const baseConfig = await getBaseApiConfig(basePath);
 
-  //console.log('config: ', config)
-
   const context: RenderContext<DTOConfig> = {
     resourceConfig: await transformDTOConfig(config, baseConfig, basePath),
     basePath,
@@ -828,8 +850,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   } catch (e) {
@@ -839,8 +861,8 @@ async function requestDtoConfig(
       path.join(context.basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })),
       capitalize(
         act?.requestBody?.content['application/json']?.schema.type ??
-          act?.requestBody?.content['multipart/form-data'].schema.type ??
-          '',
+        act?.requestBody?.content['multipart/form-data'].schema.type ??
+        '',
       ).replace(/dto$/i, ''),
     );
   }
@@ -1089,6 +1111,8 @@ export const addController = async (
 
   //config.actions = upperCaseResponse(config.actions);
 
+  //console.log('DADOS A SEREM VALIDADOS:', JSON.stringify(config, null, 2));
+
   const isConfigValid = validateController(config);
 
   if (!isConfigValid && validateController.errors) {
@@ -1099,6 +1123,7 @@ export const addController = async (
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
 
+
   const baseConfig = await getBaseApiConfig(basePath);
   config.name = capitalize(config.name);
 
@@ -1108,6 +1133,7 @@ export const addController = async (
     baseConfig,
     fullPath: basePath,
   };
+
 
   await generateController(context);
 
@@ -1133,7 +1159,7 @@ export const addController = async (
       let requestBodyAttributes: JavaAttribute[] = [];
 
       if (objectType) {
-        console.log(objectType);
+
         const dto = await requestDtoConfig(module, context, act);
         requestBodyAttributes = [
           {
@@ -1164,32 +1190,32 @@ export const addController = async (
 
       const modelAttribute: JavaAttribute[] = act?.modelAttribute
         ? [
-            {
-              name: act.modelAttribute.name.toLowerCase(),
-              type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
-              objectType: 'dto',
-              required: false,
-              module: act.modelAttribute.module,
-            },
-          ]
+          {
+            name: act.modelAttribute.name.toLowerCase(),
+            type: normalizeName(act.modelAttribute.name, 'dto') + 'DTO',
+            objectType: 'dto',
+            required: false,
+            module: act.modelAttribute.module,
+          },
+        ]
         : [];
 
       const pathVariables = act?.pathVariables
         ? act.pathVariables.map((e) => ({
-            name: e.name,
-            type: e.type,
-            objectType: 'java',
-            required: true,
-          }))
+          name: e.name,
+          type: e.type,
+          objectType: 'java',
+          required: true,
+        }))
         : [];
 
       const requestParams = act?.requestParams
         ? act.requestParams.map((e) => ({
-            name: e.name,
-            type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
-            objectType: 'java',
-            required: true,
-          }))
+          name: e.name,
+          type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
+          objectType: 'java',
+          required: true,
+        }))
         : [];
 
       if (schema && type !== 'object' && !objectType) {
@@ -1319,6 +1345,73 @@ export const deletePermission = async (config: PermissionConfig, basePath: strin
 
   await deletePerm(context);
 };
+
+
+export async function addPermissionConfig(
+    basePath: string,
+    groupConfig: GroupPermissionDef,
+    moduleName?: string
+): Promise<void> {
+
+
+  if (!basePath) throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+
+  groupConfig.name = capitalize(groupConfig.name);
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  groupConfig.module = moduleName ? moduleName : DIRECTORIES.SHARED;
+
+  const context: RenderContext<GroupPermissionDef> = {
+    resourceConfig: groupConfig,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  await saveGroupPermissionDef(context);
+}
+
+
+export async function loadConfigs(basePath: string, moduleName?: string): Promise<AppExportsConfig> {
+
+  const baseConfig = await getBaseApiConfig(basePath);
+  //console.log('baseConfig:', baseConfig);
+  const { group, packageName } = baseConfig;
+
+  //console.log('group:', group);
+  //console.log('packageName:', packageName);
+
+  const mainPath = getMainPath(group, packageName);
+  //console.log('mainPath:', mainPath);
+
+  const permissionDir = path.join(
+      basePath,
+      mainPath,
+      moduleName ? moduleName : DIRECTORIES.SHARED,
+      DIRECTORIES.INFRASTRUCTURE,
+      DIRECTORIES.AUTHORIZATION,
+      DIRECTORIES.PERMISSION
+  );
+
+  //console.log('mainPath:', mainPath);
+
+  //console.log('permissionDir:', permissionDir);
+
+  if (!(await fs.pathExists(permissionDir))) {
+    return { permissionGroups: [] };
+  }
+
+  const files = (await fs.readdir(permissionDir)).filter((f) => f.endsWith('.java'));
+
+  // extrair permissões
+  const groups: GroupPermissionDef[] = [];
+  for (const file of files) {
+    const fullPath = path.join(permissionDir, file);
+    const group = await buildPermissionGroup(fullPath);
+    if (group) groups.push(group);
+  }
+  return { permissionGroups: groups };
+}
 
 /**
  * Main Function that creates the module

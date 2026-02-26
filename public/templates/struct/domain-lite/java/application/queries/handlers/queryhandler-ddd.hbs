@@ -23,6 +23,9 @@ public class {{capitalize resourceConfig.name}}QueryHandler implements QueryHand
 
    @IgrpQueryHandler
   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Query query) {
+
+    LOGGER.debug("{{capitalize resourceConfig.name}}Query: {}", query);
+
     // TODO: Implement the query handling logic here
     return null;
   }

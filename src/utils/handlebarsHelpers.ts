@@ -17,19 +17,20 @@ import {
 import {
   DIRECTORIES,
   GENERIC_IMPORTS,
-  GENERIC_TYPES, PACKAGES,
+  GENERIC_TYPES,
+  PACKAGES,
   PROJECT_STRUCTURE_STYLE,
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import { getPackageNameFromConfig } from './helpers';
+import {getPackageNameFromConfig} from './helpers';
 import {
   capitalizeResponse,
   formatTypeName,
   getCollectionTypeInitializer,
   wrapCollectionType,
 } from './capitalizeStrings';
-import { normalizeName } from '../modules/dto/saveDTOConfig';
+import {normalizeName} from '../modules/dto/saveDTOConfig';
 import {
   capitalize,
   capitalizeJavaStyle,
@@ -37,6 +38,7 @@ import {
   fullCamelCaseAndPluralize,
   lowercaseAndPluralize,
   lowerCaseFirstLetter,
+  normalizeConst,
   sanitizeHeaderName,
   toCamelCase,
   toFullCamelCaseFromSnakeCase,
@@ -45,25 +47,14 @@ import {
   toUpperCase,
   wrapInCurlyBraces,
 } from '../helper/stringHelper';
-import { json } from '../helper/jsonHelper';
-import {
-  equals,
-  ifEquals,
-  ifNot,
-  isPageable,
-  isText,
-  not,
-  notEquals,
-} from '../helper/logicalHelper';
-import { keyTypeModel, modelImport } from '../helper/modelHelper';
-import { keyTypeDTO } from '../helper/dtoHelper';
-import { resolveAnnotations, resolvePackage } from '../helper/generalHelper';
-import { resolvePathVariables } from '../helper/controllerHelper';
-import { resolveImportReponse } from '../helper/responseHelper';
-import {
-  normalizeImplValidatorName,
-  normalizeInterfaceValidatorName,
-} from '../modules/dto/helpers';
+import {json} from '../helper/jsonHelper';
+import {equals, ifEquals, ifNot, isPageable, isText, not, notEquals,} from '../helper/logicalHelper';
+import {keyTypeModel, modelImport} from '../helper/modelHelper';
+import {keyTypeDTO} from '../helper/dtoHelper';
+import {resolveAnnotations, resolvePackage} from '../helper/generalHelper';
+import {resolvePathVariables} from '../helper/controllerHelper';
+import {resolveImportReponse} from '../helper/responseHelper';
+import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -109,6 +100,64 @@ Handlebars.registerHelper('resolve-mapping', resolvePathVariables);
 Handlebars.registerHelper('resolve-package', resolvePackage);
 Handlebars.registerHelper('resolve-annotations', resolveAnnotations);
 
+
+/*Handlebars.registerHelper('toConstantName', function(name: string) {
+  return name.toUpperCase().replace(/\./g, '_');
+});*/
+
+Handlebars.registerHelper('toConstantName', function(name: string) {
+  if (!name) return '';
+  return normalizeConst(name);
+});
+
+Handlebars.registerHelper("permissionData", function (perm) {
+  if (!perm || !perm.items || perm.items.length === 0) return null;
+
+  let mode = "ANY";
+  if (perm.items.length === 1) mode = "ONLY";
+  else if (perm.operator === "AND") mode = "ALL";
+
+  return {
+    mode,
+    values: perm.items.join(",")
+  };
+});
+
+Handlebars.registerHelper('hasEnabled', function (permission) {
+  return permission.hasOwnProperty('enabled');
+});
+
+Handlebars.registerHelper(
+    "hasQueryAndCommand",
+    function (actions: any[]) {
+      if (!Array.isArray(actions)) return { hasQuery: false, hasCommand: false };
+
+      const hasQuery = actions.some(a => a.method === "GET");
+      const hasCommand = actions.some(a => a.method !== "GET");
+
+      return { hasQuery, hasCommand };
+    }
+);
+
+Handlebars.registerHelper("normalizePermission", function (raw: string) {
+  if (!raw) return "";
+  return normalizeConst(raw);
+});
+
+Handlebars.registerHelper("normalizeActionNameDocumentation", function(actionName: string) {
+  if (!actionName) return "";
+
+  let withSpaces = actionName.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+
+  withSpaces = withSpaces.replace(/[_\s]+/g, " ");
+
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+});
+
+Handlebars.registerHelper("isSinglePermission", function(array, options) {
+  return Array.isArray(array) && array.length === 1;
+});
+
 Handlebars.registerHelper('resolveResponse', function (responses?: { [p: string]: Body }): string {
   return capitalizeResponse(responses);
 });
@@ -119,6 +168,30 @@ Handlebars.registerHelper('is-nested-object', function (attribute: JavaAttribute
   }
   return '';
 });
+
+Handlebars.registerHelper('isNotBlank', function (str: string): boolean {
+  if (str === null || str === undefined) return false;
+  return str.trim().length > 0;
+
+});
+
+Handlebars.registerHelper('isNotEmpty', function (arr: any[]): boolean {
+  if (arr === null || arr === undefined) {
+    return false;
+  }
+  return Array.isArray(arr) && arr.length > 0;
+});
+
+Handlebars.registerHelper('join', function (arr: any[], separator: string, options: Handlebars.HelperOptions) {
+  if (!Array.isArray(arr)) {
+    return '';
+  }
+  const sep = typeof separator === 'string' ? separator : ',';
+  const result = arr.map(item => options.fn(item)).join(sep);
+  return new Handlebars.SafeString(result);
+});
+
+
 
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
@@ -624,8 +697,6 @@ Handlebars.registerHelper('and', function (...args) {
 });
 
 Handlebars.registerHelper('formatAttribute', function (value) {
-  // TODO : 09-12-2024 - 16:55 - handle non-string values
-
   if (typeof value === 'string') {
     return `"${value}"`; // If it's a string, wrap it in quotes
   } else if (typeof value === 'number') {
@@ -639,9 +710,8 @@ Handlebars.registerHelper('formatAttribute', function (value) {
       return `"${Object.values(value).join('')}"`; // Join characters and return as a single string
     }
     return JSON.stringify(value, null, 2); // Otherwise, return the object as a string
-  } else {
-    return value.toString(); // Return the value as-is if it doesn't match the above types
   }
+    return value.toString();
 });
 
 Handlebars.registerHelper('mapHeaderToOption', function (config: HttpHeader): string {
@@ -664,30 +734,6 @@ Handlebars.registerHelper('normalizeDto', (str: string) => {
   if (str == '?') return '?';
   return capitalize(str).replace(/dto$/i, '') + 'DTO';
 });
-
-/*Handlebars.registerHelper('processImplementation', (type: string) => {
-  let primitiveTypes: string[] = ['integer', 'boolean', 'string', 'byte'];
-
-  if (primitiveTypes.includes(type)) {
-    return capitalize(type);
-  } else if (type == 'object') return 'object';
-  else {
-    return normalizeName(type, 'dto') + 'DTO';
-  }
-});*/
-
-/*Handlebars.registerHelper('processDocumentationType', (type: string, objType?: string) => {
-  let primitiveTypes: string[] = ['integer', 'boolean', 'string'];
-
-  if (objType === 'dto') return 'object';
-
-  if (primitiveTypes.includes(type)) {
-    return capitalize(type);
-  } else if (type === 'object' && (!objType || objType.trim() === '')) return 'object';
-  else {
-    return normalizeName(type, 'dto') + 'DTO';
-  }
-});*/
 
 Handlebars.registerHelper('processImplementation', (type: string) => {
   return GENERIC_TYPES.get(type)?.java.name ?? normalizeName(type, 'dto') + 'DTO';
@@ -719,13 +765,6 @@ Handlebars.registerHelper(
   },
 );
 
-/*Handlebars.registerHelper('isRefSchema', (content: { [p: string]: SchemaContent }): boolean => {
-  // console.log('SchemaContent:: ', content);
-  if (!content) return false;
-  const schema = content['application/json'] ?? content['multipart/form-data'];
-  return !!schema.schema.objectType;
-});*/
-
 Handlebars.registerHelper(
   'addValidAnnotation',
   (content: { [p: string]: SchemaContent }): boolean => {
@@ -733,41 +772,9 @@ Handlebars.registerHelper(
     const schema = content['application/json'];
     if (!schema) return false;
 
-    if (schema.schema.type !== 'object' && !schema.schema.objectType) {
-      return false;
-    }
-
-    //if (schema.schema.collectionType != 'none') return false;
-
-    return true;
+    return !(schema.schema.type !== 'object' && !schema.schema.objectType);
   },
 );
-
-/*Handlebars.registerHelper('resolve-body', (content: { [p: string]: SchemaContent }, name?: string): string => {
-  if (!content) return '';
-
-  const jsonContent = content['application/json'] ?? content['multipart/form-data'];
-  if (!jsonContent || !jsonContent.schema) return '';
-
-  const schema = jsonContent.schema;
-
-  let resolvedType: string;
-
-  if (schema.type === 'object') {
-
-    resolvedType = formatTypeName(name);
-  } else {
-    if (schema.objectType === 'dto') {
-      resolvedType = formatTypeName(schema.type);
-    } else {
-      resolvedType = capitalize(schema.type);
-    }
-  }
-
-  const responseCollectionType: string = schema.collectionType ?? 'none';
-
-  return wrapCollectionType(resolvedType, responseCollectionType);
-});*/
 
 Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: string): string => {
   if (!pRequestBody) return '';
@@ -794,8 +801,6 @@ Handlebars.registerHelper('resolve-body', (pRequestBody: BaseBody, actionName?: 
       resolvedType = capitalize(schema.type);
     }
   }
-
-  //console.log('resolvedType: ', resolvedType);
 
   const responseCollectionType: string = schema.collectionType ?? 'none';
 

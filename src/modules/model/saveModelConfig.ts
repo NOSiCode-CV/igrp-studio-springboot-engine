@@ -1,8 +1,8 @@
-import { saveToFile } from '../common/saveToFile';
-import { ModelConfig } from '../../interfaces/types';
-import { DIRECTORIES, ERROR_MESSAGE, EXTENSIONS } from '../../utils/constants';
-import { getModelConfigPath } from '../../utils/helpers';
-import { capitalizeJavaStyle } from '../../helper/stringHelper';
+import {saveToFile} from '../common/saveToFile';
+import {ModelConfig} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS} from '../../utils/constants';
+import {getModelConfigPath} from '../../utils/helpers';
+import {capitalizeJavaStyle} from '../../helper/stringHelper';
 
 /**
  * Generates and saves the configuration file of a model.
@@ -17,10 +17,12 @@ export const saveModelConfig = async (config: ModelConfig, basePath: string) => 
 
   const fileName = capitalizeJavaStyle(config.name);
   const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
+
+  // Override the file only if it is NOT readOnly
   await saveToFile(
     JSON.stringify(config),
     output,
-    true,
+    !config.readOnly,
     DIRECTORIES.CONFIG_MODEL,
     config.id,
     config.module,
