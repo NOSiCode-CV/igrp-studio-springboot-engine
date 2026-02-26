@@ -201,6 +201,10 @@ export const transformDTOConfig = async function (
   // normalize the name of the DTO
   ncfg.name = normalizeName(config.name, config.type);
 
+  if (ncfg.extends) {
+    ncfg.extends.name = normalizeName(ncfg.extends.name, 'dto');
+  }
+
   if (errors.length > 0) {
     throw errors;
   }
