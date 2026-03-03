@@ -1,8 +1,9 @@
-import {TECHNICAL_OUTPUT_DIR_OTHER} from './outputDirPath';
 import {getModelConfigPath, loadModelConfig} from '../src/utils/helpers';
 import fs from 'fs-extra';
 import path from 'path';
 import {ModelConfig} from '../src/interfaces/types';
+// @ts-ignore
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
 
 describe('getting configuração of model', () => {
   it('should get a model config', async () => {
@@ -10,7 +11,7 @@ describe('getting configuração of model', () => {
     const moduleName = 'core';
     const modelToRemoveRelation = 'Pessoa';
 
-    const modelPath = getModelConfigPath(moduleName, modelName, TECHNICAL_OUTPUT_DIR_OTHER);
+    const modelPath = getModelConfigPath(moduleName, modelName, TECHNICAL_OUTPUT_DIR);
     const modelDirPath = path.dirname(modelPath);
 
     const config = await loadModelConfig<ModelConfig>(modelDirPath, modelName);

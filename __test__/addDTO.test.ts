@@ -2,14 +2,9 @@ import fs from 'fs-extra';
 import {addDTO, setEngineConfiguration} from '../src';
 import {DTOConfig} from '../src/interfaces/types';
 // @ts-ignore
-import {
-    DOMAIN_OUTPUT_DIR,
-    DOMAIN_OUTPUT_DIR2,
-    INSS_PATH_PROJECT,
-    TECHNICAL_OUTPUT_DIR,
-    TECHNICAL_OUTPUT_DIR_OTHER,
-    TEST_OUTPUT_DIR
-} from './outputDirPath';
+// @ts-ignore
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+
 
 beforeAll(async () => {
   setEngineConfiguration({ environment: 'development' });
@@ -115,7 +110,7 @@ describe('DTO generator', () => {
     ];
 
     for (const testCase of domainTestCases) {
-      await addDTO(testCase, INSS_PATH_PROJECT);
+      await addDTO(testCase, TEST_OUTPUT_DIR);
     }
   })
 

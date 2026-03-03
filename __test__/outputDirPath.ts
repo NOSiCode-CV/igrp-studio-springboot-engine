@@ -5,5 +5,3 @@ export const TEST_OUTPUT_DIR = 'C:\\spring-engine\\demoNick';
 export const TEST_OUTPUT_TEC = 'C:\\spring-engine\\demoTec';
 export const JAR_OUTPUT_DIR = 'C:\\jar\\test';
 export const JAR_PATH = 'C:\\jar\\shared-test.jar';
-
-export const INSS_PATH_PROJECT = 'C:\\Users\\ivanick.santos\\Nosi-work\\projects_nosi_workspace\\projects\\inss_core_service';
