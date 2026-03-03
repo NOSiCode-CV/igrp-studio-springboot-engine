@@ -19,7 +19,6 @@ const domainControllerConfig: ControllerConfig = {
         {
           name: "ids",
           type: "string",
-          collectionType: "list",
           isRequired: true
         }
       ],
