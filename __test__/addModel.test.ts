@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
-import { DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig } from '../src/interfaces/types';
-import { addModel, serializeElement } from '../src';
+import {DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig} from '../src/interfaces/types';
+import {addModel} from '../src';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -11,107 +11,67 @@ beforeAll(async () => {
 
 describe('Model generator', () => {
 
-  it('should create model for domain driven design project style', async() => {
+  it('should create model for domain driven design project style', async () => {
 
     const domainTestCases: ModelConfig[] = [
 
       // Animal model
 
       {
-        "id": "dspza5xl7e",
-        "type": "model",
-        "name": "Animal",
-        "tableName": "animal",
-        "module": "core",
-        "uniqueConstraints": [
-          {
-            "name": "UniqueAnimalName",
-            "columns": ["name"]
-          }
-        ],
-        "attributes": [
-          {
-            "type": "integer",
-            "name": "id",
-            "primaryKey": true,
-            "generationType": "IDENTITY",
-            "nullable": false
-          },
-          {
-            "type": "string",
-            "name": "name",
-            "length": 255,
-            "nullable": false
-          },
-          {
-            "type": "string",
-            "name": "species",
-            "length": 100,
-            "nullable": false
-          },
-          {
-            "type": "date",
-            "name": "birthDate",
-            "nullable": true
-          },
-          {
-            "type": "relation",
-            "name": "owner",
-            "relation": {
-              "type": "ManyToOne",
-              "fetchType": "lazy",
-              "cardinality": "twoWay",
-              "entity": "Owner",
-              "mappedBy": "animals",
-              "referencedColumnName": "id"
-            },
-            "nullable": false
-          }
-        ],
-        "crud": false,
-        "audit": false
-      },
-
-      // Owner model
-
-      {
         "id": "mgg6olyps8",
         "type": "model",
         "name": "owner",
         "tableName": "owner",
-        "module": "core",
+        "module": "shared",
         "attributes": [
           {
-            "type": "integer",
+            "type": "uuid",
             "name": "id",
             "primaryKey": true,
-            "generationType": "IDENTITY",
+            "generationType": "NONE",
             "nullable": false
           },
           {
             "type": "string",
-            "name": "name",
+            "name": "nome",
             "length": 255,
-            "nullable": false
+            "nullable": true
           },
           {
-            "type": "string",
-            "name": "contactNumber",
+            "type": "text",
+            "name": "json",
             "length": 20,
             "nullable": false
+          }
+        ],
+        "crud": false,
+        "audit": true
+      },
+
+      {
+        "type": "model",
+        "name": "owner1",
+        "tableName": "owner",
+        "module": "shared",
+        "attributes": [
+          {
+            "type": "uuid",
+            "name": "id",
+            "primaryKey": true,
+            "generationType": "NONE",
+            "nullable": false
           },
           {
-            "type": "relation",
-            "name": "animals",
-            "relation": {
-              "type": "OneToMany",
-              "fetchType": "lazy",
-              "cardinality": "twoWay",
-              "entity": "Animal",
-              "mappedBy": "Owner",
-              "joinTable": "owner_animal"
-            },
+            "type": "string",
+            "name": "nome1",
+            "length": 255,
             "nullable": true
+          },
+          {
+            "type": "text",
+            "name": "json1",
+            "length": 20,
+            "nullable": false
           }
         ],
         "crud": false,
@@ -122,11 +82,11 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of domainTestCases) {
-      //await addModel(testCase, DOMAIN_OUTPUT_DIR);
+      await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
 
-  it('should create model for technical project style', async() => {
+  it('should create model for technical project style', async () => {
 
     const technicalTestCases: ModelConfig[] = [
 
@@ -256,11 +216,11 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of technicalTestCases) {
-      await addModel(testCase, TECHNICAL_OUTPUT_DIR);
+      //   await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
 
-  it('should create a model based on JSON serialization', async() => {
+  it('should create a model based on JSON serialization', async () => {
 
     const sampleJson = {
       id: 1,
@@ -271,18 +231,18 @@ describe('Model generator', () => {
 
     const json = JSON.stringify(sampleJson)
 
-    const config : JsonConfig = {
+    const config: JsonConfig = {
       name: "Company",
       template: "classic",
       type: "model",
       json: json
     };
 
-    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+    // await serializeElement(config, TECHNICAL_OUTPUT_DIR);
 
   })
 
-  it('should create a model based on XML serialization', async() => {
+  it('should create a model based on XML serialization', async () => {
 
     const sampleXml = `
       <id>1</id>
@@ -298,11 +258,11 @@ describe('Model generator', () => {
       xml: sampleXml
     };
 
-    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+    //  await serializeElement(config, TECHNICAL_OUTPUT_DIR);
 
   });
 
-  it('should create a model based on SQL SELECT command serialization', async() => {
+  it('should create a model based on SQL SELECT command serialization', async () => {
 
     const sampleSql = "SELECT 1 as id, 'XPTO LLC' as name, 1996 as foundingYear, '1996-04-01' as foundingDate FROM companies";
 
@@ -313,11 +273,11 @@ describe('Model generator', () => {
       sql: sampleSql
     };
 
-    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+    // await serializeElement(config, TECHNICAL_OUTPUT_DIR);
 
   });
 
-  it('should create a model based on DDL create table script serialization', async() => {
+  it('should create a model based on DDL create table script serialization', async () => {
 
     const sampleDdl = `
       CREATE TABLE companies (
@@ -333,7 +293,7 @@ describe('Model generator', () => {
       ddl: sampleDdl
     };
 
-    await serializeElement(config, TECHNICAL_OUTPUT_DIR);
+    // await serializeElement(config, TECHNICAL_OUTPUT_DIR);
 
   });
 

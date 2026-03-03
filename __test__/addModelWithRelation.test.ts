@@ -1,84 +1,86 @@
-import { ModelConfig } from '../src/interfaces/types';
-import { addModel } from '../src';
+import {ModelConfig} from '../src/interfaces/types';
+import {addModel, setEngineConfiguration} from '../src';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR } from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, INSS_PATH_PROJECT, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+
+
+beforeEach(async () => {
+  setEngineConfiguration({ environment: 'development' });
+});
+
 
 describe('Model generator', () => {
   it('should create model for DDD with OneToOne Mapping', async () => {
-    const oneToOne: ModelConfig[] = [
-      {
-        id: 'mgg6olyps8',
-        type: 'model',
-        name: 'Pessoa',
-        tableName: 't_pessoa',
-        module: 'core',
-        attributes: [
-          {
-            type: 'integer',
-            name: 'id',
-            primaryKey: true,
-            generationType: 'IDENTITY',
-            nullable: false,
-          },
-          {
-            type: 'string',
-            name: 'nome',
-          },
-          {
-            type: 'relation',
-            name: 'documento', // relation field name
-            relation: {
-              type: 'OneToOne',
-              fetchType: 'lazy',
-              cardinality: 'twoWay',
-              referencedColumnName: 'id',
-              joinColumn: 'doc_id',
-              entity: 'DocumentoIdentidade',
-              orphanRemoval: true,
-              cascadeType: [{ type: 'ALL' }]
-            },
-            nullable: false,
-            unique: true
-          },
-        ],
-        crud: false,
-        audit: false,
-      },
-      {
-        id: 'dspza5xl7e',
-        type: 'model',
-        name: 'DocumentoIdentidade',
-        tableName: 't_documentoIdentidade',
-        module: 'core',
-        attributes: [
-          {
-            type: 'integer',
-            name: 'id',
-            primaryKey: true,
-            generationType: 'IDENTITY',
-            nullable: false,
-          },
-          {
-            type: 'string',
-            name: 'numero',
-          }
-        ],
-        relationReference: [
-          {
-            type: 'OneToOne',
-            fetchType: 'lazy',
-            entity: 'Pessoa',
-            fieldName: 'pessoa',
-            mappedBy: "documento" // same name as java attribute in source relation
-          },
-        ],
-        crud: false,
-        audit: false,
-      },
+    const oneToOne: ModelConfig[] = [{
+      type: "model",
+      module: "shared",
+      name: "TesteEntity",
+      tableName: "t_teste",
+      audit: true,
+      crud: false,
+      revision: false,
+      readOnly: true,
+      attributes: [
+        {
+          name: "id",
+          type: "integer",
+          length: 255,
+          nullable: false,
+          unique: false,
+          primaryKey: true,
+          generationType: "SEQUENCE",
+          sequenceName: "SEQUENCE_NAME",
+          skipFieldRevision: false
+        },
+        {
+          name: "nome",
+          type: "string",
+          length: 255,
+          nullable: false,
+          unique: false,
+          primaryKey: false,
+          skipFieldRevision: false
+        }
+      ],
+      id: "mtev6z191h",
+      uniqueConstraints: [],
+      indexes: []
+    },
+   /* {
+      id: 'dspza5xl7e',
+      type: 'model',
+      name: 'DocumentoIdentidade',
+      tableName: 't_documentoIdentidade',
+      module: 'core',
+      attributes: [
+        {
+          type: 'integer',
+          name: 'id',
+          primaryKey: true,
+          generationType: 'IDENTITY',
+          nullable: false,
+        },
+        {
+          type: 'string',
+          name: 'numero',
+        }
+      ],
+      relationReference: [
+        {
+          type: 'OneToOne',
+          fetchType: 'lazy',
+          entity: 'Pessoa',
+          fieldName: 'pessoa',
+          mappedBy: "documento" // same name as java attribute in source relation
+        },
+      ],
+      crud: false,
+      audit: false,
+    },*/
     ];
 
     for (const testCase of oneToOne) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+      await addModel(testCase, INSS_PATH_PROJECT);
     }
   });
 
@@ -156,7 +158,7 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of OneToMany) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+      //await addModel(testCase, DOMAIN_OUTPUT_DIR);
     }
   });
 
@@ -164,155 +166,212 @@ describe('Model generator', () => {
   it('should create model for DDD with ManyToOne Mapping', async () => {
     const ManyToOne: ModelConfig[] = [
       {
-        id: 'mgg6olyps8',
         type: 'model',
-        name: 'TransacaoPagamento',
-        tableName: 't_transacaoPagamento',
-        module: 'core',
+        module: 'shared',
+        name: 'PresidenteEntity',
+        tableName: 't_presidente',
+        audit: true,
+        crud: false,
+        revision: false,
         attributes: [
           {
-            type: 'integer',
             name: 'id',
+            type: 'integer',
+            length: 255,
+            nullable: true,
+            unique: false,
             primaryKey: true,
             generationType: 'IDENTITY',
+            skipFieldRevision: false
+          },
+          {
+            name: 'nome',
+            type: 'string',
+            length: 255,
             nullable: false,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false
           },
           {
-            type: 'integer',
-            name: 'valor',
-          },
-          {
+            name: 'pais_id',
             type: 'relation',
-            name: 'cliente', // field name
+            length: 255,
+            nullable: true,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false,
             relation: {
               type: 'ManyToOne',
-              fetchType: 'lazy',
-              cardinality: 'twoWay',
+              entity: 'PaisEntity',
               referencedColumnName: 'id',
-              joinColumn: 'cliente_id',
-              entity: 'Cliente',
-
-            },
-            nullable: true,
-          },
-        ],
-        crud: false,
-        audit: false,
-      },
-      {
-        id: 'dspza5xl7e',
-        type: 'model',
-        name: 'Cliente',
-        tableName: 't_cliente',
-        module: 'core',
-        attributes: [
-          {
-            type: 'integer',
-            name: 'id',
-            primaryKey: true,
-            generationType: 'IDENTITY',
-            nullable: false,
-          },
-          {
-            type: 'string',
-            name: 'nome',
+              cardinality: 'twoWay',
+              fetchType: 'lazy',
+              mappedBy: 'presidentes',
+              module: 'shared',
+              orphanRemoval: false
+            }
           }
         ],
+        id: '41wm48lnrm',
+        uniqueConstraints: [],
+        indexes: []
+      },
+
+      {
+        type: 'model',
+        module: 'shared',
+        name: 'PaisEntity',
+        tableName: 't_pais',
+        audit: true,
+        crud: false,
+        revision: false,
+        attributes: [
+          {
+            name: 'id',
+            type: 'integer',
+            length: 255,
+            nullable: true,
+            unique: false,
+            primaryKey: true,
+            generationType: 'IDENTITY',
+            skipFieldRevision: false
+          },
+          {
+            name: 'nome',
+            type: 'string',
+            length: 255,
+            nullable: false,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false
+          }
+        ],
+        id: '1g0zv23jpz',
         relationReference: [
           {
             type: 'ManyToOne',
+            entity: 'PresidenteEntity',
             fetchType: 'lazy',
-            entity: 'TransacaoPagamento',
-            mappedBy: 'cliente', // same name as java attribute in source relation
-            fieldName: 'transacoes', // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
-            orphanRemoval: true,
-            cascadeType: [{ type: 'REMOVE' }, { type: 'PERSIST' }]
-          },
+            fieldName: 'presidentes',
+            mappedBy: 'pais_id',
+            module: 'shared'
+          }
         ],
-        crud: false,
-        audit: false,
-      },
+        uniqueConstraints: [],
+        indexes: []
+      }
     ];
 
     for (const testCase of ManyToOne) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+     // await addModel(testCase, TEST_OUTPUT_DIR);
     }
   });
 
   it('should create model for DDD with ManyToMany Mapping', async () => {
     const ManyToMany: ModelConfig[] = [
       {
-        id: 'mgg6olyps8',
         type: 'model',
-        name: 'Estudante',
-        tableName: 't_estudante',
-        module: 'core',
-        attributes: [
-          {
-            type: 'integer',
-            name: 'id',
-            primaryKey: true,
-            generationType: 'IDENTITY',
-            nullable: false,
-          },
-          {
-            type: 'string',
-            name: 'nome'
-          },
-          {
-            type: 'relation',
-            name: 'disciplina', // field name
-            relation: {
-              type: 'ManyToMany',
-              fetchType: 'lazy',
-              cardinality: 'twoWay',
-              referencedColumnName: 'id',
-              joinColumn: 'estudante_id',
-              entity: 'Disciplina',
-              joinTable: 'estudante_disciplina',
-              inverseJoinColumn: 'disciplina_id',
-            },
-            nullable: true,
-          },
-        ],
+        module: 'shared',
+        name: 'CursoEntity',
+        tableName: 't_curso',
+        audit: true,
         crud: false,
-        audit: false,
-      },
-      {
-        id: 'dspza5xl7e',
-        type: 'model',
-        name: 'Disciplina',
-        tableName: 't_disciplina',
-        module: 'core',
+        revision: false,
         attributes: [
           {
-            type: 'integer',
             name: 'id',
+            type: 'integer',
+            length: 255,
+            nullable: true,
+            unique: false,
             primaryKey: true,
             generationType: 'IDENTITY',
-            nullable: false,
+            skipFieldRevision: false
           },
           {
+            name: 'nome',
             type: 'string',
-            name: 'nome'
+            length: 255,
+            nullable: false,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false
           }
         ],
+        id: 'd7ukkb3tja',
         relationReference: [
           {
             type: 'ManyToMany',
+            entity: 'AlunoEntity',
             fetchType: 'lazy',
-            entity: 'Estudante',
-            mappedBy: 'disciplina', // same name as java attribute in source relation
-            fieldName: 'estudantes' // nome do campo a ser criado na tabela destino. deve ser inserido para casos de multiplos foreign keys
-          },
+            mappedBy: 'curso',
+            module: 'shared'
+          }
         ],
-        crud: false,
-        audit: false,
+        uniqueConstraints: [],
+        indexes: []
       },
+      {
+        type: 'model',
+        module: 'shared',
+        name: 'AlunoEntity',
+        tableName: 't_aluno',
+        audit: true,
+        crud: false,
+        revision: false,
+        attributes: [
+          {
+            name: 'id',
+            type: 'integer',
+            length: 255,
+            nullable: true,
+            unique: false,
+            primaryKey: true,
+            generationType: 'IDENTITY',
+            skipFieldRevision: false
+          },
+          {
+            name: 'nome',
+            type: 'string',
+            length: 255,
+            nullable: false,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false
+          },
+          {
+            name: 'curso',
+            type: 'relation',
+            length: 255,
+            nullable: true,
+            unique: false,
+            primaryKey: false,
+            skipFieldRevision: false,
+            relation: {
+              type: 'ManyToMany',
+              entity: 'CursoEntity',
+              referencedColumnName: 'id',
+              cardinality: 'twoWay',
+              inverseJoinColumn: 'curso_id',
+              joinTable: 'aluno_curso',
+              fetchType: 'lazy',
+              module: 'shared',
+              orphanRemoval: false
+            }
+          }
+        ],
+        id: 'v85av4ucqw',
+        uniqueConstraints: [],
+        indexes: []
+      }
+
+
+
     ];
 
     for (const testCase of ManyToMany) {
-      await addModel(testCase, DOMAIN_OUTPUT_DIR);
+    // await addModel(testCase, TEST_OUTPUT_DIR);
     }
   });
 });

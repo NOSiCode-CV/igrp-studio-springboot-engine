@@ -1,12 +1,12 @@
 import fs from 'fs-extra';
-import { addModule } from '../src';
-import { ModuleConfig } from '../src/interfaces/types';
+import {addModule} from '../src';
+import {ModuleConfig} from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR } from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2} from './outputDirPath';
 
 const moduleConfig: ModuleConfig = {
   type: 'module',
-  name: 'external',
+  name: 'demo',
 };
 
 beforeEach(async () => {
@@ -20,6 +20,6 @@ afterEach(async () => {
 describe('New Module', () => {
 
   it('should create the module structure with all the directories.', async () => {
-    await addModule(moduleConfig, DOMAIN_OUTPUT_DIR);
+    await addModule(moduleConfig, DOMAIN_OUTPUT_DIR2);
   });
 });

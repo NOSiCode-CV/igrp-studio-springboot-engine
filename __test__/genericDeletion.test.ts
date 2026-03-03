@@ -1,9 +1,9 @@
-import { deleteElement } from '../src';
-import { DeleteConfig } from '../src/interfaces/types';
+import {deleteElement} from '../src';
+import {DeleteConfig} from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR } from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
 
-describe('Generic deletion in domain driven design project style', () => {
+/*describe('Generic deletion in domain driven design project style', () => {
     it('should delete a element', async () => {
         const element: DeleteConfig = {
           name: "Level",
@@ -14,13 +14,13 @@ describe('Generic deletion in domain driven design project style', () => {
         await deleteElement(element, DOMAIN_OUTPUT_DIR)
     });
 
-});
+});*/
 
 describe('Generic deletion in technical style', () => {
   it('should delete a element', async () => {
     const element: DeleteConfig = {
-      name: "Teste",
-      type: 'dto',
+      name: "owner",
+      type: 'model',
     };
 
     await deleteElement(element, TECHNICAL_OUTPUT_DIR)

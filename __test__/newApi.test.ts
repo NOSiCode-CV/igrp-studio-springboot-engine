@@ -1,8 +1,8 @@
-
-import { newApi } from '../src';
-import { ApiConfig, BaseApiConfig } from '../src/interfaces/types';
+import {newApi, setEngineConfiguration} from '../src';
+import {BaseApiConfig} from '../src/interfaces/types';
 // @ts-ignore
-import { DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR } from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+
 
 const domainApiConfig: BaseApiConfig = {
   type: 'springboot',
@@ -13,7 +13,7 @@ const domainApiConfig: BaseApiConfig = {
   database: 'Postgresql',
   projectStructureStyle: 'domain',
   enableObservability: true,
-  enableEntityRevision: true,
+  enableEntityRevision: false,
   enableGraalVm: false
 };
 
@@ -27,25 +27,28 @@ const technicalApiConfig: BaseApiConfig = {
   projectStructureStyle: 'technical',
   enableObservability: true,
   enableEntityRevision: false,
-  enableGraalVm: true
+  enableGraalVm: false
 };
 
 const testApiConfig: BaseApiConfig = {
   type: "springboot",
-  name: "igrp_platform_access_management",
+  name: "igrp_platform_process_manager_studio",
   group: "cv.igrp.platform",
-  artifact: "access-management",
+  artifact: "process_manager_studio",
+  package : "studio",
   database: "Postgresql",
-  description: "IGRP Platform Access Management",
+  description: "IGRP Platform Process Manager Studio",
   projectStructureStyle: "domain",
   enableObservability: true,
-  enableEntityRevision: true,
-  enableGraalVm: true
+  enableEntityRevision: false,
+  enableGraalVm: false,
+  version: "1.0.0",
 }
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
   //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+  setEngineConfiguration({ environment: 'development' });
 });
 
 afterEach(async () => {
@@ -54,12 +57,12 @@ afterEach(async () => {
 
 describe('New API Module', () => {
 
-  /*it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
+  it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
     await newApi(domainApiConfig, DOMAIN_OUTPUT_DIR);
-  });*/
+  });
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(testApiConfig, TEST_OUTPUT_DIR);
+    await newApi(technicalApiConfig, TEST_OUTPUT_TEC);
   });
 
 });
