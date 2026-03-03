@@ -168,7 +168,7 @@ describe('DTO generator', () => {
     ];
 
     for (const testCase of technicalTestCases) {
-      // await addDTO(testCase, TECHNICAL_OUTPUT_DIR_OTHER);
+       await addDTO(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
 
