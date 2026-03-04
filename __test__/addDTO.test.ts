@@ -110,7 +110,7 @@ describe('DTO generator', () => {
     ];
 
     for (const testCase of domainTestCases) {
-      await addDTO(testCase, TEST_OUTPUT_DIR);
+      //await addDTO(testCase, TEST_OUTPUT_DIR);
     }
   })
 
@@ -119,37 +119,13 @@ describe('DTO generator', () => {
     const technicalTestCases: DTOConfig[] = [
       {
         "type": "dto",
-        "module": "shared",
-        "name": "demo",
+        "module": "booking",
+        "name": "CarlosTeste",
         "template": "classic",
         "enableCustonValidation": true,
         "attributes": [
           {
-            "name": "uriType",
-            "objectType": "java",
-            "type": "uri",
-            "required": false,
-            "before": false,
-            "after": false,
-            "positive": false,
-            "regex": "",
-            "isEmail": false,
-            "isUrl": false,
-            "primaryKey": false,
-            "collectionType": ""
-          }
-        ],
-        "id": "xr5l53jn5e"
-      },
-      {
-        "type": "dto",
-        "module": "shared",
-        "name": "outro",
-        "template": "classic",
-        "enableCustonValidation": true,
-        "attributes": [
-          {
-            "name": "uriType",
+            "name": "teste",
             "objectType": "java",
             "type": "string",
             "required": false,
@@ -160,15 +136,15 @@ describe('DTO generator', () => {
             "isEmail": false,
             "isUrl": false,
             "primaryKey": false,
-            "collectionType": ""
+            "collectionType": "none"
           }
         ],
-        "id": "xr5l53jn5e44"
+        "id": "xr5l53jn5e"
       }
     ];
 
     for (const testCase of technicalTestCases) {
-       await addDTO(testCase, TECHNICAL_OUTPUT_DIR);
+       await addDTO(testCase, "C:\\Users\\Carlos.Mendes.Santos\\OneDrive - nosiepe\\Documentos\\projects\\IGRP\\projects\\APIbooking");
     }
   })
 

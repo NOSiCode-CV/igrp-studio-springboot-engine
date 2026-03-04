@@ -16,4 +16,4 @@ spring.cloud.kubernetes.discovery.enabled=${KUBERNETES_DISCOVERY_ENABLED:false}
 #spring.security.oauth2.resourceserver.jwt.issuer-uri=${AUTH_JWT_ISSUER}
 auth.jwt.issuer=${AUTH_JWT_ISSUER}
 
-logging.level.{{baseConfig.group}}.{{baseConfig.artifact}}=${LOGGING_LEVEL_APP:DEBUG}
+logging.level.{{baseConfig.group}}.{{artifact-sanitized baseConfig.artifact}}=${LOGGING_LEVEL_APP:DEBUG}

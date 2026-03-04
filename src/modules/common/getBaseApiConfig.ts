@@ -23,5 +23,14 @@ export const getBaseApiConfig = async (basePath: string): Promise<ApiConfig> => 
     throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
   }
 
+  // add a sanitized artifact name to be used in templates where artifact
+  // may contain characters invalid for package names (e.g. hyphens)
+  try {
+    // create a runtime-only property that templates can use
+    (apiConfig as any).artifactSanitized = (apiConfig.artifact || '').replace(/-/g, '_');
+  } catch (e) {
+    (apiConfig as any).artifactSanitized = apiConfig.artifact || '';
+  }
+
   return <ApiConfig>apiConfig;
 };

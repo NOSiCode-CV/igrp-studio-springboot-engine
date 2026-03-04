@@ -10,7 +10,7 @@ import jakarta.validation.constraints.*;
 {{> lombok-java-imports}}
 {{/if}}
 {{#if resourceConfig.enableCustonValidation}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.{{resourceConfig.module}}.application.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
+import {{baseConfig.group}}.{{artifact-sanitized baseConfig.artifact}}.{{resourceConfig.module}}.application.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 {{#if resourceConfig.extends}}import lombok.EqualsAndHashCode;{{/if}}
