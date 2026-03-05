@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 {{> lombok-java-imports}}
 {{/if}}
 {{#if resourceConfig.enableCustonValidation}}
-import {{baseConfig.group}}.{{baseConfig.artifact}}.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
 {{/if}}
 {{{resolve-imports resourceConfig baseConfig}}}
 {{#if resourceConfig.attributes}}
