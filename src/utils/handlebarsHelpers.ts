@@ -23,7 +23,7 @@ import {
   REQUEST_BODY_NOT_IMPORT,
   REQUEST_MAPPING_OPTIONS,
 } from './constants';
-import {getPackageNameFromConfig, sanitizeArtifact} from './helpers';
+import {getPackageNameFromConfig} from './helpers';
 import {
   capitalizeResponse,
   formatTypeName,
@@ -196,11 +196,6 @@ Handlebars.registerHelper('join', function (arr: any[], separator: string, optio
 //RESPONSE
 Handlebars.registerHelper('resolve-imports-response', resolveImportReponse);
 
-// artifact sanitization helper replaces '-' with '_' for package-safe names
-Handlebars.registerHelper('artifact-sanitized', function (artifact: string): string {
-  return sanitizeArtifact(artifact);
-});
-
 Handlebars.registerHelper(
   'resolve-interface-custon-validator-name',
   function (name: string): string {
@@ -261,8 +256,6 @@ Handlebars.registerHelper(
     domainDriven?: boolean,
   ) {
     let imports: string[] = [];
-    // normalize packageName automatically
-    packageName = sanitizeArtifact(packageName);
 
     const moduloAction = module ? module.toLowerCase() : DIRECTORIES.SHARED;
 

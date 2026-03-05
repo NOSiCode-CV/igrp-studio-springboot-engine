@@ -45,7 +45,6 @@ const testApiConfig: BaseApiConfig = {
   version: "1.0.0",
 }
 
-
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
   //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });

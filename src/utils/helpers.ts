@@ -45,16 +45,6 @@ export const getPackageNameFromConfig = function (config: ApiConfig) {
   return `${config.group}.${config.packageName}`;
 };
 
-/**
- * Sanitizes an artifact string so it can be safely used in Java package names.
- * Currently replaces hyphens with underscores and removes any invalid characters.
- */
-export const sanitizeArtifact = function (artifact: string): string {
-  if (!artifact) return '';
-  // for now simply replace hyphen with underscore; additional rules can be added
-  return artifact.replace(/-/g, '_');
-};
-
 export const formatPackageName = (group: string, packageName: string) =>
   `${group}.${packageName}`.replace(/\./g, '/');
 

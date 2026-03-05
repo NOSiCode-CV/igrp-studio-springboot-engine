@@ -105,4 +105,3 @@ export function normalizeConst(raw: string): string {
       .toUpperCase()
       .replace(/[^A-Z0-9_]/g, "_");
 }
-
