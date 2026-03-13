@@ -1,4 +1,3 @@
-# igrpstudio-json-generator (SKILL.md)
 ---
 name: igrpstudio-json-generator
 description: Generates, validates, and auto-fixes IGRP Studio (spring-engine) JSON configs and writes them to the correct .igrpstudio paths. Supports BaseApiConfig, ModuleConfig, ControllerConfig, ModelConfig, and DTOConfig. Includes fast one-shot and interactive modes.
@@ -9,7 +8,7 @@ Enable an agent to create `.igrpstudio` JSON configs (IGRP Studio / spring-engin
 
 1) detect the project (`basePath`)
 2) generate JSON with predictable defaults
-3) validate using the engine schemas (AJV)
+3) validate using JSON Schema and heuristic rules
 4) auto-fix conservatively
 5) write the file to the correct path under `.igrpstudio`
 
@@ -31,7 +30,7 @@ Enable an agent to create `.igrpstudio` JSON configs (IGRP Studio / spring-engin
 - Do not overwrite existing files by default:
   - if the target file exists, ask before overwriting
   - exception: if the user explicitly requested “update/overwrite/replace”
-- Always validate with AJV before writing. If validation fails:
+- Always run JSON Schema validation (when available) and heuristic validation before writing. If validation fails:
   - attempt conservative auto-fixes and re-validate
   - if it still fails, return errors + partial JSON (do not write)
 
@@ -56,13 +55,61 @@ In this mode, the agent must:
 Use when essential information is missing (no name, no attributes, no actions).
 Ask only what is required to produce a valid JSON.
 
-## Validation (AJV) and engine schemas
-Always validate generated JSON with the engine schemas:
-- BaseApiConfig: `src/schema/baseApiConfig.ts`
-- ModuleConfig: `src/schema/moduleConfig.ts`
-- ControllerConfig: `src/schema/controllerConfig.ts`
-- ModelConfig: `src/schema/modelConfig.ts`
-- DTOConfig: `src/schema/dtoConfig.ts`
+## JSON Schema validation
+This skill can validate JSON using JSON Schema without embedding the spring-engine codebase into the microservice. The microservice should have access to a schema “bundle” (schema `.json` files) or an internal endpoint that serves schemas.
+
+### Schema validation structure (for all types)
+Have one schema per supported kind (suggested names):
+- `baseApi.schema.json`
+- `module.schema.json`
+- `controller.schema.json`
+- `model.schema.json`
+- `dto.schema.json`
+
+Validation workflow:
+1) select the schema based on config kind (baseApi/module/controller/model/dto)
+2) validate the JSON against the schema
+3) if invalid, collect structured errors (field + message)
+4) apply safe auto-fixes and re-validate
+5) if still invalid, do not write; return errors + partial JSON
+
+If schemas are not available at runtime, fall back to heuristic validation.
+
+## Heuristic validation (fallback)
+When schemas are unavailable, this skill runs validation using a conservative ruleset that mirrors the most important constraints.
+
+### Global checks
+- `type` must match the config kind (`springboot`, `module`, `controller`, `model`, DTO object type).
+- Names must be alphanumeric/underscore and start with a letter (no spaces, no hyphens).
+- Unknown/extra properties should be removed if they clearly do not belong (only when unambiguous).
+
+### BaseApiConfig checks
+- Required fields: `type`, `name`, `group`, `artifact`, `database`, `projectStructureStyle`, `enableObservability`, `enableEntityRevision`, `enableGraalVm`.
+- `database` must be one of: `MySQL | Oracle | Postgresql | H2`.
+- `projectStructureStyle` must be one of: `technical | domain`.
+- Flags must be boolean.
+
+### ModuleConfig checks
+- Required fields: `type`, `name`.
+- `name` must be valid (same naming rules).
+
+### ControllerConfig checks
+- Required fields: `type`, `name`, `basePath`, `actions`.
+- `method` must be one of: `GET | POST | PUT | PATCH | DELETE | OPTIONS | HEAD`.
+- If an action path contains `{var}`, ensure `pathVariables` includes that var.
+- If `responses` is missing, create a minimal `200` response.
+
+### ModelConfig checks
+- Required fields: `type`, `name`, `tableName`, `attributes`.
+- Attributes must have `type` and `name`.
+- If `primaryKey=true`, enforce a valid `generationType` when needed (ask if ambiguous).
+- If relations are present, require `relation.type`, `relation.fetchType`, `relation.cardinality`, `relation.entity`.
+
+### DTOConfig checks
+- Required fields: `type`, `template`, `name`, `attributes`.
+- `template` must be `classic | record`.
+- Each attribute must include `name`, `type`, `objectType`, `required`.
+- Normalize duplicated suffixes (`DTODTO`, `CommandCommand`, etc.).
 
 ## Predictable defaults (table)
 
@@ -154,7 +201,7 @@ Use the same paths as the engine:
 ## Output format
 Always return:
 
-```markdown
+'''markdown
 ## Result
 - Type: <baseApi|module|controller|model|dto>
 - Path: <absolute path to the generated file>
@@ -167,7 +214,9 @@ Always return:
 
 ## Applied fixes
 - ...
-```
+'''
+
+The `Generated JSON` block above is a response template. When the skill runs, it must be filled with the actual JSON that was generated.
 
 ## Supported one-shot phrases (mini DSL)
 
@@ -232,4 +281,3 @@ With query params:
 - When the goal is to generate Java code directly (use spring-engine: `newApi`, `addModule`, `addModel`, `addDTO`, `addController`)
 - When the user does not want to write files to disk
 - When there is no IGRPStudio project and the user refuses to provide `basePath`
-
