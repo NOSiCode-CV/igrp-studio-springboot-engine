@@ -1,14 +1,16 @@
 // Assuming the helper is exported from this file
 
-import { runJarInspector } from '../src/modules/baseApi/helpers';
+import {runJarInspector} from '../src/modules/baseApi/helpers';
 // @ts-ignore
-import { JAR_OUTPUT_DIR, JAR_PATH } from './outputDirPath';
+import {JAR_OUTPUT_DIR, JAR_PATH} from './outputDirPath';
+import {setEngineConfiguration} from "../src";
 
 // Example of a JAR file path (this should be a real path during the test execution)
 
 beforeEach(async () => {
   // Ensure the base output directory exists before tests
   //await fs.mkdir(OUTPUT_DIR, { recursive: true });
+  setEngineConfiguration({ environment: 'development' });
 });
 
 afterEach(async () => {

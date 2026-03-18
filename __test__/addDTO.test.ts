@@ -144,7 +144,7 @@ describe('DTO generator', () => {
     ];
 
     for (const testCase of technicalTestCases) {
-       await addDTO(testCase, "C:\\Users\\Carlos.Mendes.Santos\\OneDrive - nosiepe\\Documentos\\projects\\IGRP\\projects\\APIbooking");
+       await addDTO(testCase, TEST_OUTPUT_TEC);
     }
   })
 

@@ -4,4 +4,4 @@ export const DOMAIN_OUTPUT_DIR2 = 'C:\\spring-engine\\demoDomain2';
 export const TEST_OUTPUT_DIR = 'C:\\spring-engine\\demoNick';
 export const TEST_OUTPUT_TEC = 'C:\\spring-engine\\demoTec';
 export const JAR_OUTPUT_DIR = 'C:\\jar\\test';
-export const JAR_PATH = 'C:\\jar\\shared-test.jar';
+export const JAR_PATH = 'C:\\spring-engine\\demoTec\\target\\users-teste-0.0.1-SNAPSHOT.jar';
