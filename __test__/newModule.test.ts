@@ -1,16 +1,19 @@
-import fs from 'fs-extra';
-import {addModule} from '../src';
+import {addModule, setEngineConfiguration} from '../src';
 import {ModuleConfig} from '../src/interfaces/types';
 // @ts-ignore
-import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2} from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2, TEST_OUTPUT_TEC} from './outputDirPath';
 
 const moduleConfig: ModuleConfig = {
   type: 'module',
   name: 'demo',
 };
 
+beforeAll(async () => {
+  setEngineConfiguration({ environment: 'development' });
+});
+
 beforeEach(async () => {
-  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+ // await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
 });
 
 afterEach(async () => {
@@ -20,6 +23,6 @@ afterEach(async () => {
 describe('New Module', () => {
 
   it('should create the module structure with all the directories.', async () => {
-    await addModule(moduleConfig, DOMAIN_OUTPUT_DIR2);
+    await addModule(moduleConfig, DOMAIN_OUTPUT_DIR);
   });
 });

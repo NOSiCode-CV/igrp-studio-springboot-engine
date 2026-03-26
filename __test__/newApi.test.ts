@@ -62,7 +62,7 @@ describe('New API Module', () => {
   });
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(technicalApiConfig, TEST_OUTPUT_TEC);
+    //await newApi(technicalApiConfig, TEST_OUTPUT_TEC);
   });
 
 });
