@@ -32,6 +32,8 @@ Guide any evolution of the engine codebase (`src/`) so that every change is cons
 - "Add a `toKebabCase` helper"
 - "Extract the imports block into a reusable partial"
 
+**Do NOT use this skill** to generate Spring Boot project files using the engine. For that, use the `igrp-spring-generator` skill.
+
 ---
 
 ## Mandatory Workflow (follow in order)
@@ -42,10 +44,10 @@ Identify which category applies — this determines which reference files to rea
 
 | Category | Description | Reference |
 |----------|-------------|-----------|
-| **A) New operation** | Brand-new exported function + new module + new template | [adding-new-operation.md](./extend-spring-engine/references/adding-new-operation.md) |
-| **B) New module type** | Multi-file generator (like `addController`) | [adding-new-module-type.md](./extend-spring-engine/references/adding-new-module-type.md) |
-| **C) Extend existing feature** | New field, new type support, new behavior, non-Java resource files, `newApi` feature flags | [extending-existing-features.md](./extend-spring-engine/references/extending-existing-features.md) |
-| **D) Template / helper work** | New template, template variant, new partial, new Handlebars helper | [template-system.md](./extend-spring-engine/references/template-system.md) |
+| **A) New operation** | Brand-new exported function + new module + new template | [adding-new-operation.md](./references/adding-new-operation.md) |
+| **B) New module type** | Multi-file generator (like `addController`) | [adding-new-module-type.md](./references/adding-new-module-type.md) |
+| **C) Extend existing feature** | New field, new type support, new behavior, non-Java resource files, `newApi` feature flags | [extending-existing-features.md](./references/extending-existing-features.md) |
+| **D) Template / helper work** | New template, template variant, new partial, new Handlebars helper | [template-system.md](./references/template-system.md) |
 
 A single request may span multiple categories — e.g., "add UUID support to requestParams" is **C** (extend type mapping) + **D** (update template).
 
@@ -55,10 +57,10 @@ A single request may span multiple categories — e.g., "add UUID support to req
 
 Before writing any code, read what is relevant:
 
-- **Always read first:** [Architecture](../../docs/architecture.md) and [Code Generation Pipeline](../../docs/code-generation-pipeline.md)
-- For type/interface details: [Configuration Types](../../docs/configuration-types.md)
-- For existing function signatures: [Public API](../../docs/public-api.md)
-- For extension how-tos: [Extending the Engine](../../docs/extending-the-engine.md)
+- **Always read first:** [Architecture](../../../docs/architecture.md) and [Code Generation Pipeline](../../../docs/code-generation-pipeline.md)
+- For type/interface details: [Configuration Types](../../../docs/configuration-types.md)
+- For existing function signatures: [Public API](../../../docs/public-api.md)
+- For extension how-tos: [Extending the Engine](../../../docs/extending-the-engine.md)
 
 Then load the reference files for the identified category (see table above).
 
@@ -90,7 +92,7 @@ Clearly state what will change and why:
 - Whether both `technical` and `domain` styles are affected
 
 ---
-
+bo
 ### 5. Implement
 
 For **new operations**, follow the 7-step pipeline (non-negotiable):
@@ -122,16 +124,16 @@ After implementing:
 
 ### 7. Create a companion skill (for large extensions)
 
-If the extension adds a new generation paradigm (e.g., GraphQL, gRPC, WebSocket), create a new skill under `.claude/commands/` and `.trae/skills/` to guide users on how to **use** the new operations:
+If the extension adds a new generation paradigm (e.g., GraphQL, gRPC, WebSocket), create a new skill under `.trae/skills/` to guide users on how to **use** the new operations:
 
 ```
-.claude/commands/
-├── extend-spring-engine.md          ← this skill (for engine developers)
-├── igrp-spring-generator.md         ← existing (for REST generation)
-└── igrp-spring-graphql-generator.md ← new companion skill (for GraphQL generation)
+.trae/skills/
+├── extend-spring-engine/        ← this skill (for engine developers)
+├── igrp-spring-generator/       ← existing (for REST generation)
+└── igrp-spring-graphql-generator/  ← new companion skill (for GraphQL generation)
 ```
 
-The companion skill follows the same structure: a concise main `.md` with progressive disclosure via reference files.
+The companion skill follows the same structure as `igrp-spring-generator`: a concise `SKILL.md` with progressive disclosure via reference files.
 
 ---
 
@@ -156,14 +158,14 @@ Scenario: "Add `uuid` support to `requestParams` in controllers."
 
 ```
 Files to touch:
-1. src/utils/constants.ts          → add 'uuid' to PARAMS_TYPES enum
-2. src/schema/controllerConfig.ts  → update enum in requestParams.type
-3. public/templates/controller.hbs → handle uuid → java.util.UUID import + param
+1. src/utils/constants.ts       → add 'uuid' to PARAMS_TYPES enum
+2. src/schema/controllerConfig.ts → update enum in requestParams.type
+3. public/templates/controller.hbs → handle uuid → java.util.UUID import + String param
 4. __test__/addController.test.ts  → add test case with type: 'uuid'
 ```
 
 No new modules. No new schema file. No new exported function.
-Read [extending-existing-features.md](./extend-spring-engine/references/extending-existing-features.md) for the full pattern.
+Read [extending-existing-features.md](./references/extending-existing-features.md) for the full pattern.
 
 ---
 
@@ -187,11 +189,11 @@ export const addMyFeature = async (dirty: MyFeatureConfig, basePath: string) => 
 };
 ```
 
-See [adding-new-operation.md](./extend-spring-engine/references/adding-new-operation.md) for the full step-by-step.
+See [adding-new-operation.md](./references/adding-new-operation.md) for the full step-by-step.
 
 ---
 
-## Suggested trigger prompts
+## Suggested trigger test prompts
 1. "Add `uuid` as a supported type in `requestParams` for controllers."
 2. "Add a new `addAspect` operation to the engine that generates Spring AOP aspect classes."
 3. "Add a `deprecated` boolean field to `ControllerConfig` and annotate the generated class with `@Deprecated` when set."

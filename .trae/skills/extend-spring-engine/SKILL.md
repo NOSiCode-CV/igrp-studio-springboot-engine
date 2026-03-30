@@ -92,7 +92,7 @@ Clearly state what will change and why:
 - Whether both `technical` and `domain` styles are affected
 
 ---
-
+bo
 ### 5. Implement
 
 For **new operations**, follow the 7-step pipeline (non-negotiable):
