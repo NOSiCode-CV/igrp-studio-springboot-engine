@@ -323,11 +323,15 @@ Handlebars.registerHelper(
       if (reqParam) {
         //console.log(reqParam);
 
+        const TIMING_TYPES = ['date', 'datetime', 'time', 'instant'];
         reqParam.forEach((atrr) => {
           const genType = GENERIC_TYPES.get(atrr.type);
 
           if (genType?.java.namespace) {
             imports.push(`import ${genType?.java.namespace}.${genType?.java.name};`);
+          }
+          if (TIMING_TYPES.includes(atrr.type)) {
+            imports.push('import org.springframework.format.annotation.DateTimeFormat;');
           }
         });
       }
@@ -603,6 +607,17 @@ Handlebars.registerHelper('resolve-type', function (this: any, t1: any) {
   }
 
   return wrapCollectionType(attributeType, t1.collectionType);
+});
+
+Handlebars.registerHelper('dateTimeFormatAnnotation', function (this: any, param: any) {
+  const ISO_MAP: Record<string, string> = {
+    date: 'DATE',
+    datetime: 'DATE_TIME',
+    time: 'TIME',
+    instant: 'DATE_TIME',
+  };
+  const iso = ISO_MAP[param?.type];
+  return iso ? `@DateTimeFormat(iso = DateTimeFormat.ISO.${iso}) ` : '';
 });
 
 Handlebars.registerHelper('getCollectionTypeInitializer', function (this: any, t1: any) {
