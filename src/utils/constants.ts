@@ -62,6 +62,7 @@ export const DIRECTORIES = {
   KUBERNETES: 'k8s',
   AUTHORIZATION : 'authorization',
   PERMISSION: 'permission',
+  REPOSITORYADAPTER: "adapter"
 };
 
 export const PACKAGES = {
