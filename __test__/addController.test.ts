@@ -128,3 +128,40 @@ describe('Test Controller Module', () => {
     //await addController(testControllerConfig, TEST_OUTPUT_DIR);
   });
 });
+
+describe('UUID Path Variable', () => {
+  it('should generate a controller with a uuid path variable', async () => {
+    const uuidPathVarConfig: ControllerConfig = {
+      type: 'controller',
+      name: 'Animal',
+      basePath: 'animals',
+      description: 'Controller for managing animals by UUID',
+      actions: [
+        {
+          actionName: 'getById',
+          method: 'GET',
+          pathVariables: [
+            {
+              name: 'id',
+              type: 'uuid',
+              isRequired: true,
+            },
+          ],
+          responses: {
+            '200': {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+
+    await addController(uuidPathVarConfig, INSS_PATH_PROJECT);
+  });
+});

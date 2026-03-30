@@ -331,6 +331,16 @@ Handlebars.registerHelper(
           }
         });
       }
+
+      if (action.pathVariables) {
+        action.pathVariables.forEach((pathVar) => {
+          const genType = GENERIC_TYPES.get(pathVar.type);
+
+          if (genType?.java.namespace) {
+            imports.push(`import ${genType?.java.namespace}.${genType?.java.name};`);
+          }
+        });
+      }
     }
 
     return [...new Set(imports)].join('\n');
