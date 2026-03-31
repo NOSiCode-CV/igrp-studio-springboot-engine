@@ -347,7 +347,51 @@ const baseBodySchema: JSONSchemaType<BaseBody> = {
     additionalProperties: false,
 };
 
-const pathParamsSchema: JSONSchemaType<RequestParams> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const pathParamsSchema: any = {
+    type: 'object',
+    properties: {
+        type: {
+            type: 'string',
+            pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+            enum: PARAMS_TYPES,
+            errorMessage: `Param type not valid. It must be one of ${PARAMS_TYPES}`,
+        } as any,
+        name: {
+            type: 'string',
+            pattern: PATTERNS.PARAMS_VALIDATION,
+            errorMessage:
+                'The param name attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed',
+        },
+        value: {
+            type: 'string',
+            pattern: PATTERNS.PARAMS_VALIDATION,
+            nullable: true,
+            errorMessage:
+                'The param value attribute must not be empty and cannot contain spaces, hyphens, or special characters. Only alphanumeric characters are allowed',
+        },
+        description: {
+            type: 'string',
+            nullable: true,
+            errorMessage: 'The description attribute, if provided, must be a string',
+        },
+        isRequired: {
+            type: 'boolean',
+            errorMessage: 'The param isRequired must be present and holds values true|false only',
+        },
+    },
+    required: ['type', 'name', 'isRequired'],
+    additionalProperties: false,
+    errorMessage: {
+        required: {
+            type: 'The param type is required and must not be empty.',
+            name: 'The param name is required and must not be empty.',
+            isRequired: 'The obligation of the param must be present.',
+        },
+    },
+};
+
+const requestParamsSchema: JSONSchemaType<RequestParams> = {
     type: 'object',
     properties: {
         type: {
@@ -378,6 +422,12 @@ const pathParamsSchema: JSONSchemaType<RequestParams> = {
             type: 'boolean',
             errorMessage: 'The param isRequired must be present and holds values true|false only',
         },
+        collectionType: {
+            type: 'string',
+            nullable: true,
+            enum: ['list', 'set', 'collection'],
+            errorMessage: `Collection type must be one of: list, set, collection`,
+        } as any,
     },
     required: ['type', 'name', 'isRequired'],
     additionalProperties: false,
@@ -510,7 +560,7 @@ const controllerActionSchema: JSONSchemaType<ControllerAction> = {
         },
         requestParams: {
             type: 'array',
-            items: pathParamsSchema,
+            items: requestParamsSchema,
             nullable: true,
             errorMessage:
                 'Request params can only contain characters without spaces or special characters.',

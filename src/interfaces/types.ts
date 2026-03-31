@@ -301,6 +301,7 @@ export interface RequestParams {
   value?: string;
   description?: string;
   isRequired: boolean;
+  collectionType?: 'list' | 'set' | 'collection';
 }
 
 export interface PathVariables {

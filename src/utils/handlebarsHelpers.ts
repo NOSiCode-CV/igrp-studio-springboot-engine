@@ -1,51 +1,51 @@
 import * as Handlebars from 'handlebars';
 
 import {
-  Attribute,
-  BaseBody,
-  Body,
-  ControllerAction,
-  HandlerConfig,
-  HttpHeader,
-  JavaAttribute,
-  ModelConfig,
-  Relation,
-  RequestParams,
-  SchemaContent,
-  SchemaField,
+    Attribute,
+    BaseBody,
+    Body,
+    ControllerAction,
+    HandlerConfig,
+    HttpHeader,
+    JavaAttribute,
+    ModelConfig,
+    Relation,
+    RequestParams,
+    SchemaContent,
+    SchemaField,
 } from '../interfaces/types';
 import {
-  DIRECTORIES,
-  GENERIC_IMPORTS,
-  GENERIC_TYPES,
-  PACKAGES,
-  PROJECT_STRUCTURE_STYLE,
-  REQUEST_BODY_NOT_IMPORT,
-  REQUEST_MAPPING_OPTIONS,
+    DIRECTORIES,
+    GENERIC_IMPORTS,
+    GENERIC_TYPES,
+    PACKAGES,
+    PROJECT_STRUCTURE_STYLE,
+    REQUEST_BODY_NOT_IMPORT,
+    REQUEST_MAPPING_OPTIONS,
 } from './constants';
 import {getPackageNameFromConfig} from './helpers';
 import {
-  capitalizeResponse,
-  formatTypeName,
-  getCollectionTypeInitializer,
-  wrapCollectionType,
+    capitalizeResponse,
+    formatTypeName,
+    getCollectionTypeInitializer,
+    wrapCollectionType,
 } from './capitalizeStrings';
 import {normalizeName} from '../modules/dto/saveDTOConfig';
 import {
-  capitalize,
-  capitalizeJavaStyle,
-  concat,
-  fullCamelCaseAndPluralize,
-  lowercaseAndPluralize,
-  lowerCaseFirstLetter,
-  normalizeConst,
-  sanitizeHeaderName,
-  toCamelCase,
-  toFullCamelCaseFromSnakeCase,
-  toLowerCase,
-  toTitleCase,
-  toUpperCase,
-  wrapInCurlyBraces,
+    capitalize,
+    capitalizeJavaStyle,
+    concat,
+    fullCamelCaseAndPluralize,
+    lowercaseAndPluralize,
+    lowerCaseFirstLetter,
+    normalizeConst,
+    sanitizeHeaderName,
+    toCamelCase,
+    toFullCamelCaseFromSnakeCase,
+    toLowerCase,
+    toTitleCase,
+    toUpperCase,
+    wrapInCurlyBraces,
 } from '../helper/stringHelper';
 import {json} from '../helper/jsonHelper';
 import {equals, ifEquals, ifNot, isPageable, isText, not, notEquals,} from '../helper/logicalHelper';
@@ -332,6 +332,10 @@ Handlebars.registerHelper(
           }
           if (TIMING_TYPES.includes(atrr.type)) {
             imports.push('import org.springframework.format.annotation.DateTimeFormat;');
+          }
+          if (atrr.collectionType) {
+            const collectionImport = GENERIC_IMPORTS('', '').get(atrr.collectionType)?.java?.technical;
+            if (collectionImport) imports.push(collectionImport);
           }
         });
       }
