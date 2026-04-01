@@ -1,7 +1,7 @@
 import {newApi, setEngineConfiguration} from '../src';
 import {BaseApiConfig} from '../src/interfaces/types';
 // @ts-ignore
-import {DOMAIN_OUTPUT_DIR, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
 
 
 const domainApiConfig: BaseApiConfig = {
@@ -12,7 +12,7 @@ const domainApiConfig: BaseApiConfig = {
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'domain',
-  enableObservability: true,
+  enableObservability: false,
   enableEntityRevision: false,
   enableGraalVm: false
 };
@@ -25,25 +25,11 @@ const technicalApiConfig: BaseApiConfig = {
   description: 'Demo project for Spring Boot',
   database: 'Postgresql',
   projectStructureStyle: 'technical',
-  enableObservability: true,
+  enableObservability: false,
   enableEntityRevision: false,
   enableGraalVm: false
 };
 
-const testApiConfig: BaseApiConfig = {
-  type: "springboot",
-  name: "igrp_platform_process_manager_studio",
-  group: "cv.igrp.platform",
-  artifact: "process_manager_studio",
-  package : "studio",
-  database: "Postgresql",
-  description: "IGRP Platform Process Manager Studio",
-  projectStructureStyle: "domain",
-  enableObservability: true,
-  enableEntityRevision: false,
-  enableGraalVm: false,
-  version: "1.0.0",
-}
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -62,7 +48,7 @@ describe('New API Module', () => {
   });
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    //await newApi(technicalApiConfig, TEST_OUTPUT_TEC);
+    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR);
   });
 
 });

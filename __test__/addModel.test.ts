@@ -1,12 +1,13 @@
-import fs from 'fs-extra';
 import {DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig} from '../src/interfaces/types';
-import {addModel} from '../src';
+import {addModel, setEngineConfiguration} from '../src';
 // @ts-ignore
 import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
-  await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+  setEngineConfiguration({ environment: 'development' });
+
 });
 
 describe('Model generator', () => {
@@ -90,133 +91,99 @@ describe('Model generator', () => {
 
     const technicalTestCases: ModelConfig[] = [
 
-      // User
-
       {
-        "id": "sfk6hpjtcg",
         "type": "model",
-        "name": "User",
-        "tableName": "user",
-        "attributes": [
-          {
-            "type": "integer",
-            "name": "id",
-            "primaryKey": true,
-            "generationType": "IDENTITY",
-            "nullable": false
-          },
-          {
-            "type": "string",
-            "name": "username",
-            "length": 255,
-            "nullable": false,
-            "unique": true
-          },
-          {
-            "type": "Level",
-            "objectType": "enum",
-            "name": "userLevelNew",
-            "nullable": false,
-            "unique": true,
-            "skipFieldRevision": true
-          },
-          {
-            "type": "Level",
-            "objectType": "enum",
-            "name": "userLevel",
-            "length": 255,
-            "nullable": false,
-            "unique": true
-          },
-          {
-            "type": "string",
-            "name": "email",
-            "length": 255,
-            "nullable": false,
-            "unique": true,
-            "skipFieldRevision": true
-          },
-          {
-            "type": "string",
-            "name": "password",
-            "length": 25,
-            "nullable": false,
-            "skipFieldRevision": true
-          },
-          {
-            "type": "file",
-            "name": "document",
-            "nullable": false
-          },
-          {
-            "type": "boolean",
-            "name": "active",
-            "nullable": false,
-            "defaultValue": "true"
-          }
-        ],
-        "crud": false,
+        "module": "shared",
+        "name": "DemoEntity",
+        "tableName": "t_demo",
         "audit": true,
-        "revision": true
-      },
-
-      // Contact
-
-      {
-        "id": "ylmvzj5cuy",
-        "type": "model",
-        "name": "Contact",
-        "tableName": "contact",
+        "crud": false,
+        "revision": false,
         "attributes": [
           {
-            "type": "integer",
             "name": "id",
+            "type": "integer",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
             "primaryKey": true,
             "generationType": "IDENTITY",
-            "nullable": false
+            "skipFieldRevision": false
           },
           {
+            "name": "nome",
             "type": "string",
-            "name": "email",
             "length": 255,
             "nullable": false,
-            "unique": true
-          },
-          {
-            "type": "integer",
-            "name": "phoneNumber",
-            "nullable": false,
-            "unique": true
-          },
-          {
-            "type": "boolean",
-            "name": "active",
-            "nullable": false,
-            "defaultValue": "true"
-          },
-          {
-            "type": "relation",
-            "name": "user",
-            "relation": {
-              "fetchType": "lazy",
-              "fieldName": "owner",
-              "type": "OneToOne",
-              "cardinality": "oneWay",
-              "entity": "User"
-            },
-            "nullable": true
+            "unique": false,
+            "primaryKey": false,
+            "skipFieldRevision": false
           }
         ],
-        "crud": true,
-        "audit": false,
-        "revision": false
+        "id": "14srrzv51e",
+        "relationReference": [
+          {
+            "type": "OneToMany",
+            "entity": "TesteEntity",
+            "fetchType": "lazy",
+            "fieldName": "teste",
+            "mappedBy": "demos",
+            "module": "shared"
+          }
+        ],
+        "uniqueConstraints": [],
+        "indexes": []
       },
+
+      {
+        "type": "model",
+        "module": "shared",
+        "name": "TesteEntity",
+        "tableName": "t_teste",
+        "audit": true,
+        "crud": false,
+        "revision": false,
+        "attributes": [
+          {
+            "name": "id",
+            "type": "integer",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
+            "primaryKey": true,
+            "generationType": "IDENTITY",
+            "skipFieldRevision": false
+          },
+          {
+            "name": "demos",
+            "type": "relation",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
+            "primaryKey": false,
+            "skipFieldRevision": false,
+            "relation": {
+              "type": "OneToMany",
+              "entity": "DemoEntity",
+              "referencedColumnName": "id",
+              "cardinality": "twoWay",
+              "fetchType": "lazy",
+              "mappedBy": "teste",
+              "module": "shared",
+              "orphanRemoval": false
+            }
+          }
+        ],
+        "id": "umaluzndao",
+        "uniqueConstraints": [],
+        "indexes": []
+      }
 
 
     ];
 
     for (const testCase of technicalTestCases) {
-      //   await addModel(testCase, TECHNICAL_OUTPUT_DIR);
+      await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   })
 
@@ -275,6 +242,55 @@ describe('Model generator', () => {
 
     // await serializeElement(config, TECHNICAL_OUTPUT_DIR);
 
+  });
+
+  it('should create model with custom columnName attribute', async () => {
+    const config: ModelConfig = {
+      id: 'col_name_test',
+      type: 'model',
+      name: 'Product',
+      tableName: 'product',
+      attributes: [
+        {
+          type: 'integer',
+          name: 'id',
+          primaryKey: true,
+          generationType: 'IDENTITY',
+          nullable: false,
+        },
+        {
+          type: 'string',
+          name: 'productName',
+          columnName: 'product_name',  // custom column name
+          length: 255,
+          nullable: false,
+        },
+        {
+          type: 'string',
+          name: 'shortCode',
+          // no columnName — fallback to toLowerCase('shortCode') = 'shortcode'
+          length: 50,
+          nullable: true,
+        },
+      ],
+      uniqueConstraints: [
+        {
+          name: 'uq_product_name',
+          columns: ['productName'],  // engine resolves to 'product_name'
+        },
+      ],
+      indexes: [
+        {
+          name: 'idx_short_code',
+          columns: ['shortCode'],  // engine resolves to 'shortcode'
+          unique: false,
+        },
+      ],
+      crud: false,
+      audit: false,
+    };
+
+    await addModel(config, TECHNICAL_OUTPUT_DIR);
   });
 
   it('should create a model based on DDL create table script serialization', async () => {

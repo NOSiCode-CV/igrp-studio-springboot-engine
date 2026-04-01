@@ -1,7 +1,7 @@
 import {ModelConfig} from '../src/interfaces/types';
 import {addModel, setEngineConfiguration} from '../src';
 // @ts-ignore
-import {DOMAIN_OUTPUT_DIR, INSS_PATH_PROJECT, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
 
 
 beforeEach(async () => {
@@ -80,7 +80,7 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of oneToOne) {
-      await addModel(testCase, INSS_PATH_PROJECT);
+      //await addModel(testCase, INSS_PATH_PROJECT);
     }
   });
 
@@ -265,6 +265,108 @@ describe('Model generator', () => {
 
     for (const testCase of ManyToOne) {
      // await addModel(testCase, TEST_OUTPUT_DIR);
+    }
+  });
+
+  it('should create bidirectional ManyToOne/OneToMany with custom columnName', async () => {
+
+    const models: ModelConfig[] = [
+      {
+        "type": "model",
+        "module": "shared",
+        "name": "DemoEntity",
+        "tableName": "t_demo",
+        "audit": true,
+        "crud": false,
+        "revision": false,
+        "attributes": [
+          {
+            "name": "id",
+            "type": "integer",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
+            "primaryKey": true,
+            "generationType": "IDENTITY",
+            "skipFieldRevision": false
+          },
+          {
+            "name": "nome",
+            "type": "string",
+            "length": 255,
+            "nullable": false,
+            "unique": false,
+            "primaryKey": false,
+            "skipFieldRevision": false
+          }
+        ],
+        "id": "14srrzv51e",
+        "relationReference": [
+          {
+            "type": "ManyToOne",
+            "entity": "TesteEntity",
+            "fetchType": "lazy",
+            "fieldName": "testes",
+            "mappedBy": "demo_id",
+            "module": "shared"
+          }
+        ],
+        "uniqueConstraints": [],
+        "indexes": []
+      },
+
+      {
+        "type": "model",
+        "module": "shared",
+        "name": "TesteEntity",
+        "tableName": "t_teste",
+        "audit": true,
+        "crud": false,
+        "revision": false,
+        "attributes": [
+          {
+            "name": "id",
+            "type": "integer",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
+            "primaryKey": true,
+            "generationType": "IDENTITY",
+            "skipFieldRevision": false
+          },
+          {
+            "name": "demo_id",
+            "type": "relation",
+            "length": 255,
+            "nullable": true,
+            "unique": false,
+            "primaryKey": false,
+            "skipFieldRevision": false,
+            "relation": {
+              "type": "ManyToOne",
+              "entity": "DemoEntity",
+              "referencedColumnName": "id",
+              "cardinality": "twoWay",
+              "fetchType": "lazy",
+              "mappedBy": "testes",
+              "module": "shared",
+              "cascadeType": [
+                {
+                  "type": "ALL"
+                }
+              ],
+              "orphanRemoval": true
+            }
+          }
+        ],
+        "id": "umaluzndao",
+        "uniqueConstraints": [],
+        "indexes": []
+      }
+    ];
+
+    for (const testCase of models) {
+      await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   });
 

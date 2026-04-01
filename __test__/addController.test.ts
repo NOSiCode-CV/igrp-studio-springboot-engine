@@ -1,7 +1,19 @@
 import {addController, setEngineConfiguration} from '../src';
 import {ControllerConfig} from '../src/interfaces/types';
 // @ts-ignore
-import {INSS_PATH_PROJECT, TEST_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
+
+
+beforeAll(async () => {
+  //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
+  //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
+  setEngineConfiguration({ environment: 'development' });
+});
+
+afterAll(async () => {
+  // await fs.rm(OUTPUT_DIR, { recursive: true });
+});
+
 
 const domainControllerConfig: ControllerConfig = {
   id: "avtjtb5d2g",
@@ -99,36 +111,6 @@ const domainControllerConfig: ControllerConfig = {
 };
 
 
-
-
-beforeAll(async () => {
-  //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
-  //await fs.mkdir(DOMAIN_OUTPUT_DIR, { recursive: true });
-  setEngineConfiguration({ environment: 'development' });
-});
-
-afterAll(async () => {
-  // await fs.rm(OUTPUT_DIR, { recursive: true });
-});
-
-describe('Domain Controller Module', () => {
-  it('should create the controller class and the handlers in domain driven design style', async () => {
-    //await addController(domainControllerConfig, TEST_OUTPUT_DIR);
-  });
-});
-
-describe('Technical Controller Module', () => {
-  it('should create the controller class and the service interface in technical style', async () => {
-    await addController(domainControllerConfig, INSS_PATH_PROJECT);
-  });
-});
-
-describe('Test Controller Module', () => {
-  it('should create the controller class and the service interface in technical style', async () => {
-    //await addController(testControllerConfig, TEST_OUTPUT_DIR);
-  });
-});
-
 describe('UUID Path Variable', () => {
   it('should generate a controller with a uuid path variable', async () => {
     const uuidPathVarConfig: ControllerConfig = {
@@ -162,6 +144,95 @@ describe('UUID Path Variable', () => {
       ],
     };
 
-    await addController(uuidPathVarConfig, INSS_PATH_PROJECT);
+    await addController(uuidPathVarConfig, DOMAIN_OUTPUT_DIR);
+    await addController(uuidPathVarConfig, TECHNICAL_OUTPUT_DIR);
+  });
+});
+
+describe('Date RequestParam', () => {
+  it('should generate a controller with a date request param', async () => {
+    const dateRequestParamConfig: ControllerConfig = {
+      type: 'controller',
+      name: 'Animal',
+      basePath: 'reports',
+      description: 'Controller for filtering reports by date',
+      actions: [
+        {
+          actionName: 'getByDate',
+          method: 'GET',
+          requestParams: [
+            {
+              name: 'startDate',
+              type: 'date',
+              isRequired: true,
+            },
+            {
+              name: 'endDate',
+              type: 'date',
+              isRequired: false,
+            },
+          ],
+          responses: {
+            '200': {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+
+    await addController(dateRequestParamConfig, DOMAIN_OUTPUT_DIR);
+    await addController(dateRequestParamConfig, TECHNICAL_OUTPUT_DIR);
+  });
+});
+
+describe('Collection RequestParam', () => {
+  it('should generate a controller with collection type request params', async () => {
+    const collectionRequestParamConfig: ControllerConfig = {
+      type: 'controller',
+      name: 'Tag',
+      basePath: 'tags',
+      description: 'Controller for filtering by multiple tags',
+      module : 'demo',
+      actions: [
+        {
+          actionName: 'getByTags',
+          method: 'POST',
+          requestParams: [
+            {
+              name: 'tags',
+              type: 'uuid',
+              collectionType: 'list',
+              isRequired: false,
+            },
+            {
+              name: 'ids',
+              type: 'long',
+              isRequired: false,
+            },
+          ],
+          responses: {
+            '200': {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+
+    await addController(collectionRequestParamConfig, DOMAIN_OUTPUT_DIR);
+    await addController(collectionRequestParamConfig, TECHNICAL_OUTPUT_DIR);
   });
 });
