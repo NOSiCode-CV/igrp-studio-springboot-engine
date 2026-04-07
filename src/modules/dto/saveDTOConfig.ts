@@ -48,6 +48,10 @@ export const normalizeDTOType = (type: ObjectTypes): string => {
       return 'Query';
     case 'event':
       return 'Event';
+    case 'graphqlType':
+      return 'GraphQLType';
+    case 'graphqlInput':
+      return 'GraphQLInput';
   }
 };
 
@@ -63,6 +67,9 @@ export const normalizeName = (name: string, type: ObjectTypes): string => {
       return name.replace(/query$/i, '');
     case 'event':
       return name.replace(/event$/i, '');
+    case 'graphqltype':
+    case 'graphqlinput':
+      return name;
     default:
       return name;
   }

@@ -1,23 +1,24 @@
 import {ApiConfig, DTOConfig, EnumConfig, JavaType, ModelConfig, RenderContext,} from '../../interfaces/types';
 import {renderTemplate} from '../common/renderTemplate';
 import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  GENERIC_TYPES,
-  PACKAGE_NS,
-  PACKAGES,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
+    DIRECTORIES,
+    ERROR_MESSAGE,
+    EXTENSIONS,
+    GENERIC_TYPES,
+    PACKAGE_NS,
+    PACKAGES,
+    PROJECT_STRUCTURE_STYLE,
+    TEMPLATES,
 } from '../../utils/constants';
 import {saveToFile} from '../common/saveToFile';
 import {
-  getDDDCommandOutputDir,
-  getDDDDtoOutputDir,
-  getDDDEventOutputDir,
-  getDDDQueryOutputDir,
-  getDtoOutputDir,
-  getPackageNameFromConfig,
+    getDDDCommandOutputDir,
+    getDDDDtoOutputDir,
+    getDDDEventOutputDir,
+    getDDDQueryOutputDir,
+    getDtoOutputDir,
+    getMainPath,
+    getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
 import {getModelTypes} from '../model/helpers';
@@ -82,6 +83,12 @@ export const _renderDTO = async (context: RenderContext<DTOConfig>) => {
       break;
     case 'event':
       tn = TEMPLATES.DDD_LITE_EVENT[context.resourceConfig.template];
+      break;
+    case 'graphqlType':
+      tn = TEMPLATES.GRAPHQL_TYPE[context.resourceConfig.template];
+      break;
+    case 'graphqlInput':
+      tn = TEMPLATES.GRAPHQL_INPUT[context.resourceConfig.template];
       break;
     /*case "valueobject":
       tn = TEMPLATES.DDD_VALUE_OBJECT_DTO[context.resourceConfig.template];
@@ -247,10 +254,61 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
       }
+      case 'graphqlType': {
+        const outputDir = path.join(
+          context.basePath,
+          getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+          context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+          DIRECTORIES.INTERFACE,
+          DIRECTORIES.GRAPHQL,
+        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      }
+      case 'graphqlInput': {
+        const outputDir = path.join(
+          context.basePath,
+          getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+          context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
+          DIRECTORIES.INTERFACE,
+          DIRECTORIES.GRAPHQL,
+        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}Input${EXTENSIONS.JAVA}`);
+      }
+      default: {
+        const outputDir = getDDDDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+      }
     }
   } else {
-    const outputDir = getDtoOutputDir(context);
-    context.fullPath = outputDir;
-    return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+    switch (context.resourceConfig.type) {
+      case 'graphqlType': {
+        const outputDir = path.join(
+          context.basePath,
+          getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+          DIRECTORIES.GRAPHQL,
+          context.resourceConfig.name.toLowerCase(),
+        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
+      }
+      case 'graphqlInput': {
+        const outputDir = path.join(
+          context.basePath,
+          getMainPath(context.baseConfig.group, context.baseConfig.packageName),
+          DIRECTORIES.GRAPHQL,
+          context.resourceConfig.name.toLowerCase(),
+        );
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}Input${EXTENSIONS.JAVA}`);
+      }
+      default: {
+        const outputDir = getDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
+      }
+    }
   }
 };

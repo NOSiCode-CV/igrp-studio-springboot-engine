@@ -1,0 +1,41 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{graphqlImportsTypes resourceConfig}}
+import org.springframework.stereotype.Service;
+
+/**
+ * GraphQL service implementation for {{capitalize resourceConfig.name}}.
+ * This file is generated once — add your business logic here.
+ */
+@Service
+public class {{capitalize resourceConfig.name}}GraphQLService implements I{{capitalize resourceConfig.name}}GraphQLService {
+
+{{#each resourceConfig.queries}}
+    @Override
+    public {{#if this.returnType}}{{this.returnType}}{{else if this.paginated}}{{capitalize ../resourceConfig.name}}Page{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
+    }
+
+{{else}}
+    @Override
+    public {{capitalize resourceConfig.name}} findById(String id) {
+        throw new UnsupportedOperationException("Not yet implemented: findById");
+    }
+
+    @Override
+    public java.util.List<{{capitalize resourceConfig.name}}> findAll() {
+        throw new UnsupportedOperationException("Not yet implemented: findAll");
+    }
+
+{{/each}}
+{{#each resourceConfig.mutations}}
+    @Override
+    public {{#if this.returnType}}{{this.returnType}}{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}(Object input{{#each this.args}}, {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}}) {
+        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
+    }
+
+{{/each}}
+}

@@ -1,0 +1,12 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+public record {{resourceConfig.name}}(
+{{#each resourceConfig.attributes}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}},{{/if}}
+{{/each}}
+){}

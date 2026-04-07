@@ -528,3 +528,37 @@ export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type CascadeTypes = (typeof CASCADE_TYPE)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
+
+// ─── GraphQL Types ───────────────────────────────────────────────────────────
+
+export interface GraphQLFieldDef {
+  name: string;
+  type: string;           // engine attribute type (e.g. 'string', 'integer', 'uuid')
+  nullable?: boolean;
+  description?: string;
+}
+
+export interface GraphQLQuery {
+  name: string;
+  args?: GraphQLFieldDef[];
+  returnType?: string;    // override return type (defaults to <Name> or <Name>Page)
+  paginated?: boolean;    // if true, returns <Name>Page
+}
+
+export interface GraphQLMutation {
+  name: string;
+  inputType?: string;     // defaults to Create<Name>Input
+  args?: GraphQLFieldDef[];
+  returnType?: string;    // override return type (defaults to <Name>)
+}
+
+export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
+  type: 'graphql';
+  name: string;
+  module?: string;
+  modelRef?: string;      // reads .igrpstudio/<module>/models/<ModelRef>.json for fields
+  fields?: GraphQLFieldDef[];
+  queries?: GraphQLQuery[];
+  mutations?: GraphQLMutation[];
+  relations?: Array<{ entity: string; fieldName: string }>;
+}

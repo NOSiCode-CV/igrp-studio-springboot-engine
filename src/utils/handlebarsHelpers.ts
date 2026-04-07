@@ -55,6 +55,7 @@ import {resolveAnnotations, resolvePackage} from '../helper/generalHelper';
 import {resolvePathVariables} from '../helper/controllerHelper';
 import {resolveImportReponse} from '../helper/responseHelper';
 import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
+import {graphqlImportsTypes, resolveGraphQLScalar, resolveJavaTypeForGraphQL} from '../helper/graphqlHelper';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -892,6 +893,20 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
   }
 
   return isPageable;
+});
+
+// GRAPHQL
+Handlebars.registerHelper('resolveGraphQLScalar', resolveGraphQLScalar);
+Handlebars.registerHelper('resolveJavaTypeForGraphQL', resolveJavaTypeForGraphQL);
+Handlebars.registerHelper('graphqlImportsTypes', graphqlImportsTypes);
+
+Handlebars.registerHelper('hasGraphQLMutations', function (mutations: any[]): boolean {
+  return Array.isArray(mutations) && mutations.length > 0;
+});
+
+Handlebars.registerHelper('hasFindAllQuery', function (queries: any[]): boolean {
+  if (!Array.isArray(queries)) return false;
+  return queries.some((q: any) => q.paginated === true || (q.name && q.name.toLowerCase().includes('findall') || q.name.toLowerCase().includes('getall')));
 });
 
 export { Handlebars };

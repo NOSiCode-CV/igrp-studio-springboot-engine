@@ -1,0 +1,27 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{graphqlImportsTypes resourceConfig}}
+
+/**
+ * GraphQL service interface for {{capitalize resourceConfig.name}}.
+ * Implement this interface to provide the business logic for your GraphQL resolvers.
+ */
+public interface I{{capitalize resourceConfig.name}}GraphQLService {
+
+{{#each resourceConfig.queries}}
+    {{#if this.returnType}}{{this.returnType}}{{else if this.paginated}}{{capitalize ../resourceConfig.name}}Page{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+
+{{else}}
+    {{capitalize resourceConfig.name}} findById(String id);
+
+    java.util.List<{{capitalize resourceConfig.name}}> findAll();
+
+{{/each}}
+{{#each resourceConfig.mutations}}
+    {{#if this.returnType}}{{this.returnType}}{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}(Object input{{#each this.args}}, {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}});
+
+{{/each}}
+}
