@@ -1,5 +1,5 @@
 import path from "path";
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
@@ -12,7 +12,7 @@ export default defineConfig({
       formats: ["cjs", "es"]
     },
     rollupOptions: {
-      external: ['fs-extra', 'path'],
+      external: ['fs-extra', 'path', 'prettier', 'prettier/standalone'],
       output: {
         globals: {
           fs: 'fs',

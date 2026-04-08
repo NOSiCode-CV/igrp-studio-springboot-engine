@@ -1,6 +1,6 @@
 {
   "name": "@igrp/igrp-studio-springboot-engine",
-  "version": "0.1.0-beta.20",
+  "version": "0.1.0-beta.20-snapshot.1",
   "description": "Spring Boot API Creation Engine",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -16,11 +16,15 @@
     "springDocVersion": "2.8.15"
   },
   "scripts": {
+    "prebundle": "node scripts/bundle-java-plugin.mjs",
+    "pretest": "node scripts/bundle-java-plugin.mjs",
     "test": "jest",
     "build": "env-cmd -f .env.production tsc && vite build",
     "start": "tsc && vite",
     "deploy": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
-    "release": "npm run build && npm run deploy"
+    "deploy:snapshot": "npm publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag next",
+    "release": "npm run build && npm run deploy",
+    "snapshot": "npm run build && npm run deploy:snapshot"
   },
   "repository": {
     "type": "git",
@@ -44,16 +48,18 @@
     "fast-xml-parser": "^5.3.3",
     "fs-extra": "^11.3.3",
     "inflection": "^3.0.2",
-    "sass": "^1.97.3",
     "pluralize": "^8.0.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-java": "^2.8.1",
+    "sass": "^1.97.3",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.5.4"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
-    "@types/pluralize": "^0.0.33",
     "@types/node": "^25.0.10",
+    "@types/pluralize": "^0.0.33",
     "@typescript-eslint/eslint-plugin": "^8.53.1",
     "@typescript-eslint/parser": "^8.53.1",
     "env-cmd": "^11.0.0",
@@ -63,7 +69,6 @@
     "eslint-plugin-prettier": "^5.5.5",
     "handlebars": "^4.7.8",
     "jest": "^30.2.0",
-    "prettier": "^3.8.1",
     "ts-jest": "^29.4.6",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4"
