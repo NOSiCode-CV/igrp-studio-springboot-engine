@@ -80,7 +80,7 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of oneToOne) {
-      //await addModel(testCase, INSS_PATH_PROJECT);
+      await addModel(testCase, TECHNICAL_OUTPUT_DIR );
     }
   });
 
@@ -473,7 +473,7 @@ describe('Model generator', () => {
     ];
 
     for (const testCase of ManyToMany) {
-    // await addModel(testCase, TEST_OUTPUT_DIR);
+     await addModel(testCase, TECHNICAL_OUTPUT_DIR);
     }
   });
 });

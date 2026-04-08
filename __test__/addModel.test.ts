@@ -261,7 +261,6 @@ describe('Model generator', () => {
         {
           type: 'string',
           name: 'productName',
-          columnName: 'product_name',  // custom column name
           length: 255,
           nullable: false,
         },
