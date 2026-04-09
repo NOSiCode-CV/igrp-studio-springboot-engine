@@ -71,12 +71,14 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
     @JdbcType(BinaryJdbcType.class)
   {{else if (eq this.type "binary")}}
     @Lob
+  {{else if (eq this.type "json")}}
+    @JdbcTypeCode(SqlTypes.JSON)
   {{/if}}
   {{#if (eq this.objectType "enum")}}
     @Enumerated(EnumType.STRING)
   {{/if}}
   {{#ifNot (eq this.type "relation")}}
-    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (or (eq this.type "file") (eq this.type "binary"))}}, columnDefinition = "BLOB"{{/if}})
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (or (eq this.type "file") (eq this.type "binary"))}}, columnDefinition = "BLOB"{{/if}}{{#if (eq this.type "json")}}{{#if (eq ../baseConfig.database "Postgresql")}}, columnDefinition = "jsonb"{{else if (eq ../baseConfig.database "MySQL")}}, columnDefinition = "json"{{else}}, columnDefinition = "CLOB"{{/if}}{{/if}})
     private {{#if (or (eq this.type "file") (eq this.type "binary"))}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot~}}{{/if}}{{/if}}
 
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne')}}

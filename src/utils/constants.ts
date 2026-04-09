@@ -589,6 +589,7 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'uri',
   'url',
   'text',
+  'json',
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
@@ -596,6 +597,7 @@ export const CATEGORIZED_ATTRIBUTE_TYPES = {
   numeric: ['integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'],
   text: ['string', 'char', 'text'],
   media: ['file', 'binary'],
+  json: ['json'],
   misc: ['uuid', 'boolean'],
   generic: ['object'],
   uri: ['url', 'uri'],
@@ -805,6 +807,12 @@ export const GENERIC_TYPES: Map<
       python: { name: 'bytes', primitive: true },
       kotlin: { name: 'ByteArray', primitive: true },
     },
+    json: {
+      java: { name: 'JsonNode', primitive: false, namespace: 'com.fasterxml.jackson.databind' },
+      dotnet: { name: 'string', primitive: false },
+      python: { name: 'str', primitive: false },
+      kotlin: { name: 'JsonNode', primitive: false },
+    },
   }),
 );
 
@@ -869,6 +877,25 @@ export const GENERIC_IMPORTS = (
         java: {
           domain: '',
           technical: '',
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
+      },
+      json: {
+        java: {
+          domain:
+            `import com.fasterxml.jackson.databind.JsonNode;` +
+            '\n' +
+            `import org.hibernate.annotations.JdbcTypeCode;` +
+            '\n' +
+            `import org.hibernate.type.SqlTypes;`,
+          technical:
+            `import com.fasterxml.jackson.databind.JsonNode;` +
+            '\n' +
+            `import org.hibernate.annotations.JdbcTypeCode;` +
+            '\n' +
+            `import org.hibernate.type.SqlTypes;`,
         },
         dotnet: {},
         python: {},

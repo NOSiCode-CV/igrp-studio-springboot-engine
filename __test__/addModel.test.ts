@@ -292,6 +292,39 @@ describe('Model generator', () => {
     await addModel(config, TECHNICAL_OUTPUT_DIR);
   });
 
+  it('should generate @JdbcTypeCode(SqlTypes.JSON) with columnDefinition per database for json type', async () => {
+    const jsonModelBase: ModelConfig = {
+      id: 'json_type_test',
+      type: 'model',
+      name: 'ConfigEntity',
+      tableName: 'config',
+      module: 'shared',
+      attributes: [
+        {
+          type: 'integer',
+          name: 'id',
+          primaryKey: true,
+          generationType: 'IDENTITY',
+          nullable: false,
+        },
+        {
+          type: 'json',
+          name: 'metadata',
+          nullable: true,
+        },
+        {
+          type: 'json',
+          name: 'settings',
+          nullable: false,
+        },
+      ],
+      crud: false,
+      audit: false,
+    };
+
+    await addModel(jsonModelBase, TECHNICAL_OUTPUT_DIR);
+  });
+
   it('should generate @Lob and columnDefinition="BLOB" for binary type attributes', async () => {
     const config: ModelConfig = {
       id: 'binary_type_test',
