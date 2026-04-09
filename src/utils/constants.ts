@@ -867,8 +867,8 @@ export const GENERIC_IMPORTS = (
       },
       binary: {
         java: {
-          domain: `import org.hibernate.annotations.JdbcType;`,
-          technical: `import org.hibernate.annotations.JdbcType;`,
+          domain: '',
+          technical: '',
         },
         dotnet: {},
         python: {},

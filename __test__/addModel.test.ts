@@ -292,6 +292,40 @@ describe('Model generator', () => {
     await addModel(config, TECHNICAL_OUTPUT_DIR);
   });
 
+  it('should generate @Lob and columnDefinition="BLOB" for binary type attributes', async () => {
+    const config: ModelConfig = {
+      id: 'binary_type_test',
+      type: 'model',
+      name: 'DocumentEntity',
+      tableName: 'document',
+      module: 'shared',
+      attributes: [
+        {
+          type: 'integer',
+          name: 'id',
+          primaryKey: true,
+          generationType: 'IDENTITY',
+          nullable: false,
+        },
+        {
+          type: 'binary',
+          name: 'content',
+          nullable: true,
+        },
+        {
+          type: 'string',
+          name: 'fileName',
+          length: 255,
+          nullable: false,
+        },
+      ],
+      crud: false,
+      audit: false,
+    };
+
+    await addModel(config, TECHNICAL_OUTPUT_DIR);
+  });
+
   it('should create a model based on DDL create table script serialization', async () => {
 
     const sampleDdl = `

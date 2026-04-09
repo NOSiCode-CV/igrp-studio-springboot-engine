@@ -69,13 +69,15 @@ public class {{capitalizeJavaStyle resourceConfig.name}} {{#if resourceConfig.au
   {{#if (eq this.type "file")}}
     @Lob
     @JdbcType(BinaryJdbcType.class)
+  {{else if (eq this.type "binary")}}
+    @Lob
   {{/if}}
   {{#if (eq this.objectType "enum")}}
     @Enumerated(EnumType.STRING)
   {{/if}}
   {{#ifNot (eq this.type "relation")}}
-    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type "file")}}, columnDefinition = "BLOB"{{/if}})
-    private {{#if (eq this.type "file")}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot~}}{{/if}}{{/if}}
+    @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}}, nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'string')}}{{#if (and this.length (ne this.length 255))}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (or (eq this.type "file") (eq this.type "binary"))}}, columnDefinition = "BLOB"{{/if}})
+    private {{#if (or (eq this.type "file") (eq this.type "binary"))}}byte[]{{else}}{{resolve-type this}}{{/if}} {{toFullCamelCaseFromSnakeCase this.name}};{{/ifNot~}}{{/if}}{{/if}}
 
   {{#if relation}}{{#if (eq this.relation.type 'OneToOne')}}
     @OneToOne(fetch = FetchType.{{toUpperCase this.relation.fetchType}}{{#if this.relation.cascadeType}}, cascade = { {{#each  this.relation.cascadeType}}CascadeType.{{this.type}}{{#if @last}}{{else}}, {{/if}}{{/each}} }{{/if}}{{#if this.relation.orphanRemoval}}, orphanRemoval = true{{/if}}){{#if this.name}}
