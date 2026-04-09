@@ -1,13 +1,8 @@
-import { ApiConfig, ModelConfig } from '../interfaces/types';
-import {
-  DIRECTORIES,
-  GENERIC_IMPORTS,
-  GENERIC_TYPES,
-  PACKAGES,
-  PROJECT_STRUCTURE_STYLE,
-} from '../utils/constants';
-import { getPackageNameFromConfig } from '../utils/helpers';
-import { capitalize } from './stringHelper';
+import {ApiConfig, ModelConfig} from '../interfaces/types';
+import {DIRECTORIES, GENERIC_IMPORTS, GENERIC_TYPES, PACKAGES, PROJECT_STRUCTURE_STYLE,} from '../utils/constants';
+import {getPackageNameFromConfig} from '../utils/helpers';
+import {capitalize} from './stringHelper';
+import {isText} from './logicalHelper';
 
 export function keyTypeModel(config: ModelConfig): any {
   if (config.primaryKey) {
@@ -51,7 +46,7 @@ export function modelImport(modelConfig: ModelConfig, baseConfig: ApiConfig): an
     if (type === 'BigInteger' || type === 'BigDecimal') imports.push(`import java.math.${type};`);
 
     if (attribute.nullable === false && !attribute.primaryKey) {
-      if (type === 'String') imports.push('import jakarta.validation.constraints.NotBlank;');
+      if (isText(attribute.type)) imports.push('import jakarta.validation.constraints.NotBlank;');
       else imports.push('import jakarta.validation.constraints.NotNull;');
     }
 

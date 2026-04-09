@@ -6,6 +6,8 @@ import {loadPartials} from '../../utils/helpers';
 import {getDTOTypes} from '../dto/helpers';
 import {getEnumTypes} from '../enum/helpers';
 import {getPaths} from '../../index';
+import {format} from 'prettier/standalone';
+import prettierPluginJava from 'prettier-plugin-java';
 
 export const cache: Record<string, any> = {};
 
@@ -48,5 +50,21 @@ export const renderTemplate = async (templateName: string, context: any) => {
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const template = Handlebars.compile(templateContent);
 
-  return template(context);
+  const rendered = template(context);
+
+  if (templateName.includes('/java/')) {
+    try {
+      const plugin = (prettierPluginJava as any).default ?? prettierPluginJava;
+      return await format(rendered, {
+        parser: 'java',
+        plugins: [plugin],
+        tabWidth: 4,
+        printWidth: 120,
+      });
+    } catch {
+      return rendered;
+    }
+  }
+
+  return rendered;
 };
