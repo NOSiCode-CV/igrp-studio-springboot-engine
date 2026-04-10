@@ -22,7 +22,7 @@ import {
 } from '../../utils/helpers';
 import path from 'path';
 import {getModelTypes} from '../model/helpers';
-import {getDTOTypes} from './helpers';
+import {getDTOTypes, getGraphQLTypes} from './helpers';
 import {normalizeName} from './saveDTOConfig';
 import {getEnumTypes} from '../enum/helpers';
 
@@ -115,6 +115,7 @@ export const transformDTOConfig = async function (
   let mtypes: Map<string, ModelConfig> | undefined = undefined;
   let dtypes: Map<string, DTOConfig> | undefined = undefined;
   let etypes: Map<string, EnumConfig> | undefined = undefined;
+  let gtypes: Map<string, DTOConfig> | undefined = undefined;
 
   for (const attr of ncfg.attributes) {
     let type: JavaType;
@@ -194,6 +195,20 @@ export const transformDTOConfig = async function (
           type.namespace = `${getPackageNameFromConfig(api)}.${PACKAGES.CONSTANTS}`;
         }
       }
+    } else if (attr.objectType === PACKAGE_NS.graphqlType) {
+      // graphqlType references — look up manifest in attr.module (or config.module) to validate existence
+      const refModule = attr.module ?? config.module ?? DIRECTORIES.SHARED;
+      gtypes = await getGraphQLTypes(refModule, basePath);
+      const gt = gtypes.get(String(type.name));
+      if (!gt) {
+        typeNotFound = true;
+      } else {
+        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+          type.namespace = `${getPackageNameFromConfig(api)}.${refModule}.interfaces.${DIRECTORIES.GRAPHQL}.${DIRECTORIES.GRAPHQL_TYPES}`;
+        } else {
+          type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.GRAPHQL}.${DIRECTORIES.GRAPHQL_TYPES}`;
+        }
+      }
     } else typeNotFound = !(attr.objectType === PACKAGE_NS.dto && attr.type === 'object');
 
     if (typeNotFound) {
@@ -255,26 +270,30 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         return path.join(outputDir, `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
       }
       case 'graphqlType': {
+        // Domain: <module>/interfaces/graphql/types/<Name>.java
         const outputDir = path.join(
           context.basePath,
           getMainPath(context.baseConfig.group, context.baseConfig.packageName),
           context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
           DIRECTORIES.INTERFACE,
           DIRECTORIES.GRAPHQL,
+          DIRECTORIES.GRAPHQL_TYPES,
         );
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       }
       case 'graphqlInput': {
+        // Domain: <module>/interfaces/graphql/types/<Name>Input.java
         const outputDir = path.join(
           context.basePath,
           getMainPath(context.baseConfig.group, context.baseConfig.packageName),
           context.resourceConfig.module?.toLowerCase() ?? DIRECTORIES.SHARED,
           DIRECTORIES.INTERFACE,
           DIRECTORIES.GRAPHQL,
+          DIRECTORIES.GRAPHQL_TYPES,
         );
         context.fullPath = outputDir;
-        return path.join(outputDir, `${context.resourceConfig.name}Input${EXTENSIONS.JAVA}`);
+        return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       }
       default: {
         const outputDir = getDDDDtoOutputDir(context);
@@ -285,24 +304,26 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
   } else {
     switch (context.resourceConfig.type) {
       case 'graphqlType': {
+        // Technical: graphql/types/<Name>.java  (flat, no subfolder per type)
         const outputDir = path.join(
           context.basePath,
           getMainPath(context.baseConfig.group, context.baseConfig.packageName),
           DIRECTORIES.GRAPHQL,
-          context.resourceConfig.name.toLowerCase(),
+          DIRECTORIES.GRAPHQL_TYPES,
         );
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       }
       case 'graphqlInput': {
+        // Technical: graphql/types/<Name>Input.java  (flat)
         const outputDir = path.join(
           context.basePath,
           getMainPath(context.baseConfig.group, context.baseConfig.packageName),
           DIRECTORIES.GRAPHQL,
-          context.resourceConfig.name.toLowerCase(),
+          DIRECTORIES.GRAPHQL_TYPES,
         );
         context.fullPath = outputDir;
-        return path.join(outputDir, `${context.resourceConfig.name}Input${EXTENSIONS.JAVA}`);
+        return path.join(outputDir, `${context.resourceConfig.name}${EXTENSIONS.JAVA}`);
       }
       default: {
         const outputDir = getDtoOutputDir(context);

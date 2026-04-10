@@ -1,34 +1,77 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {GraphQLFieldDef, GraphQLSchemaConfig, ModelConfig, RenderContext} from '../../interfaces/types';
+import {DTOConfig, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
 import {DIRECTORIES, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
 import {renderTemplate} from '../common/renderTemplate';
 import {saveToFile} from '../common/saveToFile';
 import {saveGraphQLConfig} from './saveGraphQLConfig';
-import {getMainPath, replaceTemplate} from '../../utils/helpers';
+import {getGraphQLTypeConfigPath, getMainPath, replaceTemplate} from '../../utils/helpers';
 import {capitalizeJavaStyle} from '../../helper/stringHelper';
-import {resolveGraphQLScalar} from '../../helper/graphqlHelper';
+import {resolveGraphQLScalar, resolveJavaTypeForGraphQL} from '../../helper/graphqlHelper';
 
-// ─── Path helpers ────────────────────────────────────────────────────────────
+// ─── Manifest loaders ────────────────────────────────────────────────────────
 
 /**
- * Returns the absolute output path for the .graphqls schema file.
- * Always goes to src/main/resources/graphql/<name>.graphqls
+ * Loads a graphqlType or graphqlInput manifest from
+ * .igrpstudio/<module>/graphql/types/<name>.json
  */
-const getGraphQLSchemaFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
-  const name = capitalizeJavaStyle(context.resourceConfig.name);
-  return path.join(
-    context.basePath,
-    'src/main/resources/graphql',
-    `${name}.graphqls`,
+const loadGraphQLTypeManifest = async (
+  name: string,
+  module: string,
+  basePath: string,
+): Promise<DTOConfig> => {
+  const configPath = path.join(
+    basePath,
+    replaceTemplate(DIRECTORIES.CONFIG_GRAPHQL_TYPES, { module }),
+    `${name}${EXTENSIONS.JSON}`,
   );
+
+  if (!(await fs.pathExists(configPath))) {
+    throw new Error(
+      `GraphQL type manifest not found for '${name}' in module '${module}'. Expected at: ${configPath}`,
+    );
+  }
+
+  return fs.readJSON(configPath) as Promise<DTOConfig>;
 };
 
 /**
- * Returns the absolute output path for the Resolver Java file.
- * - Technical: <mainPath>/graphql/<name>/<Name>Resolver.java   (own subfolder per entity, like controllers/<name>/)
- * - Domain:    <mainPath>/<module>/interfaces/graphql/<Name>Resolver.java
+ * Auto-saves a Page manifest for the given type into the types folder.
+ * The Page type is always derived from a typeRef, so contentTypeRef stores the reference.
  */
+const savePageManifest = async (
+  pageName: string,
+  contentTypeRef: string,
+  module: string,
+  basePath: string,
+): Promise<DTOConfig> => {
+  const manifest: DTOConfig = {
+    type: 'graphqlType',
+    name: pageName,
+    module,
+    template: 'classic',
+    attributes: [
+      { name: 'content', type: contentTypeRef, required: true, objectType: 'graphqlType', collectionType: 'list' },
+      { name: 'totalElements', type: 'long', required: true, objectType: 'java' },
+      { name: 'totalPages', type: 'integer', required: true, objectType: 'java' },
+      { name: 'pageNumber', type: 'integer', required: true, objectType: 'java' },
+    ],
+  };
+
+  const configPath = getGraphQLTypeConfigPath(module, pageName, basePath);
+  await fs.ensureDir(path.dirname(configPath));
+  await fs.writeJSON(configPath, manifest, { spaces: 2 });
+
+  return manifest;
+};
+
+// ─── Path helpers ────────────────────────────────────────────────────────────
+
+const getGraphQLSchemaFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  return path.join(context.basePath, 'src/main/resources/graphql', `${name}.graphqls`);
+};
+
 const getResolverFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
   const name = capitalizeJavaStyle(context.resourceConfig.name);
   const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
@@ -45,10 +88,6 @@ const getResolverFilePath = (context: RenderContext<GraphQLSchemaConfig>): strin
   }
 };
 
-/**
- * Returns the absolute output path for the GraphQL Service Interface (technical only).
- * Lives alongside the resolver in graphql/<name>/
- */
 const getServiceInterfaceFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
   const name = capitalizeJavaStyle(context.resourceConfig.name);
   const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
@@ -56,10 +95,6 @@ const getServiceInterfaceFilePath = (context: RenderContext<GraphQLSchemaConfig>
   return path.join(dir, `I${name}GraphQLService.java`);
 };
 
-/**
- * Returns the absolute output path for the GraphQL Service Implementation (technical only).
- * Lives alongside the resolver in graphql/<name>/
- */
 const getServiceImplFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
   const name = capitalizeJavaStyle(context.resourceConfig.name);
   const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
@@ -67,11 +102,6 @@ const getServiceImplFilePath = (context: RenderContext<GraphQLSchemaConfig>): st
   return path.join(dir, `${name}GraphQLService.java`);
 };
 
-/**
- * Returns the absolute output path for the DataLoader (generated once, only when relations present).
- * - Technical: graphql/<name>/<Name>DataLoader.java
- * - Domain:    <module>/interfaces/graphql/<Name>DataLoader.java
- */
 const getDataLoaderFilePath = (context: RenderContext<GraphQLSchemaConfig>): string => {
   const name = capitalizeJavaStyle(context.resourceConfig.name);
   const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
@@ -86,113 +116,98 @@ const getDataLoaderFilePath = (context: RenderContext<GraphQLSchemaConfig>): str
   }
 };
 
-// ─── Field resolution from modelRef ──────────────────────────────────────────
+const getPageTypeFilePath = (context: RenderContext<GraphQLSchemaConfig>, pageName: string): string => {
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
 
-/**
- * Reads the model config from .igrpstudio/<module>/models/<ModelRef>.json
- * and converts its attributes to GraphQLFieldDef.
- */
-const resolveFieldsFromModelRef = async (
-  modelRef: string,
-  module: string,
-  basePath: string,
-): Promise<GraphQLFieldDef[]> => {
-  const configPath = path.join(
-    basePath,
-    replaceTemplate(DIRECTORIES.CONFIG_MODEL, { module }),
-    `${capitalizeJavaStyle(modelRef)}${EXTENSIONS.JSON}`,
-  );
-
-  if (!(await fs.pathExists(configPath))) {
-    throw new Error(
-      `Model config not found for modelRef '${modelRef}' in module '${module}'. Expected at: ${configPath}`,
-    );
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+    return path.join(mainPath, module, DIRECTORIES.INTERFACE, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_TYPES, `${pageName}.java`);
+  } else {
+    return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_TYPES, `${pageName}.java`);
   }
-
-  const modelConfig: ModelConfig = await fs.readJSON(configPath);
-
-  return modelConfig.attributes
-    .filter((attr) => attr.type !== 'relation') // skip relation attributes
-    .map((attr) => ({
-      name: attr.name,
-      type: attr.type,
-      nullable: attr.nullable ?? true,
-    }));
 };
 
 // ─── Context enrichment ───────────────────────────────────────────────────────
 
-/**
- * Enriches the render context with resolved fields (from modelRef or direct fields)
- * and computed properties for templates.
- */
+export type EnrichedGraphQLContext = RenderContext<GraphQLSchemaConfig> & {
+  resolvedTypeManifest?: DTOConfig;    // graphqlType manifest (from typeRef)
+  resolvedInputManifests: DTOConfig[]; // graphqlInput manifests (from inputRefs)
+  pageManifest?: DTOConfig;            // auto-generated Page manifest when collectionType 'paginated' is used
+  resolveGraphQLScalar: (t: string) => string;
+  resolveJavaType: (t: string) => string;
+};
+
 export const enrichGraphQLContext = async (
   context: RenderContext<GraphQLSchemaConfig>,
-): Promise<RenderContext<GraphQLSchemaConfig> & { resolvedFields: GraphQLFieldDef[]; graphqlScalar: (t: string) => string }> => {
+): Promise<EnrichedGraphQLContext> => {
   const { resourceConfig, basePath } = context;
   const module = resourceConfig.module ?? DIRECTORIES.SHARED;
 
-  let resolvedFields: GraphQLFieldDef[] = resourceConfig.fields ?? [];
+  // Load typeRef manifest
+  let resolvedTypeManifest: DTOConfig | undefined;
+  if (resourceConfig.typeRef) {
+    resolvedTypeManifest = await loadGraphQLTypeManifest(resourceConfig.typeRef, module, basePath);
+  }
 
-  if (resourceConfig.modelRef) {
-    const modelFields = await resolveFieldsFromModelRef(resourceConfig.modelRef, module, basePath);
-    // fields from config take priority (merge: modelRef fields first, then config fields override by name)
-    const configFieldNames = new Set(resolvedFields.map((f) => f.name));
-    const filteredModelFields = modelFields.filter((f) => !configFieldNames.has(f.name));
-    resolvedFields = [...filteredModelFields, ...resolvedFields];
+  // Load inputRef manifests
+  const resolvedInputManifests: DTOConfig[] = [];
+  for (const inputRef of resourceConfig.inputRefs ?? []) {
+    const manifest = await loadGraphQLTypeManifest(inputRef, module, basePath);
+    resolvedInputManifests.push(manifest);
+  }
+
+  // Detect if any operation uses collectionType 'paginated' — auto-create Page manifest
+  const allOps = [...(resourceConfig.queries ?? []), ...(resourceConfig.mutations ?? [])];
+  const hasPaginated = allOps.some((op) => op.collectionType === 'paginated');
+
+  let pageManifest: DTOConfig | undefined;
+  if (hasPaginated && resolvedTypeManifest) {
+    const pageName = `${resolvedTypeManifest.name}Page`;
+    pageManifest = await savePageManifest(pageName, resolvedTypeManifest.name, module, basePath);
   }
 
   return {
     ...context,
-    resolvedFields,
-    graphqlScalar: resolveGraphQLScalar,
+    resolvedTypeManifest,
+    resolvedInputManifests,
+    pageManifest,
+    resolveGraphQLScalar,
+    resolveJavaType: resolveJavaTypeForGraphQL,
   };
 };
 
 // ─── Main entry ──────────────────────────────────────────────────────────────
 
-/**
- * Generates all GraphQL-related files for a given GraphQL schema config.
- *
- * Files always regenerated:
- *   - src/main/resources/graphql/<Name>.graphqls
- *   - <package>/graphql/<Name>Resolver.java (technical)
- *   - <package>/<module>/interfaces/graphql/<Name>Resolver.java (domain)
- *
- * Files generated ONCE (skip if exists):
- *   - <package>/graphql/<Name>GraphQLService.java  (technical only)
- *   - <package>/graphql/I<Name>GraphQLService.java (technical only)
- *   - <package>/<module>/interfaces/graphql/<Name>DataLoader.java (when relations present)
- *
- * Manifest always saved:
- *   - .igrpstudio/<module>/graphql/<Name>.json
- */
 export const generateGraphQLSchema = async (context: RenderContext<GraphQLSchemaConfig>): Promise<void> => {
   const enriched = await enrichGraphQLContext(context);
 
-  // 1. Save manifest — always
+  // 1. Save manifest — always first
   await saveGraphQLConfig(context.resourceConfig, context.basePath);
 
-  // 2. Generate .graphqls schema file — always regenerated
+  // 2. .graphqls schema file — always regenerated
   await generateSchemaFile(enriched);
 
-  // 3. Generate Resolver — always regenerated
+  // 3. Resolver — always regenerated
   await generateResolverFile(enriched);
 
   const isDomain = context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
 
   if (!isDomain) {
-    // 4a. Technical: generate service interface (once)
+    // 4a. Technical: service interface — always regenerated (it's the contract)
     await generateServiceInterfaceFile(enriched);
 
-    // 4b. Technical: generate service implementation (once)
+    // 4b. Technical: service implementation — generated once
     await generateServiceImplFile(enriched);
   }
 
-  // 5. DataLoader — only when relations are defined, generated once
-  const hasRelations =
-    Array.isArray(context.resourceConfig.relations) &&
-    context.resourceConfig.relations.length > 0;
+  // 5. Page type class — always regenerated when paginated ops exist
+  if (enriched.pageManifest) {
+    await generatePageTypeFile(enriched);
+  }
+
+  // 6. DataLoader — only when typeRef has graphqlType attributes (relations), generated once
+  const hasRelations = (enriched.resolvedTypeManifest?.attributes ?? [])
+    .some((attr) => attr.objectType === 'graphqlType');
 
   if (hasRelations) {
     await generateDataLoaderFile(enriched);
@@ -201,44 +216,45 @@ export const generateGraphQLSchema = async (context: RenderContext<GraphQLSchema
 
 // ─── Sub-generators ───────────────────────────────────────────────────────────
 
-const generateSchemaFile = async (context: any): Promise<void> => {
+const generateSchemaFile = async (context: EnrichedGraphQLContext): Promise<void> => {
   const schemaContent = await renderTemplate(TEMPLATES.GRAPHQL_SCHEMA, context);
   const outputPath = getGraphQLSchemaFilePath(context);
   await fs.ensureDir(path.dirname(outputPath));
-  // Always regenerated — no duplicate check, plain write
   await fs.writeFile(outputPath, schemaContent, 'utf-8');
 };
 
-const generateResolverFile = async (context: any): Promise<void> => {
-  // fullPath must be set BEFORE renderTemplate so {{resolve-package fullPath basePath}} works
+const generateResolverFile = async (context: EnrichedGraphQLContext): Promise<void> => {
   const outputPath = getResolverFilePath(context);
-  const resolverContent = await renderTemplate(TEMPLATES.GRAPHQL_RESOLVER, context);
-  await saveToFile(resolverContent, outputPath, true);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_RESOLVER, context);
+  await saveToFile(content, outputPath, true);
 };
 
-const generateServiceInterfaceFile = async (context: any): Promise<void> => {
+const generateServiceInterfaceFile = async (context: EnrichedGraphQLContext): Promise<void> => {
   const outputPath = getServiceInterfaceFilePath(context);
-  // Always regenerated — interface is the contract between resolver and service
   context.fullPath = path.dirname(outputPath);
   const content = await renderTemplate(TEMPLATES.GRAPHQL_SERVICE_INTERFACE, context);
   await saveToFile(content, outputPath, true);
 };
 
-const generateServiceImplFile = async (context: any): Promise<void> => {
+const generateServiceImplFile = async (context: EnrichedGraphQLContext): Promise<void> => {
   const outputPath = getServiceImplFilePath(context);
-  const exists = await fs.pathExists(outputPath);
-  if (exists) return; // generated once — skip if exists
-  // Set fullPath so package-java partial resolves correctly
+  if (await fs.pathExists(outputPath)) return;
   context.fullPath = path.dirname(outputPath);
   const content = await renderTemplate(TEMPLATES.GRAPHQL_SERVICE, context);
   await saveToFile(content, outputPath, false);
 };
 
-const generateDataLoaderFile = async (context: any): Promise<void> => {
+const generatePageTypeFile = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const pageName = context.pageManifest!.name;
+  const outputPath = getPageTypeFilePath(context, pageName);
+  context.fullPath = path.dirname(outputPath);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_PAGE_TYPE, context);
+  await saveToFile(content, outputPath, true);
+};
+
+const generateDataLoaderFile = async (context: EnrichedGraphQLContext): Promise<void> => {
   const outputPath = getDataLoaderFilePath(context);
-  const exists = await fs.pathExists(outputPath);
-  if (exists) return; // generated once — skip if exists
-  // Set fullPath so package-java partial resolves correctly
+  if (await fs.pathExists(outputPath)) return;
   context.fullPath = path.dirname(outputPath);
   const content = await renderTemplate(TEMPLATES.GRAPHQL_DATALOADER, context);
   await saveToFile(content, outputPath, false);

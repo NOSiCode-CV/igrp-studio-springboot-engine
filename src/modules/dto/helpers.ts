@@ -1,6 +1,6 @@
-import { DTOConfig } from '../../interfaces/types';
-import { loadDTOConfigs } from '../../utils/helpers';
-import { normalizeName } from './saveDTOConfig';
+import {DTOConfig} from '../../interfaces/types';
+import {loadDTOConfigs, loadGraphQLTypeConfigs} from '../../utils/helpers';
+import {normalizeName} from './saveDTOConfig';
 
 export const DTO_INTERFACE_VALIDATOR_SUFFIX = 'Validator';
 
@@ -11,6 +11,16 @@ export const getDTOTypes = async function (
   const configs = await loadDTOConfigs(module, basePath);
   const types: Map<string, DTOConfig> = new Map<string, DTOConfig>();
   configs.forEach((cfg) => types.set(`${normalizeName(cfg.name, 'dto')}DTO`, cfg));
+  return types;
+};
+
+export const getGraphQLTypes = async function (
+  module: string,
+  basePath: string,
+): Promise<Map<string, DTOConfig>> {
+  const configs = await loadGraphQLTypeConfigs(module, basePath);
+  const types: Map<string, DTOConfig> = new Map<string, DTOConfig>();
+  configs.forEach((cfg) => types.set(cfg.name, cfg));
   return types;
 };
 

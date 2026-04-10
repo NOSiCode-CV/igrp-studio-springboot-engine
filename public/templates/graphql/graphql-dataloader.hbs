@@ -15,8 +15,10 @@ import java.util.concurrent.CompletionStage;
  * This file is generated once — add your batching logic here.
  *
  * Relations:
-{{#each resourceConfig.relations}}
- *   - {{this.entity}} via {{this.fieldName}}
+{{#each resolvedTypeManifest.attributes}}
+{{#if (eq this.objectType "graphqlType")}}
+ *   - {{this.type}} via field '{{this.name}}'
+{{/if}}
 {{/each}}
  */
 @Component

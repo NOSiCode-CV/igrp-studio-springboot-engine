@@ -1,16 +1,15 @@
 import {ajvInstance} from '../utils/ajv-instance';
-import {JSONSchemaType, ValidateFunction} from 'ajv';
-import {GraphQLFieldDef, GraphQLMutation, GraphQLQuery, GraphQLSchemaConfig} from '../interfaces/types';
+import {ValidateFunction} from 'ajv';
+import {GraphQLSchemaConfig} from '../interfaces/types';
 import {PATTERNS} from '../utils/constants';
 
-const graphQLFieldDefSchema: JSONSchemaType<GraphQLFieldDef> = {
+const graphQLFieldDefSchema = {
   type: 'object',
   properties: {
     name: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage:
-        'The field name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      errorMessage: 'The field name must follow the naming convention and cannot be empty.',
     },
     type: {
       type: 'string',
@@ -29,84 +28,91 @@ const graphQLFieldDefSchema: JSONSchemaType<GraphQLFieldDef> = {
   },
   required: ['name', 'type'],
   additionalProperties: false,
-  errorMessage: {
-    required: {
-      name: 'The field name is required.',
-      type: 'The field type is required.',
-    },
-    additionalProperties: 'No additional properties are allowed in a GraphQL field definition.',
-  },
 };
 
-const graphQLQuerySchema: JSONSchemaType<GraphQLQuery> = {
+const graphQLQuerySchema = {
   type: 'object',
   properties: {
     name: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage:
-        'The query name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      errorMessage: 'The query name must follow the naming convention and cannot be empty.',
     },
     args: {
       type: 'array',
       items: graphQLFieldDefSchema,
       nullable: true,
-      errorMessage: "The 'args' field, if provided, must be an array of GraphQL field definitions.",
+      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
+    },
+    returnTypeRef: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
     },
     returnType: {
       type: 'string',
       nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string.",
+      errorMessage: "The 'returnType' field, if provided, must be a string (primitive: Boolean, String, Int).",
     },
-    paginated: {
-      type: 'boolean',
+    collectionType: {
+      type: 'string',
+      enum: ['single', 'list', 'paginated'],
       nullable: true,
-      errorMessage: "The 'paginated' field, if provided, must be a boolean.",
+      errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
     },
   },
   required: ['name'],
   additionalProperties: false,
   errorMessage: {
-    required: {
-      name: 'The query name is required.',
-    },
-    additionalProperties: 'No additional properties are allowed in a GraphQL query definition.',
+    required: { name: 'The query name is required.' },
+    additionalProperties: 'No additional properties are allowed in a query definition.',
   },
 };
 
-const graphQLMutationSchema: JSONSchemaType<GraphQLMutation> = {
+const graphQLMutationSchema = {
   type: 'object',
   properties: {
     name: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage:
-        'The mutation name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      errorMessage: 'The mutation name must follow the naming convention and cannot be empty.',
     },
-    inputType: {
+    inputRef: {
       type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage: "The 'inputType' field, if provided, must be a string.",
+      errorMessage: "The 'inputRef' field, if provided, must follow the naming convention.",
     },
     args: {
       type: 'array',
       items: graphQLFieldDefSchema,
       nullable: true,
-      errorMessage: "The 'args' field, if provided, must be an array of GraphQL field definitions.",
+      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
+    },
+    returnTypeRef: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
     },
     returnType: {
       type: 'string',
       nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string.",
+      errorMessage: "The 'returnType' field, if provided, must be a string (primitive: Boolean, String, Int).",
+    },
+    collectionType: {
+      type: 'string',
+      enum: ['single', 'list', 'paginated'],
+      nullable: true,
+      errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
     },
   },
   required: ['name'],
   additionalProperties: false,
   errorMessage: {
-    required: {
-      name: 'The mutation name is required.',
-    },
-    additionalProperties: 'No additional properties are allowed in a GraphQL mutation definition.',
+    required: { name: 'The mutation name is required.' },
+    additionalProperties: 'No additional properties are allowed in a mutation definition.',
   },
 };
 
@@ -132,60 +138,37 @@ const graphQLSchemaConfigSchema: any = {
     name: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage:
-        'The name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
+      errorMessage: 'The name must follow the naming convention and cannot be empty.',
     },
     module: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage:
-        'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.',
+      errorMessage: 'The module must follow the naming convention.',
     },
-    modelRef: {
+    typeRef: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage:
-        "The 'modelRef' field, if provided, must follow the naming convention.",
+      errorMessage: "The 'typeRef' field, if provided, must follow the naming convention.",
     },
-    fields: {
+    inputRefs: {
       type: 'array',
-      items: graphQLFieldDefSchema,
+      items: { type: 'string', pattern: PATTERNS.NAME_VALIDATION_PATTERN },
       nullable: true,
-      errorMessage: "The 'fields' field, if provided, must be an array of GraphQL field definitions.",
+      errorMessage: "The 'inputRefs' field, if provided, must be an array of names.",
     },
     queries: {
       type: 'array',
       items: graphQLQuerySchema,
       nullable: true,
-      errorMessage: "The 'queries' field, if provided, must be an array of GraphQL query definitions.",
+      errorMessage: "The 'queries' field, if provided, must be an array of query definitions.",
     },
     mutations: {
       type: 'array',
       items: graphQLMutationSchema,
       nullable: true,
-      errorMessage: "The 'mutations' field, if provided, must be an array of GraphQL mutation definitions.",
-    },
-    relations: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          entity: {
-            type: 'string',
-            errorMessage: "The 'entity' field is required.",
-          },
-          fieldName: {
-            type: 'string',
-            errorMessage: "The 'fieldName' field is required.",
-          },
-        },
-        required: ['entity', 'fieldName'],
-        additionalProperties: false,
-      },
-      nullable: true,
-      errorMessage: "The 'relations' field, if provided, must be an array of relation definitions.",
+      errorMessage: "The 'mutations' field, if provided, must be an array of mutation definitions.",
     },
   },
   required: ['type', 'name'],

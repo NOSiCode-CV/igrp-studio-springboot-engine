@@ -6,8 +6,11 @@
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+{{#if (hasGraphQLTypeAttributes resolvedTypeManifest.attributes)}}
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
+{{/if}}
 import org.springframework.stereotype.Controller;
-{{graphqlImportsTypes resourceConfig}}
+{{{graphqlImportsTypes resourceConfig baseConfig resolvedTypeManifest resolvedInputManifests pageManifest}}}
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import cv.igrp.framework.core.domain.CommandBus;
 import cv.igrp.framework.core.domain.QueryBus;
@@ -42,7 +45,7 @@ public class {{capitalize resourceConfig.name}}Resolver {
 {{/if}}
 {{#each resourceConfig.queries}}
     @QueryMapping
-    public {{#if this.returnType}}{{this.returnType}}{{else if this.paginated}}{{capitalize ../resourceConfig.name}}Page{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}({{#each this.args}}@Argument {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.args}}@Argument {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
 {{#if (eq ../baseConfig.projectStructureStyle "domain")}}
         final var query = new {{capitalize this.name}}Query({{#each this.args}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
         return queryBus.handle(query);
@@ -51,28 +54,27 @@ public class {{capitalize resourceConfig.name}}Resolver {
 {{/if}}
     }
 
+{{/each}}
+{{#each resourceConfig.mutations}}
+    @MutationMapping
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#if this.inputRef}}@Argument @jakarta.validation.Valid {{this.inputRef}} input{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}@Argument {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}}) {
+{{#if (eq ../baseConfig.projectStructureStyle "domain")}}
+        final var command = new {{capitalize this.name}}Command({{#if this.inputRef}}input{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}{{this.name}}{{/each}});
+        return commandBus.send(command);
 {{else}}
-    @QueryMapping
-    public {{capitalize resourceConfig.name}} {{toCamelCase resourceConfig.name}}(@Argument String id) {
-{{#if (eq baseConfig.projectStructureStyle "domain")}}
-        final var query = new Get{{capitalize resourceConfig.name}}ByIdQuery(id);
-        return queryBus.handle(query);
-{{else}}
-        return {{toCamelCase resourceConfig.name}}GraphQLService.findById(id);
+        return {{toCamelCase ../resourceConfig.name}}GraphQLService.{{this.name}}({{#if this.inputRef}}input{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}{{this.name}}{{/each}});
 {{/if}}
     }
 
 {{/each}}
-{{#each resourceConfig.mutations}}
-    @MutationMapping
-    public {{#if this.returnType}}{{this.returnType}}{{else}}{{capitalize ../resourceConfig.name}}{{/if}} {{this.name}}({{#if this.inputType}}@Argument {{this.inputType}} input{{else}}@Argument Create{{capitalize ../resourceConfig.name}}Input input{{/if}}{{#each this.args}}, @Argument {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}}) {
-{{#if (eq ../baseConfig.projectStructureStyle "domain")}}
-        final var command = new {{capitalize this.name}}Command(input{{#each this.args}}, {{this.name}}{{/each}});
-        return commandBus.send(command);
-{{else}}
-        return {{toCamelCase ../resourceConfig.name}}GraphQLService.{{this.name}}(input{{#each this.args}}, {{this.name}}{{/each}});
-{{/if}}
+{{#each resolvedTypeManifest.attributes}}
+{{#if (eq this.objectType "graphqlType")}}
+    @SchemaMapping(typeName = "{{../resolvedTypeManifest.name}}", field = "{{this.name}}")
+    public {{{resolve-type this}}} {{this.name}}({{../resolvedTypeManifest.name}} source) {
+        // TODO: load {{this.type}} for the given source via DataLoader
+        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
     }
 
+{{/if}}
 {{/each}}
 }

@@ -107,7 +107,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java' | 'enum';
+  objectType: 'dto' | 'model' | 'java' | 'enum' | 'graphqlType';
   required: boolean;
   before?: boolean;
   after?: boolean;
@@ -172,7 +172,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java' | 'enum';
+  objectType: 'dto' | 'model' | 'java' | 'enum' | 'graphqlType';
 }
 
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
@@ -531,6 +531,7 @@ export type GenerationType = (typeof GENERATION_TYPES)[number];
 
 // ─── GraphQL Types ───────────────────────────────────────────────────────────
 
+/** Primitive arg type (uuid, string, boolean, etc.) used in queries/mutations */
 export interface GraphQLFieldDef {
   name: string;
   type: string;           // engine attribute type (e.g. 'string', 'integer', 'uuid')
@@ -538,27 +539,31 @@ export interface GraphQLFieldDef {
   description?: string;
 }
 
+export type GraphQLCollectionType = 'single' | 'list' | 'paginated';
+
 export interface GraphQLQuery {
   name: string;
-  args?: GraphQLFieldDef[];
-  returnType?: string;    // override return type (defaults to <Name> or <Name>Page)
-  paginated?: boolean;    // if true, returns <Name>Page
+  args?: GraphQLFieldDef[];             // primitive args (uuid, string, etc.)
+  returnTypeRef?: string;               // references a graphqlType (e.g. 'Category')
+  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
+  collectionType?: GraphQLCollectionType; // single (default) | list | paginated
 }
 
 export interface GraphQLMutation {
   name: string;
-  inputType?: string;     // defaults to Create<Name>Input
-  args?: GraphQLFieldDef[];
-  returnType?: string;    // override return type (defaults to <Name>)
+  inputRef?: string;                    // references a graphqlInput manifest (e.g. 'CreateCategoryInput')
+  args?: GraphQLFieldDef[];             // additional primitive args
+  returnTypeRef?: string;               // references a graphqlType
+  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
+  collectionType?: GraphQLCollectionType;
 }
 
 export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
   type: 'graphql';
   name: string;
   module?: string;
-  modelRef?: string;      // reads .igrpstudio/<module>/models/<ModelRef>.json for fields
-  fields?: GraphQLFieldDef[];
+  typeRef?: string;         // references a graphqlType manifest — source of type fields
+  inputRefs?: string[];     // references graphqlInput manifests used by mutations
   queries?: GraphQLQuery[];
   mutations?: GraphQLMutation[];
-  relations?: Array<{ entity: string; fieldName: string }>;
 }

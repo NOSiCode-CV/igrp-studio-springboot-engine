@@ -551,7 +551,9 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     await generateValidatorDTO(context);
   }
 
-  if (config.type === 'dto') await saveDTOConfig(config, basePath);
+  if (config.type === 'dto' || config.type === 'graphqlType' || config.type === 'graphqlInput') {
+    await saveDTOConfig(config, basePath);
+  }
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     if (

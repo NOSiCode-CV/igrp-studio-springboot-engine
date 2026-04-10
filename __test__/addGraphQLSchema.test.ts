@@ -1,147 +1,163 @@
-import {addGraphQLSchema, setEngineConfiguration} from '../src';
-import {GraphQLSchemaConfig} from '../src/interfaces/types';
+/**
+ * addGraphQLSchema — end-to-end tests
+ *
+ * One comprehensive schema (Product) that exercises every generation case:
+ *   - All three collectionTypes: single, list, paginated
+ *   - Mutations: with inputRef, with inputRef + extra arg, with Boolean return
+ *   - Multiple inputRefs: CreateProductInput + UpdateProductInput
+ *   - DataLoader: Product.category is a graphqlType attribute
+ *   - ProductPage: generated because of the paginated query
+ *
+ * The same schema is run for both technical and domain project styles.
+ */
+import {addDTO, addGraphQLSchema, setEngineConfiguration} from '../src';
+import {DTOConfig, GraphQLSchemaConfig} from '../src/interfaces/types';
 // @ts-ignore
 import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
 
-beforeAll(async () => {
-  setEngineConfiguration({ environment: 'development' });
-});
+// ═══════════════════════════════════════════════════════════════════════════════
+// DTO MANIFESTS — prerequisites (seeded in beforeAll)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-// ─── Configs ──────────────────────────────────────────────────────────────────
-
-const productConfig: GraphQLSchemaConfig = {
-  type: 'graphql',
-  name: 'Product',
-  module: 'shared',
-  fields: [
-    { name: 'id', type: 'uuid', nullable: false },
-    { name: 'name', type: 'string', nullable: false },
-    { name: 'price', type: 'double', nullable: true },
-    { name: 'active', type: 'boolean', nullable: true },
-    { name: 'createdAt', type: 'datetime', nullable: true },
-  ],
-  queries: [
-    { name: 'findProductById', args: [{ name: 'id', type: 'uuid', nullable: false }] },
-    { name: 'findAllProducts', paginated: true },
-  ],
-  mutations: [
-    { name: 'createProduct' },
-    { name: 'updateProduct', args: [{ name: 'id', type: 'uuid', nullable: false }] },
-    { name: 'deleteProduct', args: [{ name: 'id', type: 'uuid', nullable: false }], returnType: 'Boolean' },
-  ],
-};
-
-const orderConfig: GraphQLSchemaConfig = {
-  type: 'graphql',
-  name: 'Order',
-  module: 'demo',        // 'demo' exists in both projects
-  fields: [
-    { name: 'id', type: 'uuid', nullable: false },
-    { name: 'total', type: 'double', nullable: false },
-    { name: 'status', type: 'string', nullable: false },
-  ],
-  queries: [
-    { name: 'findOrderById', args: [{ name: 'id', type: 'uuid', nullable: false }] },
-    { name: 'findAllOrders', paginated: true },
-  ],
-  mutations: [
-    { name: 'createOrder' },
-    { name: 'cancelOrder', args: [{ name: 'id', type: 'uuid', nullable: false }], returnType: 'Boolean' },
-  ],
-};
-
-const invoiceConfig: GraphQLSchemaConfig = {
-  type: 'graphql',
-  name: 'Invoice',
-  module: 'core',        // 'core' exists in demoTechnical
-  fields: [
-    { name: 'id', type: 'uuid', nullable: false },
-    { name: 'amount', type: 'double', nullable: false },
-  ],
-  queries: [
-    { name: 'findInvoiceById', args: [{ name: 'id', type: 'uuid', nullable: false }] },
-  ],
-  relations: [
-    { entity: 'CustomerEntity', fieldName: 'customer' },
-    { entity: 'ProductEntity', fieldName: 'lineItems' },
-  ],
-};
-
-const categoryConfig: GraphQLSchemaConfig = {
-  type: 'graphql',
+// Shared — no dependencies
+const categoryType: DTOConfig = {
+  type: 'graphqlType',
   name: 'Category',
   module: 'shared',
-  fields: [
-    { name: 'id', type: 'uuid', nullable: false },
-    { name: 'label', type: 'string', nullable: false },
-  ],
-  queries: [
-    { name: 'findCategoryById', args: [{ name: 'id', type: 'uuid', nullable: false }] },
+  template: 'classic',
+  attributes: [
+    {name: 'id',    objectType: 'java', type: 'uuid',   required: true},
+    {name: 'label', objectType: 'java', type: 'string', required: true},
   ],
 };
 
-// ─── Tests ────────────────────────────────────────────────────────────────────
+// Catalog — has a graphqlType attribute (category) → triggers DataLoader in productSchema
+const productType: DTOConfig = {
+  type: 'graphqlType',
+  name: 'Product',
+  module: 'catalog',
+  template: 'classic',
+  attributes: [
+    {name: 'id',       objectType: 'java',        type: 'uuid',     required: true},
+    {name: 'name',     objectType: 'java',        type: 'string',   required: true},
+    {name: 'price',    objectType: 'java',        type: 'double',   required: true},
+    {name: 'active',   objectType: 'java',        type: 'boolean',  required: false},
+    {name: 'category', objectType: 'graphqlType', type: 'Category', required: false, module: 'shared'},
+  ],
+};
 
-describe('addGraphQLSchema — technical style', () => {
-  it('should generate with direct fields', async () => {
-    await addGraphQLSchema(productConfig, TECHNICAL_OUTPUT_DIR);
+const createProductInput: DTOConfig = {
+  type: 'graphqlInput',
+  name: 'CreateProductInput',
+  module: 'catalog',
+  template: 'classic',
+  attributes: [
+    {name: 'name',       objectType: 'java', type: 'string', required: true,  maxLength: 255},
+    {name: 'price',      objectType: 'java', type: 'double', required: true},
+    {name: 'categoryId', objectType: 'java', type: 'uuid',   required: false},
+  ],
+};
+
+const updateProductInput: DTOConfig = {
+  type: 'graphqlInput',
+  name: 'UpdateProductInput',
+  module: 'catalog',
+  template: 'record',
+  attributes: [
+    {name: 'name',  objectType: 'java', type: 'string', required: false, maxLength: 255},
+    {name: 'price', objectType: 'java', type: 'double', required: false},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SCHEMA CONFIG — one schema, all use cases
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const productSchema: GraphQLSchemaConfig = {
+  type: 'graphql',
+  name: 'Product',
+  module: 'catalog',
+  typeRef: 'Product',
+  inputRefs: ['CreateProductInput', 'UpdateProductInput'],
+  queries: [
+    // single — returns one Product
+    {name: 'findProductById',  args: [{name: 'id', type: 'uuid', nullable: false}], returnTypeRef: 'Product', collectionType: 'single'},
+    // list — returns List<Product>
+    {name: 'findAllProducts',  returnTypeRef: 'Product', collectionType: 'list'},
+    // paginated — triggers ProductPage manifest + ProductPage.java
+    {name: 'findProductsPage',args: [{name: 'page', type: 'integer', nullable: false},{name: 'size', type: 'integer', nullable: false}], returnTypeRef: 'Product', collectionType: 'paginated'},
+  ],
+  mutations: [
+    // inputRef only — create
+    {name: 'createProduct', inputRef: 'CreateProductInput', returnTypeRef: 'Product'},
+    // inputRef + extra arg — update
+    {name: 'updateProduct', inputRef: 'UpdateProductInput', args: [{name: 'id', type: 'uuid', nullable: false}], returnTypeRef: 'Product'},
+    // Boolean return — no input, no type wrapping
+    {name: 'deleteProduct', args: [{name: 'id', type: 'uuid', nullable: false}], returnType: 'Boolean'},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SETUP
+// ═══════════════════════════════════════════════════════════════════════════════
+
+beforeAll(async () => {
+  setEngineConfiguration({environment: 'development'});
+  for (const dir of [TECHNICAL_OUTPUT_DIR, DOMAIN_OUTPUT_DIR]) {
+    await addDTO(categoryType,       dir); // shared — no deps
+    await addDTO(productType,        dir); // catalog — depends on Category
+    await addDTO(createProductInput, dir);
+    await addDTO(updateProductInput, dir);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TESTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe('addGraphQLSchema — technical', () => {
+  it('generates schema, resolver, service interface, service impl, DataLoader and ProductPage', async () => {
+    await addGraphQLSchema(productSchema, TECHNICAL_OUTPUT_DIR);
   });
 
-  it('should generate with queries and mutations', async () => {
-    await addGraphQLSchema(orderConfig, TECHNICAL_OUTPUT_DIR);
-  });
-
-  it('should generate with relations (triggers DataLoader)', async () => {
-    await addGraphQLSchema(invoiceConfig, TECHNICAL_OUTPUT_DIR);
-  });
-
-  it('should generate without relations (no DataLoader)', async () => {
-    await addGraphQLSchema(categoryConfig, TECHNICAL_OUTPUT_DIR);
-  });
-
-  it('should not overwrite service file on second call', async () => {
-    await addGraphQLSchema(productConfig, TECHNICAL_OUTPUT_DIR);
-    await addGraphQLSchema(productConfig, TECHNICAL_OUTPUT_DIR);
+  it('second call does not overwrite service implementation', async () => {
+    await addGraphQLSchema(productSchema, TECHNICAL_OUTPUT_DIR);
   });
 });
 
-describe('addGraphQLSchema — domain style', () => {
-  it('should generate with direct fields', async () => {
-    await addGraphQLSchema(productConfig, DOMAIN_OUTPUT_DIR);
+describe('addGraphQLSchema — domain', () => {
+  it('generates schema, resolver, DataLoader and ProductPage under the module path', async () => {
+    await addGraphQLSchema(productSchema, DOMAIN_OUTPUT_DIR);
   });
 
-  it('should generate with queries and mutations', async () => {
-    await addGraphQLSchema(orderConfig, DOMAIN_OUTPUT_DIR);
-  });
-
-  it('should generate without relations', async () => {
-    await addGraphQLSchema(categoryConfig, DOMAIN_OUTPUT_DIR);
+  it('second call does not overwrite service implementation', async () => {
+    await addGraphQLSchema(productSchema, DOMAIN_OUTPUT_DIR);
   });
 });
 
-describe('addGraphQLSchema — module fallback', () => {
-  it('should fall back to shared when module does not exist', async () => {
-    const config: GraphQLSchemaConfig = {
-      type: 'graphql',
-      name: 'Report',
-      module: 'nonexistent',
-      fields: [{ name: 'id', type: 'uuid', nullable: false }],
-      queries: [{ name: 'findReportById', args: [{ name: 'id', type: 'uuid' }] }],
-    };
-
-    await addGraphQLSchema(config, TECHNICAL_OUTPUT_DIR);
-    await addGraphQLSchema(config, DOMAIN_OUTPUT_DIR);
-  });
-});
+// ═══════════════════════════════════════════════════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
 describe('addGraphQLSchema — validation', () => {
   it('should throw when config type is wrong', async () => {
-    const invalid: any = { type: 'controller', name: 'Bad' };
+    const invalid: any = {type: 'controller', name: 'Bad'};
     await expect(addGraphQLSchema(invalid, TECHNICAL_OUTPUT_DIR)).rejects.toBeTruthy();
   });
 
   it('should throw when name is missing', async () => {
-    const invalid: any = { type: 'graphql' };
+    const invalid: any = {type: 'graphql'};
+    await expect(addGraphQLSchema(invalid, TECHNICAL_OUTPUT_DIR)).rejects.toBeTruthy();
+  });
+
+  it('should throw when typeRef manifest does not exist', async () => {
+    const invalid: GraphQLSchemaConfig = {
+      type: 'graphql',
+      name: 'Ghost',
+      module: 'shared',
+      typeRef: 'NonExistentType',
+      queries: [{name: 'findGhost', args: [{name: 'id', type: 'uuid', nullable: false}], returnTypeRef: 'NonExistentType', collectionType: 'single'}],
+    };
     await expect(addGraphQLSchema(invalid, TECHNICAL_OUTPUT_DIR)).rejects.toBeTruthy();
   });
 });

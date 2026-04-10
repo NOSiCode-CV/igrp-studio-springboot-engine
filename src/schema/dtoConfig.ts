@@ -26,8 +26,8 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
     },
     objectType: {
       type: 'string',
-      enum: ['model', 'dto', 'java', 'enum'],
-      errorMessage: 'The abbreviated namespace must model, dto, java.',
+      enum: ['model', 'dto', 'java', 'enum', 'graphqlType'],
+      errorMessage: 'The abbreviated namespace must be model, dto, java, enum, or graphqlType.',
     },
     required: {
       type: 'boolean',
@@ -193,7 +193,7 @@ const dtoConfigSchema: JSONSchemaType<DTOConfig> = {
             'The module name in extends must follow the naming convention (only alphabetic characters allowed).',
         },
       },
-      required: ['name', 'module'], // Ensure both name and module are required when extends is provided
+      required: ['name', 'module'],
       errorMessage: {
         required: {
           name: 'The name field in extends is required.',

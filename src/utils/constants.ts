@@ -64,7 +64,9 @@ export const DIRECTORIES = {
   PERMISSION: 'permission',
   REPOSITORYADAPTER: "adapter",
   CONFIG_GRAPHQL: '.igrpstudio/{{module}}/graphql',
+  CONFIG_GRAPHQL_TYPES: '.igrpstudio/{{module}}/graphql/types',
   GRAPHQL: 'graphql',
+  GRAPHQL_TYPES: 'types',
 };
 
 export const PACKAGES = {
@@ -82,6 +84,7 @@ export const PACKAGE_NS = {
   model: 'model',
   dto: 'dto',
   controller: 'controller',
+  graphqlType: 'graphqlType',
 };
 
 export const PROJECT_STRUCTURE_STYLE = {
@@ -397,6 +400,7 @@ export const TEMPLATES = {
     classic: 'graphql/graphql-input-classic.hbs',
     record: 'graphql/graphql-input-record.hbs',
   },
+  GRAPHQL_PAGE_TYPE: 'graphql/graphql-page-type.hbs',
 };
 
 export const CONFIG_FILES = [

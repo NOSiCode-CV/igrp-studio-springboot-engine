@@ -55,7 +55,15 @@ import {resolveAnnotations, resolvePackage} from '../helper/generalHelper';
 import {resolvePathVariables} from '../helper/controllerHelper';
 import {resolveImportReponse} from '../helper/responseHelper';
 import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
-import {graphqlImportsTypes, resolveGraphQLScalar, resolveJavaTypeForGraphQL} from '../helper/graphqlHelper';
+import {
+    graphqlImportsTypes,
+    hasGraphQLTypeAttributes,
+    resolveGraphQLAttributeType,
+    resolveGraphQLReturnType,
+    resolveGraphQLScalar,
+    resolveJavaReturnType,
+    resolveJavaTypeForGraphQL
+} from '../helper/graphqlHelper';
 
 // String
 Handlebars.registerHelper('capitalize', capitalize);
@@ -897,7 +905,11 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
 
 // GRAPHQL
 Handlebars.registerHelper('resolveGraphQLScalar', resolveGraphQLScalar);
+Handlebars.registerHelper('resolveGraphQLAttributeType', resolveGraphQLAttributeType);
+Handlebars.registerHelper('hasGraphQLTypeAttributes', hasGraphQLTypeAttributes);
 Handlebars.registerHelper('resolveJavaTypeForGraphQL', resolveJavaTypeForGraphQL);
+Handlebars.registerHelper('resolveGraphQLReturnType', resolveGraphQLReturnType);
+Handlebars.registerHelper('resolveJavaReturnType', resolveJavaReturnType);
 Handlebars.registerHelper('graphqlImportsTypes', graphqlImportsTypes);
 
 Handlebars.registerHelper('hasGraphQLMutations', function (mutations: any[]): boolean {
