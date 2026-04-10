@@ -1,0 +1,14 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import java.util.List;
+
+public class {{pageManifest.name}} {
+
+{{#each pageManifest.attributes}}
+    private {{{resolve-type this}}} {{this.name}};
+
+{{/each}}
+}
