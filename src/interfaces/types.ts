@@ -1,18 +1,18 @@
 import {
-  CASCADE_TYPE,
-  CONFIG_TYPES,
-  CRUD_DISABLED_OPTIONS,
-  DATABASE_TYPES,
-  GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES,
-  GENERIC_COLLECTION_TYPES,
-  GENERIC_MODEL_ATTRIBUTE_TYPES,
-  HTTP_HEADER_TYPES,
-  HTTP_METHOD_TYPES,
-  OBJECT_TYPES,
-  PARAMS_TYPES,
-  RELATIONSHIP_TYPES,
-  STRUCT_TYPES,
+    CASCADE_TYPE,
+    CONFIG_TYPES,
+    CRUD_DISABLED_OPTIONS,
+    DATABASE_TYPES,
+    GENERATION_TYPES,
+    GENERIC_ATTRIBUTE_TYPES,
+    GENERIC_COLLECTION_TYPES,
+    GENERIC_MODEL_ATTRIBUTE_TYPES,
+    HTTP_HEADER_TYPES,
+    HTTP_METHOD_TYPES,
+    OBJECT_TYPES,
+    PARAMS_TYPES,
+    RELATIONSHIP_TYPES,
+    STRUCT_TYPES,
 } from '../utils/constants';
 
 interface IdentifiableElement {
@@ -122,6 +122,10 @@ export interface JavaAttribute {
   jsonAttributeName?: string;
   xmlAttributeName?: string;
   module?: string;
+  /** Set during transformDTOConfig for graphqlType attributes.
+   *  Holds the type of the referenced type's primary key (e.g. 'uuid').
+   *  Used to generate ID-reference fields (categoryId, productIds) instead of object fields. */
+  idType?: string;
 }
 
 export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {

@@ -39,7 +39,7 @@ const categoryType: DTOConfig = {
   module: 'shared',
   template: 'classic',
   attributes: [
-    {name: 'id',     objectType: 'java', type: 'uuid',    required: true},
+    {name: 'id',     objectType: 'java', type: 'uuid',    required: true, primaryKey: true},
     {name: 'label',  objectType: 'java', type: 'string',  required: true},
     {name: 'active', objectType: 'java', type: 'boolean', required: false},
   ],
@@ -52,7 +52,7 @@ const customerType: DTOConfig = {
   module: 'shared',
   template: 'classic',
   attributes: [
-    {name: 'id',    objectType: 'java', type: 'uuid',   required: true},
+    {name: 'id',    objectType: 'java', type: 'uuid',   required: true, primaryKey: true},
     {name: 'name',  objectType: 'java', type: 'string', required: true},
     {name: 'email', objectType: 'java', type: 'string', required: true},
   ],
@@ -69,7 +69,7 @@ const productType: DTOConfig = {
   module: 'catalog',
   template: 'classic',
   attributes: [
-    {name: 'id',        objectType: 'java',        type: 'uuid',     required: true},
+    {name: 'id',        objectType: 'java',        type: 'uuid',     required: true, primaryKey: true},
     {name: 'name',      objectType: 'java',        type: 'string',   required: true},
     {name: 'price',     objectType: 'java',        type: 'double',   required: true},
     {name: 'active',    objectType: 'java',        type: 'boolean',  required: false},
@@ -129,7 +129,7 @@ const orderType: DTOConfig = {
   module: 'orders',
   template: 'classic',
   attributes: [
-    {name: 'id',     objectType: 'java',        type: 'uuid',      required: true},
+    {name: 'id',     objectType: 'java',        type: 'uuid',      required: true, primaryKey: true},
     {name: 'total',  objectType: 'java',        type: 'double',    required: true},
     {name: 'status', objectType: 'java',        type: 'string',    required: true},
     // Relation to Customer — single, cross-module (orders → shared)

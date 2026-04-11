@@ -57,6 +57,11 @@ import {resolveImportReponse} from '../helper/responseHelper';
 import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
 import {
     graphqlImportsTypes,
+    graphqlImportsTypesService,
+    graphqlRefIdFieldName,
+    graphqlRefIdJavaType,
+    graphqlRefIdType,
+    graphqlRefReturnType,
     hasGraphQLTypeAttributes,
     resolveGraphQLAttributeType,
     resolveGraphQLReturnType,
@@ -521,6 +526,19 @@ Handlebars.registerHelper('resolve-imports', function (config: any, baseConfig: 
   }
 
   for (const attr of config.attributes) {
+    // graphqlType attributes: import the ID java type (e.g. UUID) and List if needed
+    if (attr.objectType === 'graphqlType') {
+      const idType = (attr.idType ?? 'uuid').toLowerCase();
+      const genType = GENERIC_TYPES.get(idType);
+      if (genType?.java.namespace) {
+        imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+      }
+      if (attr.collectionType === 'list') {
+        imports.add('import java.util.List;');
+      }
+      continue;
+    }
+
     if (attr.type != 'object') {
       const objectImports = GENERIC_IMPORTS(packageNameFromConfig, attr.type, attr.module).get(
         attr.objectType,
@@ -911,6 +929,11 @@ Handlebars.registerHelper('resolveJavaTypeForGraphQL', resolveJavaTypeForGraphQL
 Handlebars.registerHelper('resolveGraphQLReturnType', resolveGraphQLReturnType);
 Handlebars.registerHelper('resolveJavaReturnType', resolveJavaReturnType);
 Handlebars.registerHelper('graphqlImportsTypes', graphqlImportsTypes);
+Handlebars.registerHelper('graphqlImportsTypesService', graphqlImportsTypesService);
+Handlebars.registerHelper('graphqlRefIdFieldName', graphqlRefIdFieldName);
+Handlebars.registerHelper('graphqlRefIdType', graphqlRefIdType);
+Handlebars.registerHelper('graphqlRefIdJavaType', graphqlRefIdJavaType);
+Handlebars.registerHelper('graphqlRefReturnType', graphqlRefReturnType);
 
 Handlebars.registerHelper('hasGraphQLMutations', function (mutations: any[]): boolean {
   return Array.isArray(mutations) && mutations.length > 0;

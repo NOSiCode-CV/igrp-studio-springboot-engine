@@ -203,11 +203,11 @@ export const transformDTOConfig = async function (
       if (!gt) {
         typeNotFound = true;
       } else {
-        if (api.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
-          type.namespace = `${getPackageNameFromConfig(api)}.${refModule}.interfaces.${DIRECTORIES.GRAPHQL}.${DIRECTORIES.GRAPHQL_TYPES}`;
-        } else {
-          type.namespace = `${getPackageNameFromConfig(api)}.${DIRECTORIES.GRAPHQL}.${DIRECTORIES.GRAPHQL_TYPES}`;
-        }
+        // Resolve the primary key type of the referenced type for DataLoader ID field generation.
+        // Prefer explicit primaryKey: true; fall back to field named 'id'.
+        const pkAttr = (gt.attributes ?? []).find((a) => a.primaryKey)
+          ?? (gt.attributes ?? []).find((a) => a.name === 'id');
+        if (pkAttr) attr.idType = String(pkAttr.type);
       }
     } else typeNotFound = !(attr.objectType === PACKAGE_NS.dto && attr.type === 'object');
 

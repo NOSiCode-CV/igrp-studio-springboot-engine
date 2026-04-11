@@ -26,7 +26,7 @@ const categoryType: DTOConfig = {
   module: 'shared',
   template: 'classic',
   attributes: [
-    {name: 'id',    objectType: 'java', type: 'uuid',   required: true},
+    {name: 'id',    objectType: 'java', type: 'uuid',   required: true, primaryKey: true},
     {name: 'label', objectType: 'java', type: 'string', required: true},
   ],
 };
@@ -38,7 +38,7 @@ const productType: DTOConfig = {
   module: 'catalog',
   template: 'classic',
   attributes: [
-    {name: 'id',       objectType: 'java',        type: 'uuid',     required: true},
+    {name: 'id',       objectType: 'java',        type: 'uuid',     required: true, primaryKey: true},
     {name: 'name',     objectType: 'java',        type: 'string',   required: true},
     {name: 'price',    objectType: 'java',        type: 'double',   required: true},
     {name: 'active',   objectType: 'java',        type: 'boolean',  required: false},

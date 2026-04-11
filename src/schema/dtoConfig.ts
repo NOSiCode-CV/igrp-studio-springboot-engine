@@ -110,6 +110,11 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
         'The JSON attribute name must follow the naming convention (only alphabetic characters allowed) and cannot be empty.',
       nullable: true,
     },
+    idType: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The idType, if provided, must be a string.',
+    },
   },
   required: ['type', 'name', 'objectType', 'required'],
   additionalProperties: false,

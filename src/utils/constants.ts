@@ -922,6 +922,15 @@ export const GENERIC_IMPORTS = (
         python: {},
         kotlin: {},
       },
+      graphqlType: {
+        java: {
+          domain: `import ${packageNameFromConfig}.${module}.interfaces.graphql.types.${type};`,
+          technical: `import ${packageNameFromConfig}.graphql.types.${type};`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
+      },
       list: {
         java: {
           domain: `import java.util.List;`,

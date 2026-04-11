@@ -70,9 +70,23 @@ public class {{capitalize resourceConfig.name}}Resolver {
 {{#each resolvedTypeManifest.attributes}}
 {{#if (eq this.objectType "graphqlType")}}
     @SchemaMapping(typeName = "{{../resolvedTypeManifest.name}}", field = "{{this.name}}")
-    public {{{resolve-type this}}} {{this.name}}({{../resolvedTypeManifest.name}} source) {
-        // TODO: load {{this.type}} for the given source via DataLoader
-        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
+    public CompletableFuture<{{{graphqlRefReturnType this}}}> {{this.name}}(
+            {{../resolvedTypeManifest.name}} {{toCamelCase ../resolvedTypeManifest.name}},
+            DataLoader<{{graphqlRefIdJavaType this}}, {{this.type}}> {{toCamelCase this.type}}DataLoader) {
+{{#if (eq this.collectionType "list")}}
+        if ({{toCamelCase ../resolvedTypeManifest.name}}.get{{capitalize (graphqlRefIdFieldName this)}}() == null
+                || {{toCamelCase ../resolvedTypeManifest.name}}.get{{capitalize (graphqlRefIdFieldName this)}}().isEmpty()) {
+            return CompletableFuture.completedFuture(List.of());
+        }
+        return {{toCamelCase this.type}}DataLoader.loadMany(
+                {{toCamelCase ../resolvedTypeManifest.name}}.get{{capitalize (graphqlRefIdFieldName this)}}());
+{{else}}
+        if ({{toCamelCase ../resolvedTypeManifest.name}}.get{{capitalize (graphqlRefIdFieldName this)}}() == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return {{toCamelCase this.type}}DataLoader.load(
+                {{toCamelCase ../resolvedTypeManifest.name}}.get{{capitalize (graphqlRefIdFieldName this)}}());
+{{/if}}
     }
 
 {{/if}}

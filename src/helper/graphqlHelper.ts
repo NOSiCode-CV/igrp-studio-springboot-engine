@@ -15,6 +15,17 @@ import {
  *   - graphql.types package imports for the resolved type and all input types
  *   - imports for types referenced by graphqlType attributes (needed for @SchemaMapping return types)
  */
+/** Resolves a graphqlType import for either technical or domain style. */
+function graphqlTypeImport(
+  packageSource: string,
+  typeName: string,
+  module: string,
+  isDomain: boolean,
+): string {
+  const entry = GENERIC_IMPORTS(packageSource, typeName, module).get('graphqlType')?.java;
+  return isDomain ? (entry?.domain ?? '') : (entry?.technical ?? '');
+}
+
 export function graphqlImportsTypes(
   config: GraphQLSchemaConfig,
   baseConfig: ApiConfig,
@@ -24,8 +35,8 @@ export function graphqlImportsTypes(
 ): string {
   const imports = new Set<string>();
   const packageSource = `${baseConfig.group}.${baseConfig.packageName}`;
-  const typesPackage = `${packageSource}.graphql.types`;
   const isDomain = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const schemaModule = config.module ?? 'shared';
 
   const allArgs = [
     ...(config.queries ?? []).flatMap((q) => q.args ?? []),
@@ -42,37 +53,44 @@ export function graphqlImportsTypes(
 
   const allOps = [...(config.queries ?? []), ...(config.mutations ?? [])];
 
-  // java.util.List if any operation returns a list (reuses GENERIC_IMPORTS 'list' entry)
+  // java.util.List if any operation returns a list
   if (allOps.some((op) => op.collectionType === 'list')) {
-    const listImport = GENERIC_IMPORTS(packageSource, '').get('list')?.java.technical;
-    if (listImport) imports.add(listImport);
+    imports.add('import java.util.List;');
   }
 
-  // Resolved graphqlType import
+  // Main type import
   if (resolvedTypeManifest) {
-    imports.add(`import ${typesPackage}.${resolvedTypeManifest.name};`);
+    imports.add(graphqlTypeImport(packageSource, resolvedTypeManifest.name, schemaModule, isDomain));
 
-    // Imports for types referenced by graphqlType attributes — needed for @SchemaMapping return types
-    for (const attr of resolvedTypeManifest.attributes ?? []) {
-      if (attr.objectType === 'graphqlType') {
-        const attrModule = attr.module ?? config.module ?? 'shared';
-        if (isDomain) {
-          imports.add(`import ${packageSource}.${attrModule}.interfaces.graphql.types.${attr.type};`);
-        } else {
-          imports.add(`import ${typesPackage}.${attr.type};`);
-        }
+    const graphqlTypeAttrs = (resolvedTypeManifest.attributes ?? []).filter(
+      (a) => a.objectType === 'graphqlType',
+    );
+
+    for (const attr of graphqlTypeAttrs) {
+      // Import the referenced type class (for @SchemaMapping return type) — uses attr.module
+      const attrModule = attr.module ?? schemaModule;
+      imports.add(graphqlTypeImport(packageSource, String(attr.type), attrModule, isDomain));
+    }
+
+    // CompletableFuture + DataLoader imports when @SchemaMapping methods are generated
+    if (graphqlTypeAttrs.length > 0) {
+      imports.add('import java.util.concurrent.CompletableFuture;');
+      imports.add('import org.dataloader.DataLoader;');
+      // java.util.List needed for list @SchemaMapping return types
+      if (graphqlTypeAttrs.some((a) => a.collectionType === 'list')) {
+        imports.add('import java.util.List;');
       }
     }
   }
 
-  // Resolved graphqlInput imports
+  // Input type imports
   for (const input of resolvedInputManifests ?? []) {
-    imports.add(`import ${typesPackage}.${input.name};`);
+    imports.add(graphqlTypeImport(packageSource, input.name, schemaModule, isDomain));
   }
 
-  // Page type import when any operation is paginated
+  // Page type import
   if (pageManifest) {
-    imports.add(`import ${typesPackage}.${pageManifest.name};`);
+    imports.add(graphqlTypeImport(packageSource, pageManifest.name, schemaModule, isDomain));
   }
 
   return [...imports].join('\n');
@@ -119,6 +137,95 @@ export function resolveGraphQLAttributeType(attr: { type: string; objectType: st
  */
 export function hasGraphQLTypeAttributes(attributes: Array<{ objectType: string }> | undefined): boolean {
   return (attributes ?? []).some((a) => a.objectType === 'graphqlType');
+}
+
+/**
+ * Resolves Java imports for the service interface and service implementation.
+ * Subset of graphqlImportsTypes — excludes CompletableFuture, DataLoader, and
+ * referenced-type classes (those are resolver concerns only).
+ */
+export function graphqlImportsTypesService(
+  config: GraphQLSchemaConfig,
+  baseConfig: ApiConfig,
+  resolvedTypeManifest?: DTOConfig,
+  resolvedInputManifests?: DTOConfig[],
+  pageManifest?: DTOConfig,
+): string {
+  const imports = new Set<string>();
+  const packageSource = `${baseConfig.group}.${baseConfig.packageName}`;
+  const isDomain = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const schemaModule = config.module ?? 'shared';
+
+  const allArgs = [
+    ...(config.queries ?? []).flatMap((q) => q.args ?? []),
+    ...(config.mutations ?? []).flatMap((m) => m.args ?? []),
+  ];
+
+  for (const arg of allArgs) {
+    const genType = GENERIC_TYPES.get(arg.type?.toLowerCase?.() ?? '');
+    if (genType?.java.namespace) {
+      imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+    }
+  }
+
+  const allOps = [...(config.queries ?? []), ...(config.mutations ?? [])];
+
+  if (allOps.some((op) => op.collectionType === 'list')) {
+    imports.add('import java.util.List;');
+  }
+
+  if (resolvedTypeManifest) {
+    imports.add(graphqlTypeImport(packageSource, resolvedTypeManifest.name, schemaModule, isDomain));
+  }
+
+  for (const input of resolvedInputManifests ?? []) {
+    imports.add(graphqlTypeImport(packageSource, input.name, schemaModule, isDomain));
+  }
+
+  if (pageManifest) {
+    imports.add(graphqlTypeImport(packageSource, pageManifest.name, schemaModule, isDomain));
+  }
+
+  return [...imports].join('\n');
+}
+
+/**
+ * Returns the Java field name for a graphqlType attribute's ID reference.
+ * Derived from the referenced TYPE name (not the attribute name):
+ *   single:  Category  → categoryId
+ *   list:    Product   → productIds
+ */
+export function graphqlRefIdFieldName(attr: { type: string; collectionType?: string }): string {
+  const typeName = String(attr.type);
+  const camel = typeName.charAt(0).toLowerCase() + typeName.slice(1);
+  return attr.collectionType === 'list' ? `${camel}Ids` : `${camel}Id`;
+}
+
+/**
+ * Returns the Java type for a graphqlType attribute's ID field (using attr.idType).
+ *   single: uuid → UUID
+ *   list:   uuid → List<UUID>
+ */
+export function graphqlRefIdType(attr: { idType?: string; collectionType?: string }): string {
+  const javaType = resolveJavaTypeForGraphQL(attr.idType ?? 'uuid');
+  return attr.collectionType === 'list' ? `List<${javaType}>` : javaType;
+}
+
+/**
+ * Returns the scalar Java ID type for a graphqlType attribute (no List wrapping).
+ * Used as the DataLoader key type: DataLoader<UUID, Product>.
+ */
+export function graphqlRefIdJavaType(attr: { idType?: string }): string {
+  return resolveJavaTypeForGraphQL(attr.idType ?? 'uuid');
+}
+
+/**
+ * Returns the return type of a @SchemaMapping method for a graphqlType attribute.
+ *   single: Category  → Category
+ *   list:   Product   → List<Product>
+ */
+export function graphqlRefReturnType(attr: { type: string; collectionType?: string }): string {
+  return attr.collectionType === 'list' ? `List<${attr.type}>` : String(attr.type);
 }
 
 /**
