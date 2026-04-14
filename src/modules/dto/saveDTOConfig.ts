@@ -83,8 +83,11 @@ export const normalizeName = (name: string, type: ObjectTypes): string => {
     case 'event':
       return name.replace(/event$/i, '');
     case 'graphqltype':
-    case 'graphqlinput':
+      // GraphQL type names have no suffix by convention — Product, Category, Order
       return name;
+    case 'graphqlinput':
+      // GraphQL input names must always end in 'Input' (official GraphQL convention)
+      return name.replace(/input$/i, '') + 'Input';
     default:
       return name;
   }
