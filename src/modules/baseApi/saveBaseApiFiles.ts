@@ -1,23 +1,17 @@
 import path from 'path';
 import {RenderContext} from '../../interfaces/types';
 import {
-    COMMON_FILES,
-    CONFIG_FILES,
-    CONFIG_FILES_GRAALVM,
-    DIRECTORIES,
-    OBSERVABILITY_BINARY_FILES,
-    OBSERVABILITY_CONFIG_FILES,
-    OBSERVABILITY_CONFIG_FILES_GRAALVM,
-    OBSERVABILITY_YAML_CONFIG_FILES,
-    PROJECT_STRUCTURE_STYLE,
-    TEMPLATES,
+  COMMON_FILES,
+  CONFIG_FILES,
+  CONFIG_FILES_GRAALVM,
+  DIRECTORIES,
+  PROJECT_STRUCTURE_STYLE,
+  TEMPLATES,
 } from '../../utils/constants';
 import {capitalize} from '../../helper/stringHelper';
 import {renderTemplate} from '../common/renderTemplate';
 import {getMainPath} from '../../utils/helpers';
-import {saveBinaryToFile, saveToFile} from '../common/saveToFile';
-import fs from 'fs-extra';
-import {getPaths} from '../../index';
+import {saveToFile} from '../common/saveToFile';
 
 const APPLICATION_SUFFIX = 'Application.java';
 
@@ -79,8 +73,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.CONFIG_DEPLOYMENT,
         name: COMMON_FILES.DEPLOYMENT,
       },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
       {
         output: kubernetesPath,
         template: TEMPLATES.CONFIG_SERVICE,
@@ -259,8 +251,6 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         template: TEMPLATES.CONFIG_DEPLOYMENT,
         name: COMMON_FILES.DEPLOYMENT,
       },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_INGRESS, name: COMMON_FILES.INGRESS },
-      { output: kubernetesPath, template: TEMPLATES.CONFIG_CLUSTER, name: COMMON_FILES.CLUSTER },
       {
         output: kubernetesPath,
         template: TEMPLATES.CONFIG_SERVICE,
@@ -358,90 +348,66 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
   return files;
 };
 
-function getSubfolder(file: { template: string; output: string }) {
-  switch (file.template) {
-    case TEMPLATES.MONITORING_COLLECTOR:
-      return 'collector';
-    case TEMPLATES.MONITORING_PROMETHEUS:
-      return 'prometheus';
-    case TEMPLATES.MONITORING_PROMTAIL:
-      return 'promtail';
-    case TEMPLATES.MONITORING_TEMPO:
-      return 'tempo';
-    default:
-      return '';
-  }
-}
+const getWorkspaceComposeName = (name: string) => `igrp-compose-${name.toLowerCase()}.yaml`;
+const getWorkspaceEnvName = (name: string) => `.igrp.${name.toLowerCase()}.env`;
 
-const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {
-  // Generation and saving of the main files.
+const saveRenderedTemplate = async (
+  templatePath: string,
+  outputPath: string,
+  context: RenderContext,
+  overwrite = true,
+) => {
+  const template = await renderTemplate(templatePath, context);
+  await saveToFile(template, outputPath, overwrite);
+};
+
+const saveAdditionalBaseConfigFiles = async (context: RenderContext) => {
+  const configFiles = context.baseConfig.enableGraalVm ? CONFIG_FILES_GRAALVM : CONFIG_FILES;
+
   await Promise.all(
-    baseApiFiles.map(async (file) => {
-      const outputPath = path.join(file.output, file.name);
-
-      // Create a new context for each file to avoid overwriting `fullPath`.
-      const fileContext = { ...context, fullPath: file.output };
-
-      const template = await renderTemplate(file.template, fileContext);
-      await saveToFile(template, outputPath);
+    configFiles.map(async (file) => {
+      await saveRenderedTemplate(
+        file.template,
+        path.join(context.basePath, file.output),
+        context,
+        false,
+      );
     }),
   );
 
-  // Generation and saving of additional configuration files.
-  if (context.baseConfig.enableObservability) {
-    await Promise.all(
-      OBSERVABILITY_YAML_CONFIG_FILES.map(async (file) => {
-        const basePath = path.join(context.basePath, DIRECTORIES.MONITORING);
-        const subPath = path.join(basePath, getSubfolder(file));
-        const outputPath = path.join(subPath, file.output);
-        const template = await renderTemplate(file.template, context);
-        await saveToFile(template, outputPath);
-      }),
-    );
+  await Promise.all([
+    saveRenderedTemplate(
+      TEMPLATES.CONFIG_IGRP_DOCKER_COMPOSE,
+      path.join(context.basePath, getWorkspaceComposeName(context.baseConfig.name)),
+      context,
+      false,
+    ),
+    saveRenderedTemplate(
+      TEMPLATES.CONFIG_IGRP_ENV_FILE,
+      path.join(context.basePath, getWorkspaceEnvName(context.baseConfig.name)),
+      context,
+      false,
+    ),
+  ]);
 
-    if (context.baseConfig.enableGraalVm) {
-      await Promise.all(
-        OBSERVABILITY_CONFIG_FILES_GRAALVM.map(async (file) => {
-          const outputPath = path.join(context.basePath, file.output);
-          const template = await renderTemplate(file.template, context);
-          await saveToFile(template, outputPath, false);
-        }),
-      );
-    } else {
-      await Promise.all(
-        OBSERVABILITY_CONFIG_FILES.map(async (file) => {
-          const outputPath = path.join(context.basePath, file.output);
-          const template = await renderTemplate(file.template, context);
-          await saveToFile(template, outputPath, false);
-        }),
-      );
-    }
-
-    await Promise.all(
-      OBSERVABILITY_BINARY_FILES.map(async (file) => {
-        const outputPath = path.join(context.basePath, file.output);
-        const templatePath = path.join(getPaths().template, file.template);
-        const binaryContent = await fs.readFile(templatePath);
-        await saveBinaryToFile(binaryContent, outputPath, false);
-      }),
+  if (context.baseConfig.database === 'Postgresql') {
+    await saveRenderedTemplate(
+      TEMPLATES.CONFIG_DB_INIT_SCRIPT,
+      path.join(context.basePath, DIRECTORIES.DATABASE, COMMON_FILES.INIT_DATABASE_SCRIPT),
+      context,
+      false,
     );
-  } else {
-    if (context.baseConfig.enableGraalVm) {
-      await Promise.all(
-        CONFIG_FILES_GRAALVM.map(async (file) => {
-          const outputPath = path.join(context.basePath, file.output);
-          const template = await renderTemplate(file.template, context);
-          await saveToFile(template, outputPath, false);
-        }),
-      );
-    } else {
-      await Promise.all(
-        CONFIG_FILES.map(async (file) => {
-          const outputPath = path.join(context.basePath, file.output);
-          const template = await renderTemplate(file.template, context);
-          await saveToFile(template, outputPath, false);
-        }),
-      );
-    }
   }
+};
+
+const saveBaseApiFiles = async (baseApiFiles: BASE_API_FILES, context: RenderContext) => {
+  await Promise.all(
+    baseApiFiles.map(async (file) => {
+      const outputPath = path.join(file.output, file.name);
+      const fileContext = { ...context, fullPath: file.output };
+      await saveRenderedTemplate(file.template, outputPath, fileContext);
+    }),
+  );
+
+  await saveAdditionalBaseConfigFiles(context);
 };

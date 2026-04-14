@@ -1,2 +1,5 @@
+{{#if (eq baseConfig.authMode "autentika")}}
+AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}
+{{else}}
 AUTH_JWT_ISSUER=http://localhost:8090/realms/quickstart
-SECURITY_ENABLED=false
+{{/if}}

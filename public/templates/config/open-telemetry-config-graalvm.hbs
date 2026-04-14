@@ -17,8 +17,8 @@ public class OtelConfig {
    @Bean
     @ConditionalOnProperty(name = "otel.exporter.otlp.endpoint")
     public OpenTelemetry openTelemetry(
-        @Value("${OTEL_COLLECTOR_ENDPOINT}") String endpoint,
-        @Value("${OTEL_SERVICE_NAME}") String serviceName) {
+        @Value("${OTEL_EXPORTER_OTLP_ENDPOINT}") String endpoint,
+        @Value("${spring.application.name}") String serviceName) {
         // Criação direta do Resource sem Attributes.of()
         Resource resource = Resource.getDefault()
             .toBuilder()

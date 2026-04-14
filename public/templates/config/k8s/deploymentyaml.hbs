@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-engine
+  name: {{toLowerCase baseConfig.name}}
   labels:
-    app: spring-engine
+    app: {{toLowerCase baseConfig.name}}
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: spring-engine
+      app: {{toLowerCase baseConfig.name}}
   template:
     metadata:
       labels:
-        app: spring-engine
+        app: {{toLowerCase baseConfig.name}}
     spec:
       containers:
-        - name: spring-engine
-          image: ${REGISTRY_URL}/${REGISTRY_PROJECT}/spring-engine:${RESOURCE_NAME_FINAL}
+        - name: {{toLowerCase baseConfig.name}}
+          image: registry.nosi.cv/{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}/{{toLowerCase baseConfig.name}}:latest
           ports:
             - containerPort: 8080
           resources:
@@ -27,10 +27,60 @@ spec:
               cpu: "500m"
               memory: "1Gi"
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://<postgres-service-name>:5432/mydatabase"
             - name: SPRING_DATASOURCE_USERNAME
-              value: "myuser"
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: igrp-pg-cluster-superuser
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "mypassword"
-          
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: igrp-pg-cluster-superuser
+            - name: SPRING_PROFILES_ACTIVE
+              value: staging
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://igrp-pg-cluster-rw:5432/{{toLowerCase baseConfig.name}}_db
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: org.postgresql.Driver
+            - name: AUTH_JWT_ISSUER
+              value: "http://${DOCKER_IP}/auth/realms/igrp"
+            - name: SPRING_APPLICATION_NAME
+              value: {{toLowerCase baseConfig.name}}
+            - name: SERVER_PORT
+              value: "8080"
+            - name: EUREKA_CLIENT_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_DISCOVERY_ENABLED
+              value: "false"
+            - name: EUREKA_CLIENT_REGISTER_WITH_EUREKA
+              value: "false"
+            - name: EUREKA_CLIENT_FETCH_REGISTRY
+              value: "false"
+            - name: KUBERNETES_DISCOVERY_ENABLED
+              value: "true"
+            - name: ENABLE_SWAGGER
+              value: "true"
+            - name: OTEL_ENABLED
+              value: "false"
+            - name: SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL
+              value: "true"
+            - name: SPRINGDOC_SWAGGER_UI_URL
+              value: /{{toLowerCase baseConfig.name}}-service/v3/api-docs
+            - name: SPRINGDOC_SWAGGER_UI_CONFIG_URL
+              value: /{{toLowerCase baseConfig.name}}-service/v3/api-docs/swagger-config
+            - name: OPENAPI_SERVER_API
+              value: http://${DOCKER_IP}/{{toLowerCase baseConfig.name}}-service
+            - name: IGRP_ACCESS_API_BASE_URL
+              value: http://${DOCKER_IP}/igrp-access-management
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+            - name: IGRP_ACCESS_M2M_SYNC_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: igrp-access-m2m-sync-token
+                  name: igrp-access-management-secrets
+            - name: IGRP_WORKSPACE_SLUG
+              value: "{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{/if}}"
+            - name: IGRP_WORKSPACE_ID
+              value: "{{#if baseConfig.workspaceId}}{{baseConfig.workspaceId}}{{/if}}"

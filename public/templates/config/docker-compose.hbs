@@ -1,4 +1,4 @@
-name: '{{toLowerCase baseConfig.name}}-api-service'
+name: "{{toLowerCase baseConfig.name}}"
 
 networks:
   default:
@@ -6,10 +6,6 @@ networks:
     external: false
 
 services:
-  {{#if baseConfig.enableObservability}}
-  {{> observability-docker-services }}
-  {{/if}}
-
   {{#if (eq baseConfig.database "Postgresql")}}
   {{> postgres-docker-service }}
   {{else if (eq baseConfig.database "MySQL")}}
@@ -27,35 +23,38 @@ services:
       - .env
     depends_on:
     {{#if (eq baseConfig.database "Postgresql")}}
-      - postgres-{{toLowerCase baseConfig.name}}-api-service
+      {{toLowerCase baseConfig.name}}-postgres:
+        condition: service_healthy
     {{else if (eq baseConfig.database "MySQL")}}
-      - mysql-{{toLowerCase baseConfig.name}}-api-service
+      {{toLowerCase baseConfig.name}}-mysql:
+        condition: service_started
     {{else if (eq baseConfig.database "Oracle")}}
-      - oracle-{{toLowerCase baseConfig.name}}-api-service
+      {{toLowerCase baseConfig.name}}-oracle:
+        condition: service_started
     {{/if}}
     environment:
       - SERVER_PORT=${SERVICE_PORT}
-      - SERVICE_NAME={{toLowerCase baseConfig.name}}-service
       - SPRING_PROFILES_ACTIVE=${SERVICE_PROFILE}
       {{> database-docker-env }}
-      {{#if baseConfig.enableObservability}}
-      {{> observability-docker-env }}
-      {{/if}}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+      - AUTH_JWT_ISSUER=${AUTH_JWT_ISSUER}
+      - IGRP_ACCESS_API_BASE_URL=${IGRP_ACCESS_API_BASE_URL}
       - ENABLE_SWAGGER=${ENABLE_SWAGGER}
+      - EUREKA_CLIENT_ENABLED=${EUREKA_CLIENT_ENABLED}
+      - SPRING_CLOUD_DISCOVERY_ENABLED=${SPRING_CLOUD_DISCOVERY_ENABLED}
+      - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT}
+      - LOGGING_LEVEL_SPRING_WEB=${LOGGING_LEVEL_SPRING_WEB}
+      - LOGGING_LEVEL_APP=${LOGGING_LEVEL_APP}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${HIBERNATE_DDL}
+      - IGRP_WORKSPACE_SLUG=${IGRP_WORKSPACE_SLUG}
+      - IGRP_WORKSPACE_ID=${IGRP_WORKSPACE_ID}
     ports:
-      - ${SERVICE_PORT}:${SERVICE_PORT}
-    #restart: unless-stopped
+      - "${SERVICE_PORT}:8080"
+    restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 700m
-    {{#if baseConfig.enableObservability}}
-    labels:
-      logging: "promtail"
-    {{/if}}
+          memory: ${SERVICE_MEMORY_LIMIT}
 
 volumes:
-  {{#if baseConfig.enableObservability}}
-  {{> observability-docker-volumes }}
-  {{/if}}
   {{> database-docker-volumes }}

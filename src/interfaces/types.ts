@@ -43,6 +43,7 @@ export interface VersionedConfig {
 export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   type: 'springboot';
   workspaceId?: string;
+  workspaceSlug?: string;
   name: string;
   group: string;
   artifact: string;

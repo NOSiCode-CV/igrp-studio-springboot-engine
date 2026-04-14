@@ -2,13 +2,20 @@ FROM cgr.dev/chainguard/maven:latest-dev AS build
 WORKDIR /app
 
 COPY pom.xml ./
-RUN mvn -B -q dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B -q dependency:go-offline
 
 COPY src ./src
-RUN mvn -B -DskipTests clean package && ls -lh target
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B -DskipTests clean package
 
-FROM cgr.dev/chainguard/jre:latest
+FROM cgr.dev/chainguard/jre:latest-dev
 WORKDIR /app
+
+USER root
+RUN apk add --no-cache curl wget bash
+USER java
+
 COPY --from=build /app/target/*.jar /app/app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

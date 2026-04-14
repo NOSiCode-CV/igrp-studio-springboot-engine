@@ -77,6 +77,11 @@ const apiSchema: JSONSchemaType<BaseApiConfig> = {
       nullable: true,
       errorMessage: 'The workspace id if provided must be a string.',
     },
+    workspaceSlug: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The workspace slug if provided must be a string.',
+    },
     type: {
       type: 'string',
       const: 'springboot',

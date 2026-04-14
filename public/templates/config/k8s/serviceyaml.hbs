@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-engine-service
+  name: {{toLowerCase baseConfig.name}}-service
   labels:
-    app: spring-engine
+    app: {{toLowerCase baseConfig.name}}
+    gateway.expose: "true"
+    gateway.name: {{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}
 spec:
   selector:
-    app: spring-engine
+    app: {{toLowerCase baseConfig.name}}
   ports:
     - protocol: TCP
       port: 8080

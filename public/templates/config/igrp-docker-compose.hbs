@@ -1,0 +1,64 @@
+name: "{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-{{toLowerCase baseConfig.name}}-igrp"
+
+networks:
+  default:
+    name: {{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-igrp_default
+    external: true
+
+services:
+  {{toLowerCase baseConfig.name}}-db-prepare:
+    image: postgres:16-alpine
+    container_name: {{toLowerCase baseConfig.name}}-db-prepare
+    restart: "no"
+    env_file:
+      - ./.igrp.{{toLowerCase baseConfig.name}}.env
+    environment:
+      - IGRP_LOCAL_DATABASE_HOSTNAME=${IGRP_LOCAL_DATABASE_HOSTNAME}
+      - IGRP_DATABASE_USER=${IGRP_DATABASE_USER}
+      - IGRP_DATABASE_PASSWORD=${IGRP_DATABASE_PASSWORD}
+    extra_hosts:
+      {{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-igrp: host-gateway
+    labels:
+      type: "init-task"
+      name: "{{toLowerCase baseConfig.name}}DatabasePrepare"
+      workspace.slug: "{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{/if}}"
+      workspace.id: "{{#if baseConfig.workspaceId}}{{baseConfig.workspaceId}}{{/if}}"
+    volumes:
+      - ./db:/scripts:ro
+    command: ["sh", "/scripts/init-database.sh"]
+
+  {{toLowerCase baseConfig.name}}:
+    build: .
+    container_name: {{toLowerCase baseConfig.name}}
+    depends_on:
+      {{toLowerCase baseConfig.name}}-db-prepare:
+        condition: service_completed_successfully
+    env_file:
+      - ./.igrp.{{toLowerCase baseConfig.name}}.env
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    extra_hosts:
+      {{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-igrp: host-gateway
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_USERNAME=${IGRP_DATABASE_USER}
+      - SPRING_DATASOURCE_PASSWORD=${IGRP_DATABASE_PASSWORD}
+      - AUTH_JWT_ISSUER=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/auth/realms/igrp
+      - SPRING_APPLICATION_NAME={{toLowerCase baseConfig.name}}
+      - EUREKA_CLIENT_ENABLED=true
+      - SPRING_CLOUD_DISCOVERY_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=${EUREKA_SERVICE_URL}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_SERVICE_URL}
+      - EUREKA_SERVICE_URL=${EUREKA_SERVICE_URL}
+      - IGRP_ACCESS_API_BASE_URL=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/gateway-api/{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-access-management
+      - IGRP_WORKSPACE_SLUG=${IGRP_WORKSPACE_SLUG}
+      - IGRP_WORKSPACE_ID=${IGRP_WORKSPACE_ID}
+    labels:
+      type: "web"
+      is_project: true
+      logging: "promtail"
+      workspace.slug: "{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{/if}}"
+      workspace.id: "{{#if baseConfig.workspaceId}}{{baseConfig.workspaceId}}{{/if}}"

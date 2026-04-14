@@ -25,7 +25,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
   const mainPath = path.join(basePath, getMainPath(group, packageName));
   const testPath = path.join(basePath, getTestPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
-  const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
+  const databasePath = path.join(basePath, DIRECTORIES.DATABASE);
 
   const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
   const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
@@ -42,6 +42,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       igrpSharedPath,
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
+      databasePath,
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
 
@@ -72,15 +73,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(interfacePath, DIRECTORIES.REST)
     ];
 
-    if (config.enableObservability)
-      paths.push(
-        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
-        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
-        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
-        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
-        path.join(monitoringPath, DIRECTORIES.TEMPO),
-      );
-
     return paths;
   } else {
     const paths = [
@@ -88,6 +80,7 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(igrpSharedPath, DIRECTORIES.MODELS),
       path.join(igrpSharedPath, DIRECTORIES.DTO),
 
+      databasePath,
       path.join(basePath, DIRECTORIES.RESOURCES),
       path.join(basePath, DIRECTORIES.KUBERNETES),
 
@@ -100,15 +93,6 @@ const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] =
       path.join(testPath, DIRECTORIES.REPOSITORIES),
       path.join(testPath, DIRECTORIES.SERVICES),
     ];
-
-    if (config.enableObservability)
-      paths.push(
-        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
-        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
-        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
-        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
-        path.join(monitoringPath, DIRECTORIES.TEMPO),
-      );
 
     return paths;
   }

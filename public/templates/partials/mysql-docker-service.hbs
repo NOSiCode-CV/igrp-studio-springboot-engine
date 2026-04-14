@@ -1,12 +1,13 @@
-mysql-{{toLowerCase baseConfig.name}}-api-service:
+{{toLowerCase baseConfig.name}}-mysql:
     image: mysql:8.0
-    container_name: mysql-{{toLowerCase baseConfig.name}}-api-service
+    container_name: ${MYSQL_SERVICE_NAME}
     environment:
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - ${MYSQL_PORT}:${MYSQL_PORT}
+      - "${MYSQL_PORT}:3306"
     volumes:
-      - mysql-data-8-{{toLowerCase baseConfig.name}}-api-service:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     restart: unless-stopped
