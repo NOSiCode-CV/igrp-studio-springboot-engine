@@ -401,6 +401,12 @@ export const TEMPLATES = {
     record: 'graphql/graphql-input-record.hbs',
   },
   GRAPHQL_PAGE_TYPE: 'graphql/graphql-page-type.hbs',
+
+  // GRAPHQL DDD handlers
+  GRAPHQL_DDD_QUERY: 'graphql/graphql-query-ddd.hbs',
+  GRAPHQL_DDD_QUERY_HANDLER: 'graphql/graphql-queryhandler-ddd.hbs',
+  GRAPHQL_DDD_COMMAND: 'graphql/graphql-command-ddd.hbs',
+  GRAPHQL_DDD_COMMAND_HANDLER: 'graphql/graphql-commandhandler-ddd.hbs',
 };
 
 export const CONFIG_FILES = [

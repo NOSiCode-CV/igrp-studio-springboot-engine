@@ -1,0 +1,22 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java}}
+
+import cv.igrp.framework.core.domain.Command;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+{{{argsImports}}}
+{{{inputRefImport}}}
+
+@Getter
+@AllArgsConstructor
+public class {{capitalize operationName}}Command implements Command {
+
+{{#if inputRef}}
+    private {{{inputRef}}} input;
+{{/if}}
+{{#each args}}
+    private {{resolveJavaTypeForGraphQL this.type}} {{this.name}};
+{{/each}}
+}

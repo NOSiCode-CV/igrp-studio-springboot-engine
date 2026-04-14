@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 {{#if (eq baseConfig.projectStructureStyle "domain")}}
 import cv.igrp.framework.core.domain.CommandBus;
 import cv.igrp.framework.core.domain.QueryBus;
+{{{graphqlDDDOperationImports resourceConfig baseConfig}}}
 {{else}}
 import org.springframework.beans.factory.annotation.Autowired;
 {{/if}}

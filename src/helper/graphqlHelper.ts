@@ -7,6 +7,7 @@ import {
     GraphQLQuery,
     GraphQLSchemaConfig
 } from '../interfaces/types';
+import {capitalizeJavaStyle} from './stringHelper';
 
 /**
  * Resolves all Java import statements needed for a GraphQL resolver / service:
@@ -226,6 +227,31 @@ export function graphqlRefIdJavaType(attr: { idType?: string }): string {
  */
 export function graphqlRefReturnType(attr: { type: string; collectionType?: string }): string {
   return attr.collectionType === 'list' ? `List<${attr.type}>` : String(attr.type);
+}
+
+/**
+ * Generates import statements for the Query and Command classes referenced by
+ * a DDD-style resolver (e.g. FindProductByIdQuery, CreateProductCommand).
+ * Only relevant when projectStructureStyle === 'domain'.
+ */
+export function graphqlDDDOperationImports(
+  config: GraphQLSchemaConfig,
+  baseConfig: ApiConfig,
+): string {
+  const imports = new Set<string>();
+  const pkg = `${baseConfig.group}.${baseConfig.packageName}`;
+  const module = (config.module ?? 'shared').toLowerCase();
+
+  for (const query of config.queries ?? []) {
+    const name = capitalizeJavaStyle(query.name);
+    imports.add(`import ${pkg}.${module}.application.queries.${name}Query;`);
+  }
+  for (const mutation of config.mutations ?? []) {
+    const name = capitalizeJavaStyle(mutation.name);
+    imports.add(`import ${pkg}.${module}.application.commands.${name}Command;`);
+  }
+
+  return [...imports].join('\n');
 }
 
 /**

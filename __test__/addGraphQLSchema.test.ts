@@ -126,11 +126,19 @@ describe('addGraphQLSchema — technical', () => {
 });
 
 describe('addGraphQLSchema — domain', () => {
-  it('generates schema, resolver, DataLoader and ProductPage under the module path', async () => {
+  it('generates schema, resolver, ProductPage and DDD Query/Command handlers under the module path', async () => {
+    // Expected under catalog/application/queries/:
+    //   FindProductByIdQuery.java + FindProductByIdQueryHandler.java
+    //   FindAllProductsQuery.java + FindAllProductsQueryHandler.java
+    //   FindProductsPageQuery.java + FindProductsPageQueryHandler.java
+    // Expected under catalog/application/commands/:
+    //   CreateProductCommand.java + CreateProductCommandHandler.java
+    //   UpdateProductCommand.java + UpdateProductCommandHandler.java
+    //   DeleteProductCommand.java + DeleteProductCommandHandler.java
     await addGraphQLSchema(productSchema, DOMAIN_OUTPUT_DIR);
   });
 
-  it('second call does not overwrite service implementation', async () => {
+  it('second call does not overwrite handler implementations', async () => {
     await addGraphQLSchema(productSchema, DOMAIN_OUTPUT_DIR);
   });
 });

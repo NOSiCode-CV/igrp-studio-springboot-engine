@@ -56,6 +56,7 @@ import {resolvePathVariables} from '../helper/controllerHelper';
 import {resolveImportReponse} from '../helper/responseHelper';
 import {normalizeImplValidatorName, normalizeInterfaceValidatorName,} from '../modules/dto/helpers';
 import {
+    graphqlDDDOperationImports,
     graphqlImportsTypes,
     graphqlImportsTypesService,
     graphqlRefIdFieldName,
@@ -922,6 +923,7 @@ Handlebars.registerHelper('addPropPageable', function (context): boolean {
 });
 
 // GRAPHQL
+Handlebars.registerHelper('graphqlDDDOperationImports', graphqlDDDOperationImports);
 Handlebars.registerHelper('resolveGraphQLScalar', resolveGraphQLScalar);
 Handlebars.registerHelper('resolveGraphQLAttributeType', resolveGraphQLAttributeType);
 Handlebars.registerHelper('hasGraphQLTypeAttributes', hasGraphQLTypeAttributes);

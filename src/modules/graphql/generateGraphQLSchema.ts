@@ -1,13 +1,18 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {DTOConfig, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
-import {DIRECTORIES, EXTENSIONS, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
+import {ApiConfig, DTOConfig, GraphQLFieldDef, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
+import {DIRECTORIES, EXTENSIONS, GENERIC_TYPES, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
 import {renderTemplate} from '../common/renderTemplate';
 import {saveToFile} from '../common/saveToFile';
 import {saveGraphQLConfig} from './saveGraphQLConfig';
 import {getGraphQLTypeConfigPath, getMainPath, replaceTemplate} from '../../utils/helpers';
 import {capitalizeJavaStyle} from '../../helper/stringHelper';
-import {resolveGraphQLAttributeType, resolveGraphQLScalar, resolveJavaTypeForGraphQL} from '../../helper/graphqlHelper';
+import {
+    resolveGraphQLAttributeType,
+    resolveGraphQLScalar,
+    resolveJavaReturnType,
+    resolveJavaTypeForGraphQL
+} from '../../helper/graphqlHelper';
 
 // ─── Manifest loaders ────────────────────────────────────────────────────────
 
@@ -210,6 +215,11 @@ export const generateGraphQLSchema = async (context: RenderContext<GraphQLSchema
 
   // DataLoader class generation intentionally omitted — the DataLoader pattern is
   // embedded directly in the resolver's @SchemaMapping methods using loadMany/load.
+
+  // 6. DDD handlers — only for domain-driven projects
+  if (isDomain) {
+    await generateDDDHandlers(enriched);
+  }
 };
 
 // ─── Sub-generators ───────────────────────────────────────────────────────────
@@ -292,4 +302,120 @@ const generateDataLoaderFile = async (context: EnrichedGraphQLContext): Promise<
   context.fullPath = path.dirname(outputPath);
   const content = await renderTemplate(TEMPLATES.GRAPHQL_DATALOADER, context);
   await saveToFile(content, outputPath, false);
+};
+
+// ─── DDD handler generation (Query + QueryHandler / Command + CommandHandler) ─
+
+/**
+ * For each GraphQL query/mutation in a DDD project, generates the corresponding
+ * Query/QueryHandler and Command/CommandHandler classes under
+ * <module>/application/queries/ and <module>/application/commands/.
+ *
+ * Query/Command classes are always regenerated (they carry no user logic).
+ * Handler classes are generated once and never overwritten.
+ */
+const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const { resourceConfig, basePath, baseConfig } = context;
+  const module = (resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+  const schemaName = capitalizeJavaStyle(resourceConfig.name);
+
+  const queryDir = path.join(
+    basePath,
+    getMainPath(baseConfig.group, baseConfig.packageName),
+    module,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.QUERIES,
+  );
+
+  const commandDir = path.join(
+    basePath,
+    getMainPath(baseConfig.group, baseConfig.packageName),
+    module,
+    DIRECTORIES.APPLICATION,
+    DIRECTORIES.COMMANDS,
+  );
+
+  for (const query of resourceConfig.queries ?? []) {
+    const operationName = capitalizeJavaStyle(query.name);
+    const returnJavaType = resolveJavaReturnType(query, schemaName);
+    const argsImports = buildArgsImports(query.args ?? []);
+    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
+
+    await fs.ensureDir(queryDir);
+
+    const queryCtx = { ...context, fullPath: queryDir, operationName, args: query.args ?? [], argsImports };
+    const queryContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_QUERY, queryCtx);
+    await saveToFile(queryContent, path.join(queryDir, `${operationName}Query.java`), true);
+
+    const handlerCtx = { ...context, fullPath: queryDir, operationName, returnJavaType, returnTypeImport };
+    const handlerContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_QUERY_HANDLER, handlerCtx);
+    await saveToFile(handlerContent, path.join(queryDir, `${operationName}QueryHandler.java`), false);
+  }
+
+  for (const mutation of resourceConfig.mutations ?? []) {
+    const operationName = capitalizeJavaStyle(mutation.name);
+    const returnJavaType = resolveJavaReturnType(mutation, schemaName);
+    const argsImports = buildArgsImports(mutation.args ?? []);
+    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
+    const inputRefImport = mutation.inputRef
+      ? buildGraphQLTypeImport(mutation.inputRef, module, baseConfig)
+      : '';
+
+    await fs.ensureDir(commandDir);
+
+    const commandCtx = {
+      ...context, fullPath: commandDir, operationName,
+      inputRef: mutation.inputRef, args: mutation.args ?? [], argsImports, inputRefImport,
+    };
+    const commandContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_COMMAND, commandCtx);
+    await saveToFile(commandContent, path.join(commandDir, `${operationName}Command.java`), true);
+
+    const handlerCtx = {
+      ...context, fullPath: commandDir, operationName,
+      inputRef: mutation.inputRef, returnJavaType, returnTypeImport, inputRefImport,
+    };
+    const handlerContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_COMMAND_HANDLER, handlerCtx);
+    await saveToFile(handlerContent, path.join(commandDir, `${operationName}CommandHandler.java`), false);
+  }
+};
+
+/** Import statements for GraphQL operation args (e.g. uuid → import java.util.UUID;) */
+const buildArgsImports = (args: GraphQLFieldDef[]): string => {
+  const imports = new Set<string>();
+  for (const arg of args) {
+    const genType = GENERIC_TYPES.get((arg.type ?? '').toLowerCase());
+    if (genType?.java.namespace) {
+      imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+    }
+  }
+  return [...imports].join('\n');
+};
+
+/** DDD-style import for a graphqlType / graphqlInput class. */
+const buildGraphQLTypeImport = (typeName: string, module: string, baseConfig: ApiConfig): string => {
+  const pkg = `${baseConfig.group}.${baseConfig.packageName}`;
+  return `import ${pkg}.${module}.interfaces.graphql.types.${typeName};`;
+};
+
+/**
+ * Import statement(s) for the Java return type of an operation.
+ * Handles List<X> (adds java.util.List + X import), UUID, and custom graphql type classes.
+ */
+const buildReturnTypeImport = (returnJavaType: string, module: string, baseConfig: ApiConfig): string => {
+  const javaBuiltins = new Set(['String', 'Boolean', 'Integer', 'Long', 'Double', 'Float', 'Void']);
+
+  // List<X> — extract the inner type, not 'List' itself
+  if (returnJavaType.startsWith('List<')) {
+    const inner = returnJavaType.match(/^List<([A-Z][A-Za-z0-9]+)>/)?.[1];
+    if (!inner || javaBuiltins.has(inner)) return 'import java.util.List;';
+    return [
+      'import java.util.List;',
+      buildGraphQLTypeImport(inner, module, baseConfig),
+    ].join('\n');
+  }
+
+  if (javaBuiltins.has(returnJavaType)) return '';
+  if (returnJavaType === 'UUID') return 'import java.util.UUID;';
+
+  return buildGraphQLTypeImport(returnJavaType, module, baseConfig);
 };
