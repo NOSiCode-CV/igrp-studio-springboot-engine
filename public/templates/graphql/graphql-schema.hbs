@@ -28,7 +28,7 @@ type {{pageManifest.name}} {
 {{#if resourceConfig.queries}}
 type Query {
 {{#each resourceConfig.queries}}
-  {{this.name}}({{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}): {{resolveGraphQLReturnType this ../resourceConfig.name}}
+  {{this.name}}{{#if this.args}}({{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveGraphQLReturnType this ../resourceConfig.name}}
 {{/each}}
 }
 {{/if}}
@@ -36,7 +36,7 @@ type Query {
 {{#if resourceConfig.mutations}}
 type Mutation {
 {{#each resourceConfig.mutations}}
-  {{this.name}}({{#if this.inputRef}}input: {{this.inputRef}}!{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}): {{resolveGraphQLReturnType this ../resourceConfig.name}}
+  {{this.name}}{{#if (or this.inputRef this.args)}}({{#if this.inputRef}}input: {{this.inputRef}}!{{/if}}{{#if this.args}}{{#if this.inputRef}}, {{/if}}{{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}){{/if}}: {{resolveGraphQLReturnType this ../resourceConfig.name}}
 {{/each}}
 }
 {{/if}}
