@@ -5,7 +5,8 @@
  *   - All three collectionTypes: single, list, paginated
  *   - Mutations: with inputRef, with inputRef + extra arg, with Boolean return
  *   - Multiple inputRefs: CreateProductInput + UpdateProductInput
- *   - DataLoader: Product.category is a graphqlType attribute
+ *   - DataLoader single (one-to-one):  Product.category  → categoryId: UUID
+ *   - DataLoader list   (one-to-many): Product.tags      → tagIds: List<UUID>
  *   - ProductPage: generated because of the paginated query
  *
  * The same schema is run for both technical and domain project styles.
@@ -28,21 +29,39 @@ const categoryType: DTOConfig = {
   attributes: [
     {name: 'id',    objectType: 'java', type: 'uuid',   required: true, primaryKey: true},
     {name: 'label', objectType: 'java', type: 'string', required: true},
+    {name: 'active', objectType: 'java', type: 'boolean', required: true},
   ],
 };
 
-// Catalog — has a graphqlType attribute (category) → triggers DataLoader in productSchema
+// Catalog — simple type used as a one-to-many target
+const tagType: DTOConfig = {
+  type: 'graphqlType',
+  name: 'Tag',
+  module: 'catalog',
+  template: 'classic',
+  attributes: [
+    {name: 'id',    objectType: 'java', type: 'uuid',   required: true, primaryKey: true},
+    {name: 'value', objectType: 'java', type: 'string', required: true},
+  ],
+};
+
+// Catalog — two graphqlType relations:
+//   category (one-to-one, cross-module) → categoryId: UUID
+//   tags     (one-to-many, same module) → tagIds: List<UUID>
 const productType: DTOConfig = {
   type: 'graphqlType',
   name: 'Product',
   module: 'catalog',
   template: 'classic',
   attributes: [
-    {name: 'id',       objectType: 'java',        type: 'uuid',     required: true, primaryKey: true},
+    {name: 'id',       objectType: 'java',        type: 'uuid',     required: true,  primaryKey: true},
     {name: 'name',     objectType: 'java',        type: 'string',   required: true},
     {name: 'price',    objectType: 'java',        type: 'double',   required: true},
     {name: 'active',   objectType: 'java',        type: 'boolean',  required: false},
+    // one-to-one → categoryId: UUID  + @SchemaMapping with DataLoader.load()
     {name: 'category', objectType: 'graphqlType', type: 'Category', required: false, module: 'shared'},
+    // one-to-many → tagIds: List<UUID>  + @SchemaMapping with DataLoader.loadMany()
+    {name: 'tags',     objectType: 'graphqlType', type: 'Tag',      required: false, module: 'catalog', collectionType: 'list'},
   ],
 };
 
@@ -55,6 +74,8 @@ const createProductInput: DTOConfig = {
     {name: 'name',       objectType: 'java', type: 'string', required: true,  maxLength: 255},
     {name: 'price',      objectType: 'java', type: 'double', required: true},
     {name: 'categoryId', objectType: 'java', type: 'uuid',   required: false},
+      {name: 'tagIds', objectType: 'java', type: 'uuid',   required: false, collectionType: 'list'}, // also test list input for update
+
   ],
 };
 
@@ -66,6 +87,8 @@ const updateProductInput: DTOConfig = {
   attributes: [
     {name: 'name',  objectType: 'java', type: 'string', required: false, maxLength: 255},
     {name: 'price', objectType: 'java', type: 'double', required: false},
+    {name: 'categoryId', objectType: 'java', type: 'uuid',   required: false},
+    {name: 'tagIds', objectType: 'java', type: 'uuid',   required: false, collectionType: 'list'}, // also test list input for update
   ],
 };
 
@@ -105,7 +128,8 @@ beforeAll(async () => {
   setEngineConfiguration({environment: 'development'});
   for (const dir of [TECHNICAL_OUTPUT_DIR, DOMAIN_OUTPUT_DIR]) {
     await addDTO(categoryType,       dir); // shared — no deps
-    await addDTO(productType,        dir); // catalog — depends on Category
+    await addDTO(tagType,            dir); // catalog — no deps
+    await addDTO(productType,        dir); // catalog — depends on Category + Tag
     await addDTO(createProductInput, dir);
     await addDTO(updateProductInput, dir);
   }
