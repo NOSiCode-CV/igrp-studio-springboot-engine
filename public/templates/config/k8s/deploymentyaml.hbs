@@ -80,7 +80,3 @@ spec:
                 secretKeyRef:
                   key: igrp-access-m2m-sync-token
                   name: igrp-access-management-secrets
-            - name: IGRP_WORKSPACE_SLUG
-              value: "{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{/if}}"
-            - name: IGRP_WORKSPACE_ID
-              value: "{{#if baseConfig.workspaceId}}{{baseConfig.workspaceId}}{{/if}}"

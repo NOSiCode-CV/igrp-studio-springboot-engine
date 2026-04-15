@@ -54,8 +54,6 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_SERVICE_URL}
       - EUREKA_SERVICE_URL=${EUREKA_SERVICE_URL}
       - IGRP_ACCESS_API_BASE_URL=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/gateway-api/{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-access-management
-      - IGRP_WORKSPACE_SLUG=${IGRP_WORKSPACE_SLUG}
-      - IGRP_WORKSPACE_ID=${IGRP_WORKSPACE_ID}
     labels:
       type: "web"
       is_project: true
