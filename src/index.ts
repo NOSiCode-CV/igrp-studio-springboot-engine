@@ -197,6 +197,7 @@ export const newApi = async (dirty: BaseApiConfig, basePath: string) => {
     type: baseConfig.type,
     workspaceId: baseConfig.workspaceId,
     workspaceSlug: baseConfig.workspaceSlug,
+    authMode: baseConfig.authMode,
     name: baseConfig.name,
     group: baseConfig.group,
     artifact: baseConfig.artifact,

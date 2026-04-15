@@ -28,6 +28,9 @@ The `demoteste` backend projects showed a newer target model:
 - backend project metadata includes:
   - `workspaceId`
   - `workspaceSlug`
+- backend authentication now supports two runtime modes:
+  - `keycloak` as the default mode
+  - `autentika` as an alternative issuer mode
 - no project-local monitoring stack
 - backend Kubernetes generation is limited to:
   - `deployment.yaml`
@@ -37,20 +40,22 @@ The `demoteste` backend projects showed a newer target model:
 
 ## Summary Of Changes
 
-The alignment introduced four main categories of changes:
+The alignment introduced five main categories of changes:
 
 1. Backend configuration model changes
 2. Generated infrastructure artifact changes
-3. Removal of obsolete observability scaffolding
-4. Test suite modernization
+3. Backend authentication mode support
+4. Removal of obsolete observability scaffolding
+5. Test suite modernization
 
 ---
 
 ## 1. Configuration Model Changes
 
-### Added workspace context to backend project config
+### Added workspace context and auth mode to backend project config
 
 The engine now supports `workspaceSlug` in the backend base project configuration, alongside `workspaceId`.
+It also supports an optional `authMode` field for backend authentication generation.
 
 This change was required because backend project artifacts now depend on the workspace name for:
 
@@ -59,6 +64,11 @@ This change was required because backend project artifacts now depend on the wor
 - gateway labels
 - backend integration URLs
 - OpenTelemetry collector host naming
+
+The `authMode` field was introduced to support two backend authentication runtime modes without leaking frontend auth concerns into backend generation:
+
+- `keycloak`
+- `autentika`
 
 ### Files updated
 
@@ -73,14 +83,66 @@ The generated project-local metadata in `.igrpstudio/baseApi.json` now preserves
 
 - `workspaceId`
 - `workspaceSlug`
+- `authMode` when explicitly provided
 
 This keeps the generated backend project self-describing without touching workspace-root metadata.
 
 ---
 
-## 2. Generated Artifact Changes
+## 2. Backend Authentication Mode Support
 
-### 2.1 Standalone backend artifacts were corrected
+### Added `keycloak` and `autentika` backend generation modes
+
+The backend projects in `demoteste` now support two authentication runtime modes:
+
+- `keycloak`
+- `autentika`
+
+For the Spring Engine, this affects only backend runtime configuration.
+
+It does **not** make the backend generator responsible for frontend auth variables such as:
+
+- `AUTENTIKA_CLIENT_ID`
+- `AUTENTIKA_CLIENT_SECRET`
+- `AUTENTIKA_HOST`
+- `AUTENTIKA_SCOPES`
+- frontend `KEYCLOAK_*` variables
+
+### Backend rule
+
+The Spring backend continues to use only:
+
+- `AUTH_PROVIDER`
+- `AUTH_JWT_ISSUER`
+
+### Effective behavior
+
+- if `authMode` is omitted, backend generation defaults to `keycloak`
+- if `authMode` is `keycloak`, generated projects remain almost identical to the previous aligned output, with `AUTH_PROVIDER=keycloak` added explicitly
+- if `authMode` is `autentika`, the backend still uses only `AUTH_JWT_ISSUER`, but the value becomes `${AUTENTIKA_ISSUER}`
+
+### Files updated
+
+- [src/interfaces/types.ts](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/src/interfaces/types.ts)
+- [src/schema/baseApiConfig.ts](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/src/schema/baseApiConfig.ts)
+- [src/schema/apiConfig.ts](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/src/schema/apiConfig.ts)
+- [src/index.ts](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/src/index.ts)
+- [public/templates/config/env.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/config/env.hbs)
+- [public/templates/config/env.example.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/config/env.example.hbs)
+- [public/templates/partials/auth-env.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/partials/auth-env.hbs)
+- [public/templates/config/igrp-env.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/config/igrp-env.hbs)
+- [public/templates/config/igrp-docker-compose.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/config/igrp-docker-compose.hbs)
+- [public/templates/config/k8s/deploymentyaml.hbs](/Users/Eder.Z.Moreno/Documents/EderTeste/spring-engine/public/templates/config/k8s/deploymentyaml.hbs)
+
+### Result
+
+Generated backend projects now support both authentication modes without breaking the default Keycloak path and without importing frontend-specific auth variables into Spring project generation.
+
+---
+
+## 3. Generated Artifact Changes
+
+### 3.1 Standalone backend artifacts were corrected
 
 The original standalone `docker-compose.yml` generation had several issues:
 
@@ -117,7 +179,7 @@ Standalone backend projects now generate:
 
 ---
 
-### 2.2 Workspace-integrated backend artifacts were added
+### 3.2 Workspace-integrated backend artifacts were added
 
 The original engine did not generate the backend integration artifacts used by backend projects inside `demoteste`.
 
@@ -147,7 +209,7 @@ This matches the current Spring backend project structure used in `demoteste`.
 
 ---
 
-### 2.3 Dockerfile generation was simplified and aligned
+### 3.3 Dockerfile generation was simplified and aligned
 
 The previous engine kept Dockerfile branching related to observability and older container build conventions.
 
@@ -170,7 +232,7 @@ OpenTelemetry behavior is now controlled at the application configuration level,
 
 ---
 
-## 3. Application Configuration Changes
+## 4. Application Configuration Changes
 
 ### Application properties were aligned with backend runtime expectations
 
@@ -188,6 +250,7 @@ The backend runtime templates were updated so that generated projects use a clea
 - active profile resolution now uses a clearer default form
 - OTEL exporter endpoint uses `OTEL_EXPORTER_OTLP_ENDPOINT`
 - observability env partial was reduced to application-level OTEL settings only
+- backend auth runtime configuration now supports `AUTH_PROVIDER` plus mode-dependent `AUTH_JWT_ISSUER`
 
 ### Result
 
@@ -195,7 +258,7 @@ OpenTelemetry is no longer modeled as a local project infrastructure stack. It i
 
 ---
 
-## 4. Kubernetes Generation Changes
+## 5. Kubernetes Generation Changes
 
 ### Backend Kubernetes generation was narrowed to the actual backend pattern
 
@@ -220,7 +283,7 @@ This follows the current Spring backend convention used in the workspace project
 
 ---
 
-## 5. CI Generation Changes
+## 6. CI Generation Changes
 
 ### Backend CI was simplified
 
@@ -236,7 +299,7 @@ Generated backend projects now produce CI closer to the workspace backend conven
 
 ---
 
-## 6. Removal Of Obsolete Observability Scaffolding
+## 7. Removal Of Obsolete Observability Scaffolding
 
 ### Removed project-local monitoring generation
 
@@ -282,7 +345,7 @@ This makes backend generation closer to the real backend project shape in the wo
 
 ---
 
-## 7. Project-Local Metadata Changes
+## 8. Project-Local Metadata Changes
 
 ### `.igrpstudio/baseApi.json` now preserves backend workspace identity
 
@@ -294,6 +357,7 @@ Generated backend project metadata now includes:
 
 - `workspaceId`
 - `workspaceSlug`
+- `authMode` when it is explicitly configured
 
 This is useful for regeneration, project-local consistency, and future backend-aware tooling.
 
@@ -301,7 +365,7 @@ The alignment does **not** change workspace-root metadata. That remains outside 
 
 ---
 
-## 8. Test Suite Changes
+## 9. Test Suite Changes
 
 ### The old tests were modernized to validate actual generated output
 
@@ -323,12 +387,15 @@ The tests now validate the engine in a way that is closer to real usage:
 - temporary project scaffolding
 - project-local file assertions
 - stronger checks on generated backend artifacts
+- validation of both backend auth modes:
+  - default `keycloak`
+  - explicit `autentika`
 
 This was necessary so the demoteste-aligned generation could be validated safely after each change.
 
 ---
 
-## 9. What Did Not Change
+## 10. What Did Not Change
 
 This alignment was intentionally conservative.
 
@@ -341,12 +408,15 @@ The following parts of the engine were not the focus of this backend infrastruct
 - file persistence helpers
 - workspace-root generation
 - frontend generation
+- frontend authentication provider setup
+- workspace-root `igrp-compose.yaml` / `igrp-autentika-compose.yaml`
+- process stack authentication compose generation
 
 The goal was to adapt backend project scaffolding and backend infrastructure generation with the smallest practical change set.
 
 ---
 
-## 10. Final Outcome
+## 11. Final Outcome
 
 Compared with the original Spring Engine behavior, the new aligned version now generates Spring Boot backend projects that are much closer to the current backend projects used in the `demoteste` workspace.
 
@@ -355,6 +425,7 @@ The new backend output includes:
 - correct standalone backend Docker artifacts
 - workspace-integrated backend artifacts
 - project-local backend workspace metadata
+- backend auth generation with `keycloak` default and `autentika` support
 - simplified backend CI
 - simplified backend Dockerfile handling
 - backend-only Kubernetes output

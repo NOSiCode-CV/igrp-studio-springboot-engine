@@ -44,6 +44,7 @@ export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
   type: 'springboot';
   workspaceId?: string;
   workspaceSlug?: string;
+  authMode?: 'keycloak' | 'autentika';
   name: string;
   group: string;
   artifact: string;

@@ -27,6 +27,7 @@ It is consumed by IGRP Studio (the GUI tool) and can also be called programmatic
 | [Configuration Types](./configuration-types.md) | TypeScript interfaces for all configuration objects |
 | [Code Generation Pipeline](./code-generation-pipeline.md) | End-to-end flow from config to generated Java |
 | [Extending the Engine](./extending-the-engine.md) | How to add new operations, module types, and templates |
+| [Demoteste Backend Alignment](./demoteste-backend-alignment.md) | Practical summary of how backend generation was aligned with the `demoteste` workspace pattern |
 
 ---
 
@@ -53,6 +54,7 @@ await newApi({
   group: 'com.example',
   artifact: 'myapp',
   database: 'MySQL',
+  authMode: 'keycloak',
   projectStructureStyle: 'technical',
   enableObservability: false,
   enableEntityRevision: false,
@@ -87,6 +89,17 @@ The engine supports two styles, controlled by `projectStructureStyle`:
 |-------|-------------|
 | `technical` | Classes organized by type: `models/`, `controllers/`, `services/`, `dto/` |
 | `domain` | Classes organized by DDD layer: `domain/`, `application/`, `infrastructure/`, `interfaces/rest/` |
+
+### Backend Authentication Modes
+
+The backend generator supports two runtime authentication modes:
+
+| Mode | Behavior |
+|------|----------|
+| `keycloak` | Default mode. Backend generation keeps the Keycloak issuer-based behavior and explicitly emits `AUTH_PROVIDER=keycloak` |
+| `autentika` | Backend generation still uses only `AUTH_JWT_ISSUER`, but emits `AUTH_PROVIDER=autentika` and uses `${AUTENTIKA_ISSUER}` as issuer |
+
+The Spring Engine does not generate frontend-specific authentication variables. It only emits backend runtime auth settings.
 
 ### Manifest-First Workflow
 

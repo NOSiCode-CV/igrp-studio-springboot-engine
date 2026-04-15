@@ -64,6 +64,7 @@ await newApi({
   group: 'com.example',
   artifact: 'animals',
   database: 'MySQL',
+  authMode: 'keycloak',
   projectStructureStyle: 'technical',
   enableObservability: false,
   enableEntityRevision: false,
@@ -76,7 +77,21 @@ await newApi({
 - `pom.xml`
 - `src/main/resources/application.properties`
 - `src/main/java/<group>/<packageName>/<Name>Application.java`
-- Docker, Kubernetes, and observability config files (if enabled)
+- backend Docker and Kubernetes config files
+- standalone backend env and compose files
+- workspace-integrated backend env and compose files
+
+**Authentication behavior:**
+- `authMode` is optional
+- if omitted, `newApi()` defaults effectively to `keycloak`
+- supported values are:
+  - `keycloak`
+  - `autentika`
+- generated Spring backend projects only use:
+  - `AUTH_PROVIDER`
+  - `AUTH_JWT_ISSUER`
+
+The engine does not inject frontend authentication variables into generated Spring backend projects.
 
 **Throws** if:
 - `basePath` is not empty

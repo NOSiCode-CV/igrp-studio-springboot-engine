@@ -115,6 +115,8 @@ describe('New API Module', () => {
     );
     expect(igrpEnv).toContain('OTEL_EXPORTER_OTLP_ENDPOINT=http://demoteste-otel-collector:4318');
 
+    expect(dockerCompose).toContain('- AUTH_JWT_ISSUER=${AUTH_JWT_ISSUER}');
+
     const applicationProperties = await readFile(
       projectPath,
       path.join('src', 'main', 'resources', 'application.properties'),

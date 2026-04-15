@@ -27,6 +27,12 @@ const apiSchema: JSONSchemaType<ApiConfig> = {
       nullable: true,
       errorMessage: 'The workspace slug if provided must be a string.',
     },
+    authMode: {
+      type: 'string',
+      nullable: true,
+      enum: ['keycloak', 'autentika'],
+      errorMessage: "The 'authMode' attribute if provided must be either 'keycloak' or 'autentika'.",
+    },
     type: {
       type: 'string',
       const: 'springboot',

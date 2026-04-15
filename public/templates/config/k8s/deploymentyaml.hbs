@@ -44,7 +44,9 @@ spec:
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: org.postgresql.Driver
             - name: AUTH_JWT_ISSUER
-              value: "http://${DOCKER_IP}/auth/realms/igrp"
+              value: "{{#if (eq baseConfig.authMode "autentika")}}${AUTENTIKA_ISSUER}{{else}}http://${DOCKER_IP}/auth/realms/igrp{{/if}}"
+            - name: AUTH_PROVIDER
+              value: "{{#if (eq baseConfig.authMode "autentika")}}autentika{{else}}keycloak{{/if}}"
             - name: SPRING_APPLICATION_NAME
               value: {{toLowerCase baseConfig.name}}
             - name: SERVER_PORT
