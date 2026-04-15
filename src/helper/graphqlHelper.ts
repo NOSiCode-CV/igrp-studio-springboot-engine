@@ -120,7 +120,9 @@ export function resolveGraphQLScalar(type: string): string {
  * Resolves a JavaAttribute to its GraphQL schema representation.
  * - objectType 'graphqlType' + collectionType 'list' → [TypeName!]!
  * - objectType 'graphqlType'                         → TypeName
- * - otherwise                                        → resolveGraphQLScalar(type) + nullable marker
+ * - scalar     + collectionType 'list' + required    → [Scalar!]!
+ * - scalar     + collectionType 'list' + optional    → [Scalar]
+ * - scalar                                           → Scalar! / Scalar
  *
  * Use {{{ }}} in Handlebars to prevent HTML-encoding of brackets.
  */
@@ -129,6 +131,9 @@ export function resolveGraphQLAttributeType(attr: { type: string; objectType: st
     return attr.collectionType === 'list' ? `[${attr.type}!]!` : attr.type;
   }
   const scalar = resolveGraphQLScalar(String(attr.type));
+  if (attr.collectionType === 'list') {
+    return attr.required ? `[${scalar}!]!` : `[${scalar}]`;
+  }
   return attr.required ? `${scalar}!` : scalar;
 }
 
