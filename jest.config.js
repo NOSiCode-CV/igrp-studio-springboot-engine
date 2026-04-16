@@ -4,4 +4,7 @@ module.exports = {
   transform: {
     "^.+.tsx?$": ["ts-jest",{}],
   },
+  moduleNameMapper: {
+    "^prettier-plugin-java$": "<rootDir>/__mocks__/prettier-java-plugin.cjs",
+  },
 };

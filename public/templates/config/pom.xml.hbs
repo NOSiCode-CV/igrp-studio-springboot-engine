@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>{{baseConfig.springBootVersion}}</version>
+		<relativePath/>
 	</parent>
 	<groupId>{{baseConfig.group}}</groupId>
 	<artifactId>{{baseConfig.artifact}}</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>{{baseConfig.apiName}}</name>
+	<name>{{baseConfig.name}}</name>
 	<description>{{baseConfig.description}}</description>
 	<url/>
 	<licenses>
@@ -26,100 +26,92 @@
 		<tag/>
 		<url/>
 	</scm>
+  <repositories>
+    <repository>
+      <id>igrp-framework-releases</id>
+      <url>https://sonatype.nosi.cv/repository/igrp-framework-releases/</url>
+    </repository>
+    <repository>
+			<id>igrp-snapshots</id>
+			<url>https://sonatype.nosi.cv/repository/igrp-framework/</url>
+		</repository>
+  </repositories>
 	<properties>
-		<java.version>21</java.version>
-		<springdoc.version>2.6.0</springdoc.version>
-		<spring.security.oauth2.client.version>6.3.3</spring.security.oauth2.client.version>
+    <igrp.version>0.1.0-beta.1</igrp.version>
+    <java.version>{{baseConfig.javaVersion}}</java.version>
+    <spring-cloud.version>{{baseConfig.springCloudVersion}}</spring-cloud.version>
+    <springdoc.version>{{baseConfig.springDocVersion}}</springdoc.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
-  	</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>${springdoc.version}</version>
-		</dependency>
-		{{#if (eq baseConfig.database "MySQL")}}
-		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		{{/if}}
-		{{#if (eq baseConfig.database "Postgresql")}}
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		{{/if}}
-		{{#if (eq baseConfig.database "Oracle")}}
-		<dependency>
-      <groupId>com.oracle.database.jdbc</groupId>
-      <artifactId>ojdbc11</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-		{{/if}}
+		{{> spring-maven-dependencies}}
+		{{> spring-entity-revision-dependencies}}
+		{{> database-maven-dependencies}}
+		{{> security-maven-dependencies}}
+		{{> oauth-maven-dependencies}}
+		{{> generic-maven-dependencies}}
+    {{> igrp-maven-dependencies}}
+    {{> spring-cloud-dependencies}}
+  {{#if baseConfig.enableObservability}}
+       {{#if baseConfig.enableGraalVm}}
+		 {{> graal-vm-observability-dependencies}}
+	   {{/if}}
+		{{> observability-maven-dependencies}}
+  {{/if}}
+  
+    {{#if baseConfig.dependencies}}
+      {{#each baseConfig.dependencies}}
+      <dependency>
+        <groupId>{{groupId}}</groupId>
+        <artifactId>{{artifactId}}</artifactId>
+        {{#if version}}<version>{{version}}</version>{{/if}}
+        {{#if scope}}<scope>{{scope}}</scope>{{/if}}
+      </dependency>
 
-		<!-- Security dependency-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-		<!--Token dependencies-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-client</artifactId>
-      <version>${spring.security.oauth2.client.version}</version>
-		</dependency>
-
-	</dependencies>
-
+      {{/each}}
+    {{/if}}
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      {{#if baseConfig.enableObservability}}
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-bom</artifactId>
+        <version>2.21.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      {{/if}}
+    </dependencies>
+  </dependencyManagement>
 	<build>
 		<plugins>
+			{{#if baseConfig.enableGraalVm}}
+		       {{> graal-vm-plugin}}
+            {{/if}}
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.1</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
-
 </project>

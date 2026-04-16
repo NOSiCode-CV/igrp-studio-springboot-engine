@@ -1,0 +1,38 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import cv.igrp.framework.stereotype.IgrpDTO;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+{{#if resourceConfig.extends}}import lombok.EqualsAndHashCode;{{/if}}
+{{#if resourceConfig.attributes}}
+{{> lombok-java-imports}}
+{{/if}}
+{{#if resourceConfig.enableCustonValidation}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.dto.validator.{{resolve-interface-custon-validator-name resourceConfig.name}};
+{{/if}}
+{{{resolve-imports resourceConfig baseConfig}}}
+{{#if resourceConfig.attributes}}
+{{> lombok-java-annotations}}
+{{/if}}
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+{{#if resourceConfig.enableCustonValidation}}
+@{{resolve-interface-custon-validator-name resourceConfig.name}}
+{{/if}}
+{{#if resourceConfig.extends}}@EqualsAndHashCode(callSuper = true){{/if}}
+@IgrpDTO
+public class {{resourceConfig.name}}DTO {{#if resourceConfig.extends}}extends {{resourceConfig.extends.name}}DTO{{/if}} {
+
+    {{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-annotations this}}}
+    private {{{resolve-type this}}} {{this.name}} {{{getCollectionTypeInitializer this}}};
+
+    {{/each}}
+}

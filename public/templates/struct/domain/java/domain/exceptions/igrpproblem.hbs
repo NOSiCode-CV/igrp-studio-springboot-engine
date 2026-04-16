@@ -1,0 +1,9 @@
+{{> package-java}}
+
+import org.springframework.http.HttpStatus;
+
+public record IgrpProblem<T>(
+      HttpStatus status,
+      String title,
+      T details) {
+}

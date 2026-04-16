@@ -1,0 +1,19 @@
+{{> package-java }}
+
+import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Embeddable
+public class {{resourceConfig.name}}PrimaryKey implements Serializable {
+
+  {{#each resourceConfig.primaryKey}}
+  @Column(name="{{toLowerCase this.name}}"{{#if (eq this.unique true)}}, unique = {{this.unique}}{{/if}}{{#if (eq this.nullable false)}},nullable = {{this.nullable}}{{/if}}{{#if (eq this.type 'String')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}}{{#if (eq this.type 'Float')}}{{#if this.length}}, length={{this.length}}{{/if}}{{/if}})
+  private {{this.type}} {{this.name}};
+  
+  {{/each}}
+}

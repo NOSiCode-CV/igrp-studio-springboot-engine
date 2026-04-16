@@ -1,0 +1,33 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.event.EventBus;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.application.command.CommandHandler;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.repositories.{{toLowerCase resourceConfig.aggregate}}.{{resourceConfig.aggregate}}AggregateDomainRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{resourceConfig.name}}CommandHandler {
+
+   private final EventBus eventBus;
+   private final {{resourceConfig.aggregate}}AggregateDomainRepository {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository
+
+   public {{resourceConfig.name}}CommandHandler(EventBus eventBus, {{resourceConfig.aggregate}}AggregateDomainRepository {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository) {
+      this.eventBus = eventBus;
+      this.{{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository = {{toLowerCase resourceConfig.aggregate}}AggregateDomainRepository;
+   }
+
+   @CommandHandler
+   public void handle({{resourceConfig.name}}Command command) {
+      // TODO: Implement the command handling logic here
+      // Example content for demonstration purposes:
+      // val aggregate = {{resourceConfig.aggregate}}AggregateRoot(0, "Mr(s). ${command.name}",
+      //  {{resourceConfig.aggregate}}DomainEntity(0, command.name), {{resourceConfig.aggregate}}ValueObject(command.nif))
+
+      // Update the aggregate state
+      // aggregate.handle(command)
+
+      // Persist the aggregate using the domain repository
+      // {{toLowerCase resourceConfig.aggregate}}AggregateRootRepository.save(aggregate)
+   }
+
+}

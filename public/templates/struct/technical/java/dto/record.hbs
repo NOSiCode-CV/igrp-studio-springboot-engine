@@ -1,0 +1,23 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import cv.igrp.framework.stereotype.IgrpDTO;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+@IgrpDTO
+public record {{capitalize resourceConfig.name}}DTO(
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-annotations this}}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+){}

@@ -1,48 +1,117 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { ApiConfig, RenderContext } from '../../interfaces/types';
-import { DIRECTORIES } from '../../utils/constants';
+import { DIRECTORIES, PROJECT_STRUCTURE_STYLE } from '../../utils/constants';
 import { getMainPath, getTestPath } from '../../utils/helpers';
 
 /**
  * Function that creates the api directories
- * @param config - API base configuration file containning all the basic API information.
- * @param output - Output path where directories are created
+ * @param context - API base configuration, containing all the basic API information.
  */
 export const createAppDirectories = async (context: RenderContext) => {
   const directories = getDirectoriesToCreate(context.baseConfig, context.basePath);
-  saveAppDirectories(directories);
+  await saveAppDirectories(directories);
 };
 
 /**
  * Function that generates a list of directory paths to create based on the configuration and the output path.
- * @param config - API base configuration file containning all the basic API information.
+ * @param config - API base configuration file containing all the basic API information.
  * @param basePath - Output path where directories will be created
  * @return List of directory paths to create.
  */
 const getDirectoriesToCreate = (config: ApiConfig, basePath: string): string[] => {
+  const { group, packageName } = config;
 
-  const { group, artifact } = config;
-
-  const mainPath = path.join(basePath, getMainPath(group, artifact));
-  const testPath = path.join(basePath, getTestPath(group, artifact));
+  const mainPath = path.join(basePath, getMainPath(group, packageName));
+  const testPath = path.join(basePath, getTestPath(group, packageName));
   const igrpstudioPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO);
+  const monitoringPath = path.join(basePath, DIRECTORIES.MONITORING);
 
-  return [
-    path.join(basePath, DIRECTORIES.RESOURCES),
-    
-    path.join(mainPath, DIRECTORIES.MODELS),
-    path.join(mainPath, DIRECTORIES.SERVICES),
-    path.join(mainPath, DIRECTORIES.CONTROLLERS),
-    path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
-    path.join(mainPath, DIRECTORIES.SECURITY),
+  const sharedPath = path.join(mainPath, DIRECTORIES.SHARED);
+  const applicationPath = path.join(sharedPath, DIRECTORIES.APPLICATION);
+  const commandPath = path.join(applicationPath, DIRECTORIES.COMMANDS);
+  const queryPath = path.join(applicationPath, DIRECTORIES.QUERIES);
+  const domainPath = path.join(sharedPath, DIRECTORIES.DOMAIN);
+  const eventPath = path.join(domainPath, DIRECTORIES.EVENTS);
+  const infraPath = path.join(sharedPath, DIRECTORIES.INFRASTRUCTURE);
+  const interfacePath = path.join(sharedPath, DIRECTORIES.INTERFACE);
+  const igrpSharedPath = path.join(igrpstudioPath, DIRECTORIES.SHARED);
 
-    path.join(testPath, DIRECTORIES.REPOSITORIES),
-    path.join(testPath, DIRECTORIES.SERVICES),
+  if (config.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const paths = [
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+      path.join(basePath, DIRECTORIES.RESOURCES),
+      path.join(basePath, DIRECTORIES.KUBERNETES),
 
-    path.join(igrpstudioPath, DIRECTORIES.CONTROLLERS),
-    path.join(igrpstudioPath, DIRECTORIES.MODELS),
-  ];
+      sharedPath,
+
+      applicationPath,
+      domainPath,
+      infraPath,
+      interfacePath,
+
+      commandPath,
+      queryPath,
+
+      path.join(applicationPath, DIRECTORIES.DTO),
+
+      eventPath,
+
+      path.join(domainPath, DIRECTORIES.MODELS),
+      path.join(domainPath, DIRECTORIES.REPOSITORY),
+      path.join(domainPath, DIRECTORIES.SERVICE),
+
+      //path.join(infraPath, DIRECTORIES.CONTROLLER),
+      path.join(infraPath, DIRECTORIES.MESSAGING),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+      path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
+
+      path.join(interfacePath, DIRECTORIES.REST)
+    ];
+
+    if (config.enableObservability)
+      paths.push(
+        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
+        path.join(monitoringPath, DIRECTORIES.TEMPO),
+      );
+
+    return paths;
+  } else {
+    const paths = [
+      igrpSharedPath,
+      path.join(igrpSharedPath, DIRECTORIES.MODELS),
+      path.join(igrpSharedPath, DIRECTORIES.DTO),
+
+      path.join(basePath, DIRECTORIES.RESOURCES),
+      path.join(basePath, DIRECTORIES.KUBERNETES),
+
+      path.join(mainPath, DIRECTORIES.MODELS),
+      path.join(mainPath, DIRECTORIES.SERVICES),
+      path.join(mainPath, DIRECTORIES.CONTROLLERS),
+      path.join(mainPath, DIRECTORIES.AUDIT_CONFIG),
+      path.join(mainPath, DIRECTORIES.SECURITY),
+
+      path.join(testPath, DIRECTORIES.REPOSITORIES),
+      path.join(testPath, DIRECTORIES.SERVICES),
+    ];
+
+    if (config.enableObservability)
+      paths.push(
+        path.join(monitoringPath, DIRECTORIES.COLLECTOR),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMETHEUS),
+        path.join(monitoringPath, DIRECTORIES.PROMTAIL),
+        path.join(monitoringPath, DIRECTORIES.TEMPO),
+      );
+
+    return paths;
+  }
 };
 
 /**

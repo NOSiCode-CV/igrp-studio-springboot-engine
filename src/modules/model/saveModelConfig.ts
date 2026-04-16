@@ -1,7 +1,8 @@
-import { saveToFile } from '../common/saveToFile';
-import { ModelConfig } from '../../interfaces/types';
-import { ERROR_MESSAGE } from '../../utils/constants';
-import { getModelConfigPath } from '../../utils/helpers';
+import {saveToFile} from '../common/saveToFile';
+import {ModelConfig} from '../../interfaces/types';
+import {DIRECTORIES, ERROR_MESSAGE, EXTENSIONS} from '../../utils/constants';
+import {getModelConfigPath} from '../../utils/helpers';
+import {capitalizeJavaStyle} from '../../helper/stringHelper';
 
 /**
  * Generates and saves the configuration file of a model.
@@ -10,15 +11,22 @@ import { getModelConfigPath } from '../../utils/helpers';
  * @throws Throws an error if the model configuration or output directory is invalid.
  */
 export const saveModelConfig = async (config: ModelConfig, basePath: string) => {
-  
   if (config.attributes.length === 0) {
     throw ERROR_MESSAGE.EMPTY_ATTRIBUTE;
   }
-  
-  // if (config.primaryKey?.length === 0) {
-  //   throw `The model '${config.name}' must have at least one primary key`
-  // }
 
-  const output = getModelConfigPath(config.name, basePath);
-  await saveToFile(JSON.stringify(config), output);
+  const fileName = capitalizeJavaStyle(config.name);
+  const output = getModelConfigPath(config.module ?? DIRECTORIES.SHARED, fileName, basePath);
+
+  // Override the file only if it is NOT readOnly
+  await saveToFile(
+    JSON.stringify(config),
+    output,
+    !config.readOnly,
+    DIRECTORIES.CONFIG_MODEL,
+    config.id,
+    config.module,
+    basePath,
+    EXTENSIONS.JSON,
+  );
 };

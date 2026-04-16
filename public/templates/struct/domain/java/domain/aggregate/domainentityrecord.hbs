@@ -1,0 +1,17 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.domain.DomainEntity;
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+{{#each resourceConfig.annotations}}
+@{{this.annotation}}
+{{/each}}
+public record {{resourceConfig.name}}DomainEntity (
+{{#each resourceConfig.attributes}}
+    {{#each this.annotations}}
+    @{{this.annotation}}
+    {{/each}}
+    {{{resolve-type this}}} {{this.name}}{{#if @last}}{{else}}, {{/if}}
+{{/each}}
+) extends DomainEntity<{{keyType resourceConfig}}> {}

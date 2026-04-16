@@ -1,0 +1,31 @@
+{{> package-java }}
+
+import cv.igrp.framework.core.domain.CommandHandler;
+import cv.igrp.framework.stereotype.IgrpCommandHandler;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+{{{resolve-imports-handlers-ddd resourceConfig baseConfig}}}
+
+@Component
+public class {{capitalize resourceConfig.name}}CommandHandler implements CommandHandler<{{capitalize
+   resourceConfig.name}}Command, ResponseEntity<{{{resolveResponse resourceConfig.response}}}>> {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize resourceConfig.name}}CommandHandler.class);
+
+   public {{capitalize resourceConfig.name}}CommandHandler() {
+
+   }
+
+   @IgrpCommandHandler
+   public ResponseEntity<{{{resolveResponse resourceConfig.response}}}> handle({{capitalize resourceConfig.name}}Command command) {
+
+      LOGGER.debug("{{capitalize resourceConfig.name}}Command : {}", command);
+
+      // TODO: Implement the command handling logic here
+      return null;
+   }
+
+}

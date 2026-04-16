@@ -1,69 +1,102 @@
 import {
-  ATTRIBUTE_TYPES,
-  MIME_TYPES,
+  CASCADE_TYPE,
+  CONFIG_TYPES,
   CRUD_DISABLED_OPTIONS,
   DATABASE_TYPES,
+  GENERATION_TYPES,
+  GENERIC_ATTRIBUTE_TYPES,
+  GENERIC_COLLECTION_TYPES,
+  GENERIC_MODEL_ATTRIBUTE_TYPES,
+  HTTP_HEADER_TYPES,
   HTTP_METHOD_TYPES,
+  OBJECT_TYPES,
   PARAMS_TYPES,
   RELATIONSHIP_TYPES,
-  GENERATION_TYPES,
-  SIMPLE_RESPONSE_TYPES,
+  STRUCT_TYPES,
 } from '../utils/constants';
 
-export interface TypeMetadata {
-  name: string;
-  primitive: boolean; 
-  namespace?:string;
+interface IdentifiableElement {
+  id?: string;
 }
 
 export interface TypeMetadata {
   name: string;
-  primitive: boolean; 
-  namespace?:string;
+  primitive: boolean;
+  namespace?: string;
 }
 
-export interface ApiConfig {
-  type: 'baseApi';
-  apiName: string;
+export interface ImportTypeMetadata {
+  technical?: string;
+  domain?: string;
+}
+
+export interface ApiConfig extends BaseApiConfig {
+  packageName: string;
+}
+
+export interface VersionedConfig {
+  version?: string;
+}
+
+export interface BaseApiConfig extends IdentifiableElement, VersionedConfig {
+  type: 'springboot';
+  workspaceId?: string;
+  name: string;
   group: string;
   artifact: string;
   database: DatabaseTypes;
   description?: string;
   package?: string;
-  name?: string;
+  projectStructureStyle: ProjectStructureStyle;
+  enableObservability: boolean;
+  enableEntityRevision: boolean;
+  dependencies?: Dependency[];
+  enableGraalVm: boolean;
+  javaVersion?: string;
+  springDocVersion?: string;
+  springCloudVersion?: string;
+  springBootVersion?: string;
 }
 
-export interface ModelConfig {
+export interface ModelConfig extends IdentifiableElement, VersionedConfig {
   type: 'model';
   name: string;
   tableName: string;
   attributes: Attribute[];
-  uniqueConstraints?: UniqueConstraint[]; // Novo campo para Compound Unique
-  indexes?: EntityIndex[]; // Novo campo para index
+  uniqueConstraints?: UniqueConstraint[];
+  indexes?: EntityIndex[];
   primaryKey?: PrimaryKey[];
-  crud?: Crud;
-  relations?: Relation[];
-  audit?: boolean;  // New audit field added
+  relationReference?: RelationReference[];
+  crud?: boolean;
+  audit?: boolean;
+  revision?: boolean;
+  module?: string;
+  readOnly?: boolean;
+}
+
+export interface EntityIndex {
+  name: string;
+  columns: string[];
+  unique: boolean;
+}
+
+export interface ModuleConfig {
+  type: 'module';
+  name: string;
 }
 
 export interface PermissionConfig {
   type: 'permission';
   name: string;
   description: string;
-  endpoints: IEndpoint[]
+  endpoints: IEndpoint[];
 }
 
 export interface IEndpoint {
   type: string;
   resource: string; // indicates the model name or controller name
   method: HttpMethod | DisabledMethods;
-  path: string
-}
-
-export interface GenericType {
-  name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
+  path: string;
 }
 
 export interface JavaType {
@@ -73,19 +106,53 @@ export interface JavaType {
 
 export interface JavaAttribute {
   name: string;
-  type: string | JavaType;
-  ns: 'dto'|'model'|'java';
-  isList?: boolean
+  type: string | AttributeType;
+  objectType: 'dto' | 'model' | 'java' | 'enum';
+  required: boolean;
+  before?: boolean;
+  after?: boolean;
+  positive?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  regex?: string;
+  collectionType?: CollectionType;
+  isEmail?: boolean;
+  isUrl?: boolean;
+  primaryKey?: boolean;
+  jsonAttributeName?: string;
+  xmlAttributeName?: string;
+  module?: string;
 }
 
-export interface DTOBaseConfig {
-  type: 'dto';
+export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
+  type: ObjectTypes;
   name: string;
+  module?: string;
+  enableCustonValidation?: boolean;
+  readOnly?: boolean;
+  extends?: DTOParentReference;
+}
+
+export interface DTOParentReference {
+  name: string;
+  module: string;
 }
 
 export interface DTOConfig extends DTOBaseConfig {
   template: 'classic' | 'record';
   attributes: JavaAttribute[];
+}
+
+export interface HandlerConfig extends DTOConfig {
+  //response: JavaAttribute;
+  //response: string;
+  response: { [p: string]: Body };
+}
+
+export interface ExceptionConfig {
+  name: string;
+  body: string;
+  module?: string;
 }
 
 export interface UniqueConstraint {
@@ -93,15 +160,8 @@ export interface UniqueConstraint {
   columns: string[];
 }
 
-export interface EntityIndex {
-  name: string;
-  columns: string[];
-}
-
-export interface GenericType {
-  name: string;
-  namespace?: string;
-  ns: 'dto'|'model'|'java'|'local';
+export interface CascadeType {
+  type: CascadeTypes;
 }
 
 export interface JavaType {
@@ -111,118 +171,360 @@ export interface JavaType {
 
 export interface JavaAttribute {
   name: string;
-  type: string | JavaType;
-  ns: 'dto'|'model'|'java';
+  type: string | AttributeType;
+  objectType: 'dto' | 'model' | 'java' | 'enum';
 }
 
-export interface DTOBaseConfig {
-  type: 'dto';
-  name: string;
-}
-
-export interface DTOConfig extends DTOBaseConfig {
-  template: 'classic' | 'record';
-  attributes: JavaAttribute[];
-}
-
-export interface Icontroller {
-  type: 'icontroller';
-  name: string;
-}
-
-export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> {}
+export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
 
 export interface Attribute {
-  type: AttributeType;
+  type: ModelAttributeType;
   name: string;
   length?: number | null;
   nullable?: boolean;
   unique?: boolean;
   primaryKey?: boolean;
-  generationType?: GenerationType
+  generationType?: GenerationType;
+  sequenceName?: string;
   defaultValue?: string;
+  module?: string;
+  relation?: Relation;
+  skipFieldRevision?: boolean;
+  objectType?: 'dto' | 'model' | 'java' | 'enum';
 }
 
 export interface Relation {
-  relationType: string;
+  type: RelationshipTypes;
+  fetchType: 'lazy' | 'eager';
+  cardinality: 'twoWay' | 'oneWay';
   entity: string;
+  fieldName?: string;
   mappedBy?: string;
+  module?: string;
+  referencedColumnName?: string;
   joinColumn?: string;
   joinTable?: string;
   inverseJoinColumn?: string;
+  cascadeType?: CascadeType[];
+  orphanRemoval?: boolean;
+}
+
+export interface RelationReference {
+  type: RelationshipTypes;
+  fetchType: 'lazy' | 'eager';
+  module?: string;
+  entity: string;
+  fieldName?: string;
+  mappedBy?: string;
+  joinColumn?: string;
+  cascadeType?: CascadeType[];
+  orphanRemoval?: boolean;
 }
 
 export interface Crud {
   enabled: boolean;
   path: string;
-  permissions?: IModelPermission[]
+  permissions?: IModelPermission[];
   disabledMethods: DisabledMethods[];
 }
 
 export interface IModelPermission {
   method: DisabledMethods;
-  permissions: string[]
-}
-export interface Table {
-  name: string;
-  joinColumns: string;
-  inverseJoinColumns: string;
+  permissions: string[];
 }
 
-export interface ControllerConfig {
+export interface AppExportsConfig {
+  permissionGroups: GroupPermissionDef[];
+}
+
+export interface GroupPermissionDef {
+  name: string;
+  permissions: PermissionDef[];
+  module?: string;
+}
+
+export interface PermissionDef {
+  name: string;
+  description: string;
+  enabled?: boolean;
+}
+
+export interface PermissionsConfig {
+  items: string[];
+  operator?: 'AND' | 'OR';  // default 'OR'
+}
+
+export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   type: 'controller';
   name: string;
   basePath: string;
   actions: ControllerAction[];
+  module?: string;
+  globalPermission?: PermissionsConfig;
+  globalRoles?: string[];
+  description: string;
 }
 
 export interface ControllerAction {
   path?: string;
-  permissions?: string[];
+  permission?: PermissionsConfig;
+  roles?: string[];
   actionName: string;
   method: HttpMethod;
-  accepts?: MimeTypes;
-  contentType?: MimeTypes;
-  requestBody?: string;
+  headers?: HttpHeader[];
+  modelAttribute?: ModelAttribute;
   requestParams?: RequestParams[];
-  response: string;
+  requestBody?: BaseBody;
+  responses?: {
+    [statusCode: string]: Body;
+  };
   pathVariables?: PathVariables[];
+  multipartFiles?: MultipartFile[];
+}
+
+export interface ModelAttribute {
+  name: string;
+  module?: string;
+}
+
+export interface MultipartFile {
+  type: ParamsTypes;
+  name: string;
+  value?: string;
+  description?: string;
+  isRequired: boolean;
 }
 
 export interface RequestParams {
   type: ParamsTypes;
   name: string;
+  value?: string;
+  description?: string;
+  isRequired: boolean;
+  collectionType?: 'list' | 'set' | 'collection';
 }
-
 
 export interface PathVariables {
   type: string;
   name: string;
+  value?: string;
+  description?: string;
+  isRequired: boolean;
 }
 
 export interface ISelectPermissions {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
 
+export interface EnumConfig extends IdentifiableElement, VersionedConfig {
+  type: 'enum';
+  name: string;
+  module?: string;
+  values: EnumValue[];
+  attributes?: Attribute[];
+  readOnly?: boolean;
+}
+
+export interface EnumValue {
+  name: string;
+  attributes?: string[];
+}
+
+export interface HttpHeader {
+  type: ParamsTypes;
+  header: HttpHeaderTypes;
+  value: string;
+  isRequired: boolean;
+}
+
+export interface CrudModel {
+  modelName: string;
+  module?: string;
+  fields: Field[];
+}
+
+interface Field {
+  name: string;
+}
+
+export interface CrudControllerConfig {
+  id: string;
+  type: 'crud-controller';
+  name: string;
+  basePath: string;
+  module?: string;
+  description: string;
+  models: CrudModel[];
+  methods: {
+    create?: boolean;
+    read?: boolean;
+    update?: boolean;
+    delete?: boolean;
+  };
+}
 
 export type RenderContext<T = undefined> = {
   resourceConfig: T;
   basePath: string;
   baseConfig: ApiConfig;
+  baseVersion?: string;
+  fullPath: string;
   mathAttributes?: string[];
-  sqlAttributes?: string[];
-  uniqueConstraints?: UniqueConstraint[]; // Adicione essa linha
+  dateTimeAttributes?: string[];
+  uniqueConstraints?: UniqueConstraint[];
 };
 
+export interface SchemaField {
+  type: string;
+  objectType?: string;
+  module?: string;
+  required?: boolean;
+  identifier?: boolean;
+  description?: string;
+  example?: any;
+  deprecated?: boolean;
+  items?: SchemaField; // For array types
+  properties?: { [key: string]: PropertySchemaField }; // For object types
+  collectionType?: 'none' | 'collection' | 'map' | 'pageable' | 'set' | 'list';
+}
+
+export interface SchemaEnum {
+  name?: string;
+  values?: string[];
+}
+
+export interface PropertySchemaField extends SchemaField {
+  minimum?: number;
+  maximum?: number;
+  pattern?: string;
+  format?: string;
+  enum?: SchemaEnum;
+  default?: any;
+}
+
+export interface BaseBody extends IdentifiableElement, VersionedConfig {
+  name?: string;
+  content: {
+    [contentType: string]: SchemaContent; // e.g., "application/json"
+  };
+}
+
+export interface Body extends BaseBody {
+  description?: string;
+  name?: string;
+  module?: string;
+}
+
+export interface RequestConfig extends Body { }
+
+export interface ResponseConfig extends Body {
+  type: 'response';
+  statusCode: string;
+  template: 'classic' | 'record';
+}
+
+export interface SchemaContent {
+  schema: SchemaField;
+}
+
+export interface DeleteConfig {
+  name: string;
+  module?: string;
+  type: ConfigTypes;
+}
+
+export interface MoveConfig {
+  name: string;
+  sourceModule: string;
+  destinationModule: string;
+  type: ConfigTypes;
+}
+
+export interface SerializationConfig {
+  name: string;
+  module?: string;
+  type: 'dto' | 'model' | 'response';
+  template: 'classic' | 'record';
+}
+
+export interface JsonConfig extends SerializationConfig {
+  json: string;
+}
+
+export interface SqlConfig extends SerializationConfig {
+  sql: string;
+}
+
+export interface XmlConfig extends SerializationConfig {
+  xml: string;
+}
+
+export interface DdlConfig extends SerializationConfig {
+  ddl: string;
+}
+
+export interface AttributeCategory {
+  name: string;
+  group: string;
+}
+
+export interface PathConfig {
+  template: string;
+  partials: string;
+  springDependencies: string;
+}
+
+export interface RemovedRelationReference {
+  entity: string;
+  module: string;
+}
+
+export interface EngineConfigurationSettings {
+  environment?: string
+}
+
+export interface Dependency {
+  name: string;
+  groupId: string;
+  artifactId: string;
+  scope: string;
+  version?: string;
+  bom?: string;
+}
+
+export interface SpringInitializerData {
+  bootVersion: string;
+  dependencies: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      scope: string;
+      version?: string;
+      bom?: string;
+    };
+  };
+  repositories: any;
+  boms: {
+    [key: string]: {
+      groupId: string;
+      artifactId: string;
+      version: string;
+    };
+  };
+}
 
 export type HttpMethod = (typeof HTTP_METHOD_TYPES)[number];
-export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
+export type AttributeType = (typeof GENERIC_ATTRIBUTE_TYPES)[number];
+export type ModelAttributeType = (typeof GENERIC_MODEL_ATTRIBUTE_TYPES)[number];
+export type CollectionType = (typeof GENERIC_COLLECTION_TYPES)[number];
 export type DatabaseTypes = (typeof DATABASE_TYPES)[number];
+export type ObjectTypes = (typeof OBJECT_TYPES)[number];
+export type ConfigTypes = (typeof CONFIG_TYPES)[number];
+export type ProjectStructureStyle = (typeof STRUCT_TYPES)[number];
 export type DisabledMethods = (typeof CRUD_DISABLED_OPTIONS)[number];
-export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type ParamsTypes = (typeof PARAMS_TYPES)[number];
-export type MimeTypes = (typeof MIME_TYPES)[number];
-export type SimpleResponseTypes = (typeof SIMPLE_RESPONSE_TYPES)[number];
-export type ResponseTypes = SimpleResponseTypes | `List<${SimpleResponseTypes}>`
-export type GenerationType = (typeof GENERATION_TYPES)[number]
+export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
+export type CascadeTypes = (typeof CASCADE_TYPE)[number];
+export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
+export type GenerationType = (typeof GENERATION_TYPES)[number];

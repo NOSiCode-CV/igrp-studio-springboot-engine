@@ -1,0 +1,30 @@
+@Operation(
+  summary = "{{normalizeActionNameDocumentation actionName}}",
+  description = "{{#if permission}}{{#with (permissionData permission) as |perm|}}{{#if (eq perm.mode "ONLY")}}This Permission is required: {{perm.values}}{{else if (eq perm.mode "ALL")}}All of these Permissions are required: [{{perm.values}}]{{else}}Any of these Permissions is required: [{{perm.values}}]{{/if}}{{/with}}{{else}}{{normalizeActionNameDocumentation actionName}}{{/if}}"{{#if responses}},
+  responses = {
+{{#each responses}}
+    @ApiResponse(
+        responseCode = "{{@key}}",
+        {{#if this.description}}description = "{{this.description}}",{{/if}}
+        content = @Content(
+            {{#each this.content}}
+            mediaType = "{{@key}}",
+            schema = @Schema(
+                {{#if (eq this.schema.type "object")}}
+                implementation = {{normalizeDto ../this.name}}.class,
+                {{else}}
+                implementation = {{processImplementation this.schema.type}}.class,
+                {{/if}}
+                type = "{{processDocumentationType this.schema.type this.schema.objectType}}"{{#if this.schema.description}},
+                description = "{{this.schema.description}}"{{/if~}}{{#if this.schema.example}},
+                example = "{{this.schema.example}}"{{/if~}}{{#if this.schema.required}},
+                required = true{{/if~}}{{#if this.deprecated}},
+                deprecated = true{{/if~}}
+            )
+            {{/each}}
+        )
+    ){{#if @last}}{{else}}, {{/if}}
+{{/each}}
+  }
+{{/if}}
+)

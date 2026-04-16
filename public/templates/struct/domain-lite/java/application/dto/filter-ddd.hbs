@@ -1,0 +1,31 @@
+{{> package-java }}
+
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+{{#if resourceConfig.attributes}}
+{{> lombok-java-imports}}
+{{/if}}
+
+{{{resolve-imports resourceConfig baseConfig}}}
+
+import cv.igrp.framework.core.data.DataTableFilter;
+
+{{#if resourceConfig.attributes}}
+{{> lombok-java-annotations}}
+{{/if}}
+
+{{#each resourceConfig.annotations}}
+  @{{this.annotation}}
+{{/each}}
+
+public class {{resourceConfig.name}}DTO extends DataTableFilter {
+
+{{#each resourceConfig.attributes}}
+  {{#each this.annotations}}
+    @{{this.annotation}}
+  {{/each}}
+  {{{resolve-annotations this}}}
+  private {{{resolve-type this}}} {{this.name}};
+{{/each}}
+
+}
