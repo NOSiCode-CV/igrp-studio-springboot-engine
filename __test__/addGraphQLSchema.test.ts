@@ -104,11 +104,10 @@ const productSchema: GraphQLSchemaConfig = {
   inputRefs: ['CreateProductInput', 'UpdateProductInput'],
   queries: [
     // single — returns one Product
-    {name: 'findProductById',  args: [{name: 'id', type: 'uuid', nullable: false}], returnTypeRef: 'Product', collectionType: 'single'},
+    {name: 'product',  args: [{name: 'id', type: 'uuid', nullable: false}], returnTypeRef: 'Product', collectionType: 'single'},
     // list — returns List<Product>
-    {name: 'findAllProducts',  returnTypeRef: 'Product', collectionType: 'list'},
     // paginated — triggers ProductPage manifest + ProductPage.java
-    {name: 'findProductsPage',args: [{name: 'page', type: 'integer', nullable: false},{name: 'size', type: 'integer', nullable: false}], returnTypeRef: 'Product', collectionType: 'paginated'},
+    {name: 'products',args: [{name: 'page', type: 'integer', nullable: false},{name: 'size', type: 'integer', nullable: false}], returnTypeRef: 'Product', collectionType: 'paginated'},
   ],
   mutations: [
     // inputRef only — create
