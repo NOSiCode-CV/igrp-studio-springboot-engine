@@ -1,106 +1,99 @@
-# Path & Naming Conventions
+# Path & Naming Rules
 
-All path computation depends on values loaded from `.igrpstudio/baseApi.json`:
+All path and package decisions derive from four values in `.igrpstudio/baseApi.json`:
 
-| Field | Example | Purpose |
+| Field | Example | Role |
 |---|---|---|
-| `group` | `cv.igrp` | Java group ID |
-| `artifact` | `order-service` | Maven artifact ID |
-| `name` | `OrderService` | Class name prefix |
-| `projectStructureStyle` | `technical` or `domain` | Directory layout |
+| `group` | `cv.igrp` | Java group — becomes directory segments |
+| `artifact` | `order-service` | Maven artifact — normalized into `packageName` |
+| `name` | `OrderService` | API name — used as class prefix |
+| `projectStructureStyle` | `technical` or `domain` | Controls directory layout |
 
-## Package Name Normalization
+## Package Name — normalization rule
 
 ```
-normalizePackageName(artifact):
-  1. Replace all `-` with `_`
-  2. Remove all characters not in [a-zA-Z0-9_]
-  Result: packageName
+1. Replace every `-` with `_`
+2. Remove every character that is not a letter, digit, or underscore
+Result → packageName
 
 Example: "order-service" → "order_service"
 ```
 
-## Java Output Base Paths
+## Base Paths
 
 ```
-groupPath = group.replace('.', '/')        // "cv/igrp"
+groupPath = replace every "." in group with "/"    → "cv/igrp"
 mainPath  = src/main/java/<groupPath>/<packageName>
 testPath  = src/test/java/<groupPath>/<packageName>
 ```
 
-## Package Statement Resolution
+## Deriving a Java Package Statement
 
-To derive the `package` declaration for any Java file:
-
-1. Convert path to forward slashes
-2. Remove the `<basePath>/` prefix
+Given a file path, the package statement is computed as:
+1. Convert to forward slashes
+2. Remove the project root prefix
 3. Split by `/`
-4. Drop segments: `src`, `main`, `test`, `java`
-5. Join remaining segments with `.`
+4. Drop the segments `src`, `main`, `test`, `java`
+5. Join the remaining segments with `.`
 
-**Example:**
+**Example**
 - File: `src/main/java/cv/igrp/order_service/dto/CreateOrderDTO.java`
 - Package: `cv.igrp.order_service.dto`
 
-## Module Name Normalization
+## Module Name — normalization rule
 
 ```
-normalizeModuleName(name):
-  1. Replace `-` with `_`
-  2. Remove all characters not in [a-zA-Z0-9_]
-  3. Lowercase
-  Default when omitted: "shared"
+1. Replace `-` with `_`
+2. Remove every character that is not a letter, digit, or underscore
+3. Lowercase the result
+Default when omitted: "shared"
 ```
 
-## Manifest Paths (`.igrpstudio/`)
+## Manifest Paths
 
-| Element | Manifest Path |
+| What | Path in `.igrpstudio/` |
 |---|---|
-| Base API | `.igrpstudio/baseApi.json` |
-| Module | `.igrpstudio/<module>/module.json` |
-| DTO (type: dto / response / filter) | `.igrpstudio/<module>/dto/<NormalizedName>DTO.json` |
-| DTO (type: command) | `.igrpstudio/<module>/dto/<NormalizedName>Command.json` |
-| DTO (type: query) | `.igrpstudio/<module>/dto/<NormalizedName>Query.json` |
-| DTO (type: event) | `.igrpstudio/<module>/dto/<NormalizedName>Event.json` |
-| Controller | `.igrpstudio/<module>/controllers/<NormalizedName>Controller.json` |
-| Model | `.igrpstudio/<module>/models/<ModelName>.json` |
-| Enum | `.igrpstudio/<module>/enum/<EnumName>.json` |
-| Permission | `.igrpstudio/permissions/<PermissionName>.json` |
+| Base API | `baseApi.json` |
+| Module | `<module>/module.json` |
+| DTO — type dto / response / filter | `<module>/dto/<Name>DTO.json` |
+| DTO — type command | `<module>/dto/<Name>Command.json` |
+| DTO — type query | `<module>/dto/<Name>Query.json` |
+| DTO — type event | `<module>/dto/<Name>Event.json` |
+| Controller | `<module>/controllers/<Name>Controller.json` |
+| Model | `<module>/models/<Name>.json` |
+| Enum | `<module>/enum/<Name>.json` |
+| Permission | `permissions/<Name>.json` |
 
-**DTO name normalization before saving:** strip trailing `dto` / `DTO` / `command` / `Command` / `query` / `Query` / `event` / `Event` (case-insensitive) from the input name, then append the suffix.
-
-Example: `name: "CreateOrderDTO"` → stored as `CreateOrderDTO.json`, class name `CreateOrderDTO`.
+> **DTO name rule:** strip any trailing `DTO`, `Command`, `Query`, or `Event` (case-insensitive) from the input name before appending the suffix. Example: input `CreateOrderDTO` → stored as `CreateOrderDTO.json`.
 
 ## Java Output Paths
 
-### Technical Style
+### Technical style
 
-| Element | Java Path |
+| What | Path |
 |---|---|
-| Entity | `<mainPath>/models/<modelName_lowercase>/<ModelName>.java` |
-| Repository | `<mainPath>/models/<modelName_lowercase>/<ModelName>Repository.java` |
-| DTO (all types) | `<mainPath>/dto/<NormalizedName>DTO.java` |
-| Command | `<mainPath>/dto/<NormalizedName>Command.java` |
-| Query | `<mainPath>/dto/<NormalizedName>Query.java` |
-| Event | `<mainPath>/dto/<NormalizedName>Event.java` |
-| Controller | `<mainPath>/controllers/<controllerName_lowercase>/<ControllerName>Controller.java` |
-| Service Interface | `<mainPath>/services/I<ControllerName>Service.java` |
-| Service Impl | `<mainPath>/services/<ControllerName>Service.java` |
-| Enum | `<mainPath>/enum/<EnumName>.java` |
+| Entity | `<mainPath>/models/<name_lowercase>/<Name>.java` |
+| Repository | `<mainPath>/models/<name_lowercase>/<Name>Repository.java` |
+| DTO (all object types) | `<mainPath>/dto/<Name><Suffix>.java` |
+| Controller | `<mainPath>/controllers/<name_lowercase>/<Name>Controller.java` |
+| Service interface | `<mainPath>/services/I<Name>Service.java` |
+| Service impl | `<mainPath>/services/<Name>Service.java` |
+| Enum | `<mainPath>/enum/<Name>.java` |
 
-### Domain Style
+### Domain style
 
-| Element | Java Path |
+| What | Path |
 |---|---|
-| Entity | `<mainPath>/<module>/infrastructure/persistence/entity/<ModelName>.java` |
-| Domain Repository Interface | `<mainPath>/<module>/domain/repository/<ModelName>Repository.java` |
-| Repository Impl | `<mainPath>/<module>/infrastructure/persistence/repository/<ModelName>RepositoryImpl.java` |
-| Entity Repository Adapter | `<mainPath>/<module>/infrastructure/persistence/repository/<ModelName>EntityRepository.java` |
-| DTO (type: dto / response / filter) | `<mainPath>/<module>/application/dto/<NormalizedName>DTO.java` |
-| Command | `<mainPath>/<module>/application/commands/<NormalizedName>Command.java` |
-| Query | `<mainPath>/<module>/application/queries/<NormalizedName>Query.java` |
-| Event | `<mainPath>/<module>/application/events/<NormalizedName>Event.java` |
-| Controller | `<mainPath>/<module>/interfaces/rest/<ControllerName>Controller.java` |
-| Command Handler | `<mainPath>/<module>/application/commands/<ActionName>CommandHandler.java` |
-| Query Handler | `<mainPath>/<module>/application/queries/<ActionName>QueryHandler.java` |
-| Enum | `<mainPath>/<module>/application/enum/<EnumName>.java` |
+| Entity | `<mainPath>/<module>/infrastructure/persistence/entity/<Name>.java` |
+| Domain repository interface | `<mainPath>/<module>/domain/repository/<Name>Repository.java` |
+| Repository impl | `<mainPath>/<module>/infrastructure/persistence/repository/<Name>RepositoryImpl.java` |
+| Entity repository (JPA adapter) | `<mainPath>/<module>/infrastructure/persistence/repository/<Name>EntityRepository.java` |
+| DTO — dto / response / filter | `<mainPath>/<module>/application/dto/<Name>DTO.java` |
+| Command | `<mainPath>/<module>/application/commands/<Name>Command.java` |
+| Query | `<mainPath>/<module>/application/queries/<Name>Query.java` |
+| Event | `<mainPath>/<module>/application/events/<Name>Event.java` |
+| Controller | `<mainPath>/<module>/interfaces/rest/<Name>Controller.java` |
+| Command handler | `<mainPath>/<module>/application/commands/<ActionName>CommandHandler.java` |
+| Query handler | `<mainPath>/<module>/application/queries/<ActionName>QueryHandler.java` |
+| Handler test | `<testPath>/<module>/application/commands|queries/<ActionName>*HandlerTest.java` |
+| Enum | `<mainPath>/<module>/application/enum/<Name>.java` |

@@ -1,20 +1,20 @@
 # moveElement
 
-Moves an element from one module to another. Internally: load manifest from source → update `module` field → run the corresponding `add*` operation in destination → delete from source.
+Moves an element from one module to another. Internally: load the manifest from the source module → update its `module` field → produce the element in the destination module → delete it from the source module.
 
-## Schema
+## Manifest fields (the object that describes what to move)
 
-```typescript
-interface MoveConfig {
-  type: string;              // required — one of: dto, filter, enum, model, response
-  name: string;              // required, element name
-  sourceModule: string;      // required, current module
-  destinationModule: string; // required, target module
-  subType?: string;
-}
-```
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `dto` · `model` · `enum` · `filter` · `response` |
+| `name` | Yes | Name of the element to move. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `sourceModule` | Yes | Current module. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `destinationModule` | Yes | Target module. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `subType` | No | String |
 
-## Supported Types
+No other fields are permitted.
+
+## Supported types
 
 | Type | Supported |
 |---|---|
@@ -23,42 +23,24 @@ interface MoveConfig {
 | `enum` | Yes |
 | `model` | Yes |
 | `response` | Yes |
-| `controller` | **No** — controllers have too many inter-dependencies (services, handlers, permissions) |
+| `controller` | **No** — too many inter-dependencies (services, handlers, permissions) |
 
-## Internal Flow
+## What happens step by step
 
 ```
 1. Load   .igrpstudio/<sourceModule>/<type>/<Name>.json
-2. Update module field → destinationModule
-3. Run    add*(updatedConfig, basePath)   ← creates files in destination
-4. Run    deleteElement(source config)   ← removes files from source (force=false)
+2. Update module → destinationModule
+3. Produce element files in the destination module
+4. Delete element from the source module (dependency check applies)
 ```
 
-If step 4 fails due to remaining references, destination files are already created. Clean them up manually before retrying.
+If step 4 fails because other elements still reference the source, the destination files are already written. Clean the references manually and retry the deletion.
 
-## Effect on Packages
+## Effect on Java packages
 
-Moving an element changes its Java package because the package is derived from the path. All other files that import from the old package **are not automatically updated** — search for usages and update import statements manually after moving.
+Moving an element changes its Java package because the package is derived from the file path. All files that import from the old package are **not updated automatically** — search for usages in the project and update those import statements manually after the move.
 
-## Example
-
-```json
-{
-  "type": "dto",
-  "name": "CreateOrder",
-  "sourceModule": "shared",
-  "destinationModule": "orders"
-}
-```
-
-Steps executed:
-1. Load `.igrpstudio/shared/dto/CreateOrderDTO.json`
-2. Set `module = "orders"`
-3. Write new DTO to `orders` module paths
-4. Delete `CreateOrderDTO` from `shared` module
-
-## Important Notes
+## Preconditions
 
 - The destination module must already exist (created via `addModule`) before moving.
-- If the element has `readOnly: true`, it will still be moved — `readOnly` only blocks regeneration overwrites, not moves.
-- After moving, update any `module` references in DTOs, models, or controllers that pointed to the old location.
+- `readOnly: true` on the source manifest does not prevent a move.

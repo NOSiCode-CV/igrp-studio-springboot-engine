@@ -1,48 +1,54 @@
 # addEnum
 
-Generates a Java enum implementing `IgrpEnum<String>`. Provides built-in static lookup via `fromCode()`, `fromCodeOrThrow()`, and `codeDescriptionMap()`.
+Produces a Java enum implementing `IgrpEnum<String>` and a manifest. The enum includes built-in static lookup methods.
 
-## Schema
+## Manifest written to
 
-```typescript
-interface EnumConfig {
-  name: string;           // required, PascalCase
-  values: EnumValue[];    // required, non-empty
-  module?: string;        // defaults to "shared"
-  attributes?: EnumAttribute[]; // constructor fields shared across all constants
-  type?: 'enum';          // optional — if present, must equal "enum"
-  readOnly?: boolean;     // do not overwrite existing files on regeneration
-  id?: string;
-  version?: string;
-}
+`.igrpstudio/<module>/enum/<Name>.json`
 
-interface EnumValue {
-  name: string;           // required — becomes UPPER_CASE constant
-  attributes?: string[];  // constructor argument values for this constant
-}
+## Manifest fields
 
-interface EnumAttribute {
-  name: string;  // required — field name (lowercase in constructor)
-  type: string;  // required — engine type or Java type
-}
-```
+### Top-level
 
-> **`attributes` vs `values[].attributes`:**
-> - `EnumConfig.attributes` defines the **constructor signature** (field names and types)
-> - `EnumValue.attributes` provides the **argument values** per constant
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | Must be exactly `enum` |
+| `name` | Yes | PascalCase. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `values` | Yes | Array of enum value objects. Cannot be empty |
+| `module` | No | Default: `shared`. Pattern: `^[a-zA-Z0-9_]+$` |
+| `attributes` | No | Array of constructor field objects (shared across all constants) |
+| `readOnly` | No | Boolean — prevents overwriting |
+| `id` | No | String |
+| `version` | No | String |
 
-## Manifest Output
+No other fields are permitted.
 
-Written to: `.igrpstudio/<module>/enum/<EnumName>.json`
+### Enum value object
 
-## Java Output Path
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | Pattern: `^[A-Za-z][A-Za-z0-9_]*$` — uppercased in the generated class |
+| `attributes` | No | Array of strings — one argument per constructor field, in order |
 
-| Style | Path |
+### Constructor field object (`attributes[]` at top level)
+
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | Field name — lowercased in the generated class |
+| `type` | Yes | Engine type or Java type string |
+
+> **How `attributes` and `values[].attributes` relate:**
+> Top-level `attributes` defines the constructor signature (field names and types).
+> Each `values[].attributes` provides the argument values for that constant, in the same order.
+
+## Output paths
+
+| Style | Java path |
 |---|---|
-| Technical | `<mainPath>/enum/<EnumName>.java` |
-| Domain | `<mainPath>/<module>/application/enum/<EnumName>.java` |
+| Technical | `<mainPath>/enum/<Name>.java` |
+| Domain | `<mainPath>/<module>/application/enum/<Name>.java` |
 
-## Java Output
+## Java output
 
 ```java
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
@@ -57,21 +63,19 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
-[Technical:] import <group>.<packageName>.exceptions.IgrpResponseStatusException;
-[Domain:]    import <group>.<packageName>.shared.domain.exceptions.IgrpResponseStatusException;
+[technical:] import <group>.<packageName>.exceptions.IgrpResponseStatusException;
+[domain:]    import <group>.<packageName>.shared.domain.exceptions.IgrpResponseStatusException;
 
-public enum <EnumName> implements IgrpEnum<String> {
+public enum <Name> implements IgrpEnum<String> {
 
-    <CONSTANT_1>[(<arg1>, <arg2>)],
-    <CONSTANT_N>[(<arg1>, <arg2>)];    ← semicolon after last constant
+    CONSTANT_ONE[("arg1", "arg2")],
+    CONSTANT_N[("arg1", "arg2")];       ← semicolon after the last constant
 
-    [when attributes defined:]
-    private final <JavaType1> <lowerName1>;
-    [private final <JavaType2> <lowerName2>;]
+    [when top-level attributes defined:]
+    private final <JavaType> <lowerFieldName>;
 
-    <EnumName>(<JavaType1> <lowerName1>[, <JavaType2> <lowerName2>]) {
-        this.<lowerName1> = <lowerName1>;
-        [this.<lowerName2> = <lowerName2>;]
+    <Name>(<JavaType> <lowerFieldName>[, ...]) {
+        this.<lowerFieldName> = <lowerFieldName>;
     }
 
     @Override
@@ -87,15 +91,15 @@ public enum <EnumName> implements IgrpEnum<String> {
     /**
     * Pre-built maps for fast lookup.
     */
-    private static final Map<String, <EnumName>> CODE_MAP = Arrays.stream(values())
-            .collect(Collectors.toMap(<EnumName>::getCode, Function.identity()));
+    private static final Map<String, <Name>> CODE_MAP = Arrays.stream(values())
+            .collect(Collectors.toMap(<Name>::getCode, Function.identity()));
 
     /**
     * Attempts to find the enum value associated with the given code.
     * @param code The code to look up
     * @return An Optional containing the enum value if found, empty Optional otherwise
     */
-    public static Optional<<EnumName>> fromCode(String code) {
+    public static Optional<<Name>> fromCode(String code) {
         return Optional.ofNullable(CODE_MAP.get(code));
     }
 
@@ -105,62 +109,19 @@ public enum <EnumName> implements IgrpEnum<String> {
     * @return The enum value for the given code
     * @throws IgrpResponseStatusException if no enum value exists for the given code
     */
-    public static <EnumName> fromCodeOrThrow(String code) {
+    public static <Name> fromCodeOrThrow(String code) {
         return fromCode(code).orElseThrow(
-                () -> IgrpResponseStatusException.of(HttpStatus.BAD_REQUEST, "Invalid <EnumName> for this code: " + code));
+                () -> IgrpResponseStatusException.of(HttpStatus.BAD_REQUEST, "Invalid <Name> for this code: " + code));
     }
 
     /**
     * Returns a map of code to description.
     */
     public static Map<String, String> codeDescriptionMap() {
-        return CODE_MAP.values().stream().collect(Collectors.toMap(<EnumName>::getCode, <EnumName>::getDescription));
+        return CODE_MAP.values().stream().collect(Collectors.toMap(<Name>::getCode, <Name>::getDescription));
     }
 
 }
 ```
 
-> Constant names are uppercased via `toUpperCase()`. The semicolon `;` follows the last constant.
-
-## Examples
-
-**Simple enum (no constructor params):**
-```json
-{
-  "type": "enum",
-  "name": "OrderStatus",
-  "module": "orders",
-  "values": [
-    { "name": "PENDING" },
-    { "name": "CONFIRMED" },
-    { "name": "SHIPPED" },
-    { "name": "DELIVERED" },
-    { "name": "CANCELLED" }
-  ]
-}
-```
-
-**Enum with constructor attributes (code + description pattern):**
-```json
-{
-  "type": "enum",
-  "name": "PaymentMethod",
-  "module": "orders",
-  "attributes": [
-    { "name": "code", "type": "string" },
-    { "name": "description", "type": "string" }
-  ],
-  "values": [
-    { "name": "CREDIT_CARD", "attributes": ["CC", "Credit Card"] },
-    { "name": "BANK_TRANSFER", "attributes": ["BT", "Bank Transfer"] },
-    { "name": "CASH", "attributes": ["CA", "Cash"] }
-  ]
-}
-```
-
-Generated constants:
-```java
-CREDIT_CARD("CC", "Credit Card"),
-BANK_TRANSFER("BT", "Bank Transfer"),
-CASH("CA", "Cash");
-```
+> Constant names are uppercased. The semicolon `;` follows the last constant on its line.

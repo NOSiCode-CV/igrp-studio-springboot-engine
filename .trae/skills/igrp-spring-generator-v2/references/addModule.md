@@ -1,32 +1,25 @@
 # addModule
 
-Creates a new logical module with its directory structure and `.igrpstudio/<module>/module.json` manifest.
+Creates a named module with its directory structure and a module manifest. All other operations target a module — this must exist before adding models, DTOs, enums, or controllers to it. The default module `shared` is created by `newApi` and does not need to be created manually.
 
-> The `module` field in all other operations defaults to `shared` when omitted. Create the module first before adding models, DTOs, enums, or controllers to it.
+## Manifest written to
 
-## Schema
+`.igrpstudio/<normalizedModuleName>/module.json`
 
-```typescript
-interface ModuleConfig {
-  type: 'module'; // required, literal
-  name: string;   // required, [a-zA-Z][a-zA-Z0-9_]*
-}
-```
+Module name normalization: replace `-` with `_`, remove non-alphanumeric non-underscore characters, lowercase.
 
-## Manifest Output
+## Manifest fields
 
-Written to: `.igrpstudio/<normalizedModuleName>/module.json`
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | Must be exactly `module` |
+| `name` | Yes | Must start with a letter. Only letters, digits, underscores. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
 
-```json
-{
-  "type": "module",
-  "name": "<name>"
-}
-```
+No other fields are permitted.
 
-## Directories Created
+## Directories created
 
-### Technical Style
+### Technical style
 
 ```
 .igrpstudio/<module>/
@@ -37,15 +30,9 @@ Written to: `.igrpstudio/<normalizedModuleName>/module.json`
     .gitkeep
   enum/
     .gitkeep
-src/main/java/<groupPath>/<packageName>/
-  models/
-  services/
-  controllers/
-  config/
-  security/
 ```
 
-### Domain Style
+### Domain style
 
 ```
 .igrpstudio/<module>/
@@ -56,6 +43,7 @@ src/main/java/<groupPath>/<packageName>/
     .gitkeep
   enum/
     .gitkeep
+
 src/main/java/<groupPath>/<packageName>/<module>/
   application/
     dto/
@@ -81,18 +69,4 @@ src/main/java/<groupPath>/<packageName>/<module>/
     rest/
 ```
 
-**.gitkeep content:**
-```
-This file is used to let Git track empty directories.
-```
-
-## Example
-
-```json
-{
-  "type": "module",
-  "name": "orders"
-}
-```
-
-Creates `.igrpstudio/orders/module.json` and all corresponding module directories.
+`.gitkeep` content: `This file is used to let Git track empty directories.`

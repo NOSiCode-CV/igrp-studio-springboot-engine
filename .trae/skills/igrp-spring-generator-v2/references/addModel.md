@@ -1,113 +1,152 @@
 # addModel
 
-Generates a JPA entity class and repository. In domain style also generates a repository implementation and entity repository adapter.
+Produces a JPA entity class, a repository, and a model manifest. In domain style it also produces a domain repository interface, a repository implementation, and an entity repository adapter.
 
-## Schema
+## Manifest written to
 
-```typescript
-interface ModelConfig {
-  type: 'model';                         // required, literal
-  name: string;                          // required, PascalCase entity name
-  tableName: string;                     // required, database table name
-  attributes: Attribute[];               // required
-  module?: string;                       // defaults to "shared"
-  primaryKey?: PrimaryKey[];             // composite primary key definition
-  uniqueConstraints?: UniqueConstraint[];
-  indexes?: EntityIndex[];
-  relationReference?: RelationReference[]; // inverse side of JPA relations
-  audit?: boolean;     // true = class extends AuditEntity (createdAt, updatedAt, createdBy, lastModifiedBy)
-  revision?: boolean;  // true = adds @Audited (Hibernate Envers) to the class
-  crud?: boolean;      // true = auto-generate CRUD controller + service for this entity
-  readOnly?: boolean;  // true = do not overwrite existing files on regeneration
-  id?: string;
-  version?: string;
-}
+`.igrpstudio/<module>/models/<Name>.json`
 
-interface Attribute {
-  type: 'string' | 'text' | 'integer' | 'long' | 'double' | 'float'
-      | 'boolean' | 'date' | 'datetime' | 'time' | 'file' | 'relation' | 'enum'; // required
-  name: string;           // required
-  length?: number;
-  nullable?: boolean;
-  unique?: boolean;
-  primaryKey?: boolean;
-  generationType?: 'AUTO' | 'IDENTITY' | 'SEQUENCE' | 'TABLE' | 'NONE';
-  sequenceName?: string;  // required when generationType = 'SEQUENCE'
-  defaultValue?: string;
-  objectType?: string;    // enum class name when type = 'enum'
-  module?: string;        // module of the enum when type = 'enum'
-  relation?: Relation;    // required when type = 'relation'
-  skipFieldRevision?: boolean; // adds @NotAudited (Envers)
-}
+## Manifest fields
 
-interface Relation {
-  type: 'OneToOne' | 'OneToMany' | 'ManyToOne' | 'ManyToMany'; // required
-  entity: string;         // required, target entity class name
-  fetchType?: 'LAZY' | 'EAGER';
-  cascadeType?: Array<'ALL' | 'PERSIST' | 'MERGE' | 'REMOVE' | 'REFRESH' | 'DETACH'>;
-  orphanRemoval?: boolean;
-  fieldName?: string;
-  mappedBy?: string;
-  referencedColumnName?: string;
-  cardinality?: string;
-  joinTable?: string;
-  inverseJoinColumn?: string;
-  joinColumn?: string;
-  module?: string;
-}
+### Top-level
 
-interface RelationReference {
-  type: 'OneToOne' | 'OneToMany' | 'ManyToMany'; // required — inverse side
-  entity: string;         // required
-  module?: string;
-  fieldName?: string;
-  joinColumn?: string;
-  mappedBy?: string;
-  fetchType?: 'LAZY' | 'EAGER';
-  cascadeType?: string[];
-  orphanRemoval?: boolean;
-}
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | Must be exactly `model` |
+| `name` | Yes | PascalCase entity name. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `tableName` | Yes | Database table name. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `attributes` | Yes | Array of attribute objects. Cannot be empty |
+| `module` | No | Default: `shared`. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `primaryKey` | No | Array of composite primary key objects |
+| `uniqueConstraints` | No | Array of unique constraint objects |
+| `indexes` | No | Array of index objects |
+| `relationReference` | No | Array of inverse-side relation objects |
+| `audit` | No | Boolean — `true` makes the class extend `AuditEntity` |
+| `revision` | No | Boolean — `true` adds `@Audited` (Hibernate Envers) |
+| `crud` | No | Boolean — `true` auto-generates CRUD endpoints |
+| `readOnly` | No | Boolean — `true` prevents overwriting existing files |
+| `id` | No | String |
+| `version` | No | String |
 
-interface PrimaryKey {
-  type: string;  // required
-  name: string;  // required
-  length?: number;
-  defaultValue?: string;
-}
+No other fields are permitted.
 
-interface UniqueConstraint {
-  name: string;      // required
-  columns: string[]; // required
-}
+### Attribute object
 
-interface EntityIndex {
-  name: string;      // required
-  columns: string[]; // required
-  unique: boolean;   // required
-}
-```
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of the attribute types listed below |
+| `name` | Yes | camelCase field name. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `length` | No | Number |
+| `nullable` | No | Boolean |
+| `unique` | No | Boolean |
+| `primaryKey` | No | Boolean |
+| `generationType` | No | One of: `` (empty) · `IDENTITY` · `SEQUENCE` · `TABLE` · `AUTO` · `NONE` |
+| `sequenceName` | No | Required when `generationType` is `SEQUENCE`. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `defaultValue` | No | String |
+| `objectType` | No | The enum class name — used when `type` is `enum` |
+| `module` | No | Module of the referenced enum. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `relation` | No | Relation object — required when `type` is `relation` |
+| `skipFieldRevision` | No | Boolean — adds `@NotAudited` (Envers) |
 
-## Output Paths
+### Attribute types
 
-### Technical Style
+All accepted values for the `type` field on an attribute:
 
-| File | Path |
-|---|---|
-| Entity | `<mainPath>/models/<modelName_lowercase>/<ModelName>.java` |
-| Repository | `<mainPath>/models/<modelName_lowercase>/<ModelName>Repository.java` |
+`boolean` · `integer` · `long` · `short` · `float` · `double` · `string` · `char` · `uuid` · `decimal` · `biginteger` · `date` · `datetime` · `time` · `instant` · `uri` · `url` · `text` · `json` · `binary` · `file` · `object` · **`relation`** (JPA relationship)
 
-### Domain Style
+### Attribute type → Java type mapping
 
-| File | Path |
-|---|---|
-| Entity | `<mainPath>/<module>/infrastructure/persistence/entity/<ModelName>.java` |
-| Domain Repository Interface | `<mainPath>/<module>/domain/repository/<ModelName>Repository.java` |
-| Repository Impl | `<mainPath>/<module>/infrastructure/persistence/repository/<ModelName>RepositoryImpl.java` |
-| Entity Repository Adapter | `<mainPath>/<module>/infrastructure/persistence/repository/<ModelName>EntityRepository.java` |
+| Attribute type | Java type | Import |
+|---|---|---|
+| `boolean` | `boolean` | — |
+| `integer` | `Integer` | — |
+| `long` | `Long` | — |
+| `short` | `short` | — |
+| `float` | `Float` | — |
+| `double` | `Double` | — |
+| `string` | `String` | — |
+| `char` | `char` | — |
+| `text` | `String` | — |
+| `uuid` | `UUID` | `java.util.UUID` |
+| `decimal` | `BigDecimal` | `java.math.BigDecimal` |
+| `biginteger` | `BigInteger` | `java.math.BigInteger` |
+| `date` | `LocalDate` | `java.time.LocalDate` |
+| `datetime` | `LocalDateTime` | `java.time.LocalDateTime` |
+| `time` | `LocalTime` | `java.time.LocalTime` |
+| `instant` | `Instant` | `java.time.Instant` |
+| `uri` | `URI` | `java.net.URI` |
+| `url` | `URL` | `java.net.URL` |
+| `json` | `JsonNode` | `com.fasterxml.jackson.databind.JsonNode` |
+| `binary` | `byte[]` | — |
+| `file` | `byte[]` (stored as BLOB) | — |
+| `object` | `Object` | — |
 
-## Entity Java Output
+### Relation object
 
-### Class Declaration
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `OneToOne` · `OneToMany` · `ManyToOne` · `ManyToMany` |
+| `entity` | Yes | Target entity class name. No spaces or hyphens |
+| `fetchType` | Yes | One of: `lazy` · `eager` (lowercase in manifest → `FetchType.LAZY/EAGER` in Java) |
+| `cardinality` | Yes | One of: `oneWay` · `twoWay` — `twoWay` generates the `mappedBy` inverse side |
+| `cascadeType` | No | Array of objects `{ "type": "ALL\|PERSIST\|MERGE\|REFRESH\|REMOVE\|DETACH" }` |
+| `orphanRemoval` | No | Boolean |
+| `entity` | Yes | Target entity name |
+| `fieldName` | No | Override the generated field name. Pattern: `^[a-zA-Z0-9_]+$` |
+| `mappedBy` | No | The field on the owning side |
+| `referencedColumnName` | No | `@JoinColumn(referencedColumnName=...)` |
+| `joinTable` | No | Join table name for ManyToMany |
+| `joinColumn` | No | Join column name |
+| `inverseJoinColumn` | No | Inverse join column name for ManyToMany |
+| `module` | No | Module of the target entity |
+
+### Composite primary key object (`primaryKey[]`)
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `integer` · `long` · `string` · `uuid` · `boolean` · `short` · `float` · `double` · `char` · `decimal` · `biginteger` |
+| `name` | Yes | Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `length` | No | Number |
+| `defaultValue` | No | String |
+
+### Unique constraint object
+
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `columns` | Yes | Array of column name strings |
+
+### Index object
+
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `columns` | Yes | Array of column name strings |
+| `unique` | Yes | Boolean |
+
+### Inverse relation object (`relationReference[]`)
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `OneToOne` · `OneToMany` · `ManyToOne` · `ManyToMany` |
+| `entity` | Yes | Source entity class name |
+| `fetchType` | Yes | `lazy` or `eager` |
+| `fieldName` | No | Override generated field name |
+| `joinColumn` | No | Join column name |
+| `mappedBy` | No | Owning-side field name |
+| `cascadeType` | No | Array of cascade strings |
+| `orphanRemoval` | No | Boolean |
+| `module` | No | Module of the source entity |
+
+## Primary key rules
+
+- A model cannot have both a composite primary key (`primaryKey[]`) and a simple primary key attribute (`attribute.primaryKey: true`) simultaneously
+- Only one attribute may have `primaryKey: true`
+- When an attribute has `primaryKey: true`, `generationType` must be specified
+- Valid types for a simple primary key attribute: `integer` · `long` · `uuid` · `string`
+- Table name is lowercased for PostgreSQL and MySQL, uppercased for Oracle
+
+## Java — entity class
 
 ```java
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
@@ -115,9 +154,9 @@ interface EntityIndex {
 
 package <computed.package>;
 
-// imports...
+<imports>
 
-[@Audited]   ← only when revision=true
+[@Audited]                          ← when revision=true
 @Getter
 @Setter
 @IgrpEntity
@@ -126,226 +165,97 @@ package <computed.package>;
 @AllArgsConstructor
 @Table(
     name = "<tableName>"
-    [, uniqueConstraints = {
-        @UniqueConstraint(name = "<uc.name>", columnNames = {<uc.columns>})
-    }]
-    [, indexes = {
-        @Index(name = "<idx.name>", columnList = "<idx.columns>", unique = <idx.unique>)
-    }]
+    [, uniqueConstraints = { @UniqueConstraint(name="<n>", columnNames={<cols>}) }]
+    [, indexes = { @Index(name="<n>", columnList="<cols>", unique=<bool>) }]
 )
-public class <ModelName> [extends AuditEntity] {
-```
+public class <Name> [extends AuditEntity] {    ← extends AuditEntity when audit=true
 
-> Add `extends AuditEntity` when `audit: true`. Add `@Audited` before `@Getter` when `revision: true`.
+    // composite PK
+    [@EmbeddedId
+    private <Name>PrimaryKey id;]
 
-### Composite Primary Key
+    // simple PK — IDENTITY/AUTO/TABLE
+    [@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "<name>", unique = true, nullable = false)
+    private <JavaType> <fieldName>;]
 
-```java
-@EmbeddedId
-private <ModelName>PrimaryKey id;
-```
+    // simple PK — SEQUENCE
+    [@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "<seqName>")
+    @SequenceGenerator(name = "<seqName>", sequenceName = "<seqName>", allocationSize = 1)
+    @Column(name = "<name>", unique = true, nullable = false)
+    private <JavaType> <fieldName>;]
 
-Used when `primaryKey[]` array is defined.
+    // regular column
+    [@NotBlank / @NotNull when nullable=false]
+    [@Enumerated(EnumType.STRING) when type=enum]
+    @Column(name="<name>" [,length=<n>] [,unique=true] [,nullable=false])
+    private <JavaType> <fieldName>;
 
-### Attribute Patterns
+    // text
+    @Lob
+    @Column(name="<name>", columnDefinition="TEXT")
+    private String <fieldName>;
 
-**A) Primary key — IDENTITY / AUTO / TABLE:**
-```java
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-@Column(name = "<name>", unique = true, nullable = false)
-private <JavaType> <fieldName>;
-```
+    // file/binary
+    @Lob
+    @JdbcType(BinaryJdbcType.class)
+    @Column(columnDefinition="BLOB")
+    private byte[] <fieldName>;
 
-**B) Primary key — SEQUENCE:**
-```java
-@Id
-@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "<sequenceName>")
-@SequenceGenerator(name = "<sequenceName>", sequenceName = "<sequenceName>", allocationSize = 1)
-@Column(name = "<name>", unique = true, nullable = false)
-private <JavaType> <fieldName>;
-```
+    // ManyToOne
+    [@NotNull when nullable=false]
+    @ManyToOne(fetch=FetchType.<LAZY|EAGER> [,cascade={CascadeType.X}])
+    @JoinColumn(name="<joinColumn>")
+    private <Entity> <fieldName>;
 
-**C) Regular column:**
-```java
-[@NotBlank]   ← string, nullable=false
-[@NotNull]    ← other types, nullable=false
-[@Enumerated(EnumType.STRING)]  ← when type='enum'
-@Column(name = "<name>"[, length = <n>][, unique = true][, nullable = false])
-private <JavaType> <fieldName>;
-```
+    // OneToMany
+    @OneToMany(mappedBy="<mappedBy>" [,cascade={CascadeType.X}] [,orphanRemoval=true])
+    private List<<Entity>> <fieldName> = new ArrayList<>();
 
-**D) Text column (`type: 'text'`):**
-```java
-@Lob
-@Column(name = "<name>", columnDefinition = "TEXT")
-private String <fieldName>;
-```
+    // ManyToMany (owning)
+    @ManyToMany([cascade={CascadeType.X}])
+    @JoinTable(name="<joinTable>",
+        joinColumns=@JoinColumn(name="<joinColumn>"),
+        inverseJoinColumns=@JoinColumn(name="<inverseJoinColumn>"))
+    private Set<<Entity>> <fieldName> = new HashSet<>();
 
-**E) File column (`type: 'file'`):**
-```java
-@Lob
-@JdbcType(BinaryJdbcType.class)
-@Column(columnDefinition = "BLOB")
-private byte[] <fieldName>;
-```
+    // OneToOne
+    @OneToOne(fetch=FetchType.<LAZY|EAGER>)
+    @JoinColumn(name="<joinColumn>")
+    private <Entity> <fieldName>;
 
-**F) ManyToOne relation:**
-```java
-[@NotNull]   ← when nullable=false
-@ManyToOne(fetch = FetchType.<LAZY|EAGER>[, cascade = { CascadeType.X }])
-@JoinColumn(name = "<joinColumn>")
-private <Entity> <fieldName>;
-```
-
-**G) OneToMany relation:**
-```java
-@OneToMany(mappedBy = "<mappedBy>"[, cascade = { CascadeType.X }][, orphanRemoval = true])
-private List<<Entity>> <fieldName> = new ArrayList<>();
-```
-
-**H) ManyToMany relation (owning side):**
-```java
-@ManyToMany([cascade = { CascadeType.X }])
-@JoinTable(
-    name = "<joinTable>",
-    joinColumns = @JoinColumn(name = "<joinColumn>"),
-    inverseJoinColumns = @JoinColumn(name = "<inverseJoinColumn>")
-)
-private Set<<Entity>> <fieldName> = new HashSet<>();
-```
-
-**I) OneToOne relation:**
-```java
-@OneToOne(fetch = FetchType.<LAZY|EAGER>)
-@JoinColumn(name = "<joinColumn>")
-private <Entity> <fieldName>;
-```
-
-### RelationReference Patterns (Inverse Side)
-
-```java
-// OneToOne inverse
-@OneToOne(mappedBy = "<mappedBy>")
-private <Entity> <fieldName>;
-
-// ManyToOne inverse → OneToMany
-@OneToMany(mappedBy = "<mappedBy>")
-private List<<Entity>> <fieldName> = new ArrayList<>();
-
-// ManyToMany inverse
-@ManyToMany(mappedBy = "<mappedBy>")
-private Set<<Entity>> <fieldName> = new HashSet<>();
-```
-
-## Repository Java Output
-
-### Technical Style
-
-```java
-/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
-
-package <computed.package>;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface <ModelName>Repository extends JpaRepository<<ModelName>, <PrimaryKeyType>> {}
-```
-
-### Domain Style
-
-**Domain Repository Interface** (pure domain contract):
-```java
-public interface <ModelName>Repository {
-    // Add business-oriented methods here manually
+    // relationReference — inverse side
+    @OneToOne(mappedBy="<mappedBy>") private <Entity> <fieldName>;
+    @OneToMany(mappedBy="<mappedBy>") private List<<Entity>> <fieldName> = new ArrayList<>();
+    @ManyToMany(mappedBy="<mappedBy>") private Set<<Entity>> <fieldName> = new HashSet<>();
 }
 ```
 
-**Entity Repository Adapter** (JPA):
+## Java — repository (technical)
+
 ```java
 @Repository
-public interface <ModelName>EntityRepository extends JpaRepository<<ModelName>, <PrimaryKeyType>> {}
+public interface <Name>Repository extends JpaRepository<<Name>, <PkType>> {}
 ```
 
-**Repository Implementation:**
+## Java — domain style repositories
+
 ```java
+// Domain contract
+public interface <Name>Repository { }
+
+// JPA adapter
+@Repository
+public interface <Name>EntityRepository extends JpaRepository<<Name>, <PkType>> {}
+
+// Implementation
 @Component
-public class <ModelName>RepositoryImpl implements <ModelName>Repository {
-
-    private final <ModelName>EntityRepository entityRepository;
-
-    public <ModelName>RepositoryImpl(<ModelName>EntityRepository entityRepository) {
+public class <Name>RepositoryImpl implements <Name>Repository {
+    private final <Name>EntityRepository entityRepository;
+    public <Name>RepositoryImpl(<Name>EntityRepository entityRepository) {
         this.entityRepository = entityRepository;
     }
-}
-```
-
-## Type Mapping
-
-| Engine type | Java type |
-|---|---|
-| `string` | `String` |
-| `integer` | `Integer` |
-| `long` | `Long` |
-| `double` | `Double` |
-| `float` | `Float` |
-| `boolean` | `Boolean` |
-| `date` | `LocalDate` |
-| `datetime` | `LocalDateTime` |
-| `time` | `LocalTime` |
-| `text` | `String` |
-| `file` | `byte[]` |
-| `enum` | `<objectType>` (enum class name) |
-| `relation` | `<relation.entity>` |
-
-## Example
-
-```json
-{
-  "type": "model",
-  "name": "Order",
-  "tableName": "orders",
-  "module": "orders",
-  "audit": true,
-  "attributes": [
-    {
-      "type": "long",
-      "name": "id",
-      "primaryKey": true,
-      "generationType": "IDENTITY",
-      "nullable": false
-    },
-    {
-      "type": "string",
-      "name": "orderNumber",
-      "length": 50,
-      "nullable": false,
-      "unique": true
-    },
-    {
-      "type": "enum",
-      "name": "status",
-      "objectType": "OrderStatus",
-      "module": "orders",
-      "nullable": false
-    },
-    {
-      "type": "relation",
-      "name": "customer",
-      "relation": {
-        "type": "ManyToOne",
-        "entity": "Customer",
-        "fetchType": "LAZY",
-        "cascadeType": ["PERSIST", "MERGE"],
-        "joinColumn": "customer_id"
-      }
-    }
-  ],
-  "uniqueConstraints": [
-    { "name": "uq_order_number", "columns": ["orderNumber"] }
-  ]
 }
 ```

@@ -1,75 +1,129 @@
 # addDTO
 
-Generates a DTO class. The `type` field controls the class role and file suffix. The `template` field controls class vs record syntax.
+Produces a DTO class and a manifest. The `type` field controls the class role and file suffix. The `template` field controls class vs record syntax.
 
-## Schema
+## Manifest written to
 
-```typescript
-interface DTOConfig {
-  type: 'dto' | 'response' | 'filter' | 'command' | 'query' | 'event'; // required
-  template: 'classic' | 'record';       // required
-  name: string;                          // required, PascalCase
-  attributes: JavaAttribute[];           // required
-  module?: string;                       // defaults to "shared"
-  enableCustonValidation?: boolean;      // generates a custom validator interface
-  readOnly?: boolean;                    // do not overwrite existing files on regeneration
-  extends?: { name: string; module: string }; // parent DTO for inheritance (classic only)
-  id?: string;
-  version?: string;
-}
-
-interface JavaAttribute {
-  name: string;        // required, camelCase field name
-  type: string;        // required — engine type OR Java class name when objectType='java'
-  objectType: 'java' | 'dto' | 'model' | 'enum'; // required
-  required: boolean;   // required — drives @NotNull / @NotBlank
-  collectionType?: 'list' | 'set' | 'collection' | 'pageable' | 'map' | 'none';
-  isEmail?: boolean;   // adds @Email
-  isUrl?: boolean;     // adds @URL
-  before?: boolean;    // adds @Past
-  after?: boolean;     // adds @Future
-  positive?: boolean;  // adds @Positive
-  minLength?: number;  // adds @Size(min=...)
-  maxLength?: number;  // adds @Size(max=...)
-  regex?: string;      // adds @Pattern(regexp="...")
-  primaryKey?: boolean;
-  jsonAttributeName?: string;  // adds @JsonProperty("...")
-  xmlAttributeName?: string;   // adds @JacksonXmlProperty(localName="...")
-  module?: string;     // module of the referenced dto / model / enum
-}
-```
-
-## Type → Class Suffix Mapping
-
-| `type` value | Class suffix | Manifest filename |
-|---|---|---|
-| `dto` | `DTO` | `<Name>DTO.json` |
-| `response` | `DTO` | `<Name>DTO.json` |
-| `filter` | `DTO` | `<Name>DTO.json` |
-| `command` | `Command` | `<Name>Command.json` |
-| `query` | `Query` | `<Name>Query.json` |
-| `event` | `Event` | `<Name>Event.json` |
-
-**Name normalization before saving manifest:** strip trailing `DTO` / `Command` / `Query` / `Event` (case-insensitive) from the input name, then append the suffix.
-
-## Output Paths
-
-### Technical Style
-
-All DTO types output to: `<mainPath>/dto/<NormalizedName><Suffix>.java`
-
-### Domain Style
-
-| `type` | Java Path |
+| `type` value | Manifest path |
 |---|---|
-| `dto`, `response`, `filter` | `<mainPath>/<module>/application/dto/<Name>DTO.java` |
+| `dto` · `response` · `filter` | `.igrpstudio/<module>/dto/<Name>DTO.json` |
+| `command` | `.igrpstudio/<module>/dto/<Name>Command.json` |
+| `query` | `.igrpstudio/<module>/dto/<Name>Query.json` |
+| `event` | `.igrpstudio/<module>/dto/<Name>Event.json` |
+
+Name normalization before saving: strip any trailing `DTO` / `Command` / `Query` / `Event` (case-insensitive) from the input name, then append the correct suffix.
+
+## Manifest fields
+
+### Top-level
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `dto` · `command` · `query` · `event` · `filter` · `response` |
+| `template` | Yes | One of: `classic` · `record` |
+| `name` | Yes | PascalCase. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `attributes` | Yes | Array of attribute objects. Cannot be empty |
+| `module` | No | Default: `shared`. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `enableCustonValidation` | No | Boolean — generates a custom validator interface |
+| `readOnly` | No | Boolean — prevents overwriting |
+| `extends` | No | Object with `name` (required) and `module` (required) |
+| `id` | No | String |
+| `version` | No | String |
+
+No other fields are permitted.
+
+### Attribute object
+
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | camelCase. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `type` | Yes | One of the attribute types listed below |
+| `objectType` | Yes | One of: `java` · `dto` · `model` · `enum` |
+| `required` | Yes | Boolean — drives `@NotNull` / `@NotBlank` |
+| `collectionType` | No | One of: `none` · `list` · `set` · `collection` · `pageable` · `map` |
+| `isEmail` | No | Boolean — adds `@Email`. **Only valid when `type` is `string`** |
+| `isUrl` | No | Boolean — adds `@URL`. **Only valid when `type` is `string`** |
+| `before` | No | Boolean — adds `@Past`. **Only valid when `type` is `datetime`** |
+| `after` | No | Boolean — adds `@Future`. **Only valid when `type` is `datetime`** |
+| `positive` | No | Boolean — adds `@Positive`. **Only valid for numeric types** |
+| `minLength` | No | Number — adds `@Size(min=...)`. **Only valid when `type` is `string`** |
+| `maxLength` | No | Number — adds `@Size(max=...)`. **Only valid when `type` is `string`** |
+| `regex` | No | String — adds `@Pattern(regexp="...")`. Only for `string` |
+| `primaryKey` | No | Boolean |
+| `jsonAttributeName` | No | String — adds `@JsonProperty("...")`. Pattern: `^[a-zA-Z0-9_]+$` |
+| `xmlAttributeName` | No | String — adds `@JacksonXmlProperty(localName="...")`. Pattern: `^[a-zA-Z0-9_]+$` |
+| `module` | No | Module of the referenced dto / model / enum. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+
+### Validation constraints — must be enforced
+
+| Constraint | Rule |
+|---|---|
+| `isEmail` and `isUrl` | Cannot both be `true` on the same attribute |
+| `before` and `after` | Cannot both be `true` on the same attribute |
+| `isEmail` / `isUrl` | Only allowed when `type` is `string` |
+| `before` / `after` | Only allowed when `type` is `datetime` |
+| `positive` | Only allowed for numeric types: `integer` · `long` · `short` · `float` · `double` · `decimal` · `biginteger` |
+| `minLength` / `maxLength` | Only allowed when `type` is `string` |
+
+### Attribute types (accepted values for `type`)
+
+All types from the model attribute list are accepted here, except `relation`:
+
+`boolean` · `integer` · `long` · `short` · `float` · `double` · `string` · `char` · `uuid` · `decimal` · `biginteger` · `date` · `datetime` · `time` · `instant` · `uri` · `url` · `text` · `json` · `binary` · `file` · `object`
+
+See `addModel.md` for the Java type mapping of each type.
+
+## Output paths
+
+### Technical style
+
+All DTO types → `<mainPath>/dto/<Name><Suffix>.java`
+
+### Domain style
+
+| `type` | Java path |
+|---|---|
+| `dto` · `response` · `filter` | `<mainPath>/<module>/application/dto/<Name>DTO.java` |
 | `command` | `<mainPath>/<module>/application/commands/<Name>Command.java` |
 | `query` | `<mainPath>/<module>/application/queries/<Name>Query.java` |
 | `event` | `<mainPath>/<module>/application/events/<Name>Event.java` |
 
-## Java Output
+## Type resolution rules
 
-### Classic Template
+```
+objectType = 'java'   → map type to Java type (see addModel.md type table)
+objectType = 'dto'    → strip trailing 'DTO' from attribute name, append 'DTO'
+objectType = 'model'  → use attribute name as-is
+objectType = 'enum'   → use the enum class name from context
+
+collectionType wrapping:
+  list       → List<Base>        initializer: = new ArrayList<>()
+  set        → Set<Base>         initializer: = new HashSet<>()
+  collection → Collection<Base>
+  pageable   → Page<Base>
+  map        → Map<String, Base>
+  none / omitted → Base
+```
+
+## Validation annotation resolution (applied in this order per attribute)
+
+```
+1. @JsonProperty("<jsonAttributeName>")             if jsonAttributeName is set
+2. @JacksonXmlProperty(localName="<xmlAttr>")       if xmlAttributeName is set
+3. if required=true:
+     string / text            → @NotBlank
+     list / set / collection  → @NotNull + @NotEmpty
+     all other types          → @NotNull
+4. @Size(min=<n>, max=<n>)    if minLength or maxLength is set
+5. @Pattern(regexp="<regex>") if regex is non-empty
+6. @Email                     if isEmail=true
+7. @URL                       if isUrl=true
+8. @Past                      if before=true
+9. @Future                    if after=true
+10. @Positive                 if positive=true
+```
+
+## Java output — classic template
 
 ```java
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
@@ -80,29 +134,28 @@ package <computed.package>;
 import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-[import lombok.EqualsAndHashCode;]         ← only when extends is set
+[import lombok.EqualsAndHashCode;]                       ← only when extends is set
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-[import <group>.<packageName>.dto.validator.<NameValidator>;] ← when enableCustonValidation
-<resolved-imports-sorted>
+[import <group>.<pkg>.dto.validator.<NameValidator>;]    ← when enableCustonValidation
+<sorted imports for types used>
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-[@EqualsAndHashCode(callSuper = true)]     ← only when extends is set
-[@<NameValidator>]                         ← when enableCustonValidation
+[@EqualsAndHashCode(callSuper = true)]    ← only when extends is set
+[@<NameValidator>]                        ← when enableCustonValidation
 @IgrpDTO
 public class <Name><Suffix> [extends <ParentName>DTO] {
 
-    [per attribute:]
-    [<validation-annotations>]
+    [per attribute — validation annotations first, then field declaration]
     private <JavaType> <fieldName>[<collectionInitializer>];
 
 }
 ```
 
-### Record Template
+## Java output — record template
 
 ```java
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
@@ -113,136 +166,11 @@ package <computed.package>;
 import cv.igrp.framework.stereotype.IgrpDTO;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
-<resolved-imports-sorted>
+<sorted imports for types used>
 
 @IgrpDTO
 public record <Name><Suffix>(
-    [per attribute:]
-    [<validation-annotations>]
-    <JavaType> <fieldName>[,]    ← comma after all except last
+    [per attribute — validation annotations, then type and name]
+    <JavaType> <fieldName>[,]    ← comma after every parameter except the last
 ) {}
-```
-
-## Helper Algorithms
-
-### Type Resolution
-
-```
-resolveType(attribute):
-
-  base:
-    if objectType = 'dto':
-      strip trailing 'DTO' from attribute.name → base + 'DTO'
-    if objectType = 'model':
-      use attribute.name as-is
-    if objectType = 'enum':
-      use attribute.objectType (the enum class name)
-    if objectType = 'java':
-      map engine type → Java type (see table below)
-
-  wrap by collectionType:
-    'list'       → List<base>         initializer: = new ArrayList<>()
-    'set'        → Set<base>          initializer: = new HashSet<>()
-    'collection' → Collection<base>
-    'pageable'   → Page<base>
-    'map'        → Map<String, base>
-    'none' / missing → base
-```
-
-### Engine Type → Java Type (for `objectType: 'java'`)
-
-| Engine type | Java type |
-|---|---|
-| `string` | `String` |
-| `integer` | `Integer` |
-| `long` | `Long` |
-| `double` | `Double` |
-| `float` | `Float` |
-| `boolean` | `Boolean` |
-| `date` | `LocalDate` |
-| `datetime` | `LocalDateTime` |
-| `time` | `LocalTime` |
-
-### Validation Annotation Resolution (applied in this order)
-
-```
-1. @JsonProperty("<jsonAttributeName>")                              ← if jsonAttributeName set
-2. @JacksonXmlProperty(localName = "<xmlAttributeName>")            ← if xmlAttributeName set
-3. if required:
-     string / text            → @NotBlank
-     list / set / collection  → @NotNull + @NotEmpty
-     other types              → @NotNull
-4. if minLength or maxLength  → @Size(min=<n>, max=<n>)
-5. if regex (non-empty string) → @Pattern(regexp = "<regex>")
-6. if isEmail                 → @Email
-7. if isUrl                   → @URL
-8. if before                  → @Past
-9. if after                   → @Future
-10. if positive               → @Positive
-```
-
-### Import Resolution
-
-Build a **sorted** set of imports:
-
-- Always: `cv.igrp.framework.stereotype.IgrpDTO`, `jakarta.validation.*`, `jakarta.validation.constraints.*`
-- Classic: `lombok.Data`, `lombok.NoArgsConstructor`, `lombok.AllArgsConstructor`
-- If `extends`: `lombok.EqualsAndHashCode`; import parent DTO from its module if cross-module
-- If `jsonAttributeName`: `com.fasterxml.jackson.annotation.JsonProperty`
-- If `xmlAttributeName`: `com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty`
-- If `collectionType=list`: `java.util.List`, `java.util.ArrayList`
-- If `collectionType=set`: `java.util.Set`, `java.util.HashSet`
-- If `collectionType=collection`: `java.util.Collection`
-- If `collectionType=pageable`: `org.springframework.data.domain.Page`
-- If `collectionType=map`: `java.util.Map`
-- If `type=date`: `java.time.LocalDate`
-- If `type=datetime`: `java.time.LocalDateTime`
-- If `type=time`: `java.time.LocalTime`
-
-## Examples
-
-**Classic DTO:**
-```json
-{
-  "type": "dto",
-  "template": "classic",
-  "name": "CreateOrder",
-  "module": "orders",
-  "attributes": [
-    { "name": "customerId", "type": "long", "objectType": "java", "required": true },
-    { "name": "deliveryDate", "type": "date", "objectType": "java", "required": false, "after": true },
-    { "name": "items", "type": "string", "objectType": "java", "required": true, "collectionType": "list" }
-  ]
-}
-```
-
-**Record Command (domain style):**
-```json
-{
-  "type": "command",
-  "template": "record",
-  "name": "CreateOrder",
-  "module": "orders",
-  "attributes": [
-    { "name": "customerId", "type": "long", "objectType": "java", "required": true },
-    { "name": "deliveryDate", "type": "date", "objectType": "java", "required": false }
-  ]
-}
-```
-
-Manifest: `.igrpstudio/orders/dto/CreateOrderCommand.json`
-Java: `<mainPath>/orders/application/commands/CreateOrderCommand.java`
-
-**DTO with inheritance:**
-```json
-{
-  "type": "dto",
-  "template": "classic",
-  "name": "UpdateOrder",
-  "module": "orders",
-  "extends": { "name": "CreateOrder", "module": "orders" },
-  "attributes": [
-    { "name": "id", "type": "long", "objectType": "java", "required": true }
-  ]
-}
 ```

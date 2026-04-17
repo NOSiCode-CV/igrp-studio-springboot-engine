@@ -1,109 +1,159 @@
 # addController
 
-Generates a REST controller. For **technical** style: also generates a service interface and service implementation. For **domain** style: generates CQRS command/query classes and handlers per action, plus test stubs.
+Produces a REST controller and a manifest. In technical style also produces a service interface and service implementation. In domain style produces a command or query class and a handler per action, plus test stubs.
 
-## Schema
+## Manifest written to
 
-```typescript
-interface ControllerConfig {
-  type: 'controller';          // required, literal
-  name: string;                // required, PascalCase (without "Controller" suffix)
-  basePath: string;            // required, URL base path (e.g. "/api/v1/orders")
-  actions: ControllerAction[]; // required, non-empty
-  module?: string;             // defaults to "shared"
-  description?: string;
-  globalPermission?: PermissionRef;
-  globalRoles?: string[];
-  readOnly?: boolean;
-  id?: string;
-  version?: string;
-}
+`.igrpstudio/<module>/controllers/<Name>Controller.json`
 
-interface ControllerAction {
-  actionName: string;                              // required, camelCase method name
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; // required
-  path?: string;                                   // relative to basePath (e.g. "/{id}")
-  description?: string;
-  permission?: PermissionRef;
-  roles?: string[];
-  requestParams?: RequestParam[];
-  pathVariables?: PathVariable[];
-  headers?: HttpHeader[];
-  multipartFiles?: MultipartFile[];
-  modelAttribute?: ModelAttribute;
-  requestBody?: Body;
-  responses?: { [statusCode: string]: Body };
-}
+## Manifest fields
 
-interface PermissionRef {
-  items: string[];           // required, permission key strings
-  operator?: 'AND' | 'OR';  // defaults to OR
-}
+### Top-level
 
-interface RequestParam {
-  type: string;        // required
-  name: string;        // required
-  value?: string;
-  description?: string;
-  isRequired: boolean; // required
-}
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | Must be exactly `controller` |
+| `name` | Yes | PascalCase (without "Controller"). Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `basePath` | Yes | URL base path. Pattern: `^[A-Za-z][A-Za-z0-9-/]*$` |
+| `actions` | Yes | Array of action objects. At least one required |
+| `description` | Yes | Free text description |
+| `module` | No | Default: `shared`. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `globalPermission` | No | Permission reference object |
+| `globalRoles` | No | Array of role strings |
+| `readOnly` | No | Boolean — prevents overwriting |
+| `id` | No | String |
+| `version` | No | String |
 
-interface PathVariable {
-  type: string;        // required
-  name: string;        // required
-  isRequired: boolean; // required
-}
+No other fields are permitted.
 
-interface HttpHeader {
-  header: string;      // required
-  value: string;       // required
-  isRequired: boolean; // required
-}
+### Action object
 
-interface MultipartFile {
-  type: string;
-  name: string;
-  isRequired: boolean;
-}
+| Field | Required | Rules |
+|---|---|---|
+| `actionName` | Yes | camelCase. Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+| `method` | Yes | One of: `GET` · `POST` · `PUT` · `DELETE` · `PATCH` · `OPTIONS` · `HEAD` |
+| `path` | No | Relative path segment. May contain `{variable}`. Pattern: `^$\|^/?[A-Za-z_{][A-Za-z0-9_{}/-]*$` |
+| `description` | No | Free text |
+| `permission` | No | Permission reference object |
+| `roles` | No | Array of role strings |
+| `requestParams` | No | Array of request parameter objects |
+| `pathVariables` | No | Array of path variable objects |
+| `headers` | No | Array of HTTP header objects |
+| `multipartFiles` | No | Array of multipart file objects |
+| `modelAttribute` | No | Model attribute object |
+| `requestBody` | No | Body object |
+| `responses` | No | Object mapping status codes (3-digit pattern) to body objects |
 
-interface ModelAttribute {
-  name: string;    // required, DTO class name
-  module?: string;
-}
+### Permission reference object
 
-interface Body {
-  id?: string;
-  version?: string;
-  name?: string;
-  module?: string;
-  description?: string;
-  content: { [mimeType: string]: SchemaObject }; // required
-}
+| Field | Required | Rules |
+|---|---|---|
+| `items` | Yes | Array of permission key strings. At least one required |
+| `operator` | No | One of: `AND` · `OR` |
+
+### Request parameter object
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `long` · `string` · `integer` · `boolean` · `object` · `file` · `uuid` · `date` |
+| `name` | Yes | Pattern: `^[a-zA-Z0-9_]+$` |
+| `isRequired` | Yes | Boolean |
+| `value` | No | Pattern: `^[a-zA-Z0-9_]+$` |
+| `description` | No | String |
+| `collectionType` | No | One of: `list` · `set` · `collection` |
+
+### Path variable object
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `long` · `string` · `integer` · `boolean` · `object` · `file` · `uuid` · `date` |
+| `name` | Yes | Pattern: `^[a-zA-Z0-9_]+$` |
+| `isRequired` | Yes | Boolean |
+
+### HTTP header object
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | One of: `long` · `string` · `integer` · `boolean` · `object` · `file` · `uuid` · `date` |
+| `header` | Yes | One of the fixed header names listed below |
+| `value` | Yes | Non-empty string |
+| `isRequired` | Yes | Boolean |
+
+**Allowed header names:** `Accept` · `Cache-Control` · `Content-Type` · `Content-Length` · `Accept-Charset` · `Accept-Encoding` · `Accept-Language` · `Expires` · `Access-Control-Allow-Origin` · `Access-Control-Request-Headers` · `Access-Control-Request-Method` · `Custom-Header`
+
+> Use `Custom-Header` for any header not in the list above.
+
+### Multipart file object
+
+| Field | Required | Rules |
+|---|---|---|
+| `type` | Yes | String |
+| `name` | Yes | String |
+| `isRequired` | Yes | Boolean |
+
+### Model attribute object
+
+| Field | Required | Rules |
+|---|---|---|
+| `name` | Yes | DTO class name. No spaces or hyphens |
+| `module` | No | Pattern: `^[A-Za-z][A-Za-z0-9_]*$` |
+
+### Body object (requestBody / responses values)
+
+| Field | Required | Rules |
+|---|---|---|
+| `content` | Yes | Object mapping MIME types to schema objects |
+| `name` | No | String |
+| `module` | No | String |
+| `description` | No | String |
+| `id` | No | String |
+| `version` | No | String |
+
+Response status codes must match the pattern `^\d{3}$` (e.g. `"200"`, `"201"`, `"400"`).
+
+## Output paths
+
+### Technical style
+
+| File | Path |
+|---|---|
+| Controller | `<mainPath>/controllers/<name_lowercase>/<Name>Controller.java` |
+| Service interface | `<mainPath>/services/I<Name>Service.java` |
+| Service impl | `<mainPath>/services/<Name>Service.java` |
+
+### Domain style
+
+| File | Path |
+|---|---|
+| Controller | `<mainPath>/<module>/interfaces/rest/<Name>Controller.java` |
+| GET action → Query | `<mainPath>/<module>/application/queries/<ActionName>Query.java` |
+| GET action → Query handler | `<mainPath>/<module>/application/queries/<ActionName>QueryHandler.java` |
+| GET action → Handler test | `<testPath>/<module>/application/queries/<ActionName>QueryHandlerTest.java` |
+| Non-GET → Command | `<mainPath>/<module>/application/commands/<ActionName>Command.java` |
+| Non-GET → Command handler | `<mainPath>/<module>/application/commands/<ActionName>CommandHandler.java` |
+| Non-GET → Handler test | `<testPath>/<module>/application/commands/<ActionName>CommandHandlerTest.java` |
+
+## Permission expression resolution
+
+```
+items: ["A", "B"], operator: "AND"  →  @PreAuthorize("hasAuthority('A') and hasAuthority('B')")
+items: ["A", "B"], operator: "OR"   →  @PreAuthorize("hasAuthority('A') or hasAuthority('B')")
+roles: ["ADMIN", "USER"]            →  @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+both permission and roles           →  combine with " and "
 ```
 
-## Output Paths
+## Method parameter order
 
-### Technical Style
+Parameters always appear in this fixed order:
+1. `@PathVariable` — one per path variable entry
+2. `@RequestParam` — one per request param entry
+3. `@RequestHeader` — one per header entry
+4. `@RequestBody` — from `requestBody.content["application/json"]`
+5. `@ModelAttribute` — from `modelAttribute`
+6. `@RequestPart` — one per multipart file entry
+7. `Pageable pageable` — only for GET with pageable response type
 
-| File | Path |
-|---|---|
-| Controller | `<mainPath>/controllers/<controllerName_lowercase>/<ControllerName>Controller.java` |
-| Service Interface | `<mainPath>/services/I<ControllerName>Service.java` |
-| Service Impl | `<mainPath>/services/<ControllerName>Service.java` |
-
-### Domain Style
-
-| File | Path |
-|---|---|
-| Controller | `<mainPath>/<module>/interfaces/rest/<ControllerName>Controller.java` |
-| Per GET action — Query | `<mainPath>/<module>/application/queries/<ActionName>Query.java` |
-| Per GET action — Query Handler | `<mainPath>/<module>/application/queries/<ActionName>QueryHandler.java` |
-| Per GET action — Handler Test | `<testPath>/<module>/application/queries/<ActionName>QueryHandlerTest.java` |
-| Per non-GET action — Command | `<mainPath>/<module>/application/commands/<ActionName>Command.java` |
-| Per non-GET action — Command Handler | `<mainPath>/<module>/application/commands/<ActionName>CommandHandler.java` |
-| Per non-GET action — Handler Test | `<testPath>/<module>/application/commands/<ActionName>CommandHandlerTest.java` |
-
-## Controller Java Output
+## Java output — controller
 
 ```java
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
@@ -111,206 +161,73 @@ interface Body {
 
 package <computed.package>;
 
-<IMPORTS_BLOCK>
+<imports>
 
 @IgrpController
 @RestController
 @RequestMapping(path = "<basePath>")
-[@PreAuthorize("<GLOBAL_EXPRESSION>")]   ← when globalPermission or globalRoles set
-@Tag(
-    name = "<ControllerName>",
-    description = "<description>")
-public class <ControllerName>Controller {
+[@PreAuthorize("<GLOBAL_EXPRESSION>")]
+@Tag(name = "<Name>", description = "<description>")
+public class <Name>Controller {
 
-    [Technical — service injection:]
-    private final I<ControllerName>Service <lowerCamelName>Service;
-
-    public <ControllerName>Controller(I<ControllerName>Service <lowerCamelName>Service) {
-        this.<lowerCamelName>Service = <lowerCamelName>Service;
+    [technical:]
+    private final I<Name>Service <lowerName>Service;
+    public <Name>Controller(I<Name>Service <lowerName>Service) {
+        this.<lowerName>Service = <lowerName>Service;
     }
 
-    [Domain — bus injection:]
-    [private final QueryBus queryBus;]     ← only if any GET actions
-    [private final CommandBus commandBus;] ← only if any non-GET actions
-
-    public <ControllerName>Controller([QueryBus queryBus,] [CommandBus commandBus]) {
-        [this.queryBus = queryBus;]
-        [this.commandBus = commandBus;]
-    }
+    [domain — only injected buses that are needed:]
+    [private final QueryBus queryBus;]
+    [private final CommandBus commandBus;]
+    public <Name>Controller([QueryBus queryBus,] [CommandBus commandBus]) { ... }
 
     [per action:]
     [@PreAuthorize("<ACTION_EXPRESSION>")]
-    @<HttpMethod>Mapping([value = "<path>"])
+    @<Method>Mapping([value = "<path>"])
     @Operation(summary = "<actionName>", operationId = "<actionName>")
-    @ApiResponses(value = {
-        <per response: @ApiResponse(responseCode = "<code>", description = "...")>
-    })
-    public ResponseEntity<<ResolvedResponseType>> <actionName>(<PARAMS>) {
+    @ApiResponses(value = { @ApiResponse(responseCode = "<code>", ...) })
+    public ResponseEntity<<ResolvedType>> <actionName>(<params>) {
 
-        [Technical:]
-        var response = <lowerCamelName>Service.<actionName>(<args>);
-        return response;
-
-        [Domain GET:]
-        final var query = new <ActionName>Query(<args>);
-        return queryBus.handle(query);
-
-        [Domain non-GET:]
-        final var command = new <ActionName>Command(<args>);
-        return commandBus.send(command);
+        [technical:]   var response = <lowerName>Service.<actionName>(<args>); return response;
+        [domain GET:]  final var query = new <ActionName>Query(<args>); return queryBus.handle(query);
+        [domain other:]final var command = new <ActionName>Command(<args>); return commandBus.send(command);
     }
 }
 ```
 
-## Permission Expression Resolution
-
-```
-PermissionRef { items: ["PERM_A", "PERM_B"], operator: "AND" }
-  → @PreAuthorize("hasAuthority('PERM_A') and hasAuthority('PERM_B')")
-
-PermissionRef { items: ["PERM_A", "PERM_B"], operator: "OR" }
-  → @PreAuthorize("hasAuthority('PERM_A') or hasAuthority('PERM_B')")
-
-roles: ["ADMIN", "MANAGER"]
-  → @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-
-Both permission and roles present → combine with " and "
-```
-
-## Response Type Resolution
-
-```
-resolveResponseType(responses):
-  1. Find response with 2xx status code (prefer 200, then 201)
-  2. Extract schema from content["application/json"]
-  3. Resolve schema ref → Java type using same DTO type rules
-  4. If ambiguous or no match → ResponseEntity<?>
-```
-
-## Method Parameter Order
-
-Parameters appear in this fixed order:
-
-1. `@PathVariable` params — one per `pathVariables` entry
-2. `@RequestParam` params — one per `requestParams` entry
-3. `@RequestHeader` params — one per `headers` entry
-4. `@RequestBody` — from `requestBody.content["application/json"]`
-5. `@ModelAttribute` — from `modelAttribute`
-6. `@RequestPart` — one per `multipartFiles` entry
-7. `Pageable pageable` — only for GET with `collectionType: 'pageable'` response
-
-## Technical Service Output
+## Java output — technical service
 
 ```java
-// Service Interface
 @Service
-public interface I<ControllerName>Service {
-    ResponseEntity<<ReturnType>> <actionName>(<PARAMS>);
+public interface I<Name>Service {
+    ResponseEntity<<ReturnType>> <actionName>(<params>);
 }
 
-// Service Implementation
 @Service
-public class <ControllerName>Service implements I<ControllerName>Service {
-
+public class <Name>Service implements I<Name>Service {
     @Override
-    public ResponseEntity<<ReturnType>> <actionName>(<PARAMS>) {
+    public ResponseEntity<<ReturnType>> <actionName>(<params>) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }
 ```
 
-## Domain Handler Output
+## Java output — domain handlers
 
 ```java
-// CommandHandler
 @Component
 public class <ActionName>CommandHandler implements CommandHandler<<ActionName>Command, ResponseEntity<?>> {
-
     @Override
     public ResponseEntity<?> handle(<ActionName>Command command) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }
 
-// QueryHandler
 @Component
 public class <ActionName>QueryHandler implements QueryHandler<<ActionName>Query, ResponseEntity<?>> {
-
     @Override
     public ResponseEntity<?> handle(<ActionName>Query query) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-}
-```
-
-## Example
-
-```json
-{
-  "type": "controller",
-  "name": "Order",
-  "basePath": "/api/v1/orders",
-  "module": "orders",
-  "description": "Order management endpoints",
-  "globalPermission": {
-    "items": ["ORDERS_ACCESS"],
-    "operator": "OR"
-  },
-  "actions": [
-    {
-      "actionName": "findAll",
-      "method": "GET",
-      "requestParams": [
-        { "type": "string", "name": "status", "isRequired": false }
-      ],
-      "responses": {
-        "200": {
-          "content": {
-            "application/json": {
-              "schema": { "type": "array", "items": { "$ref": "OrderDTO" } }
-            }
-          }
-        }
-      }
-    },
-    {
-      "actionName": "create",
-      "method": "POST",
-      "permission": { "items": ["ORDERS_WRITE"] },
-      "requestBody": {
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "CreateOrderDTO" }
-          }
-        }
-      },
-      "responses": {
-        "201": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "OrderDTO" }
-            }
-          }
-        }
-      }
-    },
-    {
-      "actionName": "findById",
-      "method": "GET",
-      "path": "/{id}",
-      "pathVariables": [
-        { "type": "long", "name": "id", "isRequired": true }
-      ],
-      "responses": {
-        "200": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "OrderDTO" }
-            }
-          }
-        }
-      }
-    }
-  ]
 }
 ```
