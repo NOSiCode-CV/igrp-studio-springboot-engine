@@ -1,0 +1,28 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java}}
+
+import cv.igrp.framework.core.domain.CommandHandler;
+import cv.igrp.framework.stereotype.IgrpCommandHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+{{{returnTypeImport}}}
+{{{inputRefImport}}}
+
+@Component
+public class {{capitalize operationName}}CommandHandler implements CommandHandler<{{capitalize operationName}}Command, {{{returnJavaType}}}> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize operationName}}CommandHandler.class);
+
+    public {{capitalize operationName}}CommandHandler() {}
+
+    @IgrpCommandHandler
+    public {{{returnJavaType}}} handle({{capitalize operationName}}Command command) {
+        LOGGER.debug("{{capitalize operationName}}Command: {}", command);
+        // TODO: Implement the command handling logic here
+        return null;
+    }
+
+}

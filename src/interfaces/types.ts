@@ -1,18 +1,18 @@
 import {
-  CASCADE_TYPE,
-  CONFIG_TYPES,
-  CRUD_DISABLED_OPTIONS,
-  DATABASE_TYPES,
-  GENERATION_TYPES,
-  GENERIC_ATTRIBUTE_TYPES,
-  GENERIC_COLLECTION_TYPES,
-  GENERIC_MODEL_ATTRIBUTE_TYPES,
-  HTTP_HEADER_TYPES,
-  HTTP_METHOD_TYPES,
-  OBJECT_TYPES,
-  PARAMS_TYPES,
-  RELATIONSHIP_TYPES,
-  STRUCT_TYPES,
+    CASCADE_TYPE,
+    CONFIG_TYPES,
+    CRUD_DISABLED_OPTIONS,
+    DATABASE_TYPES,
+    GENERATION_TYPES,
+    GENERIC_ATTRIBUTE_TYPES,
+    GENERIC_COLLECTION_TYPES,
+    GENERIC_MODEL_ATTRIBUTE_TYPES,
+    HTTP_HEADER_TYPES,
+    HTTP_METHOD_TYPES,
+    OBJECT_TYPES,
+    PARAMS_TYPES,
+    RELATIONSHIP_TYPES,
+    STRUCT_TYPES,
 } from '../utils/constants';
 
 interface IdentifiableElement {
@@ -107,7 +107,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java' | 'enum';
+  objectType: 'dto' | 'model' | 'java' | 'enum' | 'graphqlType';
   required: boolean;
   before?: boolean;
   after?: boolean;
@@ -122,6 +122,10 @@ export interface JavaAttribute {
   jsonAttributeName?: string;
   xmlAttributeName?: string;
   module?: string;
+  /** Set during transformDTOConfig for graphqlType attributes.
+   *  Holds the type of the referenced type's primary key (e.g. 'uuid').
+   *  Used to generate ID-reference fields (categoryId, productIds) instead of object fields. */
+  idType?: string;
 }
 
 export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
@@ -172,7 +176,7 @@ export interface JavaType {
 export interface JavaAttribute {
   name: string;
   type: string | AttributeType;
-  objectType: 'dto' | 'model' | 'java' | 'enum';
+  objectType: 'dto' | 'model' | 'java' | 'enum' | 'graphqlType';
 }
 
 export interface PrimaryKey extends Pick<Attribute, 'type' | 'name' | 'length'> { }
@@ -528,3 +532,42 @@ export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type CascadeTypes = (typeof CASCADE_TYPE)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
+
+// ─── GraphQL Types ───────────────────────────────────────────────────────────
+
+/** Primitive arg type (uuid, string, boolean, etc.) used in queries/mutations */
+export interface GraphQLFieldDef {
+  name: string;
+  type: string;           // engine attribute type (e.g. 'string', 'integer', 'uuid')
+  nullable?: boolean;
+  description?: string;
+}
+
+export type GraphQLCollectionType = 'single' | 'list' | 'paginated';
+
+export interface GraphQLQuery {
+  name: string;
+  args?: GraphQLFieldDef[];             // primitive args (uuid, string, etc.)
+  returnTypeRef?: string;               // references a graphqlType (e.g. 'Category')
+  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
+  collectionType?: GraphQLCollectionType; // single (default) | list | paginated
+}
+
+export interface GraphQLMutation {
+  name: string;
+  inputRef?: string;                    // references a graphqlInput manifest (e.g. 'CreateCategoryInput')
+  args?: GraphQLFieldDef[];             // additional primitive args
+  returnTypeRef?: string;               // references a graphqlType
+  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
+  collectionType?: GraphQLCollectionType;
+}
+
+export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
+  type: 'graphql';
+  name: string;
+  module?: string;
+  typeRef?: string;         // references a graphqlType manifest — source of type fields
+  inputRefs?: string[];     // references graphqlInput manifests used by mutations
+  queries?: GraphQLQuery[];
+  mutations?: GraphQLMutation[];
+}

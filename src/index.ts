@@ -1,45 +1,46 @@
 import {
-  ApiConfig,
-  AppExportsConfig,
-  BaseApiConfig,
-  ControllerAction,
-  ControllerConfig,
-  CrudControllerConfig,
-  DdlConfig,
-  DeleteConfig,
-  Dependency,
-  DTOConfig,
-  EngineConfigurationSettings,
-  EnumConfig,
-  GroupPermissionDef,
-  HandlerConfig,
-  JavaAttribute,
-  JsonConfig,
-  ModelConfig,
-  ModuleConfig,
-  MoveConfig,
-  PathConfig,
-  PermissionConfig,
-  RenderContext,
-  ResponseConfig,
-  SqlConfig,
-  XmlConfig,
+    ApiConfig,
+    AppExportsConfig,
+    BaseApiConfig,
+    ControllerAction,
+    ControllerConfig,
+    CrudControllerConfig,
+    DdlConfig,
+    DeleteConfig,
+    Dependency,
+    DTOConfig,
+    EngineConfigurationSettings,
+    EnumConfig,
+    GraphQLSchemaConfig,
+    GroupPermissionDef,
+    HandlerConfig,
+    JavaAttribute,
+    JsonConfig,
+    ModelConfig,
+    ModuleConfig,
+    MoveConfig,
+    PathConfig,
+    PermissionConfig,
+    RenderContext,
+    ResponseConfig,
+    SqlConfig,
+    XmlConfig,
 } from './interfaces/types';
 import {
-  CATEGORIZED_ATTRIBUTE_TYPES,
-  CRUD_DISABLED_OPTIONS,
-  DATABASE_TYPES,
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  GENERATION_TYPES,
-  GENERIC_COLLECTION_TYPES,
-  HTTP_HEADER_TYPES,
-  HTTP_METHOD_TYPES,
-  MIME_TYPES,
-  PARAMS_TYPES,
-  PROJECT_STRUCTURE_STYLE,
-  RELATIONSHIP_TYPES,
-  SCHEMA_TYPES,
+    CATEGORIZED_ATTRIBUTE_TYPES,
+    CRUD_DISABLED_OPTIONS,
+    DATABASE_TYPES,
+    DIRECTORIES,
+    ERROR_MESSAGE,
+    GENERATION_TYPES,
+    GENERIC_COLLECTION_TYPES,
+    HTTP_HEADER_TYPES,
+    HTTP_METHOD_TYPES,
+    MIME_TYPES,
+    PARAMS_TYPES,
+    PROJECT_STRUCTURE_STYLE,
+    RELATIONSHIP_TYPES,
+    SCHEMA_TYPES,
 } from './utils/constants';
 import {apiValidation} from './schema/baseApiConfig';
 import path from 'path';
@@ -99,6 +100,8 @@ import {moveValidation} from './schema/moveConfig';
 import {verifyEnumAttributes} from './modules/enum/helpers';
 import defaultEngineModule from './config/default';
 import {configurationAsObject, setConfiguration} from './config';
+import {validateGraphQLSchemaConfig} from './schema/graphQLSchemaConfig';
+import {generateGraphQLSchema} from './modules/graphql/generateGraphQLSchema';
 import {engineConfigurationRegistrationValidate} from './schema/engineConfigurationRegisterConfig';
 import fs from "fs-extra";
 import {buildPermissionGroup} from "./utils/permissionParser";
@@ -548,7 +551,9 @@ export const addDTO = async (dirty: DTOConfig | HandlerConfig, basePath: string)
     await generateValidatorDTO(context);
   }
 
-  if (config.type === 'dto') await saveDTOConfig(config, basePath);
+  if (config.type === 'dto' || config.type === 'graphqlType' || config.type === 'graphqlInput') {
+    await saveDTOConfig(config, basePath);
+  }
 
   if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
     if (
@@ -1521,4 +1526,65 @@ export const engineTypes = async (module: string, basePath: string) => {
     { CRUD_DISABLED_OPTIONS: CRUD_DISABLED_OPTIONS },
     { GENERATION_TYPES: GENERATION_TYPES.filter((gt) => gt !== '') },
   ];
+};
+
+/**
+ * Generates GraphQL schema, resolver, service (technical), and DataLoader files.
+ *
+ * @param {GraphQLSchemaConfig} dirty - The GraphQL schema configuration.
+ * @param {string} basePath - The project root path.
+ *
+ * @example
+ * await addGraphQLSchema({
+ *   type: 'graphql',
+ *   name: 'User',
+ *   module: 'users',
+ *   modelRef: 'UserEntity',
+ *   queries: [
+ *     { name: 'findUserById', args: [{ name: 'id', type: 'uuid' }] },
+ *     { name: 'findAllUsers', paginated: true },
+ *   ],
+ *   mutations: [
+ *     { name: 'createUser' },
+ *     { name: 'updateUser', args: [{ name: 'id', type: 'uuid' }] },
+ *   ],
+ * }, basePath);
+ */
+export const addGraphQLSchema = async (dirty: GraphQLSchemaConfig, basePath: string): Promise<void> => {
+  // Step 1: cleaner
+  const config: GraphQLSchemaConfig = cleaner(dirty);
+
+  // Step 2: validate
+  const isValid = validateGraphQLSchemaConfig(config);
+  if (!isValid && validateGraphQLSchemaConfig.errors) {
+    throw validateGraphQLSchemaConfig.errors;
+  }
+
+  if (!basePath) {
+    throw ERROR_MESSAGE.INVALID_OUTPUT_PATH;
+  }
+
+  // Step 3: load base API config
+  const baseConfig = await getBaseApiConfig(basePath);
+
+  // Step 4: normalize name; validate module exists — only addModule creates modules
+  config.name = capitalize(config.name);
+
+  if (config.module && config.module.toLowerCase() !== DIRECTORIES.SHARED) {
+    const moduleConfigPath = path.join(basePath, DIRECTORIES.IGRPSTUDIO, config.module.toLowerCase());
+    const moduleExists = await checkIfDirectoryExists(moduleConfigPath);
+    if (!moduleExists) {
+      config.module = DIRECTORIES.SHARED;
+    }
+  }
+
+  const context: RenderContext<GraphQLSchemaConfig> = {
+    resourceConfig: config,
+    basePath,
+    baseConfig,
+    fullPath: basePath,
+  };
+
+  // Steps 5–7: saveManifest, render templates, saveToFile (all inside generateGraphQLSchema)
+  await generateGraphQLSchema(context);
 };

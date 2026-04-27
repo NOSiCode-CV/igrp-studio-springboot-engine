@@ -1,0 +1,22 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java}}
+
+import cv.igrp.framework.core.domain.Query;
+{{#if args}}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+{{{argsImports}}}
+{{/if}}
+
+{{#if args}}
+@Getter
+@AllArgsConstructor
+{{/if}}
+public class {{capitalize operationName}}Query implements Query {
+
+{{#each args}}
+    private {{resolveJavaTypeForGraphQL this.type}} {{this.name}};
+{{/each}}
+}

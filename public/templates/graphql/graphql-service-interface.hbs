@@ -1,0 +1,22 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{{graphqlImportsTypesService resourceConfig baseConfig resolvedTypeManifest resolvedInputManifests pageManifest}}}
+
+/**
+ * GraphQL service interface for {{capitalize resourceConfig.name}}.
+ * Implement this interface to provide the business logic for your GraphQL resolvers.
+ */
+public interface I{{capitalize resourceConfig.name}}GraphQLService {
+
+{{#each resourceConfig.queries}}
+    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+
+{{/each}}
+{{#each resourceConfig.mutations}}
+    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#if this.inputRef}}{{this.inputRef}} input{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}});
+
+{{/each}}
+}

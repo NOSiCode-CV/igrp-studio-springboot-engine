@@ -1,0 +1,35 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import org.dataloader.BatchLoader;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+/**
+ * DataLoader for {{capitalize resourceConfig.name}} relations.
+ * This file is generated once — add your batching logic here.
+ *
+ * Relations:
+{{#each resolvedTypeManifest.attributes}}
+{{#if (eq this.objectType "graphqlType")}}
+ *   - {{this.type}} via field '{{this.name}}'
+{{/if}}
+{{/each}}
+ */
+@Component
+public class {{capitalize resourceConfig.name}}DataLoader implements BatchLoader<String, {{capitalize resourceConfig.name}}> {
+
+    @Override
+    public CompletionStage<List<{{capitalize resourceConfig.name}}>> load(List<String> keys) {
+        return CompletableFuture.supplyAsync(() -> {
+            throw new UnsupportedOperationException(
+                "Not yet implemented: {{capitalize resourceConfig.name}}DataLoader.load()"
+            );
+        });
+    }
+}

@@ -1,0 +1,27 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import lombok.Getter;
+import lombok.Setter;
+{{{resolve-imports resourceConfig baseConfig}}}
+
+@Getter
+@Setter
+public class {{resourceConfig.name}} {
+
+{{#each resourceConfig.attributes}}
+{{#unless (eq this.objectType "graphqlType")}}
+    private {{{resolve-type this}}} {{this.name}};
+{{/unless}}
+{{/each}}
+{{#if (hasGraphQLTypeAttributes resourceConfig.attributes)}}
+    /* Stored as IDs for DataLoader pattern - resolved lazily */
+{{#each resourceConfig.attributes}}
+{{#if (eq this.objectType "graphqlType")}}
+    private {{{graphqlRefIdType this}}} {{graphqlRefIdFieldName this}};
+{{/if}}
+{{/each}}
+{{/if}}
+}

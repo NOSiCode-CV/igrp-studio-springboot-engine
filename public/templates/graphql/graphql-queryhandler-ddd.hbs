@@ -1,0 +1,27 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java}}
+
+import cv.igrp.framework.core.domain.QueryHandler;
+import cv.igrp.framework.stereotype.IgrpQueryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+{{{returnTypeImport}}}
+
+@Component
+public class {{capitalize operationName}}QueryHandler implements QueryHandler<{{capitalize operationName}}Query, {{{returnJavaType}}}> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger({{capitalize operationName}}QueryHandler.class);
+
+    public {{capitalize operationName}}QueryHandler() {}
+
+    @IgrpQueryHandler
+    public {{{returnJavaType}}} handle({{capitalize operationName}}Query query) {
+        LOGGER.debug("{{capitalize operationName}}Query: {}", query);
+        // TODO: Implement the query handling logic here
+        return null;
+    }
+
+}

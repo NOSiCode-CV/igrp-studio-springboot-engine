@@ -1,23 +1,23 @@
-import { DIRECTORIES, EXTENSIONS, PARTIALS } from './constants';
+import {DIRECTORIES, EXTENSIONS, PARTIALS} from './constants';
 import path from 'path';
 import fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import {
-  ApiConfig,
-  ControllerConfig,
-  CrudControllerConfig,
-  DeleteConfig,
-  DTOBaseConfig,
-  DTOConfig,
-  EnumConfig,
-  ExceptionConfig,
-  ModelConfig,
-  ObjectTypes,
-  PermissionConfig,
-  RenderContext,
+    ApiConfig,
+    ControllerConfig,
+    CrudControllerConfig,
+    DeleteConfig,
+    DTOBaseConfig,
+    DTOConfig,
+    EnumConfig,
+    ExceptionConfig,
+    ModelConfig,
+    ObjectTypes,
+    PermissionConfig,
+    RenderContext,
 } from '../interfaces/types';
-import { normalizeDTOType } from '../modules/dto/saveDTOConfig';
-import { getPaths } from '../index';
+import {normalizeDTOType} from '../modules/dto/saveDTOConfig';
+import {getPaths} from '../index';
 
 /**
  * Dynamically loads and registers Handlebars partials in a React.js application.
@@ -69,6 +69,13 @@ export const getDTOConfigPath = (type: string, module: string, dto: string, outp
     output,
     replaceTemplate(DIRECTORIES.CONFIG_DTO, { module }),
     `${dto}${type}${EXTENSIONS.JSON}`,
+  );
+
+export const getGraphQLTypeConfigPath = (module: string, name: string, output: string) =>
+  path.join(
+    output,
+    replaceTemplate(DIRECTORIES.CONFIG_GRAPHQL_TYPES, { module }),
+    `${name}${EXTENSIONS.JSON}`,
   );
 
 export const getResponseConfigPath = (module: string, response: string, output: string) =>
@@ -465,6 +472,13 @@ export const loadDTOConfigs = async function (
   basePath: string,
 ): Promise<DTOConfig[]> {
   return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_DTO, { module })));
+};
+
+export const loadGraphQLTypeConfigs = async function (
+  module: string,
+  basePath: string,
+): Promise<DTOConfig[]> {
+  return await loadConfig(path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_GRAPHQL_TYPES, { module })));
 };
 
 export const loadEnumConfigs = async function (

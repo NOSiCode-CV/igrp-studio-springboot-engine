@@ -1,39 +1,39 @@
 import {
-  ApiConfig,
-  ControllerAction,
-  ControllerConfig,
-  DTOConfig,
-  EnumConfig,
-  JavaType,
-  ModelConfig,
-  RenderContext,
+    ApiConfig,
+    ControllerAction,
+    ControllerConfig,
+    DTOConfig,
+    EnumConfig,
+    JavaType,
+    ModelConfig,
+    RenderContext,
 } from '../../interfaces/types';
-import { renderTemplate } from '../common/renderTemplate';
+import {renderTemplate} from '../common/renderTemplate';
 import {
-  DIRECTORIES,
-  ERROR_MESSAGE,
-  EXTENSIONS,
-  GENERIC_TYPES,
-  PACKAGE_NS,
-  PACKAGES,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
+    DIRECTORIES,
+    ERROR_MESSAGE,
+    EXTENSIONS,
+    GENERIC_TYPES,
+    PACKAGE_NS,
+    PACKAGES,
+    PROJECT_STRUCTURE_STYLE,
+    TEMPLATES,
 } from '../../utils/constants';
-import { saveToFile } from '../common/saveToFile';
+import {saveToFile} from '../common/saveToFile';
 import {
-  getDDDCommandOutputDir,
-  getDDDDtoOutputDir,
-  getDDDEventOutputDir,
-  getDDDQueryOutputDir,
-  getDtoOutputDir,
-  getPackageNameFromConfig,
+    getDDDCommandOutputDir,
+    getDDDDtoOutputDir,
+    getDDDEventOutputDir,
+    getDDDQueryOutputDir,
+    getDtoOutputDir,
+    getPackageNameFromConfig,
 } from '../../utils/helpers';
 import path from 'path';
-import { getModelTypes } from '../model/helpers';
-import { getDTOTypes } from '../dto/helpers';
-import { normalizeName } from '../dto/saveDTOConfig';
-import { capitalize } from '../../helper/stringHelper';
-import { getEnumTypes } from '../enum/helpers';
+import {getModelTypes} from '../model/helpers';
+import {getDTOTypes} from '../dto/helpers';
+import {normalizeName} from '../dto/saveDTOConfig';
+import {capitalize} from '../../helper/stringHelper';
+import {getEnumTypes} from '../enum/helpers';
 
 export const generateRequest = async (context: RenderContext<ControllerConfig>) => {
   const dtoConfigMap = new Map<string, RenderContext<DTOConfig>>();
@@ -305,6 +305,11 @@ const getDTOOutputPath = (context: RenderContext<DTOConfig>) => {
         const outputDir = getDDDEventOutputDir(context);
         context.fullPath = outputDir;
         return path.join(outputDir, `${context.resourceConfig.name}Event${EXTENSIONS.JAVA}`);
+      }
+      default: {
+        const outputDir = getDDDDtoOutputDir(context);
+        context.fullPath = outputDir;
+        return path.join(outputDir, `${context.resourceConfig.name}DTO${EXTENSIONS.JAVA}`);
       }
     }
   } else {

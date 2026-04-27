@@ -62,7 +62,11 @@ export const DIRECTORIES = {
   KUBERNETES: 'k8s',
   AUTHORIZATION : 'authorization',
   PERMISSION: 'permission',
-  REPOSITORYADAPTER: "adapter"
+  REPOSITORYADAPTER: "adapter",
+  CONFIG_GRAPHQL: '.igrpstudio/{{module}}/graphql',
+  CONFIG_GRAPHQL_TYPES: '.igrpstudio/{{module}}/graphql/types',
+  GRAPHQL: 'graphql',
+  GRAPHQL_TYPES: 'types',
 };
 
 export const PACKAGES = {
@@ -80,6 +84,7 @@ export const PACKAGE_NS = {
   model: 'model',
   dto: 'dto',
   controller: 'controller',
+  graphqlType: 'graphqlType',
 };
 
 export const PROJECT_STRUCTURE_STYLE = {
@@ -379,7 +384,29 @@ export const TEMPLATES = {
 
   GITKEEPFILE: 'struct/gitKeepFile.hbs',
 
-  PERMISSION_GROUP: 'struct/permisson-group.hbs'
+  PERMISSION_GROUP: 'struct/permisson-group.hbs',
+
+  // GRAPHQL
+  GRAPHQL_SCHEMA: 'graphql/graphql-schema.hbs',
+  GRAPHQL_RESOLVER: 'graphql/graphql-resolver.hbs',
+  GRAPHQL_SERVICE_INTERFACE: 'graphql/graphql-service-interface.hbs',
+  GRAPHQL_SERVICE: 'graphql/graphql-service.hbs',
+  GRAPHQL_DATALOADER: 'graphql/graphql-dataloader.hbs',
+  GRAPHQL_TYPE: {
+    classic: 'graphql/graphql-type-classic.hbs',
+    record: 'graphql/graphql-type-record.hbs',
+  },
+  GRAPHQL_INPUT: {
+    classic: 'graphql/graphql-input-classic.hbs',
+    record: 'graphql/graphql-input-record.hbs',
+  },
+  GRAPHQL_PAGE_TYPE: 'graphql/graphql-page-type.hbs',
+
+  // GRAPHQL DDD handlers
+  GRAPHQL_DDD_QUERY: 'graphql/graphql-query-ddd.hbs',
+  GRAPHQL_DDD_QUERY_HANDLER: 'graphql/graphql-queryhandler-ddd.hbs',
+  GRAPHQL_DDD_COMMAND: 'graphql/graphql-command-ddd.hbs',
+  GRAPHQL_DDD_COMMAND_HANDLER: 'graphql/graphql-commandhandler-ddd.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -901,6 +928,15 @@ export const GENERIC_IMPORTS = (
         python: {},
         kotlin: {},
       },
+      graphqlType: {
+        java: {
+          domain: `import ${packageNameFromConfig}.${module}.interfaces.graphql.types.${type};`,
+          technical: `import ${packageNameFromConfig}.graphql.types.${type};`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
+      },
       list: {
         java: {
           domain: `import java.util.List;`,
@@ -1044,7 +1080,7 @@ export const STRUCT_TYPES = [
   PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN,
   PROJECT_STRUCTURE_STYLE.TECHNICAL,
 ] as const;
-export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter', 'response'] as const;
+export const OBJECT_TYPES = ['dto', 'command', 'query', 'event', 'filter', 'response', 'graphqlType', 'graphqlInput'] as const;
 export const CONFIG_TYPES = [
   'dto',
   'controller',
@@ -1179,3 +1215,32 @@ export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DE
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file', 'uuid', 'date'] as const;
 
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO', 'NONE'] as const;
+
+/**
+ * Maps engine attribute types to their GraphQL scalar equivalents.
+ * Single source of truth for engine-type → GraphQL-scalar resolution.
+ * Add new mappings here; resolveGraphQLScalar will pick them up automatically.
+ */
+export const GRAPHQL_SCALAR_TYPES: Map<string, string> = new Map([
+  ['string',     'String'],
+  ['text',       'String'],
+  ['char',       'String'],
+  ['date',       'String'],
+  ['datetime',   'String'],
+  ['time',       'String'],
+  ['instant',    'String'],
+  ['uri',        'String'],
+  ['url',        'String'],
+  ['binary',     'String'],
+  ['file',       'String'],
+  ['integer',    'Int'],
+  ['int',        'Int'],
+  ['long',       'Int'],
+  ['short',      'Int'],
+  ['float',      'Float'],
+  ['double',     'Float'],
+  ['decimal',    'Float'],
+  ['bigdecimal', 'Float'],
+  ['boolean',    'Boolean'],
+  ['uuid',       'ID'],
+]);

@@ -1,0 +1,30 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{{graphqlImportsTypesService resourceConfig baseConfig resolvedTypeManifest resolvedInputManifests pageManifest}}}
+import org.springframework.stereotype.Service;
+
+/**
+ * GraphQL service implementation for {{capitalize resourceConfig.name}}.
+ * This file is generated once — add your business logic here.
+ */
+@Service
+public class {{capitalize resourceConfig.name}}GraphQLService implements I{{capitalize resourceConfig.name}}GraphQLService {
+
+{{#each resourceConfig.queries}}
+    @Override
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
+    }
+
+{{/each}}
+{{#each resourceConfig.mutations}}
+    @Override
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#if this.inputRef}}{{this.inputRef}} input{{/if}}{{#each this.args}}{{#if ../this.inputRef}}, {{/if}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{/each}}) {
+        throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
+    }
+
+{{/each}}
+}
