@@ -1,0 +1,17 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.models.IAMUserProfile;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+public interface IAMUserProfileRepository {
+
+    IAMUserProfile save(IAMUserProfile userProfile);
+
+    Optional<IAMUserProfile> findBySub(String sub);
+
+    List<IAMUserProfile> findBySubIn(Collection<String> subs);
+
+}

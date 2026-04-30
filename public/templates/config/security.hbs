@@ -1,21 +1,25 @@
 {{> package-java }}
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.http.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.TokenExchangeOAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
-import org.springframework.security.oauth2.client.TokenExchangeOAuth2AuthorizedClientProvider;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 /**
@@ -26,11 +30,17 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
-    @Value("${auth.jwt.issuer}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String jwtIssuer;
+
+    @Value("${app.security.enabled:true}")
+    private boolean securityEnabled;
+
+    private final Environment environment;
+
+    public SecurityConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     /**
      * Configures the security filter chain, enabling OAuth2 resource server with JWT and specifying
@@ -41,7 +51,7 @@ public class SecurityConfig {
      * @throws Exception if an error occurs while configuring the security
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, IAMUserProfileSyncFilter iamUserProfileSyncFilter) throws Exception {
 
         /*
           Creates and configures a CORS filter.
@@ -63,20 +73,21 @@ public class SecurityConfig {
           return configuration;
         }));
 
-        if ("development".equals(activeProfile) || "staging".equals(activeProfile)) {
-            // Disable security in development mode
-            http.csrf(AbstractHttpConfigurer::disable); // Disable CSRF protection
-            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-            return http.build();
-        }
-
-        // Configure OAuth2 Resource Server to use JWT tokens for authentication
-        http.oauth2ResourceServer((oauth2ResourceServer) -> oauth2ResourceServer
+        // Always configure the JWT resource server so BearerTokenAuthenticationFilter is in the
+        // chain and SecurityContext is populated with JwtAuthenticationToken when a valid Bearer
+        // token is present — required for IAMUserProfileSyncFilter to work regardless of whether
+        // app.security.enabled is true or false.
+        http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
         );
 
-        // Configure authorization rules and policy enforcement
-                http.authorizeHttpRequests((authorize) -> authorize
+        if (isSecurityDisabled()) {
+            // Security disabled — only allowed in development profile via SECURITY_ENABLED=false.
+            // Token is still parsed when present so IAMUserProfileSyncFilter can sync the profile.
+            http.csrf(AbstractHttpConfigurer::disable);
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        } else {
+            http.authorizeHttpRequests(authorize -> authorize
                           .requestMatchers(
                               "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                               "/swagger-resources/**", "/webjars/**", "/actuator/**"
@@ -90,8 +101,10 @@ public class SecurityConfig {
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
                 }));
 
-        // Set session management to stateless (no session created for API requests)
-        http.sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            http.sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        }
+
+        http.addFilterBefore(iamUserProfileSyncFilter, AuthorizationFilter.class);
 
         return http.build();
     }
@@ -115,9 +128,15 @@ public class SecurityConfig {
      * @return the {@link JwtDecoder} for JWT token validation
      */
     @Bean
-    @Profile("!development & !staging")
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withIssuerLocation(jwtIssuer).build();
+    }
+
+    @Bean
+    public FilterRegistrationBean<IAMUserProfileSyncFilter> iamUserProfileSyncFilterRegistration(IAMUserProfileSyncFilter filter) {
+        var registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(true);
+        return registration;
     }
 
     /**
@@ -132,6 +151,13 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthorizedClientProvider tokenExchange() {
         return new TokenExchangeOAuth2AuthorizedClientProvider();
+    }
+
+    // SECURITY_ENABLED=false is only honoured in the development profile.
+    // In staging/production the flag is ignored and auth is always enforced.
+    private boolean isSecurityDisabled() {
+        boolean isDevelopment = environment.matchesProfiles("development");
+        return !securityEnabled && isDevelopment;
     }
 
 }

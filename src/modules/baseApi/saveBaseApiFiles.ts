@@ -1,16 +1,16 @@
 import path from 'path';
 import {RenderContext} from '../../interfaces/types';
 import {
-  COMMON_FILES,
-  CONFIG_FILES,
-  CONFIG_FILES_GRAALVM,
-  DIRECTORIES,
-  OBSERVABILITY_BINARY_FILES,
-  OBSERVABILITY_CONFIG_FILES,
-  OBSERVABILITY_CONFIG_FILES_GRAALVM,
-  OBSERVABILITY_YAML_CONFIG_FILES,
-  PROJECT_STRUCTURE_STYLE,
-  TEMPLATES,
+    COMMON_FILES,
+    CONFIG_FILES,
+    CONFIG_FILES_GRAALVM,
+    DIRECTORIES,
+    OBSERVABILITY_BINARY_FILES,
+    OBSERVABILITY_CONFIG_FILES,
+    OBSERVABILITY_CONFIG_FILES_GRAALVM,
+    OBSERVABILITY_YAML_CONFIG_FILES,
+    PROJECT_STRUCTURE_STYLE,
+    TEMPLATES,
 } from '../../utils/constants';
 import {capitalize} from '../../helper/stringHelper';
 import {renderTemplate} from '../common/renderTemplate';
@@ -143,6 +143,43 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: securityPath,
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+      // IAM User Profile — domain layer
+      {
+        output: path.join(domainPath, DIRECTORIES.MODELS),
+        template: TEMPLATES.IAM_USER_PROFILE_DOMAIN_MODEL,
+        name: COMMON_FILES.IAM_USER_PROFILE_DOMAIN_MODEL,
+      },
+      {
+        output: path.join(domainPath, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.IAM_USER_PROFILE_DOMAIN_REPOSITORY,
+        name: COMMON_FILES.IAM_USER_PROFILE_DOMAIN_REPOSITORY,
+      },
+      // IAM User Profile — infrastructure layer
+      {
+        output: path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.ENTITY),
+        template: TEMPLATES.IAM_USER_PROFILE_ENTITY,
+        name: COMMON_FILES.IAM_USER_PROFILE_ENTITY,
+      },
+      {
+        output: path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORY),
+        template: TEMPLATES.IAM_USER_PROFILE_ENTITY_REPOSITORY,
+        name: COMMON_FILES.IAM_USER_PROFILE_ENTITY_REPOSITORY,
+      },
+      {
+        output: path.join(infraPath, DIRECTORIES.PERSISTENCE, DIRECTORIES.REPOSITORYADAPTER),
+        template: TEMPLATES.IAM_USER_PROFILE_REPOSITORY_IMPL,
+        name: COMMON_FILES.IAM_USER_PROFILE_REPOSITORY_IMPL,
+      },
+      {
+        output: path.join(infraPath, 'mapper'),
+        template: TEMPLATES.IAM_USER_PROFILE_MAPPER,
+        name: COMMON_FILES.IAM_USER_PROFILE_MAPPER,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.IAM_USER_PROFILE_SYNC_FILTER,
+        name: COMMON_FILES.IAM_USER_PROFILE_SYNC_FILTER,
       },
       {
         output: exceptionsPath,
@@ -278,6 +315,22 @@ const generateBaseAPIFiles = (context: RenderContext): BASE_API_FILES => {
         output: securityPath,
         template: TEMPLATES.CONFIG_SECURITY,
         name: COMMON_FILES.APPLICATION_SECURITY,
+      },
+      // IAM User Profile — entity and JPA repo follow the model convention (models/{name}/)
+      {
+        output: path.join(mainPath, DIRECTORIES.MODELS, 'iamuserprofileentity'),
+        template: TEMPLATES.IAM_USER_PROFILE_ENTITY,
+        name: COMMON_FILES.IAM_USER_PROFILE_ENTITY,
+      },
+      {
+        output: path.join(mainPath, DIRECTORIES.MODELS, 'iamuserprofileentity'),
+        template: TEMPLATES.IAM_USER_PROFILE_ENTITY_REPOSITORY,
+        name: COMMON_FILES.IAM_USER_PROFILE_ENTITY_REPOSITORY,
+      },
+      {
+        output: securityPath,
+        template: TEMPLATES.IAM_USER_PROFILE_SYNC_FILTER,
+        name: COMMON_FILES.IAM_USER_PROFILE_SYNC_FILTER,
       },
       {
         output: exceptionPath,

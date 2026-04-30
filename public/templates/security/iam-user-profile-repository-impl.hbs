@@ -1,0 +1,40 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.models.IAMUserProfile;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.repository.IAMUserProfileRepository;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.infrastructure.mapper.IAMUserProfileMapper;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.infrastructure.persistence.repository.IAMUserProfileEntityRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+@Component
+public class IAMUserProfileRepositoryImpl implements IAMUserProfileRepository {
+
+    private final IAMUserProfileEntityRepository repository;
+    private final IAMUserProfileMapper mapper;
+
+    public IAMUserProfileRepositoryImpl(IAMUserProfileEntityRepository repository, IAMUserProfileMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
+
+    @Override
+    public IAMUserProfile save(IAMUserProfile userProfile) {
+        return mapper.toModel(repository.save(mapper.toEntity(userProfile)));
+    }
+
+    @Override
+    public Optional<IAMUserProfile> findBySub(String sub) {
+        return repository.findBySub(sub).map(mapper::toModel);
+    }
+
+    @Override
+    public List<IAMUserProfile> findBySubIn(Collection<String> subs) {
+        return repository.findBySubIn(subs).stream()
+            .map(mapper::toModel)
+            .toList();
+    }
+}

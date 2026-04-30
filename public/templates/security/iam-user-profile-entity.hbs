@@ -1,0 +1,58 @@
+{{> package-java }}
+
+import cv.igrp.framework.stereotype.IgrpEntity;
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.config.AuditEntity;
+{{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.config.AuditEntity;
+{{/if}}
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+{{#if baseConfig.enableEntityRevision}}
+import org.hibernate.envers.Audited;
+{{/if}}
+import lombok.*;
+
+import java.util.UUID;
+
+{{#if baseConfig.enableEntityRevision}}@Audited
+{{/if}}@Getter
+@Setter
+@IgrpEntity
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "t_iam_user_profile",
+    indexes = {
+        @Index(name = "idx_iam_user_profile_sub", columnList = "sub"),
+        @Index(name = "idx_iam_user_profile_username", columnList = "username"),
+        @Index(name = "idx_iam_user_profile_full_name", columnList = "full_name")
+    }
+)
+public class IAMUserProfileEntity extends AuditEntity {
+
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    private UUID id;
+
+    @NotBlank(message = "sub is mandatory")
+    @Column(name = "sub", unique = true, nullable = false)
+    private String sub;
+
+    @NotBlank(message = "username is mandatory")
+    @Column(name = "username", unique = true, nullable = false)
+    private String username;
+
+    @Column(name = "email", unique = true)
+    private String email;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+}

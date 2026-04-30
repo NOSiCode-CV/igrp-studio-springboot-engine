@@ -1,0 +1,165 @@
+{{> package-java }}
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.models.IAMUserProfile;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.repository.IAMUserProfileRepository;
+{{else}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.models.iamuserprofileentity.IAMUserProfileEntity;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.models.iamuserprofileentity.IAMUserProfileEntityRepository;
+{{/if}}
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+@Component
+public class IAMUserProfileSyncFilter extends OncePerRequestFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IAMUserProfileSyncFilter.class);
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+    private final IAMUserProfileRepository userProfileRepository;
+
+    public IAMUserProfileSyncFilter(IAMUserProfileRepository userProfileRepository) {
+        this.userProfileRepository = userProfileRepository;
+    }
+{{else}}
+    private final IAMUserProfileEntityRepository userProfileRepository;
+
+    public IAMUserProfileSyncFilter(IAMUserProfileEntityRepository userProfileRepository) {
+        this.userProfileRepository = userProfileRepository;
+    }
+{{/if}}
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+            Jwt jwt = jwtAuth.getToken();
+            String sub = jwt.getSubject();
+            try {
+                var existing = userProfileRepository.findBySub(sub);
+                if (existing.isEmpty()) {
+                    LOGGER.debug("Creating IAM user profile. sub={}", sub);
+                    userProfileRepository.save(buildProfile(jwt));
+                } else {
+                    buildUpdatedProfile(existing.get(), jwt).ifPresent(updated -> {
+                        LOGGER.debug("Updating IAM user profile. sub={}", sub);
+                        userProfileRepository.save(updated);
+                    });
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to sync IAM user profile. sub={}, error={}", sub, e.getMessage(), e);
+            }
+        }
+
+        chain.doFilter(request, response);
+    }
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+    private IAMUserProfile buildProfile(Jwt jwt) {
+        String sub = jwt.getSubject();
+        String username = resolveUsername(jwt);
+
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalStateException("Could not determine username from JWT claims. sub=" + sub);
+        }
+
+        return IAMUserProfile.builder()
+            .id(UUID.fromString(sub))
+            .sub(sub)
+            .username(username)
+            .email(jwt.getClaimAsString("email"))
+            .firstName(jwt.getClaimAsString("given_name"))
+            .lastName(jwt.getClaimAsString("family_name"))
+            .build();
+    }
+
+    private Optional<IAMUserProfile> buildUpdatedProfile(IAMUserProfile existing, Jwt jwt) {
+        String username = resolveUsername(jwt);
+        String email = jwt.getClaimAsString("email");
+        String firstName = jwt.getClaimAsString("given_name");
+        String lastName = jwt.getClaimAsString("family_name");
+
+        boolean changed = (StringUtils.hasText(username) && !username.equals(existing.getUsername()))
+            || !Objects.equals(email, existing.getEmail())
+            || !Objects.equals(firstName, existing.getFirstName())
+            || !Objects.equals(lastName, existing.getLastName());
+
+        if (!changed) return Optional.empty();
+
+        return Optional.of(IAMUserProfile.builder()
+            .id(existing.getId())
+            .sub(existing.getSub())
+            .username(StringUtils.hasText(username) ? username : existing.getUsername())
+            .email(email)
+            .firstName(firstName)
+            .lastName(lastName)
+            .build());
+    }
+{{else}}
+    private IAMUserProfileEntity buildProfile(Jwt jwt) {
+        String sub = jwt.getSubject();
+        String username = resolveUsername(jwt);
+
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalStateException("Could not determine username from JWT claims. sub=" + sub);
+        }
+
+        var entity = new IAMUserProfileEntity();
+        entity.setId(UUID.fromString(sub));
+        entity.setSub(sub);
+        entity.setUsername(username);
+        entity.setEmail(jwt.getClaimAsString("email"));
+        entity.setFirstName(jwt.getClaimAsString("given_name"));
+        entity.setLastName(jwt.getClaimAsString("family_name"));
+        return entity;
+    }
+
+    private Optional<IAMUserProfileEntity> buildUpdatedProfile(IAMUserProfileEntity existing, Jwt jwt) {
+        String username = resolveUsername(jwt);
+        String email = jwt.getClaimAsString("email");
+        String firstName = jwt.getClaimAsString("given_name");
+        String lastName = jwt.getClaimAsString("family_name");
+
+        boolean changed = (StringUtils.hasText(username) && !username.equals(existing.getUsername()))
+            || !Objects.equals(email, existing.getEmail())
+            || !Objects.equals(firstName, existing.getFirstName())
+            || !Objects.equals(lastName, existing.getLastName());
+
+        if (!changed) return Optional.empty();
+
+        var updated = new IAMUserProfileEntity();
+        updated.setId(existing.getId());
+        updated.setSub(existing.getSub());
+        updated.setUsername(StringUtils.hasText(username) ? username : existing.getUsername());
+        updated.setEmail(email);
+        updated.setFirstName(firstName);
+        updated.setLastName(lastName);
+        return Optional.of(updated);
+    }
+{{/if}}
+
+    private String resolveUsername(Jwt jwt) {
+        String preferred = jwt.getClaimAsString("preferred_username");
+        return StringUtils.hasText(preferred) ? preferred : jwt.getClaimAsString("email");
+    }
+}

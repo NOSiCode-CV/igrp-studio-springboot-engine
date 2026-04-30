@@ -1,0 +1,62 @@
+{{> package-java }}
+
+import lombok.Getter;
+
+import java.util.Objects;
+import java.util.UUID;
+
+@Getter
+public class IAMUserProfile {
+
+    private final UUID id;
+    private final String sub;
+    private final String username;
+    private final String email;
+    private final String firstName;
+    private final String lastName;
+    private final String fullName;
+
+    private IAMUserProfile(Builder builder) {
+        this.id = builder.id != null ? builder.id : UUID.randomUUID();
+        this.sub = Objects.requireNonNull(builder.sub, "sub cannot be null");
+        this.username = Objects.requireNonNull(builder.username, "username cannot be null");
+        this.email = builder.email;
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.fullName = resolveFullName(builder.fullName, builder.firstName, builder.lastName);
+    }
+
+    private static String resolveFullName(String fullName, String firstName, String lastName) {
+        if (fullName != null && !fullName.isBlank()) return fullName;
+        var sb = new StringBuilder();
+        if (firstName != null && !firstName.isBlank()) sb.append(firstName.strip());
+        if (lastName != null && !lastName.isBlank()) {
+            if (!sb.isEmpty()) sb.append(" ");
+            sb.append(lastName.strip());
+        }
+        return sb.isEmpty() ? null : sb.toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private UUID id;
+        private String sub;
+        private String username;
+        private String email;
+        private String firstName;
+        private String lastName;
+        private String fullName;
+
+        public Builder id(UUID id) { this.id = id; return this; }
+        public Builder sub(String sub) { this.sub = sub; return this; }
+        public Builder username(String username) { this.username = username; return this; }
+        public Builder email(String email) { this.email = email; return this; }
+        public Builder firstName(String firstName) { this.firstName = firstName; return this; }
+        public Builder lastName(String lastName) { this.lastName = lastName; return this; }
+        public Builder fullName(String fullName) { this.fullName = fullName; return this; }
+        public IAMUserProfile build() { return new IAMUserProfile(this); }
+    }
+}

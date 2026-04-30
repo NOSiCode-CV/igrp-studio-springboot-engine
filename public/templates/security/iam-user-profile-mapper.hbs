@@ -1,0 +1,33 @@
+{{> package-java }}
+
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.domain.models.IAMUserProfile;
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.infrastructure.persistence.entity.IAMUserProfileEntity;
+import org.springframework.stereotype.Component;
+
+@Component
+public class IAMUserProfileMapper {
+
+    public IAMUserProfile toModel(IAMUserProfileEntity entity) {
+        return IAMUserProfile.builder()
+            .id(entity.getId())
+            .sub(entity.getSub())
+            .username(entity.getUsername())
+            .email(entity.getEmail())
+            .firstName(entity.getFirstName())
+            .lastName(entity.getLastName())
+            .fullName(entity.getFullName())
+            .build();
+    }
+
+    public IAMUserProfileEntity toEntity(IAMUserProfile model) {
+        var entity = new IAMUserProfileEntity();
+        entity.setId(model.getId());
+        entity.setSub(model.getSub());
+        entity.setUsername(model.getUsername());
+        entity.setEmail(model.getEmail());
+        entity.setFirstName(model.getFirstName());
+        entity.setLastName(model.getLastName());
+        entity.setFullName(model.getFullName());
+        return entity;
+    }
+}

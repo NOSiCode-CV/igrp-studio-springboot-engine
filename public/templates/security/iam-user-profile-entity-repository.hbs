@@ -1,0 +1,28 @@
+{{> package-java }}
+
+{{#if (eq baseConfig.projectStructureStyle "domain")}}
+import {{baseConfig.group}}.{{baseConfig.packageName}}.shared.infrastructure.persistence.entity.IAMUserProfileEntity;
+{{/if}}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+{{#if baseConfig.enableEntityRevision}}
+import org.springframework.data.repository.history.RevisionRepository;
+{{/if}}
+import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface IAMUserProfileEntityRepository extends
+    JpaRepository<IAMUserProfileEntity, UUID>,
+    JpaSpecificationExecutor<IAMUserProfileEntity>{{#if baseConfig.enableEntityRevision}},
+    RevisionRepository<IAMUserProfileEntity, UUID, Integer>{{/if}} {
+
+    Optional<IAMUserProfileEntity> findBySub(String sub);
+
+    List<IAMUserProfileEntity> findBySubIn(Collection<String> subs);
+
+}
