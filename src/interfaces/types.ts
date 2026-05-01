@@ -126,6 +126,8 @@ export interface JavaAttribute {
    *  Holds the type of the referenced type's primary key (e.g. 'uuid').
    *  Used to generate ID-reference fields (categoryId, productIds) instead of object fields. */
   idType?: string;
+  /** Deprecation reason — generates @deprecated Javadoc and @deprecated SDL directive. */
+  deprecated?: string;
 }
 
 export interface DTOBaseConfig extends IdentifiableElement, VersionedConfig {
@@ -552,6 +554,9 @@ export interface GraphQLQuery {
   returnTypeRef?: string;               // references a graphqlType (e.g. 'Category')
   returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
   collectionType?: GraphQLCollectionType; // single (default) | list | paginated
+  filterRef?: string;                   // references a graphqlInput manifest used as filter
+  roles?: string[];                     // same as ControllerAction.roles — generates hasAnyRole(...)
+  permission?: PermissionsConfig;       // same as ControllerAction.permission — generates @igrpAuthorization.check*
 }
 
 export interface GraphQLMutation {
@@ -561,14 +566,23 @@ export interface GraphQLMutation {
   returnTypeRef?: string;               // references a graphqlType
   returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
   collectionType?: GraphQLCollectionType;
+  roles?: string[];                     // same as ControllerAction.roles
+  permission?: PermissionsConfig;       // same as ControllerAction.permission
+}
+
+export interface GraphQLSubscription {
+  name: string;
+  args?: GraphQLFieldDef[];
+  returnTypeRef?: string;
 }
 
 export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
   type: 'graphql';
   name: string;
   module?: string;
-  typeRef?: string;         // references a graphqlType manifest — source of type fields
-  inputRefs?: string[];     // references graphqlInput manifests used by mutations
+  typeRef?: string;              // references a graphqlType manifest — source of type fields
+  inputRefs?: string[];          // references graphqlInput manifests used by mutations
   queries?: GraphQLQuery[];
   mutations?: GraphQLMutation[];
+  subscriptions?: GraphQLSubscription[];
 }

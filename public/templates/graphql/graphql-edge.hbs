@@ -1,0 +1,25 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+{{{nodeTypeImport}}}
+
+public class {{connectionTypeName}}Edge {
+
+    private {{connectionTypeName}} node;
+    private String cursor;
+
+    public {{connectionTypeName}}Edge() {}
+
+    public {{connectionTypeName}}Edge({{connectionTypeName}} node, String cursor) {
+        this.node = node;
+        this.cursor = cursor;
+    }
+
+    public {{connectionTypeName}} getNode() { return node; }
+    public void setNode({{connectionTypeName}} node) { this.node = node; }
+
+    public String getCursor() { return cursor; }
+    public void setCursor(String cursor) { this.cursor = cursor; }
+}

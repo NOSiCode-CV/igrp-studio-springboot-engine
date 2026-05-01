@@ -7,13 +7,10 @@
 
 public record {{resourceConfig.name}}(
 {{#each resourceConfig.attributes}}
-{{#unless (eq this.objectType "graphqlType")}}
-    {{{resolve-type this}}} {{this.name}}{{#unless @last}},{{else}}{{#if (hasGraphQLTypeAttributes ../resourceConfig.attributes)}},{{/if}}{{/unless}}
-{{/unless}}
-{{/each}}
-{{#each resourceConfig.attributes}}
-{{#if (eq this.objectType "graphqlType")}}
-    /* ID for DataLoader - resolved lazily */ {{{graphqlRefIdType this}}} {{graphqlRefIdFieldName this}}{{#unless @last}},{{/unless}}
+{{#if this.deprecated}}
+    /* @deprecated {{this.deprecated}} */ {{{resolve-type this}}} {{this.name}}{{#unless @last}},{{/unless}}
+{{else}}
+    {{{resolve-type this}}} {{this.name}}{{#unless @last}},{{/unless}}
 {{/if}}
 {{/each}}
 ){}

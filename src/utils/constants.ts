@@ -67,6 +67,14 @@ export const DIRECTORIES = {
   CONFIG_GRAPHQL_TYPES: '.igrpstudio/{{module}}/graphql/types',
   GRAPHQL: 'graphql',
   GRAPHQL_TYPES: 'types',
+  GRAPHQL_TYPE: 'type',
+  GRAPHQL_INPUT: 'input',
+  GRAPHQL_CONNECTION: 'connection',
+  GRAPHQL_CONFIG: 'config',
+  GRAPHQL_EXCEPTION: 'exception',
+  GRAPHQL_INTERCEPTOR: 'interceptor',
+  GRAPHQL_INSTRUMENTATION: 'instrumentation',
+  GRAPHQL_SUBSCRIPTION: 'subscription',
 };
 
 export const PACKAGES = {
@@ -414,6 +422,23 @@ export const TEMPLATES = {
   GRAPHQL_DDD_QUERY_HANDLER: 'graphql/graphql-queryhandler-ddd.hbs',
   GRAPHQL_DDD_COMMAND: 'graphql/graphql-command-ddd.hbs',
   GRAPHQL_DDD_COMMAND_HANDLER: 'graphql/graphql-commandhandler-ddd.hbs',
+
+  // GRAPHQL infrastructure & pagination
+  GRAPHQL_COMMON: 'graphql/graphql-common.hbs',
+  GRAPHQL_CONFIG: 'graphql/graphql-config.hbs',
+  GRAPHQL_EXCEPTION_HANDLER: 'graphql/graphql-exception-handler.hbs',
+  GRAPHQL_CONNECTION: 'graphql/graphql-connection.hbs',
+  GRAPHQL_EDGE: 'graphql/graphql-edge.hbs',
+  GRAPHQL_CURSOR_UTILS: 'graphql/graphql-cursor-utils.hbs',
+  GRAPHQL_PAGINATION_UTILS: 'graphql/graphql-pagination-utils.hbs',
+  GRAPHQL_PAGE_INFO: 'graphql/graphql-page-info.hbs',
+  GRAPHQL_SORT_INPUT: 'graphql/graphql-sort-input.hbs',
+  GRAPHQL_PAGE_INPUT: 'graphql/graphql-page-input.hbs',
+
+  // GRAPHQL subscriptions
+  GRAPHQL_SUBSCRIPTION_CONTROLLER: 'graphql/graphql-subscription-controller.hbs',
+  GRAPHQL_EVENT_SERVICE: 'graphql/graphql-event-service.hbs',
+  GRAPHQL_EVENT_SERVICE_IMPL: 'graphql/graphql-event-service-impl.hbs',
 };
 
 export const CONFIG_FILES = [
@@ -1242,7 +1267,7 @@ export const GRAPHQL_SCALAR_TYPES: Map<string, string> = new Map([
   ['text',       'String'],
   ['char',       'String'],
   ['date',       'String'],
-  ['datetime',   'String'],
+  ['datetime',   'DateTime'],
   ['time',       'String'],
   ['instant',    'String'],
   ['uri',        'String'],
@@ -1251,12 +1276,12 @@ export const GRAPHQL_SCALAR_TYPES: Map<string, string> = new Map([
   ['file',       'String'],
   ['integer',    'Int'],
   ['int',        'Int'],
-  ['long',       'Int'],
+  ['long',       'Long'],
   ['short',      'Int'],
   ['float',      'Float'],
   ['double',     'Float'],
-  ['decimal',    'Float'],
-  ['bigdecimal', 'Float'],
+  ['decimal',    'BigDecimal'],
+  ['bigdecimal', 'BigDecimal'],
   ['boolean',    'Boolean'],
   ['uuid',       'ID'],
 ]);

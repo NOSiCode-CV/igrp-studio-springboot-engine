@@ -1,0 +1,20 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* THIS FILE IS GENERATED ONCE — ADD YOUR BUSINESS LOGIC HERE */
+
+{{> package-java }}
+
+import graphql.GraphQLError;
+import graphql.schema.DataFetchingEnvironment;
+import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter;
+import org.springframework.stereotype.Component;
+
+@Component
+public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter {
+
+    @Override
+    protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
+        // TODO: map domain exceptions to typed GraphQL errors
+        // Example: if (ex instanceof EntityNotFoundException) return GraphqlErrorBuilder.newError()...
+        return null; // null → Spring uses the default handler
+    }
+}

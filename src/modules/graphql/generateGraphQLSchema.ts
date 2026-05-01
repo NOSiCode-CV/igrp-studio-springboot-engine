@@ -1,17 +1,19 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {ApiConfig, DTOConfig, GraphQLFieldDef, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
+import {ApiConfig, DTOConfig, GraphQLFieldDef, GraphQLSchemaConfig, GraphQLSubscription, RenderContext} from '../../interfaces/types';
 import {DIRECTORIES, EXTENSIONS, GENERIC_TYPES, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
 import {renderTemplate} from '../common/renderTemplate';
 import {saveToFile} from '../common/saveToFile';
 import {saveGraphQLConfig} from './saveGraphQLConfig';
 import {getGraphQLTypeConfigPath, getMainPath, replaceTemplate} from '../../utils/helpers';
 import {capitalizeJavaStyle} from '../../helper/stringHelper';
+import {normalizeName} from '../dto/saveDTOConfig';
 import {
     resolveGraphQLAttributeType,
     resolveGraphQLScalar,
     resolveJavaReturnType,
-    resolveJavaTypeForGraphQL
+    resolveJavaTypeForGraphQL,
+    resolveSubscriptionJavaReturnType,
 } from '../../helper/graphqlHelper';
 
 // ─── Manifest loaders ────────────────────────────────────────────────────────
@@ -19,25 +21,33 @@ import {
 /**
  * Loads a graphqlType or graphqlInput manifest from
  * .igrpstudio/<module>/graphql/types/<name>.json
+ * Tries the raw name first, then the Input-normalized form (e.g. OrderFilter → OrderFilterInput).
  */
 const loadGraphQLTypeManifest = async (
   name: string,
   module: string,
   basePath: string,
 ): Promise<DTOConfig> => {
-  const configPath = path.join(
-    basePath,
-    replaceTemplate(DIRECTORIES.CONFIG_GRAPHQL_TYPES, { module }),
-    `${name}${EXTENSIONS.JSON}`,
-  );
+  const dir = path.join(basePath, replaceTemplate(DIRECTORIES.CONFIG_GRAPHQL_TYPES, { module }));
 
-  if (!(await fs.pathExists(configPath))) {
-    throw new Error(
-      `GraphQL type manifest not found for '${name}' in module '${module}'. Expected at: ${configPath}`,
-    );
+  // Try exact name (graphqlType convention)
+  const directPath = path.join(dir, `${name}${EXTENSIONS.JSON}`);
+  if (await fs.pathExists(directPath)) {
+    return fs.readJSON(directPath) as Promise<DTOConfig>;
   }
 
-  return fs.readJSON(configPath) as Promise<DTOConfig>;
+  // Try Input-normalized name (graphqlInput convention: saveDTOConfig appends 'Input')
+  const inputNormalized = normalizeName(name, 'graphqlInput');
+  if (inputNormalized !== name) {
+    const inputPath = path.join(dir, `${inputNormalized}${EXTENSIONS.JSON}`);
+    if (await fs.pathExists(inputPath)) {
+      return fs.readJSON(inputPath) as Promise<DTOConfig>;
+    }
+  }
+
+  throw new Error(
+    `GraphQL type manifest not found for '${name}' in module '${module}'. Expected at: ${directPath}`,
+  );
 };
 
 /**
@@ -134,10 +144,13 @@ const getPageTypeFilePath = (context: RenderContext<GraphQLSchemaConfig>, pageNa
 
 // ─── Context enrichment ───────────────────────────────────────────────────────
 
+export type ConnectionManifest = { typeName: string };
+
 export type EnrichedGraphQLContext = RenderContext<GraphQLSchemaConfig> & {
-  resolvedTypeManifest?: DTOConfig;    // graphqlType manifest (from typeRef)
-  resolvedInputManifests: DTOConfig[]; // graphqlInput manifests (from inputRefs)
-  pageManifest?: DTOConfig;            // auto-generated Page manifest when collectionType 'paginated' is used
+  resolvedTypeManifest?: DTOConfig;      // graphqlType manifest (from typeRef)
+  resolvedInputManifests: DTOConfig[];   // graphqlInput manifests (from inputRefs)
+  pageManifest?: DTOConfig;              // kept for legacy — replaced by connectionManifest
+  connectionManifest?: ConnectionManifest; // Relay Connection type info for paginated queries
   resolveGraphQLScalar: (t: string) => string;
   resolveJavaType: (t: string) => string;
 };
@@ -161,21 +174,20 @@ export const enrichGraphQLContext = async (
     resolvedInputManifests.push(manifest);
   }
 
-  // Detect if any operation uses collectionType 'paginated' — auto-create Page manifest
+  // Detect if any operation uses collectionType 'paginated' — build Connection manifest
   const allOps = [...(resourceConfig.queries ?? []), ...(resourceConfig.mutations ?? [])];
   const hasPaginated = allOps.some((op) => op.collectionType === 'paginated');
 
-  let pageManifest: DTOConfig | undefined;
+  let connectionManifest: ConnectionManifest | undefined;
   if (hasPaginated && resolvedTypeManifest) {
-    const pageName = `${resolvedTypeManifest.name}Page`;
-    pageManifest = await savePageManifest(pageName, resolvedTypeManifest.name, module, basePath);
+    connectionManifest = { typeName: resolvedTypeManifest.name };
   }
 
   return {
     ...context,
     resolvedTypeManifest,
     resolvedInputManifests,
-    pageManifest,
+    connectionManifest,
     resolveGraphQLScalar,
     resolveJavaType: resolveJavaTypeForGraphQL,
   };
@@ -188,6 +200,9 @@ export const generateGraphQLSchema = async (context: RenderContext<GraphQLSchema
 
   // 1. Save manifest — always first
   await saveGraphQLConfig(context.resourceConfig, context.basePath);
+
+  // 1b. common.graphqls — generated once per project (scalars, Node, PageInfo, SortInput, PageInput)
+  await generateCommonSchema(enriched);
 
   // 2. .graphqls schema file — always regenerated
   await generateSchemaFile(enriched);
@@ -206,19 +221,37 @@ export const generateGraphQLSchema = async (context: RenderContext<GraphQLSchema
 
     // 4b. Technical: service implementation — generated once
     await generateServiceImplFile(enriched);
+
+    // 4c. Infrastructure one-time files (GraphQLConfig + GraphQLExceptionHandler)
+    await generateGraphQLConfig(enriched);
+    await generateExceptionHandler(enriched);
+  } else {
+    // Domain: infrastructure one-time files at project root (different paths)
+    await generateGraphQLConfig(enriched);
+    await generateExceptionHandler(enriched);
   }
 
-  // 5. Page type class — always regenerated when paginated ops exist
-  if (enriched.pageManifest) {
-    await generatePageTypeFile(enriched);
+  // 5. Connection + Edge classes — always regenerated when paginated ops exist
+  if (enriched.connectionManifest) {
+    await generatePageInfoClass(enriched);
+    await generateSortInputClass(enriched);
+    await generatePageInputClass(enriched);
+    await generateConnectionFile(enriched);
+    await generateEdgeFile(enriched);
+    await generateCursorUtils(enriched);
+    await generatePaginationUtils(enriched);
   }
-
-  // DataLoader class generation intentionally omitted — the DataLoader pattern is
-  // embedded directly in the resolver's @SchemaMapping methods using loadMany/load.
 
   // 6. DDD handlers — only for domain-driven projects
   if (isDomain) {
     await generateDDDHandlers(enriched);
+  }
+
+  // 7. Subscription files — when subscriptions declared
+  if ((context.resourceConfig.subscriptions ?? []).length > 0) {
+    await generateSubscriptionController(enriched);
+    await generateEventService(enriched);
+    await generateEventServiceImpl(enriched);
   }
 };
 
@@ -341,9 +374,21 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
     const argsImports = buildArgsImports(query.args ?? []);
     const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
 
+    const filterRefImport = query.filterRef
+      ? `import ${baseConfig.group}.${baseConfig.packageName}.${module}.interfaces.graphql.types.${query.filterRef};`
+      : '';
+    const paginatedImports = query.collectionType === 'paginated'
+      ? `import ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.SortInput;\nimport ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.PageInput;`
+      : '';
+
     await fs.ensureDir(queryDir);
 
-    const queryCtx = { ...context, fullPath: queryDir, operationName, args: query.args ?? [], argsImports };
+    const queryCtx = {
+      ...context, fullPath: queryDir, operationName,
+      args: query.args ?? [], argsImports,
+      filterRef: query.filterRef, collectionType: query.collectionType,
+      filterRefImport, paginatedImports,
+    };
     const queryContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_QUERY, queryCtx);
     await saveToFile(queryContent, path.join(queryDir, `${operationName}Query.java`), true);
 
@@ -417,5 +462,216 @@ const buildReturnTypeImport = (returnJavaType: string, module: string, baseConfi
   if (javaBuiltins.has(returnJavaType)) return '';
   if (returnJavaType === 'UUID') return 'import java.util.UUID;';
 
+  // *Connection types live in .interfaces.graphql.connection, not .types
+  if (returnJavaType.endsWith('Connection')) {
+    const pkg = `${baseConfig.group}.${baseConfig.packageName}`;
+    return `import ${pkg}.${module}.interfaces.graphql.connection.${returnJavaType};`;
+  }
+
   return buildGraphQLTypeImport(returnJavaType, module, baseConfig);
+};
+
+// ─── common.graphqls (one-time) ──────────────────────────────────────────────
+
+const generateCommonSchema = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const outputPath = path.join(context.basePath, 'src/main/resources/graphql', 'common.graphqls');
+  if (await fs.pathExists(outputPath)) return;
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_COMMON, context);
+  await fs.ensureDir(path.dirname(outputPath));
+  await fs.writeFile(outputPath, content, 'utf-8');
+};
+
+// ─── Infrastructure one-time files ───────────────────────────────────────────
+
+const getGraphQLConfigFilePath = (context: EnrichedGraphQLContext): string => {
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    return path.join(mainPath, DIRECTORIES.GRAPHQL_CONFIG, 'GraphQLConfig.java');
+  }
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_CONFIG, 'GraphQLConfig.java');
+};
+
+const getExceptionHandlerFilePath = (context: EnrichedGraphQLContext): string => {
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_EXCEPTION, 'GraphQLExceptionHandler.java');
+  }
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_CONFIG, 'GraphQLExceptionHandler.java');
+};
+
+const generateGraphQLConfig = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const outputPath = getGraphQLConfigFilePath(context);
+  if (await fs.pathExists(outputPath)) return;
+  context.fullPath = path.dirname(outputPath);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_CONFIG, context);
+  await saveToFile(content, outputPath, false);
+};
+
+const generateExceptionHandler = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const outputPath = getExceptionHandlerFilePath(context);
+  if (await fs.pathExists(outputPath)) return;
+  context.fullPath = path.dirname(outputPath);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_EXCEPTION_HANDLER, context);
+  await saveToFile(content, outputPath, false);
+};
+
+// ─── Relay Cursor Pagination ──────────────────────────────────────────────────
+
+const getConnectionDir = (context: EnrichedGraphQLContext): string => {
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+    return path.join(mainPath, module, DIRECTORIES.INTERFACE, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_CONNECTION);
+  }
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_CONNECTION);
+};
+
+const getSharedGraphQLDir = (context: EnrichedGraphQLContext): string => {
+  // CursorUtils + PaginationUtils go to shared graphql/connection regardless of style
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_CONNECTION);
+};
+
+const generateConnectionFile = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const typeName = context.connectionManifest!.typeName;
+  const dir = getConnectionDir(context);
+  await fs.ensureDir(dir);
+  const isDomain = context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const pkg = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
+  // PageInfo lives in the shared graphql.connection package — import needed only when connection is in a different package (domain style)
+  const pageInfoImport = isDomain ? `import ${pkg}.graphql.connection.PageInfo;` : '';
+  const ctx = { ...context, fullPath: dir, connectionTypeName: typeName, pageInfoImport };
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_CONNECTION, ctx);
+  await saveToFile(content, path.join(dir, `${typeName}Connection.java`), true);
+};
+
+const generateEdgeFile = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const typeName = context.connectionManifest!.typeName;
+  const dir = getConnectionDir(context);
+  await fs.ensureDir(dir);
+  const isDomain = context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const pkg = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
+  const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+  const nodeTypeImport = isDomain
+    ? `import ${pkg}.${module}.interfaces.graphql.types.${typeName};`
+    : `import ${pkg}.graphql.types.${typeName};`;
+  const ctx = { ...context, fullPath: dir, connectionTypeName: typeName, nodeTypeImport };
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_EDGE, ctx);
+  await saveToFile(content, path.join(dir, `${typeName}Edge.java`), true);
+};
+
+const generateCursorUtils = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const dir = getSharedGraphQLDir(context);
+  const outputPath = path.join(dir, 'CursorUtils.java');
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(dir);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_CURSOR_UTILS, { ...context, fullPath: dir });
+  await saveToFile(content, outputPath, false);
+};
+
+const generatePaginationUtils = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const dir = getSharedGraphQLDir(context);
+  const outputPath = path.join(dir, 'PaginationUtils.java');
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(dir);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_PAGINATION_UTILS, { ...context, fullPath: dir });
+  await saveToFile(content, outputPath, false);
+};
+
+const generatePageInfoClass = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const dir = getSharedGraphQLDir(context);
+  const outputPath = path.join(dir, 'PageInfo.java');
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(dir);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_PAGE_INFO, { ...context, fullPath: dir });
+  await saveToFile(content, outputPath, false);
+};
+
+const generateSortInputClass = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const dir = getSharedGraphQLDir(context);
+  const outputPath = path.join(dir, 'SortInput.java');
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(dir);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_SORT_INPUT, { ...context, fullPath: dir });
+  await saveToFile(content, outputPath, false);
+};
+
+const generatePageInputClass = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const dir = getSharedGraphQLDir(context);
+  const outputPath = path.join(dir, 'PageInput.java');
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(dir);
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_PAGE_INPUT, { ...context, fullPath: dir });
+  await saveToFile(content, outputPath, false);
+};
+
+// ─── Subscriptions ────────────────────────────────────────────────────────────
+
+const getSubscriptionDir = (context: EnrichedGraphQLContext): string => {
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+    return path.join(mainPath, module, DIRECTORIES.INTERFACE, DIRECTORIES.GRAPHQL, DIRECTORIES.GRAPHQL_SUBSCRIPTION);
+  }
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, context.resourceConfig.name.toLowerCase(), DIRECTORIES.GRAPHQL_SUBSCRIPTION);
+};
+
+const getEventServiceDir = (context: EnrichedGraphQLContext): string => {
+  const mainPath = path.join(context.basePath, getMainPath(context.baseConfig.group, context.baseConfig.packageName));
+  if (context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN) {
+    const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+    return path.join(mainPath, module, DIRECTORIES.APPLICATION, 'event');
+  }
+  return path.join(mainPath, DIRECTORIES.GRAPHQL, context.resourceConfig.name.toLowerCase(), DIRECTORIES.GRAPHQL_SUBSCRIPTION);
+};
+
+const buildSubscriptionImportContext = (context: EnrichedGraphQLContext): { typeClassImport: string; argsImports: string; eventServiceImport: string } => {
+  const typeName = context.resolvedTypeManifest?.name ?? capitalizeJavaStyle(context.resourceConfig.name);
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  const pkg = `${context.baseConfig.group}.${context.baseConfig.packageName}`;
+  const isDomain = context.baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
+  const module = (context.resourceConfig.module ?? DIRECTORIES.SHARED).toLowerCase();
+
+  const typeClassImport = isDomain
+    ? `import ${pkg}.${module}.interfaces.graphql.types.${typeName};`
+    : `import ${pkg}.graphql.types.${typeName};`;
+
+  // Impl always needs import (it's in a .impl sub-package). Controller needs it only for domain (different package from interface).
+  const eventServiceImport = isDomain
+    ? `import ${pkg}.${module}.application.event.${name}EventService;`
+    : `import ${pkg}.graphql.${context.resourceConfig.name.toLowerCase()}.subscription.${name}EventService;`;
+
+  const allSubArgs = (context.resourceConfig.subscriptions ?? []).flatMap((s) => s.args ?? []);
+  const argsImports = buildArgsImports(allSubArgs);
+  return { typeClassImport, argsImports, eventServiceImport };
+};
+
+const generateSubscriptionController = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  const dir = getSubscriptionDir(context);
+  await fs.ensureDir(dir);
+  const ctx = { ...context, fullPath: dir, ...buildSubscriptionImportContext(context) };
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_SUBSCRIPTION_CONTROLLER, ctx);
+  await saveToFile(content, path.join(dir, `${name}SubscriptionController.java`), true);
+};
+
+const generateEventService = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  const dir = getEventServiceDir(context);
+  await fs.ensureDir(dir);
+  const ctx = { ...context, fullPath: dir, ...buildSubscriptionImportContext(context) };
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_EVENT_SERVICE, ctx);
+  await saveToFile(content, path.join(dir, `${name}EventService.java`), true);
+};
+
+const generateEventServiceImpl = async (context: EnrichedGraphQLContext): Promise<void> => {
+  const name = capitalizeJavaStyle(context.resourceConfig.name);
+  const implDir = path.join(getEventServiceDir(context), 'impl');
+  const outputPath = path.join(implDir, `${name}EventServiceImpl.java`);
+  if (await fs.pathExists(outputPath)) return;
+  await fs.ensureDir(implDir);
+  const ctx = { ...context, fullPath: implDir, ...buildSubscriptionImportContext(context) };
+  const content = await renderTemplate(TEMPLATES.GRAPHQL_EVENT_SERVICE_IMPL, ctx);
+  await saveToFile(content, outputPath, false);
 };

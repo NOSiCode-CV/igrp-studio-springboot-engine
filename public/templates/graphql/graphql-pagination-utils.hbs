@@ -1,0 +1,46 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* THIS FILE IS GENERATED ONCE — DO NOT MODIFY */
+
+{{> package-java }}
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+public final class PaginationUtils {
+
+    private PaginationUtils() {}
+
+    /**
+     * Builds a Relay Connection from a page of items.
+     *
+     * @param items      full list of items in this page
+     * @param offset     0-based offset of the first item in the full dataset
+     * @param totalCount total number of items in the dataset
+     * @param toEdge     function that converts (item, cursor) → Edge
+     */
+    public static <T, E> PageInfo buildPageInfo(
+            List<T> items,
+            long offset,
+            long totalCount,
+            Function<T, String> cursorFn,
+            Function<Object[], E> edgeFn,
+            List<E> edgesOut) {
+
+        String startCursor = null;
+        String endCursor = null;
+
+        for (int i = 0; i < items.size(); i++) {
+            T item = items.get(i);
+            String cursor = CursorUtils.encode(offset + i);
+            if (i == 0) startCursor = cursor;
+            endCursor = cursor;
+            // edgesOut is filled by the caller — keep signature generic
+        }
+
+        boolean hasPreviousPage = offset > 0;
+        boolean hasNextPage = (offset + items.size()) < totalCount;
+
+        return new PageInfo(hasNextPage, hasPreviousPage, startCursor, endCursor);
+    }
+}

@@ -3,6 +3,35 @@ import {ValidateFunction} from 'ajv';
 import {GraphQLSchemaConfig} from '../interfaces/types';
 import {PATTERNS} from '../utils/constants';
 
+// Reused from controllerConfig — same structure for @PreAuthorize generation
+const permissionSchema = {
+  type: 'object',
+  nullable: true,
+  properties: {
+    items: {
+      type: 'array',
+      items: { type: 'string' },
+      minItems: 1,
+      errorMessage: "The 'permission.items' field must be a non-empty array of strings",
+    },
+    operator: {
+      type: 'string',
+      enum: ['AND', 'OR'],
+      nullable: true,
+      errorMessage: "The 'permission.operator' must be 'AND' or 'OR' if provided",
+    },
+  },
+  required: ['items'],
+  additionalProperties: false,
+};
+
+const rolesSchema = {
+  type: 'array',
+  nullable: true,
+  items: { type: 'string' },
+  errorMessage: "The 'roles' field must be an array of strings",
+};
+
 const graphQLFieldDefSchema = {
   type: 'object',
   properties: {
@@ -61,6 +90,14 @@ const graphQLQuerySchema = {
       nullable: true,
       errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
     },
+    filterRef: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The 'filterRef' field, if provided, must follow the naming convention.",
+    },
+    roles: rolesSchema,
+    permission: permissionSchema,
   },
   required: ['name'],
   additionalProperties: false,
@@ -107,12 +144,43 @@ const graphQLMutationSchema = {
       nullable: true,
       errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
     },
+    roles: rolesSchema,
+    permission: permissionSchema,
   },
   required: ['name'],
   additionalProperties: false,
   errorMessage: {
     required: { name: 'The mutation name is required.' },
     additionalProperties: 'No additional properties are allowed in a mutation definition.',
+  },
+};
+
+const graphQLSubscriptionSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      errorMessage: 'The subscription name must follow the naming convention and cannot be empty.',
+    },
+    args: {
+      type: 'array',
+      items: graphQLFieldDefSchema,
+      nullable: true,
+      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
+    },
+    returnTypeRef: {
+      type: 'string',
+      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
+      nullable: true,
+      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
+    },
+  },
+  required: ['name'],
+  additionalProperties: false,
+  errorMessage: {
+    required: { name: 'The subscription name is required.' },
+    additionalProperties: 'No additional properties are allowed in a subscription definition.',
   },
 };
 
@@ -169,6 +237,12 @@ const graphQLSchemaConfigSchema: any = {
       items: graphQLMutationSchema,
       nullable: true,
       errorMessage: "The 'mutations' field, if provided, must be an array of mutation definitions.",
+    },
+    subscriptions: {
+      type: 'array',
+      items: graphQLSubscriptionSchema,
+      nullable: true,
+      errorMessage: "The 'subscriptions' field, if provided, must be an array of subscription definitions.",
     },
   },
   required: ['type', 'name'],

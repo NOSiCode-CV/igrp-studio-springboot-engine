@@ -1,0 +1,31 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
+{{{typeClassImport}}}
+{{{eventServiceImport}}}
+{{#if argsImports}}{{{argsImports}}}
+{{/if}}
+
+@Controller
+public class {{capitalize resourceConfig.name}}SubscriptionController {
+
+    private final {{capitalize resourceConfig.name}}EventService {{toCamelCase resourceConfig.name}}EventService;
+
+    public {{capitalize resourceConfig.name}}SubscriptionController({{capitalize resourceConfig.name}}EventService {{toCamelCase resourceConfig.name}}EventService) {
+        this.{{toCamelCase resourceConfig.name}}EventService = {{toCamelCase resourceConfig.name}}EventService;
+    }
+
+{{#each resourceConfig.subscriptions}}
+    @SubscriptionMapping
+    public Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}({{#each this.args}}@Argument {{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+        return {{toCamelCase ../resourceConfig.name}}EventService.{{this.name}}Stream({{#each this.args}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+    }
+
+{{/each}}
+}

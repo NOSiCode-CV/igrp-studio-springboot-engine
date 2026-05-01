@@ -5,7 +5,8 @@ import {
     GraphQLCollectionType,
     GraphQLMutation,
     GraphQLQuery,
-    GraphQLSchemaConfig
+    GraphQLSchemaConfig,
+    GraphQLSubscription,
 } from '../interfaces/types';
 import {capitalizeJavaStyle} from './stringHelper';
 
@@ -32,7 +33,6 @@ export function graphqlImportsTypes(
   baseConfig: ApiConfig,
   resolvedTypeManifest?: DTOConfig,
   resolvedInputManifests?: DTOConfig[],
-  pageManifest?: DTOConfig,
 ): string {
   const imports = new Set<string>();
   const packageSource = `${baseConfig.group}.${baseConfig.packageName}`;
@@ -59,6 +59,19 @@ export function graphqlImportsTypes(
     imports.add('import java.util.List;');
   }
 
+  // Paginated operations — import Connection, SortInput, PageInput
+  if (allOps.some((op) => op.collectionType === 'paginated')) {
+    const sharedPkg = `${packageSource}.graphql.connection`;
+    imports.add(`import ${sharedPkg}.SortInput;`);
+    imports.add(`import ${sharedPkg}.PageInput;`);
+    if (resolvedTypeManifest) {
+      const connPkg = isDomain
+        ? `${packageSource}.${schemaModule}.interfaces.graphql.connection`
+        : sharedPkg;
+      imports.add(`import ${connPkg}.${resolvedTypeManifest.name}Connection;`);
+    }
+  }
+
   // Main type import
   if (resolvedTypeManifest) {
     imports.add(graphqlTypeImport(packageSource, resolvedTypeManifest.name, schemaModule, isDomain));
@@ -73,11 +86,9 @@ export function graphqlImportsTypes(
       imports.add(graphqlTypeImport(packageSource, String(attr.type), attrModule, isDomain));
     }
 
-    // CompletableFuture + DataLoader imports when @SchemaMapping methods are generated
+    // Map + List imports for @BatchMapping return types
     if (graphqlTypeAttrs.length > 0) {
-      imports.add('import java.util.concurrent.CompletableFuture;');
-      imports.add('import org.dataloader.DataLoader;');
-      // java.util.List needed for list @SchemaMapping return types
+      imports.add('import java.util.Map;');
       if (graphqlTypeAttrs.some((a) => a.collectionType === 'list')) {
         imports.add('import java.util.List;');
       }
@@ -87,11 +98,6 @@ export function graphqlImportsTypes(
   // Input type imports
   for (const input of resolvedInputManifests ?? []) {
     imports.add(graphqlTypeImport(packageSource, input.name, schemaModule, isDomain));
-  }
-
-  // Page type import
-  if (pageManifest) {
-    imports.add(graphqlTypeImport(packageSource, pageManifest.name, schemaModule, isDomain));
   }
 
   return [...imports].join('\n');
@@ -155,7 +161,6 @@ export function graphqlImportsTypesService(
   baseConfig: ApiConfig,
   resolvedTypeManifest?: DTOConfig,
   resolvedInputManifests?: DTOConfig[],
-  pageManifest?: DTOConfig,
 ): string {
   const imports = new Set<string>();
   const packageSource = `${baseConfig.group}.${baseConfig.packageName}`;
@@ -180,16 +185,25 @@ export function graphqlImportsTypesService(
     imports.add('import java.util.List;');
   }
 
+  // Paginated operations — import Connection, SortInput, PageInput
+  if (allOps.some((op) => op.collectionType === 'paginated')) {
+    const sharedPkg = `${packageSource}.graphql.connection`;
+    imports.add(`import ${sharedPkg}.SortInput;`);
+    imports.add(`import ${sharedPkg}.PageInput;`);
+    if (resolvedTypeManifest) {
+      const connPkg = isDomain
+        ? `${packageSource}.${schemaModule}.interfaces.graphql.connection`
+        : sharedPkg;
+      imports.add(`import ${connPkg}.${resolvedTypeManifest.name}Connection;`);
+    }
+  }
+
   if (resolvedTypeManifest) {
     imports.add(graphqlTypeImport(packageSource, resolvedTypeManifest.name, schemaModule, isDomain));
   }
 
   for (const input of resolvedInputManifests ?? []) {
     imports.add(graphqlTypeImport(packageSource, input.name, schemaModule, isDomain));
-  }
-
-  if (pageManifest) {
-    imports.add(graphqlTypeImport(packageSource, pageManifest.name, schemaModule, isDomain));
   }
 
   return [...imports].join('\n');
@@ -301,8 +315,69 @@ export function resolveJavaReturnType(
     case 'list':
       return `List<${typeName}>`;
     case 'paginated':
-      return `${schemaName}Page`;
+      return `${schemaName}Connection`;
     default:
       return typeName;
+  }
+}
+
+/**
+ * Returns true if the type manifest has an 'id' attribute — used to add `implements Node` in SDL.
+ */
+export function typeImplementsNode(manifest: DTOConfig | undefined): boolean {
+  if (!manifest) return false;
+  return (manifest.attributes ?? []).some((a) => a.name === 'id');
+}
+
+/**
+ * Maps a security role string to a Spring @PreAuthorize expression.
+ */
+export function resolvePreAuthorize(security: string): string {
+  switch (security) {
+    case 'ADMIN':
+      return `@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")`;
+    case 'EDITOR':
+      return `@org.springframework.security.access.prepost.PreAuthorize("hasRole('EDITOR') or hasRole('ADMIN')")`;
+    case 'USER':
+      return `@org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")`;
+    default:
+      return '';
+  }
+}
+
+/**
+ * Resolves the return type string for a subscription in the .graphqls file.
+ */
+export function resolveSubscriptionReturnType(
+  sub: GraphQLSubscription,
+  schemaName: string,
+): string {
+  return sub.returnTypeRef ?? schemaName;
+}
+
+/**
+ * Resolves the Java return type for a subscription (always single type for Flux).
+ */
+export function resolveSubscriptionJavaReturnType(
+  sub: GraphQLSubscription,
+  schemaName: string,
+): string {
+  return sub.returnTypeRef ?? schemaName;
+}
+
+/**
+ * Resolves the SDL return type for a GraphQL query or mutation, now using Connection for paginated.
+ */
+export function resolveGraphQLReturnTypeV2(
+  operation: GraphQLQuery | GraphQLMutation,
+  schemaName: string,
+): string {
+  if (operation.returnType) return operation.returnType;
+  const typeName = operation.returnTypeRef ?? schemaName;
+  const collectionType: GraphQLCollectionType = operation.collectionType ?? 'single';
+  switch (collectionType) {
+    case 'list':      return `[${typeName}!]!`;
+    case 'paginated': return `${typeName}Connection!`;
+    default:          return typeName;
   }
 }

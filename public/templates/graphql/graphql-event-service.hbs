@@ -1,0 +1,18 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import reactor.core.publisher.Flux;
+{{{typeClassImport}}}
+{{#if argsImports}}{{{argsImports}}}
+{{/if}}
+public interface {{capitalize resourceConfig.name}}EventService {
+
+{{#each resourceConfig.subscriptions}}
+    void publish{{capitalize this.name}}({{resolveSubscriptionJavaReturnType this ../resourceConfig.name}} payload);
+
+    Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}Stream({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+
+{{/each}}
+}

@@ -1,0 +1,41 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import graphql.scalars.ExtendedScalars;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.graphql.execution.RuntimeWiringConfigurer;
+import graphql.analysis.MaxQueryDepthInstrumentation;
+import graphql.analysis.MaxQueryComplexityInstrumentation;
+import graphql.execution.instrumentation.Instrumentation;
+import org.springframework.beans.factory.annotation.Value;
+
+@Configuration
+public class GraphQLConfig {
+
+    @Bean
+    public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+        return builder -> builder
+            .scalar(ExtendedScalars.DateTime)
+            .scalar(ExtendedScalars.GraphQLBigDecimal)
+            .scalar(ExtendedScalars.GraphQLLong)
+            .type("Node", wiring -> wiring.typeResolver(env -> {
+                // TypeResolver for Node interface — add known types here as the project grows
+                return null;
+            }));
+    }
+
+    @Bean
+    public Instrumentation maxQueryDepthInstrumentation(
+            @Value("${spring.graphql.schema.introspection.enabled:true}") boolean introspection) {
+        return new MaxQueryDepthInstrumentation(introspection ? 25 : 10);
+    }
+
+    @Bean
+    public Instrumentation maxQueryComplexityInstrumentation(
+            @Value("${spring.graphql.schema.introspection.enabled:true}") boolean introspection) {
+        return new MaxQueryComplexityInstrumentation(introspection ? 1000 : 200);
+    }
+}

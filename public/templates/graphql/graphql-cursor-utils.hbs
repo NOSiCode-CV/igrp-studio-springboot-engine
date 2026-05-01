@@ -1,0 +1,27 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* THIS FILE IS GENERATED ONCE — DO NOT MODIFY */
+
+{{> package-java }}
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+public final class CursorUtils {
+
+    private static final String PREFIX = "cursor:";
+
+    private CursorUtils() {}
+
+    public static String encode(long offset) {
+        return Base64.getEncoder().encodeToString((PREFIX + offset).getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static long decode(String cursor) {
+        try {
+            String decoded = new String(Base64.getDecoder().decode(cursor), StandardCharsets.UTF_8);
+            return Long.parseLong(decoded.substring(PREFIX.length()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid cursor: " + cursor, e);
+        }
+    }
+}

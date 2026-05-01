@@ -115,6 +115,11 @@ const attributeSchema: JSONSchemaType<JavaAttribute> = {
       nullable: true,
       errorMessage: 'The idType, if provided, must be a string.',
     },
+    deprecated: {
+      type: 'string',
+      nullable: true,
+      errorMessage: 'The deprecated field, if provided, must be a string (the deprecation reason).',
+    },
   },
   required: ['type', 'name', 'objectType', 'required'],
   additionalProperties: false,

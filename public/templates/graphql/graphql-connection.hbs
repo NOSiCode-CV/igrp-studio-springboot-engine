@@ -1,0 +1,31 @@
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME */
+
+{{> package-java }}
+
+import java.util.List;
+{{#if pageInfoImport}}{{{pageInfoImport}}}
+{{/if}}
+public class {{connectionTypeName}}Connection {
+
+    private List<{{connectionTypeName}}Edge> edges;
+    private PageInfo pageInfo;
+    private long totalCount;
+
+    public {{connectionTypeName}}Connection() {}
+
+    public {{connectionTypeName}}Connection(List<{{connectionTypeName}}Edge> edges, PageInfo pageInfo, long totalCount) {
+        this.edges = edges;
+        this.pageInfo = pageInfo;
+        this.totalCount = totalCount;
+    }
+
+    public List<{{connectionTypeName}}Edge> getEdges() { return edges; }
+    public void setEdges(List<{{connectionTypeName}}Edge> edges) { this.edges = edges; }
+
+    public PageInfo getPageInfo() { return pageInfo; }
+    public void setPageInfo(PageInfo pageInfo) { this.pageInfo = pageInfo; }
+
+    public long getTotalCount() { return totalCount; }
+    public void setTotalCount(long totalCount) { this.totalCount = totalCount; }
+}
