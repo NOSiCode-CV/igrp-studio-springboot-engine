@@ -692,6 +692,11 @@ const controllerSchema: JSONSchemaType<ControllerConfig> = {
             errorMessage:
                 'The module attribute must not be empty and can only contain alphanumeric characters without spaces or special characters.',
         },
+        tag: {
+            type: 'string',
+            nullable: true,
+            errorMessage: 'The tag attribute, if provided, must be a string.',
+        },
         globalPermission: {
             type: 'object',
             nullable: true,

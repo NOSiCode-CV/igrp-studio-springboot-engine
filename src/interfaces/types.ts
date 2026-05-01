@@ -264,6 +264,7 @@ export interface ControllerConfig extends IdentifiableElement, VersionedConfig {
   basePath: string;
   actions: ControllerAction[];
   module?: string;
+  tag?: string;
   globalPermission?: PermissionsConfig;
   globalRoles?: string[];
   description: string;

@@ -17,7 +17,7 @@ import {{baseConfig.group}}.{{baseConfig.artifact}}.{{#if resourceConfig.module}
 @RestController
 @RequestMapping(path = "{{resourceConfig.basePath}}")
 @Tag(
-    name = "{{#if baseConfig.module}}{{capitalize baseConfig.module}}{{else}}{{capitalize resourceConfig.name}}{{/if}}",
+    name = "{{#if resourceConfig.tag}}{{resourceConfig.tag}}{{else}}{{#if resourceConfig.module}}{{capitalize resourceConfig.module}}{{else}}{{capitalize resourceConfig.name}}{{/if}}{{/if}}",
     description = "Controller for handling {{resourceConfig.name}}"
 )
 public class {{resourceConfig.name}}Controller {

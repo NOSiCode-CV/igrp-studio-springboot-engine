@@ -111,6 +111,37 @@ const domainControllerConfig: ControllerConfig = {
 };
 
 
+describe('Custom tag field', () => {
+  it('should use tag field in @Tag annotation when provided', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Animal',
+      module: 'veterinary',
+      tag: 'Gestão de Animais',
+      basePath: 'animals',
+      description: 'Animal management',
+      actions: [{ actionName: 'list', method: 'GET' }],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+    await addController(config, TECHNICAL_OUTPUT_DIR);
+  });
+
+  it('should fallback to module/name when tag is not provided', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Animal',
+      module: 'veterinary',
+      basePath: 'animals',
+      description: 'Animal management',
+      actions: [{ actionName: 'list', method: 'GET' }],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+    await addController(config, TECHNICAL_OUTPUT_DIR);
+  });
+});
+
 describe('UUID Path Variable', () => {
   it('should generate a controller with a uuid path variable', async () => {
     const uuidPathVarConfig: ControllerConfig = {
