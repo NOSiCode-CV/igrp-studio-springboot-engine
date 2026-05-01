@@ -1,3 +1,6 @@
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { expect, describe, it, beforeAll, afterAll } from '@jest/globals';
 import {addController, setEngineConfiguration} from '../src';
 import {ControllerConfig} from '../src/interfaces/types';
 // @ts-ignore
@@ -110,6 +113,60 @@ const domainControllerConfig: ControllerConfig = {
   ]
 };
 
+
+describe('@Parameter annotation with description', () => {
+  it('should generate @Parameter when description is set on pathVariable and requestParam', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Verify',
+      basePath: 'verify',
+      description: 'Verify parameter output',
+      actions: [{
+        actionName: 'getById',
+        method: 'GET',
+        pathVariables: [{ name: 'id', type: 'uuid', isRequired: true, description: 'Product unique identifier' }],
+        requestParams: [{ name: 'lang', type: 'string', isRequired: false, description: 'Response language' }],
+        responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+      }],
+    };
+
+    await addController(config, TECHNICAL_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(TECHNICAL_OUTPUT_DIR, 'src/main/java/cv/nosi/users/controllers/verify/VerifyController.java'),
+      'utf-8',
+    );
+
+    expect(generated).toContain('@Parameter(description = "Product unique identifier", required = true)');
+    expect(generated).toContain('@Parameter(description = "Response language", required = false)');
+    expect(generated).toContain('@PathVariable(value = "id") UUID id');
+    expect(generated).toContain('String lang');
+  });
+
+  it('should NOT generate @Parameter when description is absent', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'NoDesc',
+      basePath: 'nodesc',
+      description: 'No description test',
+      actions: [{
+        actionName: 'getById',
+        method: 'GET',
+        pathVariables: [{ name: 'id', type: 'uuid', isRequired: true }],
+      }],
+    };
+
+    await addController(config, TECHNICAL_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(TECHNICAL_OUTPUT_DIR, 'src/main/java/cv/nosi/users/controllers/nodesc/NoDescController.java'),
+      'utf-8',
+    );
+
+    expect(generated).not.toContain('@Parameter(description');
+    expect(generated).toContain('@PathVariable(value = "id") UUID id');
+  });
+});
 
 describe('Custom tag field', () => {
   it('should use tag field in @Tag annotation when provided', async () => {

@@ -11,11 +11,7 @@
             mediaType = "{{@key}}",
             schema = @Schema(
                 {{#if (eq this.schema.type "object")}}
-                implementation = {{normalizeDto ../this.name}}.class,
-                {{else}}
-                implementation = {{processImplementation this.schema.type}}.class,
-                {{/if}}
-                type = "{{processDocumentationType this.schema.type this.schema.objectType}}"{{#if this.schema.description}},
+                implementation = {{normalizeDto ../this.name}}.class{{else}}implementation = {{processImplementation this.schema.type}}.class{{/if~}}{{#if this.schema.description}},
                 description = "{{this.schema.description}}"{{/if~}}{{#if this.schema.example}},
                 example = "{{this.schema.example}}"{{/if~}}{{#if this.schema.required}},
                 required = true{{/if~}}{{#if this.deprecated}},
