@@ -149,6 +149,28 @@ describe('UUID Path Variable', () => {
   });
 });
 
+describe('Path Variable type restriction', () => {
+  it.each(['date', 'boolean', 'file'])(
+    'should reject "%s" as a path variable type',
+    async (invalidType) => {
+      const config: ControllerConfig = {
+        type: 'controller',
+        name: 'Test',
+        basePath: 'test',
+        description: 'Test controller',
+        actions: [
+          {
+            actionName: 'getById',
+            method: 'GET',
+            pathVariables: [{ name: 'id', type: invalidType as any, isRequired: true }],
+          },
+        ],
+      };
+      await expect(addController(config, DOMAIN_OUTPUT_DIR)).rejects.toBeDefined();
+    },
+  );
+});
+
 describe('Date RequestParam', () => {
   it('should generate a controller with a date request param', async () => {
     const dateRequestParamConfig: ControllerConfig = {

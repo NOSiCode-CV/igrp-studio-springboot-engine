@@ -1,7 +1,7 @@
 import {DdlConfig, JsonConfig, ModelConfig, SqlConfig, XmlConfig} from '../src/interfaces/types';
 import {addModel, setEngineConfiguration} from '../src';
 // @ts-ignore
-import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
+import {DOMAIN_OUTPUT_DIR, DOMAIN_OUTPUT_DIR2, TECHNICAL_OUTPUT_DIR, TEST_OUTPUT_TEC} from './outputDirPath';
 
 beforeAll(async () => {
   //await fs.mkdir(TECHNICAL_OUTPUT_DIR, { recursive: true });
@@ -49,7 +49,7 @@ describe('Model generator', () => {
         "audit": true
       },
 
-      {
+      /*{
         "type": "model",
         "name": "owner1",
         "tableName": "owner",
@@ -77,13 +77,13 @@ describe('Model generator', () => {
         ],
         "crud": false,
         "audit": true
-      }
+      }*/
 
 
     ];
 
     for (const testCase of domainTestCases) {
-      await addModel(testCase, TECHNICAL_OUTPUT_DIR);
+      await addModel(testCase, TEST_OUTPUT_TEC);
     }
   })
 

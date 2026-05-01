@@ -44,11 +44,11 @@ afterEach(async () => {
 describe('New API Module', () => {
 
   it('should create the project structure with all the directories and templates in domain driven design style.', async () => {
-    await newApi(domainApiConfig, DOMAIN_OUTPUT_DIR);
+    await newApi(domainApiConfig, TEST_OUTPUT_DIR);
   });
 
   it('should create the project structure with all the directories and templates in technical style.', async () => {
-    await newApi(technicalApiConfig, TECHNICAL_OUTPUT_DIR);
+    await newApi(technicalApiConfig, TEST_OUTPUT_TEC);
   });
 
 });

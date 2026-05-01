@@ -1228,6 +1228,8 @@ export const CASCADE_TYPE = ['ALL', 'PERSIST', 'MERGE', 'REFRESH', 'REMOVE', 'DE
 
 export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', 'file', 'uuid', 'date'] as const;
 
+export const PATH_VARIABLE_TYPES = ['long', 'string', 'integer', 'object', 'uuid'] as const;
+
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO', 'NONE'] as const;
 
 /**
