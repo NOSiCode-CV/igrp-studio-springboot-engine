@@ -302,6 +302,180 @@ describe('Date RequestParam', () => {
   });
 });
 
+describe('DDD command/query requestParams validation annotations', () => {
+  it('should NOT add @NotNull/@NotBlank on command when isRequired is false', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Report',
+      basePath: 'reports',
+      module: 'demo',
+      description: 'Test optional requestParams in DDD command',
+      actions: [
+        {
+          actionName: 'filterReports',
+          method: 'POST',
+          requestParams: [
+            { name: 'status', type: 'string', isRequired: false },
+            { name: 'year', type: 'integer', isRequired: false },
+          ],
+          responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+        },
+      ],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(DOMAIN_OUTPUT_DIR, 'src/main/java/com/petshop/animals/demo/application/commands/FilterReportsCommand.java'),
+      'utf-8',
+    );
+
+    expect(generated).not.toContain('@NotBlank');
+    expect(generated).not.toContain('@NotNull');
+    expect(generated).toContain('private String status');
+    expect(generated).toContain('private Integer year');
+  });
+
+  it('should add @NotBlank on string command attribute when isRequired is true', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Report',
+      basePath: 'reports',
+      module: 'demo',
+      description: 'Test required string requestParam in DDD command',
+      actions: [
+        {
+          actionName: 'createReport',
+          method: 'POST',
+          requestParams: [
+            { name: 'title', type: 'string', isRequired: true },
+          ],
+          responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+        },
+      ],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(DOMAIN_OUTPUT_DIR, 'src/main/java/com/petshop/animals/demo/application/commands/CreateReportCommand.java'),
+      'utf-8',
+    );
+
+    expect(generated).toContain('@NotBlank');
+    expect(generated).not.toContain('@NotNull');
+    expect(generated).toContain('private String title');
+  });
+
+  it('should add @NotNull on non-string command attribute when isRequired is true', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Report',
+      basePath: 'reports',
+      module: 'demo',
+      description: 'Test required non-string requestParam in DDD command',
+      actions: [
+        {
+          actionName: 'archiveReport',
+          method: 'PUT',
+          requestParams: [
+            { name: 'year', type: 'integer', isRequired: true },
+            { name: 'active', type: 'boolean', isRequired: true },
+          ],
+          responses: { '204': { content: { 'application/json': { schema: { type: 'string' } } } } },
+        },
+      ],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(DOMAIN_OUTPUT_DIR, 'src/main/java/com/petshop/animals/demo/application/commands/ArchiveReportCommand.java'),
+      'utf-8',
+    );
+
+    expect(generated).not.toContain('@NotBlank');
+    expect(generated).toContain('@NotNull(message = "The field <year> is required")');
+    expect(generated).toContain('@NotNull(message = "The field <active> is required")');
+    expect(generated).toContain('private Integer year');
+    expect(generated).toContain('private boolean active');
+  });
+
+  it('should add @NotNull/@NotBlank only on required fields in mixed command', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Report',
+      basePath: 'reports',
+      module: 'demo',
+      description: 'Test mixed required/optional requestParams in DDD command',
+      actions: [
+        {
+          actionName: 'searchReport',
+          method: 'POST',
+          requestParams: [
+            { name: 'title', type: 'string', isRequired: true },
+            { name: 'status', type: 'string', isRequired: false },
+            { name: 'year', type: 'integer', isRequired: true },
+            { name: 'page', type: 'integer', isRequired: false },
+          ],
+          responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+        },
+      ],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(DOMAIN_OUTPUT_DIR, 'src/main/java/com/petshop/animals/demo/application/commands/SearchReportCommand.java'),
+      'utf-8',
+    );
+
+    expect(generated).toContain('@NotBlank(message = "The field <title> is required")');
+    expect(generated).toContain('@NotNull(message = "The field <year> is required")');
+    expect(generated).toContain('private String status');
+    expect(generated).toContain('private Integer page');
+    // exactly 1 @NotBlank (title) and 1 @NotNull (year) — status and page have no annotations
+    expect(generated.match(/@NotBlank/g)?.length).toBe(1);
+    expect(generated.match(/@NotNull/g)?.length).toBe(1);
+    // optional fields have no annotation on the preceding line
+    expect(generated).toMatch(/\n\s*private String status/);
+    expect(generated).toMatch(/\n\s*private Integer page/);
+  });
+
+  it('should NOT add @NotNull/@NotBlank on query when isRequired is false', async () => {
+    const config: ControllerConfig = {
+      type: 'controller',
+      name: 'Report',
+      basePath: 'reports',
+      module: 'demo',
+      description: 'Test optional requestParams in DDD query',
+      actions: [
+        {
+          actionName: 'listReports',
+          method: 'GET',
+          requestParams: [
+            { name: 'status', type: 'string', isRequired: false },
+            { name: 'year', type: 'integer', isRequired: false },
+          ],
+          responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+        },
+      ],
+    };
+
+    await addController(config, DOMAIN_OUTPUT_DIR);
+
+    const generated = await fs.readFile(
+      path.join(DOMAIN_OUTPUT_DIR, 'src/main/java/com/petshop/animals/demo/application/queries/ListReportsQuery.java'),
+      'utf-8',
+    );
+
+    expect(generated).not.toContain('@NotBlank');
+    expect(generated).not.toContain('@NotNull');
+    expect(generated).toContain('private String status');
+    expect(generated).toContain('private Integer year');
+  });
+});
+
 describe('Collection RequestParam', () => {
   it('should generate a controller with collection type request params', async () => {
     const collectionRequestParamConfig: ControllerConfig = {

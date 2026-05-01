@@ -1219,7 +1219,7 @@ export const addController = async (
           name: e.name,
           type: e.type as 'long' | 'string' | 'integer' | 'boolean' | 'object',
           objectType: 'java',
-          required: true,
+          required: e.isRequired,
           collectionType: e.collectionType,
         }))
         : [];
