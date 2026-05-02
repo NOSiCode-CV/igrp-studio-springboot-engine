@@ -4,23 +4,25 @@
  * Integration tests for the GraphQL boilerplate improvement plan (all 8 phases).
  *
  * For each test scenario we:
- *   1. Generate files via addGraphQLSchema / addDTO
- *   2. Assert the generated Java/GraphQL content is correct
- *   3. After all scenarios, compile both Java projects with Maven to catch compile errors
+ *   1. Create fresh Spring Boot projects via newApi
+ *   2. Generate files via addGraphQLSchema / addDTO
+ *   3. Assert the generated Java/GraphQL content is correct
+ *   4. After all scenarios, compile both Java projects with Maven to catch compile errors
  *
  * Projects used:
- *   - TECHNICAL_OUTPUT_DIR: C:\spring-engine\demoTechnical  (layered / technical style)
- *   - DOMAIN_OUTPUT_DIR:    C:\spring-engine\demoDomain     (DDD / domain style)
+ *   - TECHNICAL_OUTPUT_DIR: C:\spring-engine\demoGraphQLTec  (layered / technical style)
+ *   - DOMAIN_OUTPUT_DIR:    C:\spring-engine\demoGraphQLDom  (DDD / domain style)
  */
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import {execSync} from 'child_process';
 import {describe, it, beforeAll, expect} from '@jest/globals';
-import {addDTO, addGraphQLSchema, setEngineConfiguration} from '../src';
-import {DTOConfig, GraphQLSchemaConfig} from '../src/interfaces/types';
-// @ts-ignore
-import {DOMAIN_OUTPUT_DIR, TECHNICAL_OUTPUT_DIR} from './outputDirPath';
+import {addDTO, addGraphQLSchema, newApi, setEngineConfiguration} from '../src';
+import {BaseApiConfig, DTOConfig, GraphQLSchemaConfig} from '../src/interfaces/types';
+
+const TECHNICAL_OUTPUT_DIR = 'C:\\spring-engine\\demoGraphQLTec';
+const DOMAIN_OUTPUT_DIR    = 'C:\\spring-engine\\demoGraphQLDom';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Helper — read generated file
@@ -161,8 +163,87 @@ const orderItemSchema: GraphQLSchemaConfig = {
 // Setup
 // ═══════════════════════════════════════════════════════════════════════════════
 
+const technicalProjectConfig: BaseApiConfig = {
+  type: 'springboot',
+  name: 'demoGraphQLTec',
+  group: 'cv.nosi',
+  artifact: 'users',
+  description: 'GraphQL integration test project — technical style',
+  database: 'Postgresql',
+  projectStructureStyle: 'technical',
+  enableObservability: false,
+  enableEntityRevision: false,
+  enableGraalVm: false,
+};
+
+const domainProjectConfig: BaseApiConfig = {
+  type: 'springboot',
+  name: 'demoGraphQLDom',
+  group: 'com.petshop',
+  artifact: 'animals',
+  description: 'GraphQL integration test project — domain style',
+  database: 'Postgresql',
+  projectStructureStyle: 'domain',
+  enableObservability: false,
+  enableEntityRevision: false,
+  enableGraalVm: false,
+};
+
 beforeAll(async () => {
   setEngineConfiguration({environment: 'development'});
+
+  // Wipe and recreate blank directories — newApi requires an empty (existing) dir
+  for (const dir of [TECHNICAL_OUTPUT_DIR, DOMAIN_OUTPUT_DIR]) {
+    await fs.rm(dir, {recursive: true, force: true});
+    await fs.mkdir(dir, {recursive: true});
+  }
+
+  // Bootstrap fresh Spring Boot projects (generates pom.xml + full structure)
+  await newApi(technicalProjectConfig, TECHNICAL_OUTPUT_DIR);
+  await newApi(domainProjectConfig, DOMAIN_OUTPUT_DIR);
+
+  // Add test infrastructure so mvn test (contextLoads) can start without a real DB or auth server
+  const testProps = [
+    'spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
+    'spring.datasource.driver-class-name=org.h2.Driver',
+    'spring.datasource.username=sa',
+    'spring.datasource.password=',
+    'spring.jpa.database-platform=org.hibernate.dialect.H2Dialect',
+    'spring.jpa.hibernate.ddl-auto=create-drop',
+    'spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration,org.springdoc.core.configuration.SpringDocDataRestConfiguration',
+    'spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost/test',
+    'igrp.access.api.base-url=http://localhost/test',
+  ].join('\n');
+
+  const projects = [
+    {dir: TECHNICAL_OUTPUT_DIR, pkg: 'cv.nosi.users',       cls: 'DemoGraphQLTecApplicationTests'},
+    {dir: DOMAIN_OUTPUT_DIR,    pkg: 'com.petshop.animals',  cls: 'DemoGraphQLDomApplicationTests'},
+  ];
+
+  for (const {dir, pkg, cls} of projects) {
+    const testResDir = path.join(dir, 'src', 'test', 'resources');
+    await fs.mkdir(testResDir, {recursive: true});
+    await fs.writeFile(path.join(testResDir, 'application.properties'), testProps);
+
+    // Overwrite the generated test class to add @MockBean JwtDecoder (avoids real auth server)
+    const testJavaDir = path.join(dir, 'src', 'test', 'java', ...pkg.split('.'));
+    const jwtMockClass = [
+      `package ${pkg};`,
+      '',
+      'import org.junit.jupiter.api.Test;',
+      'import org.springframework.boot.test.context.SpringBootTest;',
+      'import org.springframework.boot.test.mock.mockito.MockBean;',
+      'import org.springframework.security.oauth2.jwt.JwtDecoder;',
+      '',
+      '@SpringBootTest',
+      `public class ${cls} {`,
+      '    @MockBean JwtDecoder jwtDecoder;',
+      '    @Test public void contextLoads() {}',
+      '}',
+    ].join('\n');
+    await fs.writeFile(path.join(testJavaDir, `${cls}.java`), jwtMockClass);
+  }
+
   for (const dir of [TECHNICAL_OUTPUT_DIR, DOMAIN_OUTPUT_DIR]) {
     await addDTO(orderType,        dir);
     await addDTO(orderItemType,    dir);
@@ -170,7 +251,7 @@ beforeAll(async () => {
     await addDTO(orderFilterInput, dir);
     await addDTO(productType,      dir);
   }
-});
+}, 60_000);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Phase 1 — Scalar mappings
@@ -493,7 +574,7 @@ describe('Phase 6 — Subscriptions', () => {
 
   it('SDL includes type Subscription block', async () => {
     const sdl = await readGenerated(TECHNICAL_OUTPUT_DIR, 'src/main/resources/graphql/ProductEvent.graphqls');
-    expect(sdl).toContain('type Subscription');
+    expect(sdl).toContain('extend type Subscription');
     expect(sdl).toContain('productCreated: ProductEvent!');
     expect(sdl).toContain('productUpdated(productId: ID!): ProductEvent!');
   });

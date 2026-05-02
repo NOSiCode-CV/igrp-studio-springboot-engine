@@ -35,7 +35,7 @@ type {{connectionManifest.typeName}}Edge {
 
 {{/if}}
 {{#if resourceConfig.queries}}
-type Query {
+extend type Query {
 {{#each resourceConfig.queries}}
 {{#if (eq this.collectionType "paginated")}}
   {{this.name}}({{#if this.filterRef}}filter: {{this.filterRef}}, {{/if}}sort: SortInput, page: PageInput{{#each this.args}}, {{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{/each}}): {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
@@ -47,7 +47,7 @@ type Query {
 {{/if}}
 
 {{#if resourceConfig.mutations}}
-type Mutation {
+extend type Mutation {
 {{#each resourceConfig.mutations}}
   {{this.name}}{{#if (or this.inputRef this.args)}}({{#if this.inputRef}}input: {{this.inputRef}}!{{/if}}{{#if this.args}}{{#if this.inputRef}}, {{/if}}{{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}){{/if}}: {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
 {{/each}}
@@ -55,7 +55,7 @@ type Mutation {
 {{/if}}
 
 {{#if resourceConfig.subscriptions}}
-type Subscription {
+extend type Subscription {
 {{#each resourceConfig.subscriptions}}
   {{this.name}}{{#if this.args}}({{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveSubscriptionReturnType this ../resourceConfig.name}}!
 {{/each}}

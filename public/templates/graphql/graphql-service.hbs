@@ -15,7 +15,7 @@ public class {{capitalize resourceConfig.name}}GraphQLService implements I{{capi
 
 {{#each resourceConfig.queries}}
     @Override
-    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#if this.filterRef}}{{this.filterRef}} filter{{#if (or this.args (eq this.collectionType "paginated"))}}, {{/if}}{{/if}}{{#if (eq this.collectionType "paginated")}}SortInput sort, PageInput page{{#if this.args}}, {{/if}}{{/if}}{{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#if this.filterRef}}{{this.filterRef}} filter{{#if (or (and this.args (ne this.collectionType "paginated")) (eq this.collectionType "paginated"))}}, {{/if}}{{/if}}{{#if (eq this.collectionType "paginated")}}SortInput sort, PageInput page{{else}}{{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}) {
         throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
     }
 

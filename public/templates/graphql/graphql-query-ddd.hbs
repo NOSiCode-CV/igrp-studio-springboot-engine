@@ -26,8 +26,9 @@ public class {{capitalize operationName}}Query implements Query {
 {{#if (eq collectionType "paginated")}}
     private SortInput sort;
     private PageInput page;
-{{/if}}
+{{else}}
 {{#each args}}
     private {{resolveJavaTypeForGraphQL this.type}} {{this.name}};
 {{/each}}
+{{/if}}
 }
