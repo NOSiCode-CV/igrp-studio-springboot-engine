@@ -1085,4 +1085,46 @@ Da mesma forma, o `return` aceita `module` para tipos de outro módulo:
 
 ---
 
+---
+
+## Dependências Maven para projetos existentes
+
+> **Nota para quem já tinha uma aplicação Spring Boot gerada antes do suporte GraphQL.**
+
+Se a tua aplicação foi gerada antes desta funcionalidade, o `pom.xml` não inclui as dependências GraphQL. Adiciona as seguintes entradas dentro do bloco `<dependencies>`:
+
+```xml
+<!-- Spring GraphQL — suporte a queries, mutations e subscriptions -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-graphql</artifactId>
+</dependency>
+
+<!-- Escalares personalizados: DateTime, BigDecimal, Long -->
+<dependency>
+    <groupId>com.graphql-java</groupId>
+    <artifactId>graphql-java-extended-scalars</artifactId>
+    <version>22.0</version>
+</dependency>
+
+<!-- Reactor — necessário para Flux<T> nas Subscriptions -->
+<dependency>
+    <groupId>io.projectreactor</groupId>
+    <artifactId>reactor-core</artifactId>
+</dependency>
+```
+
+### Notas
+
+- `spring-boot-starter-graphql` é gerido pelo Spring Boot BOM — não precisa de versão explícita. Compatível com Spring Boot **3.3+**.
+- `graphql-java-extended-scalars` **requer versão explícita** (`22.0`). Esta versão é compatível com Spring Boot 3.5.x. Se usares uma versão de Spring Boot mais antiga, confirma a compatibilidade na [tabela oficial](https://github.com/graphql-java/graphql-java-extended-scalars).
+- `reactor-core` é gerido pelo Spring Boot BOM — não precisas de versão.
+- Não é necessário `spring-boot-starter-webflux`. O engine usa Spring MVC com suporte a subscriptions via **SSE (Server-Sent Events)**, que não exige WebFlux.
+
+### Verificação
+
+Após adicionar as dependências, corre `mvn compile` para confirmar que não há erros. Se o projeto já tem código GraphQL gerado, corre também `mvn test` — o `contextLoads` verifica que o Spring consegue carregar o schema SDL sem erros.
+
+---
+
 *iGRP Spring Engine — branch `dev`*
