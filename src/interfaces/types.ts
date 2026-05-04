@@ -538,42 +538,39 @@ export type GenerationType = (typeof GENERATION_TYPES)[number];
 
 // ─── GraphQL Types ───────────────────────────────────────────────────────────
 
-/** Primitive arg type (uuid, string, boolean, etc.) used in queries/mutations */
-export interface GraphQLFieldDef {
-  name: string;
-  type: string;           // engine attribute type (e.g. 'string', 'integer', 'uuid')
-  nullable?: boolean;
-  description?: string;
-}
-
 export type GraphQLCollectionType = 'single' | 'list' | 'paginated';
+
+/**
+ * A single operation parameter.
+ * type is either a lowercase engine scalar ('uuid', 'string') or a PascalCase DTO name ('CreateOrderInput').
+ */
+export interface GraphQLParam {
+  name: string;
+  type: string;
+  required?: boolean;
+}
 
 export interface GraphQLQuery {
   name: string;
-  args?: GraphQLFieldDef[];             // primitive args (uuid, string, etc.)
-  returnTypeRef?: string;               // references a graphqlType (e.g. 'Category')
-  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
+  params?: GraphQLParam[];              // scalars and/or DTO filter refs
+  returnType?: string;                  // scalar ('Boolean') or graphqlType name ('Order')
   collectionType?: GraphQLCollectionType; // single (default) | list | paginated
-  filterRef?: string;                   // references a graphqlInput manifest used as filter
-  roles?: string[];                     // same as ControllerAction.roles — generates hasAnyRole(...)
-  permission?: PermissionsConfig;       // same as ControllerAction.permission — generates @igrpAuthorization.check*
+  roles?: string[];
+  permission?: PermissionsConfig;
 }
 
 export interface GraphQLMutation {
   name: string;
-  inputRef?: string;                    // references a graphqlInput manifest (e.g. 'CreateCategoryInput')
-  args?: GraphQLFieldDef[];             // additional primitive args
-  returnTypeRef?: string;               // references a graphqlType
-  returnType?: string;                  // primitive return ('Boolean', 'String', 'Int')
-  collectionType?: GraphQLCollectionType;
-  roles?: string[];                     // same as ControllerAction.roles
-  permission?: PermissionsConfig;       // same as ControllerAction.permission
+  params?: GraphQLParam[];              // scalars and/or DTO input refs (@Valid applied to DTOs)
+  returnType?: string;                  // scalar ('Boolean') or graphqlType name ('Order')
+  roles?: string[];
+  permission?: PermissionsConfig;
 }
 
 export interface GraphQLSubscription {
   name: string;
-  args?: GraphQLFieldDef[];
-  returnTypeRef?: string;
+  params?: GraphQLParam[];
+  returnType?: string;                  // graphqlType name or scalar
 }
 
 export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
@@ -581,7 +578,6 @@ export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfi
   name: string;
   module?: string;
   typeRef?: string;              // references a graphqlType manifest — source of type fields
-  inputRefs?: string[];          // references graphqlInput manifests used by mutations
   queries?: GraphQLQuery[];
   mutations?: GraphQLMutation[];
   subscriptions?: GraphQLSubscription[];

@@ -4,31 +4,21 @@
 {{> package-java}}
 
 import cv.igrp.framework.core.domain.Query;
-{{#if (or args filterRef (eq collectionType "paginated"))}}
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-{{/if}}
-{{#if filterRef}}{{{filterRefImport}}}
-{{/if}}
 {{#if (eq collectionType "paginated")}}{{{paginatedImports}}}
 {{/if}}
 {{{argsImports}}}
 
-{{#if (or args filterRef (eq collectionType "paginated"))}}
 @Getter
 @AllArgsConstructor
-{{/if}}
 public class {{capitalize operationName}}Query implements Query {
 
-{{#if filterRef}}
-    private {{filterRef}} filter;
-{{/if}}
+{{#each params}}
+    private {{resolveParamJavaType this.type}} {{this.name}};
+{{/each}}
 {{#if (eq collectionType "paginated")}}
     private SortInput sort;
     private PageInput page;
-{{else}}
-{{#each args}}
-    private {{resolveJavaTypeForGraphQL this.type}} {{this.name}};
-{{/each}}
 {{/if}}
 }

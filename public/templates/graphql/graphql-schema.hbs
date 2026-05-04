@@ -38,9 +38,9 @@ type {{connectionManifest.typeName}}Edge {
 extend type Query {
 {{#each resourceConfig.queries}}
 {{#if (eq this.collectionType "paginated")}}
-  {{this.name}}({{#if this.filterRef}}filter: {{this.filterRef}}, {{/if}}sort: SortInput, page: PageInput{{#each this.args}}, {{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{/each}}): {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
+  {{this.name}}({{#each this.params}}{{this.name}}: {{resolveParamSDLType this}}, {{/each}}sort: SortInput, page: PageInput): {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
 {{else}}
-  {{this.name}}{{#if this.args}}({{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
+  {{this.name}}{{#if this.params}}({{#each this.params}}{{this.name}}: {{resolveParamSDLType this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
 {{/if}}
 {{/each}}
 }
@@ -49,7 +49,7 @@ extend type Query {
 {{#if resourceConfig.mutations}}
 extend type Mutation {
 {{#each resourceConfig.mutations}}
-  {{this.name}}{{#if (or this.inputRef this.args)}}({{#if this.inputRef}}input: {{this.inputRef}}!{{/if}}{{#if this.args}}{{#if this.inputRef}}, {{/if}}{{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}){{/if}}: {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
+  {{this.name}}{{#if this.params}}({{#each this.params}}{{this.name}}: {{resolveParamSDLType this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveGraphQLReturnTypeV2 this ../resourceConfig.name}}
 {{/each}}
 }
 {{/if}}
@@ -57,7 +57,7 @@ extend type Mutation {
 {{#if resourceConfig.subscriptions}}
 extend type Subscription {
 {{#each resourceConfig.subscriptions}}
-  {{this.name}}{{#if this.args}}({{#each this.args}}{{this.name}}: {{resolveGraphQLScalar this.type}}{{#unless this.nullable}}!{{/unless}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveSubscriptionReturnType this ../resourceConfig.name}}!
+  {{this.name}}{{#if this.params}}({{#each this.params}}{{this.name}}: {{resolveParamSDLType this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}: {{resolveSubscriptionReturnType this ../resourceConfig.name}}!
 {{/each}}
 }
 {{/if}}

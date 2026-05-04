@@ -100,7 +100,7 @@ import {moveValidation} from './schema/moveConfig';
 import {verifyEnumAttributes} from './modules/enum/helpers';
 import defaultEngineModule from './config/default';
 import {configurationAsObject, setConfiguration} from './config';
-import {validateGraphQLSchemaConfig} from './schema/graphQLSchemaConfig';
+import {validateGraphQLSchemaConfig} from './schema/graphqlSchemaConfig';
 import {generateGraphQLSchema} from './modules/graphql/generateGraphQLSchema';
 import {engineConfigurationRegistrationValidate} from './schema/engineConfigurationRegisterConfig';
 import fs from "fs-extra";

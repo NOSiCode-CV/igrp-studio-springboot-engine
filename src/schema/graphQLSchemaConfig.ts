@@ -32,27 +32,22 @@ const rolesSchema = {
   errorMessage: "The 'roles' field must be an array of strings",
 };
 
-const graphQLFieldDefSchema = {
+const graphQLParamSchema = {
   type: 'object',
   properties: {
     name: {
       type: 'string',
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      errorMessage: 'The field name must follow the naming convention and cannot be empty.',
+      errorMessage: 'The param name must follow the naming convention and cannot be empty.',
     },
     type: {
       type: 'string',
-      errorMessage: "The 'type' field is required and must be a string.",
+      errorMessage: "The 'type' field is required and must be a string (engine scalar or DTO name).",
     },
-    nullable: {
+    required: {
       type: 'boolean',
       nullable: true,
-      errorMessage: "The 'nullable' field, if provided, must be a boolean.",
-    },
-    description: {
-      type: 'string',
-      nullable: true,
-      errorMessage: "The 'description' field, if provided, must be a string.",
+      errorMessage: "The 'required' field, if provided, must be a boolean.",
     },
   },
   required: ['name', 'type'],
@@ -67,34 +62,22 @@ const graphQLQuerySchema = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The query name must follow the naming convention and cannot be empty.',
     },
-    args: {
+    params: {
       type: 'array',
-      items: graphQLFieldDefSchema,
+      items: graphQLParamSchema,
       nullable: true,
-      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
-    },
-    returnTypeRef: {
-      type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: true,
-      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
+      errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
     returnType: {
       type: 'string',
       nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string (primitive: Boolean, String, Int).",
+      errorMessage: "The 'returnType' field, if provided, must be a string (scalar or graphqlType name).",
     },
     collectionType: {
       type: 'string',
       enum: ['single', 'list', 'paginated'],
       nullable: true,
       errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
-    },
-    filterRef: {
-      type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: true,
-      errorMessage: "The 'filterRef' field, if provided, must follow the naming convention.",
     },
     roles: rolesSchema,
     permission: permissionSchema,
@@ -115,34 +98,16 @@ const graphQLMutationSchema = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The mutation name must follow the naming convention and cannot be empty.',
     },
-    inputRef: {
-      type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: true,
-      errorMessage: "The 'inputRef' field, if provided, must follow the naming convention.",
-    },
-    args: {
+    params: {
       type: 'array',
-      items: graphQLFieldDefSchema,
+      items: graphQLParamSchema,
       nullable: true,
-      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
-    },
-    returnTypeRef: {
-      type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
-      nullable: true,
-      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
+      errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
     returnType: {
       type: 'string',
       nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string (primitive: Boolean, String, Int).",
-    },
-    collectionType: {
-      type: 'string',
-      enum: ['single', 'list', 'paginated'],
-      nullable: true,
-      errorMessage: "The 'collectionType' must be 'single', 'list', or 'paginated'.",
+      errorMessage: "The 'returnType' field, if provided, must be a string (scalar or graphqlType name).",
     },
     roles: rolesSchema,
     permission: permissionSchema,
@@ -163,17 +128,16 @@ const graphQLSubscriptionSchema = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The subscription name must follow the naming convention and cannot be empty.',
     },
-    args: {
+    params: {
       type: 'array',
-      items: graphQLFieldDefSchema,
+      items: graphQLParamSchema,
       nullable: true,
-      errorMessage: "The 'args' field, if provided, must be an array of field definitions.",
+      errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
-    returnTypeRef: {
+    returnType: {
       type: 'string',
-      pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
-      errorMessage: "The 'returnTypeRef' field, if provided, must follow the naming convention.",
+      errorMessage: "The 'returnType' field, if provided, must be a string (graphqlType name or scalar).",
     },
   },
   required: ['name'],
@@ -219,12 +183,6 @@ const graphQLSchemaConfigSchema: any = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       nullable: true,
       errorMessage: "The 'typeRef' field, if provided, must follow the naming convention.",
-    },
-    inputRefs: {
-      type: 'array',
-      items: { type: 'string', pattern: PATTERNS.NAME_VALIDATION_PATTERN },
-      nullable: true,
-      errorMessage: "The 'inputRefs' field, if provided, must be an array of names.",
     },
     queries: {
       type: 'array',

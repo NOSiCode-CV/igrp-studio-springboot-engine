@@ -26,7 +26,7 @@ public class {{capitalize resourceConfig.name}}EventServiceImpl implements {{cap
     }
 
     @Override
-    public Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}Stream({{#each this.args}}{{resolveJavaTypeForGraphQL this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    public Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}Stream({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
         return {{this.name}}Sink.asFlux();
     }
 

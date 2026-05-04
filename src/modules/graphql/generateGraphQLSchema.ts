@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {ApiConfig, DTOConfig, GraphQLFieldDef, GraphQLSchemaConfig, GraphQLSubscription, RenderContext} from '../../interfaces/types';
+import {ApiConfig, DTOConfig, GraphQLParam, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
 import {DIRECTORIES, EXTENSIONS, GENERIC_TYPES, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
 import {renderTemplate} from '../common/renderTemplate';
 import {saveToFile} from '../common/saveToFile';
@@ -9,6 +9,7 @@ import {getGraphQLTypeConfigPath, getMainPath, replaceTemplate} from '../../util
 import {capitalizeJavaStyle} from '../../helper/stringHelper';
 import {normalizeName} from '../dto/saveDTOConfig';
 import {
+    isGraphQLDTO,
     resolveGraphQLAttributeType,
     resolveGraphQLScalar,
     resolveJavaReturnType,
@@ -148,7 +149,7 @@ export type ConnectionManifest = { typeName: string };
 
 export type EnrichedGraphQLContext = RenderContext<GraphQLSchemaConfig> & {
   resolvedTypeManifest?: DTOConfig;      // graphqlType manifest (from typeRef)
-  resolvedInputManifests: DTOConfig[];   // graphqlInput manifests (from inputRefs)
+  resolvedInputManifests: DTOConfig[];   // graphqlInput manifests (auto-derived from DTO params)
   pageManifest?: DTOConfig;              // kept for legacy — replaced by connectionManifest
   connectionManifest?: ConnectionManifest; // Relay Connection type info for paginated queries
   resolveGraphQLScalar: (t: string) => string;
@@ -167,16 +168,34 @@ export const enrichGraphQLContext = async (
     resolvedTypeManifest = await loadGraphQLTypeManifest(resourceConfig.typeRef, module, basePath);
   }
 
-  // Load inputRef manifests
+  // Auto-derive input manifests from DTO params across all operations
+  const dtoParmTypes = new Set<string>();
+  const allOperations = [
+    ...(resourceConfig.queries ?? []),
+    ...(resourceConfig.mutations ?? []),
+    ...(resourceConfig.subscriptions ?? []),
+  ];
+  for (const op of allOperations) {
+    for (const param of op.params ?? []) {
+      if (isGraphQLDTO(param.type)) {
+        dtoParmTypes.add(param.type);
+      }
+    }
+  }
   const resolvedInputManifests: DTOConfig[] = [];
-  for (const inputRef of resourceConfig.inputRefs ?? []) {
-    const manifest = await loadGraphQLTypeManifest(inputRef, module, basePath);
-    resolvedInputManifests.push(manifest);
+  for (const typeName of dtoParmTypes) {
+    try {
+      const manifest = await loadGraphQLTypeManifest(typeName, module, basePath);
+      if (manifest.type === 'graphqlInput') {
+        resolvedInputManifests.push(manifest);
+      }
+    } catch {
+      // skip if manifest not found (may be a return type or not registered)
+    }
   }
 
-  // Detect if any operation uses collectionType 'paginated' — build Connection manifest
-  const allOps = [...(resourceConfig.queries ?? []), ...(resourceConfig.mutations ?? [])];
-  const hasPaginated = allOps.some((op) => op.collectionType === 'paginated');
+  // Detect if any query uses collectionType 'paginated' — build Connection manifest
+  const hasPaginated = (resourceConfig.queries ?? []).some((q) => q.collectionType === 'paginated');
 
   let connectionManifest: ConnectionManifest | undefined;
   if (hasPaginated && resolvedTypeManifest) {
@@ -371,12 +390,9 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
   for (const query of resourceConfig.queries ?? []) {
     const operationName = capitalizeJavaStyle(query.name);
     const returnJavaType = resolveJavaReturnType(query, schemaName);
-    const argsImports = buildArgsImports(query.args ?? []);
+    const argsImports = buildParamsImports(query.params ?? [], module, baseConfig);
     const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
 
-    const filterRefImport = query.filterRef
-      ? `import ${baseConfig.group}.${baseConfig.packageName}.${module}.interfaces.graphql.types.${query.filterRef};`
-      : '';
     const paginatedImports = query.collectionType === 'paginated'
       ? `import ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.SortInput;\nimport ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.PageInput;`
       : '';
@@ -385,9 +401,9 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
 
     const queryCtx = {
       ...context, fullPath: queryDir, operationName,
-      args: query.args ?? [], argsImports,
-      filterRef: query.filterRef, collectionType: query.collectionType,
-      filterRefImport, paginatedImports,
+      params: query.params ?? [], argsImports,
+      collectionType: query.collectionType,
+      paginatedImports,
     };
     const queryContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_QUERY, queryCtx);
     await saveToFile(queryContent, path.join(queryDir, `${operationName}Query.java`), true);
@@ -400,37 +416,38 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
   for (const mutation of resourceConfig.mutations ?? []) {
     const operationName = capitalizeJavaStyle(mutation.name);
     const returnJavaType = resolveJavaReturnType(mutation, schemaName);
-    const argsImports = buildArgsImports(mutation.args ?? []);
+    const argsImports = buildParamsImports(mutation.params ?? [], module, baseConfig);
     const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
-    const inputRefImport = mutation.inputRef
-      ? buildGraphQLTypeImport(mutation.inputRef, module, baseConfig)
-      : '';
 
     await fs.ensureDir(commandDir);
 
     const commandCtx = {
       ...context, fullPath: commandDir, operationName,
-      inputRef: mutation.inputRef, args: mutation.args ?? [], argsImports, inputRefImport,
+      params: mutation.params ?? [], argsImports,
     };
     const commandContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_COMMAND, commandCtx);
     await saveToFile(commandContent, path.join(commandDir, `${operationName}Command.java`), true);
 
     const handlerCtx = {
       ...context, fullPath: commandDir, operationName,
-      inputRef: mutation.inputRef, returnJavaType, returnTypeImport, inputRefImport,
+      returnJavaType, returnTypeImport,
     };
     const handlerContent = await renderTemplate(TEMPLATES.GRAPHQL_DDD_COMMAND_HANDLER, handlerCtx);
     await saveToFile(handlerContent, path.join(commandDir, `${operationName}CommandHandler.java`), false);
   }
 };
 
-/** Import statements for GraphQL operation args (e.g. uuid → import java.util.UUID;) */
-const buildArgsImports = (args: GraphQLFieldDef[]): string => {
+/** Import statements for GraphQL operation params — scalar types get java imports, DTOs get graphqlType imports. */
+const buildParamsImports = (params: GraphQLParam[], module: string, baseConfig: ApiConfig): string => {
   const imports = new Set<string>();
-  for (const arg of args) {
-    const genType = GENERIC_TYPES.get((arg.type ?? '').toLowerCase());
-    if (genType?.java.namespace) {
-      imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+  for (const param of params) {
+    if (isGraphQLDTO(param.type)) {
+      imports.add(`import ${baseConfig.group}.${baseConfig.packageName}.${module}.interfaces.graphql.types.${param.type};`);
+    } else {
+      const genType = GENERIC_TYPES.get((param.type ?? '').toLowerCase());
+      if (genType?.java.namespace) {
+        imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+      }
     }
   }
   return [...imports].join('\n');
@@ -642,8 +659,8 @@ const buildSubscriptionImportContext = (context: EnrichedGraphQLContext): { type
     ? `import ${pkg}.${module}.application.event.${name}EventService;`
     : `import ${pkg}.graphql.${context.resourceConfig.name.toLowerCase()}.subscription.${name}EventService;`;
 
-  const allSubArgs = (context.resourceConfig.subscriptions ?? []).flatMap((s) => s.args ?? []);
-  const argsImports = buildArgsImports(allSubArgs);
+  const allSubParams = (context.resourceConfig.subscriptions ?? []).flatMap((s) => s.params ?? []);
+  const argsImports = buildParamsImports(allSubParams, module, context.baseConfig);
   return { typeClassImport, argsImports, eventServiceImport };
 };
 

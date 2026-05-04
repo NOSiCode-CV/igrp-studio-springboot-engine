@@ -4,10 +4,43 @@ import {
     DTOConfig,
     GraphQLCollectionType,
     GraphQLMutation,
+    GraphQLParam,
     GraphQLQuery,
     GraphQLSchemaConfig,
     GraphQLSubscription,
 } from '../interfaces/types';
+
+/** GraphQL scalar types as they appear in SDL / returnType fields. */
+const GRAPHQL_KNOWN_SCALARS = new Set([
+  'Boolean', 'String', 'Int', 'Float', 'ID', 'Long', 'BigDecimal', 'DateTime',
+]);
+
+/**
+ * Returns true when a param's type is a DTO class (PascalCase, not a known GraphQL scalar).
+ * e.g. 'CreateOrderInput' → true, 'uuid' → false, 'Boolean' → false.
+ */
+export function isGraphQLDTO(type: string): boolean {
+  if (!type) return false;
+  return /^[A-Z]/.test(type) && !GRAPHQL_KNOWN_SCALARS.has(type);
+}
+
+/**
+ * Resolves a GraphQLParam to its SDL representation (e.g. `id: ID!` or `filter: OrderFilterInput`).
+ */
+export function resolveParamSDLType(param: GraphQLParam): string {
+  const bang = param.required ? '!' : '';
+  if (isGraphQLDTO(param.type)) return `${param.type}${bang}`;
+  return `${resolveGraphQLScalar(param.type)}${bang}`;
+}
+
+/**
+ * Resolves a param type to the Java type used in method signatures.
+ * DTO types are returned as-is; scalar types go through resolveJavaTypeForGraphQL.
+ */
+export function resolveParamJavaType(type: string): string {
+  if (isGraphQLDTO(type)) return type;
+  return resolveJavaTypeForGraphQL(type);
+}
 import {capitalizeJavaStyle} from './stringHelper';
 
 /**
@@ -39,28 +72,30 @@ export function graphqlImportsTypes(
   const isDomain = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
   const schemaModule = config.module ?? 'shared';
 
-  const allArgs = [
-    ...(config.queries ?? []).flatMap((q) => q.args ?? []),
-    ...(config.mutations ?? []).flatMap((m) => m.args ?? []),
+  const allParams = [
+    ...(config.queries ?? []).flatMap((q) => q.params ?? []),
+    ...(config.mutations ?? []).flatMap((m) => m.params ?? []),
   ];
 
-  // Standard arg type imports (e.g. UUID)
-  for (const arg of allArgs) {
-    const genType = GENERIC_TYPES.get(arg.type?.toLowerCase?.() ?? '');
-    if (genType?.java.namespace) {
-      imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+  // Standard scalar param type imports (e.g. UUID)
+  for (const param of allParams) {
+    if (!isGraphQLDTO(param.type)) {
+      const genType = GENERIC_TYPES.get(param.type?.toLowerCase?.() ?? '');
+      if (genType?.java.namespace) {
+        imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+      }
     }
   }
 
-  const allOps = [...(config.queries ?? []), ...(config.mutations ?? [])];
+  const allQueries = config.queries ?? [];
 
-  // java.util.List if any operation returns a list
-  if (allOps.some((op) => op.collectionType === 'list')) {
+  // java.util.List if any query returns a list (only queries have collectionType)
+  if (allQueries.some((q) => q.collectionType === 'list')) {
     imports.add('import java.util.List;');
   }
 
-  // Paginated operations — import Connection, SortInput, PageInput
-  if (allOps.some((op) => op.collectionType === 'paginated')) {
+  // Paginated queries — import Connection, SortInput, PageInput
+  if (allQueries.some((q) => q.collectionType === 'paginated')) {
     const sharedPkg = `${packageSource}.graphql.connection`;
     imports.add(`import ${sharedPkg}.SortInput;`);
     imports.add(`import ${sharedPkg}.PageInput;`);
@@ -167,26 +202,28 @@ export function graphqlImportsTypesService(
   const isDomain = baseConfig.projectStructureStyle === PROJECT_STRUCTURE_STYLE.DOMAIN_DRIVEN_DESIGN;
   const schemaModule = config.module ?? 'shared';
 
-  const allArgs = [
-    ...(config.queries ?? []).flatMap((q) => q.args ?? []),
-    ...(config.mutations ?? []).flatMap((m) => m.args ?? []),
+  const allParams = [
+    ...(config.queries ?? []).flatMap((q) => q.params ?? []),
+    ...(config.mutations ?? []).flatMap((m) => m.params ?? []),
   ];
 
-  for (const arg of allArgs) {
-    const genType = GENERIC_TYPES.get(arg.type?.toLowerCase?.() ?? '');
-    if (genType?.java.namespace) {
-      imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+  for (const param of allParams) {
+    if (!isGraphQLDTO(param.type)) {
+      const genType = GENERIC_TYPES.get(param.type?.toLowerCase?.() ?? '');
+      if (genType?.java.namespace) {
+        imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
+      }
     }
   }
 
-  const allOps = [...(config.queries ?? []), ...(config.mutations ?? [])];
+  const allQueriesSvc = config.queries ?? [];
 
-  if (allOps.some((op) => op.collectionType === 'list')) {
+  if (allQueriesSvc.some((q) => q.collectionType === 'list')) {
     imports.add('import java.util.List;');
   }
 
-  // Paginated operations — import Connection, SortInput, PageInput
-  if (allOps.some((op) => op.collectionType === 'paginated')) {
+  // Paginated queries — import Connection, SortInput, PageInput
+  if (allQueriesSvc.some((q) => q.collectionType === 'paginated')) {
     const sharedPkg = `${packageSource}.graphql.connection`;
     imports.add(`import ${sharedPkg}.SortInput;`);
     imports.add(`import ${sharedPkg}.PageInput;`);
@@ -274,50 +311,41 @@ export function graphqlDDDOperationImports(
 }
 
 /**
- * Resolves the return type string for a GraphQL query or mutation in the .graphqls file.
- * collectionType: 'single' (default) → Type, 'list' → [Type!]!, 'paginated' → TypePage
- * Priority: returnType (primitive) > returnTypeRef + collectionType > schemaName (fallback)
+ * Resolves the SDL return type for a GraphQL query or mutation.
+ * If returnType is a known scalar, returns it directly.
+ * Otherwise wraps using collectionType (list → [Type!]!, paginated → TypeConnection!, single → Type).
  */
 export function resolveGraphQLReturnType(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,
 ): string {
-  // Primitive explicit return (Boolean, String, Int, etc.)
-  if (operation.returnType) return operation.returnType;
-
-  const typeName = operation.returnTypeRef ?? schemaName;
-  const collectionType: GraphQLCollectionType = operation.collectionType ?? 'single';
-
+  const rt = operation.returnType;
+  if (!rt) return schemaName;
+  if (GRAPHQL_KNOWN_SCALARS.has(rt)) return rt;
+  const collectionType: GraphQLCollectionType = (operation as GraphQLQuery).collectionType ?? 'single';
   switch (collectionType) {
-    case 'list':
-      return `[${typeName}!]!`;
-    case 'paginated':
-      return `${typeName}Page`;
-    default:
-      return typeName;
+    case 'list':      return `[${rt}!]!`;
+    case 'paginated': return `${rt}Connection!`;
+    default:          return rt;
   }
 }
 
 /**
  * Resolves the Java return type for a query/mutation in Resolver and ServiceInterface.
- * list → List<Type>, paginated → <SchemaName>Page, single → Type
+ * list → List<Type>, paginated → TypeConnection, single → Type (or scalar as-is).
  */
 export function resolveJavaReturnType(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,
 ): string {
-  if (operation.returnType) return operation.returnType;
-
-  const typeName = operation.returnTypeRef ?? schemaName;
-  const collectionType: GraphQLCollectionType = operation.collectionType ?? 'single';
-
+  const rt = operation.returnType;
+  if (!rt) return schemaName;
+  if (GRAPHQL_KNOWN_SCALARS.has(rt)) return rt;
+  const collectionType: GraphQLCollectionType = (operation as GraphQLQuery).collectionType ?? 'single';
   switch (collectionType) {
-    case 'list':
-      return `List<${typeName}>`;
-    case 'paginated':
-      return `${schemaName}Connection`;
-    default:
-      return typeName;
+    case 'list':      return `List<${rt}>`;
+    case 'paginated': return `${rt}Connection`;
+    default:          return rt;
   }
 }
 
@@ -352,7 +380,7 @@ export function resolveSubscriptionReturnType(
   sub: GraphQLSubscription,
   schemaName: string,
 ): string {
-  return sub.returnTypeRef ?? schemaName;
+  return sub.returnType ?? schemaName;
 }
 
 /**
@@ -362,22 +390,13 @@ export function resolveSubscriptionJavaReturnType(
   sub: GraphQLSubscription,
   schemaName: string,
 ): string {
-  return sub.returnTypeRef ?? schemaName;
+  return sub.returnType ?? schemaName;
 }
 
-/**
- * Resolves the SDL return type for a GraphQL query or mutation, now using Connection for paginated.
- */
+/** Alias of resolveGraphQLReturnType — kept for template compatibility. */
 export function resolveGraphQLReturnTypeV2(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,
 ): string {
-  if (operation.returnType) return operation.returnType;
-  const typeName = operation.returnTypeRef ?? schemaName;
-  const collectionType: GraphQLCollectionType = operation.collectionType ?? 'single';
-  switch (collectionType) {
-    case 'list':      return `[${typeName}!]!`;
-    case 'paginated': return `${typeName}Connection!`;
-    default:          return typeName;
-  }
+  return resolveGraphQLReturnType(operation, schemaName);
 }

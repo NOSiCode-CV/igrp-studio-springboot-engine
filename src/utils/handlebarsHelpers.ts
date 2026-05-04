@@ -64,11 +64,14 @@ import {
     graphqlRefIdType,
     graphqlRefReturnType,
     hasGraphQLTypeAttributes,
+    isGraphQLDTO,
     resolveGraphQLAttributeType,
     resolveGraphQLReturnType,
     resolveGraphQLScalar,
     resolveJavaReturnType,
     resolveJavaTypeForGraphQL,
+    resolveParamJavaType,
+    resolveParamSDLType,
     typeImplementsNode,
     resolvePreAuthorize,
     resolveSubscriptionReturnType,
@@ -946,6 +949,9 @@ Handlebars.registerHelper('resolvePreAuthorize', resolvePreAuthorize);
 Handlebars.registerHelper('resolveSubscriptionReturnType', resolveSubscriptionReturnType);
 Handlebars.registerHelper('resolveSubscriptionJavaReturnType', resolveSubscriptionJavaReturnType);
 Handlebars.registerHelper('resolveGraphQLReturnTypeV2', resolveGraphQLReturnTypeV2);
+Handlebars.registerHelper('isGraphQLDTO', isGraphQLDTO);
+Handlebars.registerHelper('resolveParamSDLType', resolveParamSDLType);
+Handlebars.registerHelper('resolveParamJavaType', resolveParamJavaType);
 
 Handlebars.registerHelper('hasGraphQLMutations', function (mutations: any[]): boolean {
   return Array.isArray(mutations) && mutations.length > 0;
