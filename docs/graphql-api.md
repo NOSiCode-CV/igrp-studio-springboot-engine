@@ -389,33 +389,26 @@ Define os objetos de entrada das mutations. **Apenas atributos com `objectType: 
 
 ## Segurança — `roles` e `permission`
 
-Cada operação pode declarar controlo de acesso. Os dois mecanismos são mutuamente exclusivos por operação — use um ou outro.
+Cada operação pode declarar controlo de acesso via `roles`, `permission`, ou ambos. Quando os dois estão presentes, são combinados com AND.
 
 ### `roles` — baseado em papéis Spring Security
 
 ```json
 {
-  "name": "findAllProducts",
+  "name": "products",
   "params": [...],
   "return": {"objectType": "graphqlType", "type": "Product"},
-  "collectionType": "list",
+  "collectionType": "paginated",
   "roles": ["MANAGER", "ADMIN"]
 }
 ```
 
 Java gerado:
 ```java
-@PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
 ```
 
-Valores disponíveis:
-
-| Valor em `roles` | Anotação Java gerada |
-|-----------------|----------------------|
-| `"ADMIN"` | `hasRole('ADMIN')` |
-| `"EDITOR"` | `hasRole('EDITOR') or hasRole('ADMIN')` |
-| `"USER"` | `isAuthenticated()` |
-| `"MANAGER"`, `"VIEWER"`, etc. | `hasRole('<VALOR>')` |
+`roles` é um array de strings livres — os valores são passados diretamente para `hasAnyRole(...)`. Qualquer nome de role Spring Security é válido.
 
 ### `permission` — baseado em permissões granulares
 
@@ -435,6 +428,38 @@ Valores disponíveis:
 |-------|------|-----------|
 | `items` | `string[]` | Lista de permissões necessárias |
 | `operator` | `"AND"` \| `"OR"` | Como combinar múltiplas permissões |
+
+Java gerado (1 item):
+```java
+@PreAuthorize("@igrpAuthorization.checkPermission(T(Permission).ORDER_WRITE)")
+```
+
+Java gerado (múltiplos items, `OR`):
+```java
+@PreAuthorize("@igrpAuthorization.checkAnyPermission(T(Permission).ORDER_WRITE, T(Permission).ORDER_ADMIN)")
+```
+
+Java gerado (múltiplos items, `AND`):
+```java
+@PreAuthorize("@igrpAuthorization.checkAllPermission(T(Permission).ORDER_WRITE, T(Permission).ORDER_ADMIN)")
+```
+
+### Combinando `roles` e `permission`
+
+Quando ambos são declarados na mesma operação, o Java gerado combina-os com `and`:
+
+```json
+{
+  "name": "deleteProduct",
+  "roles": ["ADMIN"],
+  "permission": {"items": ["PRODUCT_DELETE"], "operator": "OR"}
+}
+```
+
+Java gerado:
+```java
+@PreAuthorize("hasAnyRole('ADMIN') and @igrpAuthorization.checkPermission(T(Permission).PRODUCT_DELETE)")
+```
 
 ---
 
@@ -1044,7 +1069,7 @@ Da mesma forma, o `return` aceita `module` para tipos de outro módulo:
 | `module` especificado não existe no projeto | Runtime error ao gerar |
 | Propriedades extras no manifest | Validation error (strict mode — `additionalProperties: false`) |
 | `collectionType` em mutation | Validation error — não permitido |
-| `roles` e `permission` ambos declarados na mesma operação | Apenas um é aplicado (`roles` tem precedência) |
+| `roles` e `permission` ambos declarados na mesma operação | Ambos são aplicados combinados com AND |
 
 ### Checklist antes de gerar
 
