@@ -878,19 +878,20 @@ describe('Validation — objectType is required on params and return', () => {
 
 describe('permission — AND operator generates checkAllPermission', () => {
   beforeAll(async () => {
+    // Use scalar returns to avoid SDL redefinition conflict with Order.graphqls
     const andPermSchema: GraphQLSchemaConfig = {
-      type: 'graphql', name: 'Report', module: 'orders', typeRef: 'Order',
+      type: 'graphql', name: 'Report', module: 'orders',
       queries: [
         {
           name: 'sensitiveReport',
           params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
-          return: {objectType: 'graphqlType', type: 'Order'},
+          return: {objectType: 'java', type: 'boolean'},
           permission: {items: ['REPORT_READ', 'REPORT_EXPORT'], operator: 'AND'},
         },
         {
           name: 'report',
           params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
-          return: {objectType: 'graphqlType', type: 'Order'},
+          return: {objectType: 'java', type: 'boolean'},
           permission: {items: ['REPORT_READ', 'REPORT_EXPORT'], operator: 'OR'},
         },
       ],
