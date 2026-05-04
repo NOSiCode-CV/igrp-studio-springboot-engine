@@ -15,7 +15,7 @@ import lombok.Getter;
 public class {{capitalize operationName}}Query implements Query {
 
 {{#each params}}
-    private {{resolveParamJavaType this.type}} {{this.name}};
+    private {{resolveParamJavaType this}} {{this.name}};
 {{/each}}
 {{#if (eq collectionType "paginated")}}
     private SortInput sort;

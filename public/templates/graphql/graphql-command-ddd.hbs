@@ -13,6 +13,6 @@ import lombok.Getter;
 public class {{capitalize operationName}}Command implements Command {
 
 {{#each params}}
-    private {{resolveParamJavaType this.type}} {{this.name}};
+    private {{resolveParamJavaType this}} {{this.name}};
 {{/each}}
 }

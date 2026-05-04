@@ -15,14 +15,14 @@ public class {{capitalize resourceConfig.name}}GraphQLService implements I{{capi
 
 {{#each resourceConfig.queries}}
     @Override
-    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if (eq this.collectionType "paginated")}}{{#if this.params}}, {{/if}}SortInput sort, PageInput page{{/if}}) {
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if (eq this.collectionType "paginated")}}{{#if this.params}}, {{/if}}SortInput sort, PageInput page{{/if}}) {
         throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
     }
 
 {{/each}}
 {{#each resourceConfig.mutations}}
     @Override
-    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    public {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
         throw new UnsupportedOperationException("Not yet implemented: {{this.name}}");
     }
 

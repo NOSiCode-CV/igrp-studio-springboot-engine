@@ -12,11 +12,11 @@
 public interface I{{capitalize resourceConfig.name}}GraphQLService {
 
 {{#each resourceConfig.queries}}
-    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if (eq this.collectionType "paginated")}}{{#if this.params}}, {{/if}}SortInput sort, PageInput page{{/if}});
+    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if (eq this.collectionType "paginated")}}{{#if this.params}}, {{/if}}SortInput sort, PageInput page{{/if}});
 
 {{/each}}
 {{#each resourceConfig.mutations}}
-    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+    {{{resolveJavaReturnType this ../resourceConfig.name}}} {{this.name}}({{#each this.params}}{{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
 
 {{/each}}
 }

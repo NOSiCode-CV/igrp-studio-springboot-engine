@@ -3,7 +3,6 @@ import {ValidateFunction} from 'ajv';
 import {GraphQLSchemaConfig} from '../interfaces/types';
 import {PATTERNS} from '../utils/constants';
 
-// Reused from controllerConfig — same structure for @PreAuthorize generation
 const permissionSchema = {
   type: 'object',
   nullable: true,
@@ -40,17 +39,50 @@ const graphQLParamSchema = {
       pattern: PATTERNS.NAME_VALIDATION_PATTERN,
       errorMessage: 'The param name must follow the naming convention and cannot be empty.',
     },
+    objectType: {
+      type: 'string',
+      enum: ['java', 'graphqlInput'],
+      errorMessage: "The 'objectType' must be 'java' (scalar) or 'graphqlInput' (DTO).",
+    },
     type: {
       type: 'string',
-      errorMessage: "The 'type' field is required and must be a string (engine scalar or DTO name).",
+      errorMessage: "The 'type' field is required and must be a string.",
     },
     required: {
       type: 'boolean',
       nullable: true,
       errorMessage: "The 'required' field, if provided, must be a boolean.",
     },
+    module: {
+      type: 'string',
+      nullable: true,
+      errorMessage: "The 'module' field, if provided, must be a string.",
+    },
   },
-  required: ['name', 'type'],
+  required: ['name', 'objectType', 'type'],
+  additionalProperties: false,
+};
+
+const graphQLReturnSchema = {
+  type: 'object',
+  nullable: true,
+  properties: {
+    objectType: {
+      type: 'string',
+      enum: ['java', 'graphqlType'],
+      errorMessage: "The 'objectType' must be 'java' (scalar) or 'graphqlType' (manifest reference).",
+    },
+    type: {
+      type: 'string',
+      errorMessage: "The 'type' field is required and must be a string.",
+    },
+    module: {
+      type: 'string',
+      nullable: true,
+      errorMessage: "The 'module' field, if provided, must be a string.",
+    },
+  },
+  required: ['objectType', 'type'],
   additionalProperties: false,
 };
 
@@ -68,11 +100,7 @@ const graphQLQuerySchema = {
       nullable: true,
       errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
-    returnType: {
-      type: 'string',
-      nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string (scalar or graphqlType name).",
-    },
+    return: graphQLReturnSchema,
     collectionType: {
       type: 'string',
       enum: ['single', 'list', 'paginated'],
@@ -104,11 +132,7 @@ const graphQLMutationSchema = {
       nullable: true,
       errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
-    returnType: {
-      type: 'string',
-      nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string (scalar or graphqlType name).",
-    },
+    return: graphQLReturnSchema,
     roles: rolesSchema,
     permission: permissionSchema,
   },
@@ -134,11 +158,7 @@ const graphQLSubscriptionSchema = {
       nullable: true,
       errorMessage: "The 'params' field, if provided, must be an array of param definitions.",
     },
-    returnType: {
-      type: 'string',
-      nullable: true,
-      errorMessage: "The 'returnType' field, if provided, must be a string (graphqlType name or scalar).",
-    },
+    return: graphQLReturnSchema,
   },
   required: ['name'],
   additionalProperties: false,

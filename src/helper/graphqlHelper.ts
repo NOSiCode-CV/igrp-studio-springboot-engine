@@ -6,50 +6,29 @@ import {
     GraphQLMutation,
     GraphQLParam,
     GraphQLQuery,
+    GraphQLReturn,
     GraphQLSchemaConfig,
     GraphQLSubscription,
 } from '../interfaces/types';
-
-/** GraphQL scalar types as they appear in SDL / returnType fields. */
-const GRAPHQL_KNOWN_SCALARS = new Set([
-  'Boolean', 'String', 'Int', 'Float', 'ID', 'Long', 'BigDecimal', 'DateTime',
-]);
+import {capitalizeJavaStyle} from './stringHelper';
 
 /**
- * Returns true when a param's type is a DTO class (PascalCase, not a known GraphQL scalar).
- * e.g. 'CreateOrderInput' → true, 'uuid' → false, 'Boolean' → false.
- */
-export function isGraphQLDTO(type: string): boolean {
-  if (!type) return false;
-  return /^[A-Z]/.test(type) && !GRAPHQL_KNOWN_SCALARS.has(type);
-}
-
-/**
- * Resolves a GraphQLParam to its SDL representation (e.g. `id: ID!` or `filter: OrderFilterInput`).
+ * Resolves a GraphQLParam to its SDL type string (e.g. `ID!`, `String`, `CreateOrderInput!`).
  */
 export function resolveParamSDLType(param: GraphQLParam): string {
   const bang = param.required ? '!' : '';
-  if (isGraphQLDTO(param.type)) return `${param.type}${bang}`;
+  if (param.objectType === 'graphqlInput') return `${param.type}${bang}`;
   return `${resolveGraphQLScalar(param.type)}${bang}`;
 }
 
 /**
- * Resolves a param type to the Java type used in method signatures.
- * DTO types are returned as-is; scalar types go through resolveJavaTypeForGraphQL.
+ * Resolves a GraphQLParam to the Java type used in method signatures.
  */
-export function resolveParamJavaType(type: string): string {
-  if (isGraphQLDTO(type)) return type;
-  return resolveJavaTypeForGraphQL(type);
+export function resolveParamJavaType(param: GraphQLParam): string {
+  if (param.objectType === 'graphqlInput') return param.type;
+  return resolveJavaTypeForGraphQL(param.type);
 }
-import {capitalizeJavaStyle} from './stringHelper';
 
-/**
- * Resolves all Java import statements needed for a GraphQL resolver / service:
- *   - Standard Java type imports from query/mutation args (e.g. java.util.UUID)
- *   - java.util.List when any operation uses collectionType 'list'
- *   - graphql.types package imports for the resolved type and all input types
- *   - imports for types referenced by graphqlType attributes (needed for @SchemaMapping return types)
- */
 /** Resolves a graphqlType import for either technical or domain style. */
 function graphqlTypeImport(
   packageSource: string,
@@ -77,9 +56,9 @@ export function graphqlImportsTypes(
     ...(config.mutations ?? []).flatMap((m) => m.params ?? []),
   ];
 
-  // Standard scalar param type imports (e.g. UUID)
+  // Java scalar imports (e.g. UUID)
   for (const param of allParams) {
-    if (!isGraphQLDTO(param.type)) {
+    if (param.objectType === 'java') {
       const genType = GENERIC_TYPES.get(param.type?.toLowerCase?.() ?? '');
       if (genType?.java.namespace) {
         imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
@@ -89,12 +68,10 @@ export function graphqlImportsTypes(
 
   const allQueries = config.queries ?? [];
 
-  // java.util.List if any query returns a list (only queries have collectionType)
   if (allQueries.some((q) => q.collectionType === 'list')) {
     imports.add('import java.util.List;');
   }
 
-  // Paginated queries — import Connection, SortInput, PageInput
   if (allQueries.some((q) => q.collectionType === 'paginated')) {
     const sharedPkg = `${packageSource}.graphql.connection`;
     imports.add(`import ${sharedPkg}.SortInput;`);
@@ -107,7 +84,6 @@ export function graphqlImportsTypes(
     }
   }
 
-  // Main type import
   if (resolvedTypeManifest) {
     imports.add(graphqlTypeImport(packageSource, resolvedTypeManifest.name, schemaModule, isDomain));
 
@@ -116,12 +92,10 @@ export function graphqlImportsTypes(
     );
 
     for (const attr of graphqlTypeAttrs) {
-      // Import the referenced type class (for @SchemaMapping return type) — uses attr.module
       const attrModule = attr.module ?? schemaModule;
       imports.add(graphqlTypeImport(packageSource, String(attr.type), attrModule, isDomain));
     }
 
-    // Map + List imports for @BatchMapping return types
     if (graphqlTypeAttrs.length > 0) {
       imports.add('import java.util.Map;');
       if (graphqlTypeAttrs.some((a) => a.collectionType === 'list')) {
@@ -130,7 +104,6 @@ export function graphqlImportsTypes(
     }
   }
 
-  // Input type imports
   for (const input of resolvedInputManifests ?? []) {
     imports.add(graphqlTypeImport(packageSource, input.name, schemaModule, isDomain));
   }
@@ -141,7 +114,6 @@ export function graphqlImportsTypes(
 /**
  * Resolves an engine attribute type to the Java type used in GraphQL resolver
  * arguments and service method signatures.
- * uuid → UUID, integer → Integer, etc. — consistent with controllers and DTOs.
  */
 export function resolveJavaTypeForGraphQL(type: string): string {
   if (!type) return 'String';
@@ -150,7 +122,6 @@ export function resolveJavaTypeForGraphQL(type: string): string {
 
 /**
  * Resolves an engine attribute type to a GraphQL scalar type.
- * Delegates to GRAPHQL_SCALAR_TYPES (constants.ts).
  */
 export function resolveGraphQLScalar(type: string): string {
   if (!type) return 'String';
@@ -159,13 +130,6 @@ export function resolveGraphQLScalar(type: string): string {
 
 /**
  * Resolves a JavaAttribute to its GraphQL schema representation.
- * - objectType 'graphqlType' + collectionType 'list' → [TypeName!]!
- * - objectType 'graphqlType'                         → TypeName
- * - scalar     + collectionType 'list' + required    → [Scalar!]!
- * - scalar     + collectionType 'list' + optional    → [Scalar]
- * - scalar                                           → Scalar! / Scalar
- *
- * Use {{{ }}} in Handlebars to prevent HTML-encoding of brackets.
  */
 export function resolveGraphQLAttributeType(attr: { type: string; objectType: string; collectionType?: string; required: boolean }): string {
   if (attr.objectType === 'graphqlType') {
@@ -180,17 +144,11 @@ export function resolveGraphQLAttributeType(attr: { type: string; objectType: st
 
 /**
  * Returns true if any attribute in the list has objectType 'graphqlType'.
- * Used in templates to conditionally import @SchemaMapping and generate relation methods.
  */
 export function hasGraphQLTypeAttributes(attributes: Array<{ objectType: string }> | undefined): boolean {
   return (attributes ?? []).some((a) => a.objectType === 'graphqlType');
 }
 
-/**
- * Resolves Java imports for the service interface and service implementation.
- * Subset of graphqlImportsTypes — excludes CompletableFuture, DataLoader, and
- * referenced-type classes (those are resolver concerns only).
- */
 export function graphqlImportsTypesService(
   config: GraphQLSchemaConfig,
   baseConfig: ApiConfig,
@@ -208,7 +166,7 @@ export function graphqlImportsTypesService(
   ];
 
   for (const param of allParams) {
-    if (!isGraphQLDTO(param.type)) {
+    if (param.objectType === 'java') {
       const genType = GENERIC_TYPES.get(param.type?.toLowerCase?.() ?? '');
       if (genType?.java.namespace) {
         imports.add(`import ${genType.java.namespace}.${genType.java.name};`);
@@ -222,7 +180,6 @@ export function graphqlImportsTypesService(
     imports.add('import java.util.List;');
   }
 
-  // Paginated queries — import Connection, SortInput, PageInput
   if (allQueriesSvc.some((q) => q.collectionType === 'paginated')) {
     const sharedPkg = `${packageSource}.graphql.connection`;
     imports.add(`import ${sharedPkg}.SortInput;`);
@@ -246,50 +203,25 @@ export function graphqlImportsTypesService(
   return [...imports].join('\n');
 }
 
-/**
- * Returns the Java field name for a graphqlType attribute's ID reference.
- * Derived from the referenced TYPE name (not the attribute name):
- *   single:  Category  → categoryId
- *   list:    Product   → productIds
- */
 export function graphqlRefIdFieldName(attr: { type: string; collectionType?: string }): string {
   const typeName = String(attr.type);
   const camel = typeName.charAt(0).toLowerCase() + typeName.slice(1);
   return attr.collectionType === 'list' ? `${camel}Ids` : `${camel}Id`;
 }
 
-/**
- * Returns the Java type for a graphqlType attribute's ID field (using attr.idType).
- *   single: uuid → UUID
- *   list:   uuid → List<UUID>
- */
 export function graphqlRefIdType(attr: { idType?: string; collectionType?: string }): string {
   const javaType = resolveJavaTypeForGraphQL(attr.idType ?? 'uuid');
   return attr.collectionType === 'list' ? `List<${javaType}>` : javaType;
 }
 
-/**
- * Returns the scalar Java ID type for a graphqlType attribute (no List wrapping).
- * Used as the DataLoader key type: DataLoader<UUID, Product>.
- */
 export function graphqlRefIdJavaType(attr: { idType?: string }): string {
   return resolveJavaTypeForGraphQL(attr.idType ?? 'uuid');
 }
 
-/**
- * Returns the return type of a @SchemaMapping method for a graphqlType attribute.
- *   single: Category  → Category
- *   list:   Product   → List<Product>
- */
 export function graphqlRefReturnType(attr: { type: string; collectionType?: string }): string {
   return attr.collectionType === 'list' ? `List<${attr.type}>` : String(attr.type);
 }
 
-/**
- * Generates import statements for the Query and Command classes referenced by
- * a DDD-style resolver (e.g. FindProductByIdQuery, CreateProductCommand).
- * Only relevant when projectStructureStyle === 'domain'.
- */
 export function graphqlDDDOperationImports(
   config: GraphQLSchemaConfig,
   baseConfig: ApiConfig,
@@ -311,55 +243,56 @@ export function graphqlDDDOperationImports(
 }
 
 /**
- * Resolves the SDL return type for a GraphQL query or mutation.
- * If returnType is a known scalar, returns it directly.
- * Otherwise wraps using collectionType (list → [Type!]!, paginated → TypeConnection!, single → Type).
+ * Resolves the SDL return type for a GraphQL query or mutation from its `return` field.
+ * Absent return → uses schemaName.
+ * objectType 'java'       → resolves scalar (e.g. boolean → Boolean)
+ * objectType 'graphqlType' → applies collectionType (list / paginated / single)
  */
 export function resolveGraphQLReturnType(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,
 ): string {
-  const rt = operation.returnType;
-  if (!rt) return schemaName;
-  if (GRAPHQL_KNOWN_SCALARS.has(rt)) return rt;
+  const ret = operation.return;
+  if (!ret) return schemaName;
+  if (ret.objectType === 'java') return resolveGraphQLScalar(ret.type);
   const collectionType: GraphQLCollectionType = (operation as GraphQLQuery).collectionType ?? 'single';
   switch (collectionType) {
-    case 'list':      return `[${rt}!]!`;
-    case 'paginated': return `${rt}Connection!`;
-    default:          return rt;
+    case 'list':      return `[${ret.type}!]!`;
+    case 'paginated': return `${ret.type}Connection!`;
+    default:          return ret.type;
   }
 }
 
 /**
- * Resolves the Java return type for a query/mutation in Resolver and ServiceInterface.
- * list → List<Type>, paginated → TypeConnection, single → Type (or scalar as-is).
+ * Resolves the Java return type for a query/mutation.
+ * Always returns wrapper types (Boolean not boolean) — required for generic type params.
  */
 export function resolveJavaReturnType(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,
 ): string {
-  const rt = operation.returnType;
-  if (!rt) return schemaName;
-  if (GRAPHQL_KNOWN_SCALARS.has(rt)) return rt;
+  const ret = operation.return;
+  if (!ret) return schemaName;
+  if (ret.objectType === 'java') {
+    const jt = resolveJavaTypeForGraphQL(ret.type);
+    return jt.charAt(0).toUpperCase() + jt.slice(1);
+  }
   const collectionType: GraphQLCollectionType = (operation as GraphQLQuery).collectionType ?? 'single';
   switch (collectionType) {
-    case 'list':      return `List<${rt}>`;
-    case 'paginated': return `${rt}Connection`;
-    default:          return rt;
+    case 'list':      return `List<${ret.type}>`;
+    case 'paginated': return `${ret.type}Connection`;
+    default:          return ret.type;
   }
 }
 
 /**
- * Returns true if the type manifest has an 'id' attribute — used to add `implements Node` in SDL.
+ * Returns true if the type manifest has an 'id' attribute.
  */
 export function typeImplementsNode(manifest: DTOConfig | undefined): boolean {
   if (!manifest) return false;
   return (manifest.attributes ?? []).some((a) => a.name === 'id');
 }
 
-/**
- * Maps a security role string to a Spring @PreAuthorize expression.
- */
 export function resolvePreAuthorize(security: string): string {
   switch (security) {
     case 'ADMIN':
@@ -374,13 +307,16 @@ export function resolvePreAuthorize(security: string): string {
 }
 
 /**
- * Resolves the return type string for a subscription in the .graphqls file.
+ * Resolves the SDL return type for a subscription.
  */
 export function resolveSubscriptionReturnType(
   sub: GraphQLSubscription,
   schemaName: string,
 ): string {
-  return sub.returnType ?? schemaName;
+  const ret = sub.return;
+  if (!ret) return schemaName;
+  if (ret.objectType === 'java') return resolveGraphQLScalar(ret.type);
+  return ret.type;
 }
 
 /**
@@ -390,10 +326,13 @@ export function resolveSubscriptionJavaReturnType(
   sub: GraphQLSubscription,
   schemaName: string,
 ): string {
-  return sub.returnType ?? schemaName;
+  const ret = sub.return;
+  if (!ret) return schemaName;
+  if (ret.objectType === 'java') return resolveJavaTypeForGraphQL(ret.type);
+  return ret.type;
 }
 
-/** Alias of resolveGraphQLReturnType — kept for template compatibility. */
+/** Alias kept for template compatibility. */
 export function resolveGraphQLReturnTypeV2(
   operation: GraphQLQuery | GraphQLMutation,
   schemaName: string,

@@ -12,7 +12,7 @@ public interface {{capitalize resourceConfig.name}}EventService {
 {{#each resourceConfig.subscriptions}}
     void publish{{capitalize this.name}}({{resolveSubscriptionJavaReturnType this ../resourceConfig.name}} payload);
 
-    Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}Stream({{#each this.params}}{{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
+    Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}Stream({{#each this.params}}{{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
 
 {{/each}}
 }

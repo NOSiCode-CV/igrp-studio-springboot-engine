@@ -23,7 +23,7 @@ public class {{capitalize resourceConfig.name}}SubscriptionController {
 
 {{#each resourceConfig.subscriptions}}
     @SubscriptionMapping
-    public Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}({{#each this.params}}@Argument {{resolveParamJavaType this.type}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
+    public Flux<{{resolveSubscriptionJavaReturnType this ../resourceConfig.name}}> {{this.name}}({{#each this.params}}@Argument {{resolveParamJavaType this}} {{this.name}}{{#unless @last}}, {{/unless}}{{/each}}) {
         return {{toCamelCase ../resourceConfig.name}}EventService.{{this.name}}Stream({{#each this.params}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}});
     }
 

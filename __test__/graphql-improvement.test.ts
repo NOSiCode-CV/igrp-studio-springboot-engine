@@ -114,21 +114,33 @@ const orderSchema: GraphQLSchemaConfig = {
   typeRef: 'Order',
   queries: [
     // single query, no auth
-    {name: 'order', params: [{name: 'id', type: 'uuid', required: true}], returnType: 'Order', collectionType: 'single'},
+    {name: 'order',
+      params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
+      return: {objectType: 'graphqlType', type: 'Order'},
+      collectionType: 'single'},
     // paginated + filter param (Phase 3 + 7) + security via roles (Phase 5)
-    {name: 'orders', returnType: 'Order', collectionType: 'paginated',
-      params: [{name: 'filter', type: 'OrderFilterInput', required: false}],
+    {name: 'orders',
+      params: [{name: 'filter', objectType: 'graphqlInput', type: 'OrderFilterInput', required: false}],
+      return: {objectType: 'graphqlType', type: 'Order'},
+      collectionType: 'paginated',
       roles: ['MANAGER', 'ADMIN']},
     // list + permission
-    {name: 'ordersByRef', params: [{name: 'ref', type: 'string', required: true}], returnType: 'Order',
-      collectionType: 'list', permission: {items: ['ORDER_READ'], operator: 'OR'}},
+    {name: 'ordersByRef',
+      params: [{name: 'ref', objectType: 'java', type: 'string', required: true}],
+      return: {objectType: 'graphqlType', type: 'Order'},
+      collectionType: 'list',
+      permission: {items: ['ORDER_READ'], operator: 'OR'}},
   ],
   mutations: [
     // DTO input param + roles
-    {name: 'createOrder', params: [{name: 'input', type: 'CreateOrderInput', required: true}], returnType: 'Order',
+    {name: 'createOrder',
+      params: [{name: 'input', objectType: 'graphqlInput', type: 'CreateOrderInput', required: true}],
+      return: {objectType: 'graphqlType', type: 'Order'},
       roles: ['MANAGER']},
     // scalar param + primitive return + permission
-    {name: 'cancelOrder', params: [{name: 'id', type: 'uuid', required: true}], returnType: 'Boolean',
+    {name: 'cancelOrder',
+      params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
+      return: {objectType: 'java', type: 'boolean'},
       permission: {items: ['ORDER_WRITE', 'ORDER_ADMIN'], operator: 'OR'}},
   ],
 };
@@ -140,11 +152,16 @@ const subscriptionSchema: GraphQLSchemaConfig = {
   module: 'catalog',
   typeRef: 'ProductEvent',
   queries: [
-    {name: 'productEvent', params: [{name: 'id', type: 'uuid', required: true}], returnType: 'ProductEvent', collectionType: 'single'},
+    {name: 'productEvent',
+      params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
+      return: {objectType: 'graphqlType', type: 'ProductEvent'},
+      collectionType: 'single'},
   ],
   subscriptions: [
-    {name: 'productCreated', returnType: 'ProductEvent'},
-    {name: 'productUpdated', params: [{name: 'productId', type: 'uuid', required: true}], returnType: 'ProductEvent'},
+    {name: 'productCreated', return: {objectType: 'graphqlType', type: 'ProductEvent'}},
+    {name: 'productUpdated',
+      params: [{name: 'productId', objectType: 'java', type: 'uuid', required: true}],
+      return: {objectType: 'graphqlType', type: 'ProductEvent'}},
   ],
 };
 
@@ -155,7 +172,10 @@ const orderItemSchema: GraphQLSchemaConfig = {
   module: 'orders',
   typeRef: 'OrderItem',
   queries: [
-    {name: 'orderItems', params: [{name: 'orderId', type: 'uuid', required: true}], returnType: 'OrderItem', collectionType: 'list'},
+    {name: 'orderItems',
+      params: [{name: 'orderId', objectType: 'java', type: 'uuid', required: true}],
+      return: {objectType: 'graphqlType', type: 'OrderItem'},
+      collectionType: 'list'},
   ],
 };
 

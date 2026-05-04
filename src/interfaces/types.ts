@@ -540,29 +540,33 @@ export type GenerationType = (typeof GENERATION_TYPES)[number];
 
 export type GraphQLCollectionType = 'single' | 'list' | 'paginated';
 
-/**
- * A single operation parameter.
- * type is either a lowercase engine scalar ('uuid', 'string') or a PascalCase DTO name ('CreateOrderInput').
- */
 export interface GraphQLParam {
   name: string;
+  objectType: 'java' | 'graphqlInput';
   type: string;
   required?: boolean;
+  module?: string;
+}
+
+export interface GraphQLReturn {
+  objectType: 'java' | 'graphqlType';
+  type: string;
+  module?: string;
 }
 
 export interface GraphQLQuery {
   name: string;
-  params?: GraphQLParam[];              // scalars and/or DTO filter refs
-  returnType?: string;                  // scalar ('Boolean') or graphqlType name ('Order')
-  collectionType?: GraphQLCollectionType; // single (default) | list | paginated
+  params?: GraphQLParam[];
+  return?: GraphQLReturn;
+  collectionType?: GraphQLCollectionType;
   roles?: string[];
   permission?: PermissionsConfig;
 }
 
 export interface GraphQLMutation {
   name: string;
-  params?: GraphQLParam[];              // scalars and/or DTO input refs (@Valid applied to DTOs)
-  returnType?: string;                  // scalar ('Boolean') or graphqlType name ('Order')
+  params?: GraphQLParam[];
+  return?: GraphQLReturn;
   roles?: string[];
   permission?: PermissionsConfig;
 }
@@ -570,14 +574,14 @@ export interface GraphQLMutation {
 export interface GraphQLSubscription {
   name: string;
   params?: GraphQLParam[];
-  returnType?: string;                  // graphqlType name or scalar
+  return?: GraphQLReturn;
 }
 
 export interface GraphQLSchemaConfig extends IdentifiableElement, VersionedConfig {
   type: 'graphql';
   name: string;
   module?: string;
-  typeRef?: string;              // references a graphqlType manifest — source of type fields
+  typeRef?: string;
   queries?: GraphQLQuery[];
   mutations?: GraphQLMutation[];
   subscriptions?: GraphQLSubscription[];

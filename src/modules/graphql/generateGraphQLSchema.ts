@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {ApiConfig, DTOConfig, GraphQLParam, GraphQLSchemaConfig, RenderContext} from '../../interfaces/types';
+import {ApiConfig, DTOConfig, GraphQLParam, GraphQLSchemaConfig, GraphQLReturn, RenderContext} from '../../interfaces/types';
 import {DIRECTORIES, EXTENSIONS, GENERIC_TYPES, PROJECT_STRUCTURE_STYLE, TEMPLATES} from '../../utils/constants';
 import {renderTemplate} from '../common/renderTemplate';
 import {saveToFile} from '../common/saveToFile';
@@ -9,7 +9,6 @@ import {getGraphQLTypeConfigPath, getMainPath, replaceTemplate} from '../../util
 import {capitalizeJavaStyle} from '../../helper/stringHelper';
 import {normalizeName} from '../dto/saveDTOConfig';
 import {
-    isGraphQLDTO,
     resolveGraphQLAttributeType,
     resolveGraphQLScalar,
     resolveJavaReturnType,
@@ -168,8 +167,8 @@ export const enrichGraphQLContext = async (
     resolvedTypeManifest = await loadGraphQLTypeManifest(resourceConfig.typeRef, module, basePath);
   }
 
-  // Auto-derive input manifests from DTO params across all operations
-  const dtoParmTypes = new Set<string>();
+  // Load input manifests explicitly declared via objectType: 'graphqlInput' in params
+  const inputParamsSeen = new Map<string, string>(); // typeName → module
   const allOperations = [
     ...(resourceConfig.queries ?? []),
     ...(resourceConfig.mutations ?? []),
@@ -177,20 +176,20 @@ export const enrichGraphQLContext = async (
   ];
   for (const op of allOperations) {
     for (const param of op.params ?? []) {
-      if (isGraphQLDTO(param.type)) {
-        dtoParmTypes.add(param.type);
+      if (param.objectType === 'graphqlInput') {
+        inputParamsSeen.set(param.type, param.module ?? module);
       }
     }
   }
   const resolvedInputManifests: DTOConfig[] = [];
-  for (const typeName of dtoParmTypes) {
+  for (const [typeName, paramModule] of inputParamsSeen) {
     try {
-      const manifest = await loadGraphQLTypeManifest(typeName, module, basePath);
+      const manifest = await loadGraphQLTypeManifest(typeName, paramModule, basePath);
       if (manifest.type === 'graphqlInput') {
         resolvedInputManifests.push(manifest);
       }
     } catch {
-      // skip if manifest not found (may be a return type or not registered)
+      // skip if manifest not found
     }
   }
 
@@ -198,8 +197,15 @@ export const enrichGraphQLContext = async (
   const hasPaginated = (resourceConfig.queries ?? []).some((q) => q.collectionType === 'paginated');
 
   let connectionManifest: ConnectionManifest | undefined;
-  if (hasPaginated && resolvedTypeManifest) {
-    connectionManifest = { typeName: resolvedTypeManifest.name };
+  if (hasPaginated) {
+    // Prefer the return.type of the first paginated query; fall back to resolvedTypeManifest name
+    const paginatedQuery = (resourceConfig.queries ?? []).find((q) => q.collectionType === 'paginated');
+    const connectionTypeName =
+      (paginatedQuery?.return?.objectType === 'graphqlType' ? paginatedQuery.return.type : undefined)
+      ?? resolvedTypeManifest?.name;
+    if (connectionTypeName) {
+      connectionManifest = { typeName: connectionTypeName };
+    }
   }
 
   return {
@@ -391,7 +397,7 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
     const operationName = capitalizeJavaStyle(query.name);
     const returnJavaType = resolveJavaReturnType(query, schemaName);
     const argsImports = buildParamsImports(query.params ?? [], module, baseConfig);
-    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
+    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig, query.return);
 
     const paginatedImports = query.collectionType === 'paginated'
       ? `import ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.SortInput;\nimport ${baseConfig.group}.${baseConfig.packageName}.graphql.connection.PageInput;`
@@ -417,7 +423,7 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
     const operationName = capitalizeJavaStyle(mutation.name);
     const returnJavaType = resolveJavaReturnType(mutation, schemaName);
     const argsImports = buildParamsImports(mutation.params ?? [], module, baseConfig);
-    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig);
+    const returnTypeImport = buildReturnTypeImport(returnJavaType, module, baseConfig, mutation.return);
 
     await fs.ensureDir(commandDir);
 
@@ -438,11 +444,12 @@ const generateDDDHandlers = async (context: EnrichedGraphQLContext): Promise<voi
 };
 
 /** Import statements for GraphQL operation params — scalar types get java imports, DTOs get graphqlType imports. */
-const buildParamsImports = (params: GraphQLParam[], module: string, baseConfig: ApiConfig): string => {
+const buildParamsImports = (params: GraphQLParam[], defaultModule: string, baseConfig: ApiConfig): string => {
   const imports = new Set<string>();
   for (const param of params) {
-    if (isGraphQLDTO(param.type)) {
-      imports.add(`import ${baseConfig.group}.${baseConfig.packageName}.${module}.interfaces.graphql.types.${param.type};`);
+    if (param.objectType === 'graphqlInput') {
+      const paramModule = param.module ?? defaultModule;
+      imports.add(`import ${baseConfig.group}.${baseConfig.packageName}.${paramModule}.interfaces.graphql.types.${param.type};`);
     } else {
       const genType = GENERIC_TYPES.get((param.type ?? '').toLowerCase());
       if (genType?.java.namespace) {
@@ -461,18 +468,19 @@ const buildGraphQLTypeImport = (typeName: string, module: string, baseConfig: Ap
 
 /**
  * Import statement(s) for the Java return type of an operation.
- * Handles List<X> (adds java.util.List + X import), UUID, and custom graphql type classes.
+ * Uses the operation's return field (objectType + type + module) to build the correct import.
  */
-const buildReturnTypeImport = (returnJavaType: string, module: string, baseConfig: ApiConfig): string => {
-  const javaBuiltins = new Set(['String', 'Boolean', 'Integer', 'Long', 'Double', 'Float', 'Void']);
+const buildReturnTypeImport = (returnJavaType: string, defaultModule: string, baseConfig: ApiConfig, ret?: GraphQLReturn): string => {
+  const javaBuiltins = new Set(['String', 'Boolean', 'boolean', 'Integer', 'int', 'Long', 'long', 'Double', 'double', 'Float', 'float', 'Void', 'void', 'Short', 'short']);
+  const retModule = ret?.module ?? defaultModule;
 
-  // List<X> — extract the inner type, not 'List' itself
+  // List<X> — extract the inner type
   if (returnJavaType.startsWith('List<')) {
     const inner = returnJavaType.match(/^List<([A-Z][A-Za-z0-9]+)>/)?.[1];
     if (!inner || javaBuiltins.has(inner)) return 'import java.util.List;';
     return [
       'import java.util.List;',
-      buildGraphQLTypeImport(inner, module, baseConfig),
+      buildGraphQLTypeImport(inner, retModule, baseConfig),
     ].join('\n');
   }
 
@@ -482,10 +490,10 @@ const buildReturnTypeImport = (returnJavaType: string, module: string, baseConfi
   // *Connection types live in .interfaces.graphql.connection, not .types
   if (returnJavaType.endsWith('Connection')) {
     const pkg = `${baseConfig.group}.${baseConfig.packageName}`;
-    return `import ${pkg}.${module}.interfaces.graphql.connection.${returnJavaType};`;
+    return `import ${pkg}.${retModule}.interfaces.graphql.connection.${returnJavaType};`;
   }
 
-  return buildGraphQLTypeImport(returnJavaType, module, baseConfig);
+  return buildGraphQLTypeImport(returnJavaType, retModule, baseConfig);
 };
 
 // ─── common.graphqls (one-time) ──────────────────────────────────────────────

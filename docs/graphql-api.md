@@ -30,7 +30,7 @@ Manifests JSON (.igrpstudio/)
   Arquivo .graphqls  +  Classes Java (Resolver, Service, Types)
 ```
 
-A API GraphQL suporta **Queries**, **Mutations** e paginação automática. Subscriptions **não são suportadas** na versão atual.
+A API GraphQL suporta **Queries**, **Mutations**, **Subscriptions** e paginação automática (cursor-based via Relay Connection).
 
 ---
 
@@ -46,51 +46,50 @@ A API GraphQL suporta **Queries**, **Mutations** e paginação automática. Subs
   "name": "Product",
   "module": "catalog",
   "typeRef": "Product",
-  "inputRefs": ["CreateProductInput", "UpdateProductInput"],
   "queries": [
     {
       "name": "findProductById",
-      "args": [
-        {
-          "name": "id",
-          "type": "uuid",
-          "nullable": false,
-          "description": "ID do produto"
-        }
+      "params": [
+        {"name": "id", "type": "uuid", "required": true}
       ],
-      "returnTypeRef": "Product",
+      "returnType": "Product",
       "collectionType": "single"
     },
     {
       "name": "findAllProducts",
-      "returnTypeRef": "Product",
+      "returnType": "Product",
       "collectionType": "list"
     },
     {
       "name": "findProductsPage",
-      "args": [
-        {"name": "page", "type": "integer", "nullable": false},
-        {"name": "size", "type": "integer", "nullable": false}
+      "params": [
+        {"name": "filter", "type": "ProductFilterInput", "required": false}
       ],
-      "returnTypeRef": "Product",
+      "returnType": "Product",
       "collectionType": "paginated"
     }
   ],
   "mutations": [
     {
       "name": "createProduct",
-      "inputRef": "CreateProductInput",
-      "returnTypeRef": "Product"
+      "params": [
+        {"name": "input", "type": "CreateProductInput", "required": true}
+      ],
+      "returnType": "Product"
     },
     {
       "name": "updateProduct",
-      "inputRef": "UpdateProductInput",
-      "args": [{"name": "id", "type": "uuid", "nullable": false}],
-      "returnTypeRef": "Product"
+      "params": [
+        {"name": "id",    "type": "uuid",                "required": true},
+        {"name": "input", "type": "UpdateProductInput",  "required": true}
+      ],
+      "returnType": "Product"
     },
     {
       "name": "deleteProduct",
-      "args": [{"name": "id", "type": "uuid", "nullable": false}],
+      "params": [
+        {"name": "id", "type": "uuid", "required": true}
+      ],
       "returnType": "Boolean"
     }
   ]
@@ -105,47 +104,66 @@ A API GraphQL suporta **Queries**, **Mutations** e paginação automática. Subs
 | `name` | `string` | Sim | Nome do schema (PascalCase, ex: `Product`) |
 | `module` | `string` | Não | Módulo alvo (default: `shared`) |
 | `typeRef` | `string` | Não | Nome do manifesto `graphqlType` principal |
-| `inputRefs` | `string[]` | Não | Nomes dos manifests `graphqlInput` usados |
 | `queries` | `GraphQLQuery[]` | Não | Lista de queries |
 | `mutations` | `GraphQLMutation[]` | Não | Lista de mutations |
+| `subscriptions` | `GraphQLSubscription[]` | Não | Lista de subscriptions |
+
+> **Nota:** `inputRefs` foi removido da API. O engine detecta automaticamente os DTO input usados examinando os `params` de cada operação — qualquer `type` em PascalCase que referencie um manifesto `graphqlInput` é carregado automaticamente.
+
+### Definição de Parâmetro (`GraphQLParam`)
+
+Todos os tipos de operação (query, mutation, subscription) usam o mesmo tipo de parâmetro:
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `name` | `string` | Sim | Nome do parâmetro (camelCase) |
+| `type` | `string` | Sim | Tipo engine em minúsculas (`uuid`, `string`) **ou** nome PascalCase de um DTO (`CreateProductInput`) |
+| `required` | `boolean` | Não | Se obrigatório no schema (default: `false`) |
+
+**Regra de tipo:**
+- `type` em minúsculas → tipo escalar engine (ex: `uuid` → `ID!`, `string` → `String`)
+- `type` em PascalCase → referência a um manifesto DTO (ex: `CreateProductInput` → carregado de `.igrpstudio/`)
 
 ### Definição de Query (`GraphQLQuery`)
 
 | Campo | Tipo | Obrigatório | Descrição |
 |-------|------|-------------|-----------|
 | `name` | `string` | Sim | Nome da operação (camelCase) |
-| `args` | `GraphQLFieldDef[]` | Não | Argumentos primitivos |
-| `returnTypeRef` | `string` | Não | Referência a um `graphqlType` |
-| `returnType` | `string` | Não | Tipo primitivo de retorno (`Boolean`, `String`, `Int`) |
-| `collectionType` | `"single"` \| `"list"` \| `"paginated"` | Não | Formato do retorno (default: `"single"`) |
+| `params` | `GraphQLParam[]` | Não | Argumentos da query |
+| `returnType` | `string` | Não | Tipo de retorno — nome do `graphqlType` (ex: `Product`) ou escalar GraphQL (`Boolean`, `String`) |
+| `collectionType` | `"single"` \| `"list"` \| `"paginated"` | Não | Formato da coleção (default: `"single"`) |
+| `roles` | `string[]` | Não | Roles de acesso (ex: `["ADMIN", "MANAGER"]`) |
+| `permission` | `PermissionsConfig` | Não | Permissões por item (`items`, `operator`) |
 
 ### Definição de Mutation (`GraphQLMutation`)
 
 | Campo | Tipo | Obrigatório | Descrição |
 |-------|------|-------------|-----------|
 | `name` | `string` | Sim | Nome da operação (camelCase) |
-| `inputRef` | `string` | Não | Referência a um `graphqlInput` |
-| `args` | `GraphQLFieldDef[]` | Não | Argumentos primitivos adicionais |
-| `returnTypeRef` | `string` | Não | Referência a um `graphqlType` |
-| `returnType` | `string` | Não | Tipo primitivo de retorno |
-| `collectionType` | `"single"` \| `"list"` \| `"paginated"` | Não | Formato do retorno |
+| `params` | `GraphQLParam[]` | Não | Argumentos da mutation |
+| `returnType` | `string` | Não | Tipo de retorno |
+| `roles` | `string[]` | Não | Roles de acesso |
+| `permission` | `PermissionsConfig` | Não | Permissões por item |
 
-### Definição de Argumento (`GraphQLFieldDef`)
+> **Nota:** `collectionType` foi removido de mutations — mutations sempre retornam um único objeto ou escalar.
+
+### Definição de Subscription (`GraphQLSubscription`)
 
 | Campo | Tipo | Obrigatório | Descrição |
 |-------|------|-------------|-----------|
-| `name` | `string` | Sim | Nome do argumento |
-| `type` | `string` | Sim | Tipo engine (`uuid`, `string`, `integer`, etc.) |
-| `nullable` | `boolean` | Não | Se pode ser nulo (default: `false`) |
-| `description` | `string` | Não | Documentação do campo |
+| `name` | `string` | Sim | Nome da operação (camelCase) |
+| `params` | `GraphQLParam[]` | Não | Argumentos do filtro de subscription |
+| `returnType` | `string` | Não | Tipo de retorno (padrão: nome do schema) |
 
-### Comportamento de `collectionType`
+### Comportamento de `collectionType` (apenas em queries)
 
-| Valor | Retorno GraphQL | Retorno Java |
-|-------|-----------------|--------------|
+| Valor | Retorno GraphQL SDL | Retorno Java |
+|-------|---------------------|--------------|
 | `"single"` | `Product` | `Product` |
 | `"list"` | `[Product!]!` | `List<Product>` |
-| `"paginated"` | `ProductPage` | `ProductPage` (auto-gerado) |
+| `"paginated"` | `ProductConnection!` | `ProductConnection` (Relay) |
+
+Para `collectionType: "paginated"`, os argumentos `sort: SortInput` e `page: PageInput` são **sempre gerados automaticamente** no SDL e no resolver — não precisam ser declarados em `params`. O array `params` serve apenas para filtros adicionais (ex: `filter: ProductFilterInput`).
 
 ---
 
@@ -237,11 +255,11 @@ Atributos com `objectType: "graphqlType"` são renderizados como campos de ID no
 
 ```
 Atributo: category (graphqlType, single)
-  → Campo Java:   UUID categoryId
+  → Campo Java:    UUID categoryId
   → Campo GraphQL: category: Category
 
 Atributo: items (graphqlType, list)
-  → Campo Java:   List<UUID> itemIds
+  → Campo Java:    List<UUID> itemIds
   → Campo GraphQL: items: [OrderItem!]!
 ```
 
@@ -323,8 +341,9 @@ addGraphQLSchema(config: GraphQLSchemaConfig, basePath: string): Promise<void>
 
 6. Enriquecimento de Contexto
    ├── Carrega o manifesto do typeRef (resolvedTypeManifest)
-   ├── Carrega os manifestos dos inputRefs (resolvedInputManifests)
-   └── Gera pageManifest automático se houver collectionType: 'paginated'
+   ├── Auto-deriva inputs: varre params de todas as operações,
+   │   carrega manifests de tipos PascalCase com type='graphqlInput'
+   └── Gera Connection manifest automático se houver collectionType: 'paginated'
 
 7. Geração de Arquivos
    ├── .graphqls (schema SDL)
@@ -332,7 +351,7 @@ addGraphQLSchema(config: GraphQLSchemaConfig, basePath: string): Promise<void>
    ├── Resolver Java
    ├── (Technical) Interface de Serviço + Implementação
    ├── (Domain) Query/QueryHandler + Command/CommandHandler
-   └── Tipo Page (se paginado)
+   └── Tipos Connection/Edge (se paginado)
 
 8. Salvar Manifesto
    └── .igrpstudio/<module>/graphql/<Name>.json
@@ -367,20 +386,26 @@ src/main/java/<group>/<pkg>/
     │   ├── ProductResolver.java              ← @Controller Spring GraphQL
     │   ├── IProductGraphQLService.java       ← Interface de contrato
     │   └── ProductGraphQLService.java        ← Implementação (gerado 1x)
-    └── types/
-        ├── Product.java
-        ├── CreateProductInput.java
-        ├── UpdateProductInput.java
-        ├── Category.java
-        └── ProductPage.java                  ← Gerado automaticamente (se paginado)
+    ├── type/
+    │   ├── Product.java
+    │   ├── Category.java
+    │   └── ...
+    ├── input/
+    │   ├── CreateProductInput.java
+    │   └── UpdateProductInput.java
+    └── connection/
+        ├── ProductConnection.java            ← Gerado automaticamente (se paginado)
+        ├── ProductEdge.java
+        ├── PageInfo.java
+        ├── SortInput.java
+        └── PageInput.java
 
 .igrpstudio/catalog/graphql/
 ├── Product.json                              ← Manifesto salvo
 └── types/
     ├── Product.json
     ├── CreateProductInput.json
-    ├── UpdateProductInput.json
-    └── ProductPage.json                      ← Auto-gerado (se paginado)
+    └── UpdateProductInput.json
 ```
 
 ### Estilo Domain (DDD)
@@ -393,12 +418,15 @@ src/main/resources/graphql/
 src/main/java/<group>/<pkg>/catalog/
 ├── interfaces/graphql/
 │   ├── ProductResolver.java
-│   └── types/
-│       ├── Product.java
-│       ├── Category.java
-│       ├── CreateProductInput.java
-│       ├── UpdateProductInput.java
-│       └── ProductPage.java
+│   ├── type/
+│   │   ├── Product.java
+│   │   └── Category.java
+│   ├── input/
+│   │   ├── CreateProductInput.java
+│   │   └── UpdateProductInput.java
+│   └── connection/
+│       ├── ProductConnection.java
+│       └── ProductEdge.java
 └── application/
     ├── queries/
     │   ├── FindProductByIdQuery.java
@@ -421,10 +449,7 @@ src/main/java/<group>/<pkg>/catalog/
 Para o exemplo completo do `Product`, o schema SDL gerado é:
 
 ```graphql
-# GraphQL Schema — Product
-# Generated by iGRP Studio — do not modify this file directly
-
-type Product {
+type Product implements Node {
   id: ID!
   name: String!
   price: Float!
@@ -444,22 +469,27 @@ input UpdateProductInput {
   price: Float
 }
 
-type ProductPage {
-  content: [Product!]!
-  totalElements: Int!
-  totalPages: Int!
-  pageNumber: Int!
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  nodes: [Product!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type Query {
   findProductById(id: ID!): Product
   findAllProducts: [Product!]!
-  findProductsPage(page: Int!, size: Int!): ProductPage
+  findProductsPage(filter: ProductFilterInput, sort: SortInput, page: PageInput): ProductConnection!
 }
 
 type Mutation {
   createProduct(input: CreateProductInput!): Product
-  updateProduct(input: UpdateProductInput!, id: ID!): Product
+  updateProduct(id: ID!, input: UpdateProductInput!): Product
   deleteProduct(id: ID!): Boolean
 }
 ```
@@ -493,6 +523,16 @@ type Mutation {
 | `float` | `Float` |
 | `double`, `decimal`, `bigdecimal` | `Double` |
 | `boolean` | `Boolean` |
+
+### Tipos PascalCase em `params`
+
+Quando `type` em `params` começa com maiúscula e **não é** um escalar GraphQL conhecido (`Boolean`, `String`, `Int`, `Float`, `ID`, `Long`, `BigDecimal`, `DateTime`), o engine trata-o como referência a um DTO:
+
+- No SDL: `input: CreateProductInput!` (usado diretamente)
+- No Java (mutation): `@Argument @Valid CreateProductInput input`
+- No Java (query): `@Argument ProductFilterInput filter`
+
+O manifesto do DTO é carregado automaticamente de `.igrpstudio/<module>/graphql/types/<Name>.json`.
 
 ---
 
@@ -538,22 +578,40 @@ type Mutation {
   "name": "Item",
   "module": "inventory",
   "typeRef": "Item",
-  "inputRefs": ["CreateItemInput"],
   "queries": [
-    {"name": "findItemById",  "args": [{"name": "id", "type": "uuid", "nullable": false}], "returnTypeRef": "Item", "collectionType": "single"},
-    {"name": "findAllItems",  "returnTypeRef": "Item", "collectionType": "list"}
+    {
+      "name": "findItemById",
+      "params": [{"name": "id", "type": "uuid", "required": true}],
+      "returnType": "Item",
+      "collectionType": "single"
+    },
+    {
+      "name": "findAllItems",
+      "returnType": "Item",
+      "collectionType": "list"
+    }
   ],
   "mutations": [
-    {"name": "createItem", "inputRef": "CreateItemInput", "returnTypeRef": "Item"},
-    {"name": "deleteItem", "args": [{"name": "id", "type": "uuid", "nullable": false}], "returnType": "Boolean"}
+    {
+      "name": "createItem",
+      "params": [{"name": "input", "type": "CreateItemInput", "required": true}],
+      "returnType": "Item"
+    },
+    {
+      "name": "deleteItem",
+      "params": [{"name": "id", "type": "uuid", "required": true}],
+      "returnType": "Boolean"
+    }
   ]
 }
 ```
 
+> O engine detecta automaticamente que `CreateItemInput` é um DTO e carrega o manifesto — não é necessário declarar `inputRefs`.
+
 #### Schema SDL gerado
 
 ```graphql
-type Item {
+type Item implements Node {
   id: ID!
   sku: String!
   quantity: Int!
@@ -579,20 +637,15 @@ type Mutation {
 
 ### Exemplo 2 — Com Paginação e Relações (DataLoader)
 
-#### Manifests necessários (conforme test suite)
+#### Manifests necessários
 
 Pré-requisito — registrar os DTOs com `addDTO()` antes de `addGraphQLSchema()`:
 
 ```typescript
-// Tipos referenciados
-await addDTO(categoryType, basePath);   // graphqlType Category (module: shared)
-await addDTO(productType,  basePath);   // graphqlType Product  (module: catalog)
-
-// Inputs
-await addDTO(createProductInput, basePath);
-await addDTO(updateProductInput, basePath);
-
-// Schema
+await addDTO(categoryType, basePath);          // graphqlType Category (module: shared)
+await addDTO(productType,  basePath);          // graphqlType Product  (module: catalog)
+await addDTO(createProductInput, basePath);    // graphqlInput
+await addDTO(updateProductInput, basePath);    // graphqlInput
 await addGraphQLSchema(productSchema, basePath);
 ```
 
@@ -634,16 +687,44 @@ await addGraphQLSchema(productSchema, basePath);
   "name": "Product",
   "module": "catalog",
   "typeRef": "Product",
-  "inputRefs": ["CreateProductInput", "UpdateProductInput"],
   "queries": [
-    {"name": "findProductById",  "args": [{"name": "id",   "type": "uuid",    "nullable": false}], "returnTypeRef": "Product", "collectionType": "single"},
-    {"name": "findAllProducts",  "returnTypeRef": "Product", "collectionType": "list"},
-    {"name": "findProductsPage", "args": [{"name": "page", "type": "integer", "nullable": false}, {"name": "size", "type": "integer", "nullable": false}], "returnTypeRef": "Product", "collectionType": "paginated"}
+    {
+      "name": "findProductById",
+      "params": [{"name": "id", "type": "uuid", "required": true}],
+      "returnType": "Product",
+      "collectionType": "single"
+    },
+    {
+      "name": "findAllProducts",
+      "returnType": "Product",
+      "collectionType": "list"
+    },
+    {
+      "name": "findProductsPage",
+      "params": [{"name": "filter", "type": "ProductFilterInput", "required": false}],
+      "returnType": "Product",
+      "collectionType": "paginated"
+    }
   ],
   "mutations": [
-    {"name": "createProduct", "inputRef": "CreateProductInput", "returnTypeRef": "Product"},
-    {"name": "updateProduct", "inputRef": "UpdateProductInput", "args": [{"name": "id", "type": "uuid", "nullable": false}], "returnTypeRef": "Product"},
-    {"name": "deleteProduct", "args": [{"name": "id", "type": "uuid", "nullable": false}], "returnType": "Boolean"}
+    {
+      "name": "createProduct",
+      "params": [{"name": "input", "type": "CreateProductInput", "required": true}],
+      "returnType": "Product"
+    },
+    {
+      "name": "updateProduct",
+      "params": [
+        {"name": "id",    "type": "uuid",                "required": true},
+        {"name": "input", "type": "UpdateProductInput",  "required": true}
+      ],
+      "returnType": "Product"
+    },
+    {
+      "name": "deleteProduct",
+      "params": [{"name": "id", "type": "uuid", "required": true}],
+      "returnType": "Boolean"
+    }
   ]
 }
 ```
@@ -651,7 +732,7 @@ await addGraphQLSchema(productSchema, basePath);
 #### Schema SDL gerado
 
 ```graphql
-type Product {
+type Product implements Node {
   id: ID!
   name: String!
   price: Float!
@@ -675,22 +756,27 @@ input UpdateProductInput {
   price: Float
 }
 
-type ProductPage {
-  content: [Product!]!
-  totalElements: Int!
-  totalPages: Int!
-  pageNumber: Int!
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  nodes: [Product!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type Query {
   findProductById(id: ID!): Product
   findAllProducts: [Product!]!
-  findProductsPage(page: Int!, size: Int!): ProductPage
+  findProductsPage(filter: ProductFilterInput, sort: SortInput, page: PageInput): ProductConnection!
 }
 
 type Mutation {
   createProduct(input: CreateProductInput!): Product
-  updateProduct(input: UpdateProductInput!, id: ID!): Product
+  updateProduct(id: ID!, input: UpdateProductInput!): Product
   deleteProduct(id: ID!): Boolean
 }
 ```
@@ -722,18 +808,25 @@ query FindAllProducts {
   }
 }
 
-# Listagem paginada
-query FindProductsPage($page: Int!, $size: Int!) {
-  findProductsPage(page: $page, size: $size) {
-    content {
-      id
-      name
-      price
-      active
+# Listagem paginada (Relay Connection)
+query FindProductsPage($filter: ProductFilterInput, $sort: SortInput, $page: PageInput) {
+  findProductsPage(filter: $filter, sort: $sort, page: $page) {
+    edges {
+      node {
+        id
+        name
+        price
+        active
+      }
+      cursor
     }
-    totalElements
-    totalPages
-    pageNumber
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
 }
 
@@ -747,8 +840,8 @@ mutation CreateProduct($input: CreateProductInput!) {
 }
 
 # Atualizar produto
-mutation UpdateProduct($input: UpdateProductInput!, $id: ID!) {
-  updateProduct(input: $input, id: $id) {
+mutation UpdateProduct($id: ID!, $input: UpdateProductInput!) {
+  updateProduct(id: $id, input: $input) {
     id
     name
     price
@@ -763,14 +856,68 @@ mutation DeleteProduct($id: ID!) {
 
 ---
 
+### Exemplo 3 — Com Subscriptions
+
+```json
+{
+  "type": "graphql",
+  "name": "Order",
+  "module": "orders",
+  "typeRef": "Order",
+  "queries": [
+    {
+      "name": "order",
+      "params": [{"name": "id", "type": "uuid", "required": true}],
+      "returnType": "Order",
+      "collectionType": "single"
+    }
+  ],
+  "mutations": [
+    {
+      "name": "createOrder",
+      "params": [{"name": "input", "type": "CreateOrderInput", "required": true}],
+      "returnType": "Order"
+    }
+  ],
+  "subscriptions": [
+    {
+      "name": "orderUpdated",
+      "params": [{"name": "orderId", "type": "uuid", "required": true}],
+      "returnType": "Order"
+    }
+  ]
+}
+```
+
+Schema SDL gerado para subscriptions:
+
+```graphql
+type Subscription {
+  orderUpdated(orderId: ID!): Order
+}
+```
+
+---
+
 ## Validações e Regras
 
 ### Regras de Nomenclatura
 
-- `name`, `typeRef`, `inputRefs[]` devem seguir o padrão PascalCase (ex: `Product`, `CreateProductInput`)
+- `name`, `typeRef` devem seguir o padrão PascalCase (ex: `Product`, `CreateProductInput`)
 - `module` deve seguir camelCase (ex: `catalog`, `shared`, `orders`)
-- Nomes de queries e mutations devem seguir camelCase (ex: `findProductById`)
-- Nomes de argumentos e atributos devem seguir camelCase (ex: `categoryId`)
+- Nomes de queries, mutations e subscriptions devem seguir camelCase (ex: `findProductById`)
+- Nomes de parâmetros e atributos devem seguir camelCase (ex: `categoryId`)
+- `type` em `params`: minúsculas para escalares engine (`uuid`, `string`), PascalCase para DTOs (`CreateProductInput`)
+
+### Escalares GraphQL Conhecidos
+
+Os seguintes tipos em PascalCase **não** são tratados como DTOs — são escalares GraphQL diretos:
+
+```
+Boolean, String, Int, Float, ID, Long, BigDecimal, DateTime
+```
+
+Use-os em `returnType` para retornos escalares (ex: `"returnType": "Boolean"`).
 
 ### Erros de Validação
 
@@ -779,26 +926,33 @@ mutation DeleteProduct($id: ID!) {
 | `type` diferente de `"graphql"` | Validation error |
 | `name` ausente | Validation error |
 | `typeRef` aponta para manifesto inexistente | Runtime error |
-| `inputRefs[]` aponta para manifesto inexistente | Runtime error |
+| DTO em `params.type` não encontrado em `.igrpstudio/` | Runtime error |
 | Módulo especificado não existe no projeto | Runtime error |
 | Propriedades extras no manifesto | Validation error (strict mode) |
 
-### Tipos Auto-gerados
+### Paginação Automática (Relay Connection)
 
-Quando uma query tem `collectionType: "paginated"`, o engine cria automaticamente:
+Quando uma query tem `collectionType: "paginated"`, o engine gera automaticamente:
 
-1. Um manifesto `<TypeRef>Page.json` em `.igrpstudio/<module>/graphql/types/`
-2. Uma classe Java `<TypeRef>Page.java`
-3. O tipo `<TypeRef>Page` no arquivo `.graphqls`
+1. Classe Java `<TypeRef>Connection.java`
+2. Classe Java `<TypeRef>Edge.java`
+3. Manifesto `.igrpstudio/<module>/graphql/types/<TypeRef>Connection.json`
+4. Tipos `<TypeRef>Connection` e `<TypeRef>Edge` no arquivo `.graphqls`
+5. Argumentos `sort: SortInput` e `page: PageInput` na assinatura da query
 
-O tipo Page gerado sempre tem esta estrutura:
+O tipo Connection gerado segue a especificação Relay:
 
 ```graphql
-type ProductPage {
-  content: [Product!]!
-  totalElements: Int!
-  totalPages: Int!
-  pageNumber: Int!
+type ProductConnection {
+  edges: [ProductEdge!]!
+  nodes: [Product!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
 }
 ```
 
@@ -819,4 +973,4 @@ O engine localiza o manifesto em `.igrpstudio/shared/graphql/types/Category.json
 
 ---
 
-*Gerado para o iGRP Spring Engine — branch `feat/support-graphql-v1`*
+*Gerado para o iGRP Spring Engine — branch `dev`*

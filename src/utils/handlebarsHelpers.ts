@@ -64,7 +64,6 @@ import {
     graphqlRefIdType,
     graphqlRefReturnType,
     hasGraphQLTypeAttributes,
-    isGraphQLDTO,
     resolveGraphQLAttributeType,
     resolveGraphQLReturnType,
     resolveGraphQLScalar,
@@ -949,7 +948,6 @@ Handlebars.registerHelper('resolvePreAuthorize', resolvePreAuthorize);
 Handlebars.registerHelper('resolveSubscriptionReturnType', resolveSubscriptionReturnType);
 Handlebars.registerHelper('resolveSubscriptionJavaReturnType', resolveSubscriptionJavaReturnType);
 Handlebars.registerHelper('resolveGraphQLReturnTypeV2', resolveGraphQLReturnTypeV2);
-Handlebars.registerHelper('isGraphQLDTO', isGraphQLDTO);
 Handlebars.registerHelper('resolveParamSDLType', resolveParamSDLType);
 Handlebars.registerHelper('resolveParamJavaType', resolveParamJavaType);
 
