@@ -151,6 +151,7 @@ export type EnrichedGraphQLContext = RenderContext<GraphQLSchemaConfig> & {
   resolvedInputManifests: DTOConfig[];   // graphqlInput manifests (auto-derived from DTO params)
   pageManifest?: DTOConfig;              // kept for legacy — replaced by connectionManifest
   connectionManifest?: ConnectionManifest; // Relay Connection type info for paginated queries
+  skipTypeDefinition: boolean;           // true when another schema owns the typeRef type
   resolveGraphQLScalar: (t: string) => string;
   resolveJavaType: (t: string) => string;
 };
@@ -208,11 +209,19 @@ export const enrichGraphQLContext = async (
     }
   }
 
+  // A schema owns its type only when name === typeRef (case-insensitive).
+  // Any other schema using the same typeRef is borrowing it and must not
+  // redefine it — Spring GraphQL rejects duplicate type definitions across files.
+  const skipTypeDefinition =
+    resolvedTypeManifest !== undefined &&
+    resourceConfig.name.toLowerCase() !== (resourceConfig.typeRef ?? '').toLowerCase();
+
   return {
     ...context,
     resolvedTypeManifest,
     resolvedInputManifests,
     connectionManifest,
+    skipTypeDefinition,
     resolveGraphQLScalar,
     resolveJavaType: resolveJavaTypeForGraphQL,
   };

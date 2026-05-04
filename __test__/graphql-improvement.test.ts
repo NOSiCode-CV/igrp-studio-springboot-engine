@@ -878,26 +878,35 @@ describe('Validation — objectType is required on params and return', () => {
 
 describe('permission — AND operator generates checkAllPermission', () => {
   beforeAll(async () => {
-    // Use scalar returns to avoid SDL redefinition conflict with Order.graphqls
+    // typeRef: 'Order' borrows the type from Order.graphqls — the engine must NOT
+    // redefine 'type Order' here or Spring GraphQL rejects duplicate SDL definitions.
     const andPermSchema: GraphQLSchemaConfig = {
-      type: 'graphql', name: 'Report', module: 'orders',
+      type: 'graphql', name: 'Report', module: 'orders', typeRef: 'Order',
       queries: [
         {
           name: 'sensitiveReport',
           params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
-          return: {objectType: 'java', type: 'boolean'},
+          return: {objectType: 'graphqlType', type: 'Order'},
           permission: {items: ['REPORT_READ', 'REPORT_EXPORT'], operator: 'AND'},
         },
         {
           name: 'report',
           params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
-          return: {objectType: 'java', type: 'boolean'},
+          return: {objectType: 'graphqlType', type: 'Order'},
           permission: {items: ['REPORT_READ', 'REPORT_EXPORT'], operator: 'OR'},
         },
       ],
     };
     await addGraphQLSchema(andPermSchema, TECHNICAL_OUTPUT_DIR);
     await addGraphQLSchema(andPermSchema, DOMAIN_OUTPUT_DIR);
+  });
+
+  it('borrowing schema does not redefine the type in its SDL (no SDL conflict)', async () => {
+    const sdl = await readGenerated(TECHNICAL_OUTPUT_DIR, 'src/main/resources/graphql/Report.graphqls');
+    // Report.graphqls borrows Order — must NOT contain 'type Order {'
+    expect(sdl).not.toMatch(/^type Order\b/m);
+    // But operations referencing Order must still be present
+    expect(sdl).toContain('sensitiveReport');
   });
 
   it('AND operator generates checkAllPermission in resolver', async () => {
