@@ -389,6 +389,8 @@ Define os objetos de entrada das mutations. **Apenas atributos com `objectType: 
 
 ## Segurança — `roles` e `permission`
 
+**Ambos os campos são opcionais.** Se uma operação não declarar nem `roles` nem `permission`, o resolver é gerado sem nenhuma restrição de acesso — qualquer utilizador autenticado (ou anónimo, dependendo da config do Spring Security) pode chamar a operação.
+
 Cada operação pode declarar controlo de acesso via `roles`, `permission`, ou ambos. Quando os dois estão presentes, são combinados com AND.
 
 ### `roles` — baseado em papéis Spring Security
