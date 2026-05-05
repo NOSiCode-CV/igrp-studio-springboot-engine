@@ -1,4 +1,4 @@
-import {HTTP_HEADER_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, PATH_VARIABLE_TYPES, PATTERNS} from '../utils/constants';
+import {HTTP_HEADER_TYPES, HTTP_METHOD_TYPES, PARAMS_TYPES, PATH_VARIABLE_TYPES, REQUEST_PARAM_COLLECTION_TYPES, PATTERNS} from '../utils/constants';
 import {ajvInstance} from '../utils/ajv-instance';
 import {JSONSchemaType, ValidateFunction} from 'ajv';
 import {
@@ -469,8 +469,8 @@ const requestParamsSchema: JSONSchemaType<RequestParams> = {
         collectionType: {
             type: 'string',
             nullable: true,
-            enum: ['list', 'set', 'collection'],
-            errorMessage: `Collection type must be one of: list, set, collection`,
+            enum: REQUEST_PARAM_COLLECTION_TYPES,
+            errorMessage: `Collection type must be one of: ${REQUEST_PARAM_COLLECTION_TYPES}`,
         } as any,
     },
     required: ['type', 'name', 'isRequired'],

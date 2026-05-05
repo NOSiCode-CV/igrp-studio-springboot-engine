@@ -1255,6 +1255,8 @@ export const PARAMS_TYPES = ['long', 'string', 'integer', 'boolean', 'object', '
 
 export const PATH_VARIABLE_TYPES = ['long', 'string', 'integer', 'object', 'uuid'] as const;
 
+export const REQUEST_PARAM_COLLECTION_TYPES = ['list', 'set', 'collection'] as const;
+
 export const GENERATION_TYPES = ['', 'IDENTITY', 'SEQUENCE', 'TABLE', 'AUTO', 'NONE'] as const;
 
 /**
