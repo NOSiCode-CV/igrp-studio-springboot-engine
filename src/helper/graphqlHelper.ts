@@ -23,10 +23,13 @@ export function resolveParamSDLType(param: GraphQLParam): string {
 
 /**
  * Resolves a GraphQLParam to the Java type used in method signatures.
+ * Always returns wrapper types (Boolean not boolean) — optional params must
+ * accept null, which Java primitives cannot.
  */
 export function resolveParamJavaType(param: GraphQLParam): string {
   if (param.objectType === 'graphqlInput') return param.type;
-  return resolveJavaTypeForGraphQL(param.type);
+  const jt = resolveJavaTypeForGraphQL(param.type);
+  return jt.charAt(0).toUpperCase() + jt.slice(1);
 }
 
 /** Resolves a graphqlType import for either technical or domain style. */

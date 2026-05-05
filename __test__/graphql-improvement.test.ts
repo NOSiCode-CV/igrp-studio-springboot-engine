@@ -142,6 +142,16 @@ const orderSchema: GraphQLSchemaConfig = {
       params: [{name: 'id', objectType: 'java', type: 'uuid', required: true}],
       return: {objectType: 'java', type: 'boolean'},
       permission: {items: ['ORDER_WRITE', 'ORDER_ADMIN'], operator: 'OR'}},
+    // multiple scalar types in mutation args — string, integer, boolean, long
+    {name: 'updateOrderMeta',
+      params: [
+        {name: 'id',       objectType: 'java', type: 'uuid',    required: true},
+        {name: 'ref',      objectType: 'java', type: 'string',  required: true},
+        {name: 'priority', objectType: 'java', type: 'integer', required: false},
+        {name: 'active',   objectType: 'java', type: 'boolean', required: false},
+        {name: 'version',  objectType: 'java', type: 'long',    required: false},
+      ],
+      return: {objectType: 'graphqlType', type: 'Order'}},
   ],
 };
 
@@ -932,6 +942,83 @@ describe('permission — AND operator generates checkAllPermission', () => {
     );
     // ordersByRef has permission: {items: ['ORDER_READ'], operator: 'OR'} — single item
     expect(resolver).toMatch(/checkPermission\(T\(Permission\)\.ORDER_READ\)/);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Primitive scalar types in mutation args (string, integer, boolean, long)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe('Primitive scalar types in mutation args', () => {
+  // updateOrderMeta mutation covers: uuid, string, integer, boolean, long
+
+  it('SDL — all scalar types resolve to correct GraphQL scalars', async () => {
+    const sdl = await readGenerated(TECHNICAL_OUTPUT_DIR, 'src/main/resources/graphql/Order.graphqls');
+    // id: uuid → ID!, ref: string → String!, priority: integer → Int,
+    // active: boolean → Boolean, version: long → Long (extended-scalars)
+    expect(sdl).toMatch(/updateOrderMeta\([^)]*id: ID![^)]*\)/);
+    expect(sdl).toMatch(/updateOrderMeta\([^)]*ref: String![^)]*\)/);
+    expect(sdl).toMatch(/updateOrderMeta\([^)]*priority: Int[^)]*\)/);
+    expect(sdl).toMatch(/updateOrderMeta\([^)]*active: Boolean[^)]*\)/);
+    expect(sdl).toMatch(/updateOrderMeta\([^)]*version: Long[^)]*\)/);
+  });
+
+  it('resolver — all scalar types resolve to correct Java types', async () => {
+    const resolver = await readGenerated(
+      TECHNICAL_OUTPUT_DIR,
+      'src/main/java/cv/nosi/users/graphql/order/OrderResolver.java',
+    );
+    expect(resolver).toContain('public Order updateOrderMeta(');
+    expect(resolver).toMatch(/@Argument UUID id/);
+    expect(resolver).toMatch(/@Argument String ref/);
+    expect(resolver).toMatch(/@Argument Integer priority/);
+    expect(resolver).toMatch(/@Argument Boolean active/);
+    expect(resolver).toMatch(/@Argument Long version/);
+  });
+
+  it('resolver — no @Valid on any scalar param in mutation', async () => {
+    const resolver = await readGenerated(
+      TECHNICAL_OUTPUT_DIR,
+      'src/main/java/cv/nosi/users/graphql/order/OrderResolver.java',
+    );
+    // @Valid must never appear before a java scalar type
+    expect(resolver).not.toMatch(/@Valid\s+String/);
+    expect(resolver).not.toMatch(/@Valid\s+Integer/);
+    expect(resolver).not.toMatch(/@Valid\s+Boolean/);
+    expect(resolver).not.toMatch(/@Valid\s+Long/);
+  });
+
+  it('service interface — method signature matches resolver', async () => {
+    const iface = await readGenerated(
+      TECHNICAL_OUTPUT_DIR,
+      'src/main/java/cv/nosi/users/graphql/order/IOrderGraphQLService.java',
+    );
+    expect(iface).toContain('Order updateOrderMeta(');
+    expect(iface).toMatch(/UUID id/);
+    expect(iface).toMatch(/String ref/);
+    expect(iface).toMatch(/Integer priority/);
+    expect(iface).toMatch(/Boolean active/);
+    expect(iface).toMatch(/Long version/);
+  });
+
+  it('domain: DDD Command has correct field types for all scalars', async () => {
+    const cmd = await readGenerated(
+      DOMAIN_OUTPUT_DIR,
+      'src/main/java/com/petshop/animals/orders/application/commands/UpdateOrderMetaCommand.java',
+    );
+    expect(cmd).toContain('private UUID id;');
+    expect(cmd).toContain('private String ref;');
+    expect(cmd).toContain('private Integer priority;');
+    expect(cmd).toContain('private Boolean active;');
+    expect(cmd).toContain('private Long version;');
+  });
+
+  it('domain: DDD CommandHandler uses correct generic return type', async () => {
+    const handler = await readGenerated(
+      DOMAIN_OUTPUT_DIR,
+      'src/main/java/com/petshop/animals/orders/application/commands/UpdateOrderMetaCommandHandler.java',
+    );
+    expect(handler).toContain('CommandHandler<UpdateOrderMetaCommand, Order>');
   });
 });
 
