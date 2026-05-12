@@ -11,7 +11,9 @@ import {
     HTTP_METHOD_TYPES,
     OBJECT_TYPES,
     PARAMS_TYPES,
+    PATH_VARIABLE_TYPES,
     RELATIONSHIP_TYPES,
+    REQUEST_PARAM_COLLECTION_TYPES,
     STRUCT_TYPES,
 } from '../utils/constants';
 
@@ -308,11 +310,11 @@ export interface RequestParams {
   value?: string;
   description?: string;
   isRequired: boolean;
-  collectionType?: 'list' | 'set' | 'collection';
+  collectionType?: RequestParamCollectionType;
 }
 
 export interface PathVariables {
-  type: string;
+  type: PathVariableType;
   name: string;
   value?: string;
   description?: string;
@@ -393,7 +395,7 @@ export interface SchemaField {
   deprecated?: boolean;
   items?: SchemaField; // For array types
   properties?: { [key: string]: PropertySchemaField }; // For object types
-  collectionType?: 'none' | 'collection' | 'map' | 'pageable' | 'set' | 'list';
+  collectionType?: CollectionType;
 }
 
 export interface SchemaEnum {
@@ -535,6 +537,8 @@ export type RelationshipTypes = (typeof RELATIONSHIP_TYPES)[number];
 export type CascadeTypes = (typeof CASCADE_TYPE)[number];
 export type HttpHeaderTypes = (typeof HTTP_HEADER_TYPES)[number];
 export type GenerationType = (typeof GENERATION_TYPES)[number];
+export type PathVariableType = (typeof PATH_VARIABLE_TYPES)[number];
+export type RequestParamCollectionType = (typeof REQUEST_PARAM_COLLECTION_TYPES)[number];
 
 // ─── GraphQL Types ───────────────────────────────────────────────────────────
 
