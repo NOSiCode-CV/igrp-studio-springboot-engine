@@ -14,13 +14,20 @@ public class ApplicationAuditorAware implements AuditorAware<String> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationAuditorAware.class);
 
-  private static final String SYSTEM_FALLBACK = "system";
+  private static final String SYSTEM_FALLBACK = "system-bot@nosi.cv";
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    return Optional.of(getCurrentSubjectName());
+    return Optional.ofNullable(getCurrentSubjectName()).filter(s -> !s.isBlank());
   }
 
+  /**
+   * Resolves the current user identity for auditing purposes.
+   * Priority:
+   * 1) sub claim from JWT if present
+   * 2) Authentication#getName() if an Authentication exists
+   * 3) Fallback to system account for background processing
+   */
   private String getCurrentSubjectName() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
