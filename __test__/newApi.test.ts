@@ -173,6 +173,6 @@ describe('New API Module', () => {
 
     const standaloneEnv = await readFile(projectPath, '.env');
     expect(standaloneEnv).toContain('AUTH_PROVIDER=autentika');
-    expect(standaloneEnv).toContain('AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}');
+    expect(standaloneEnv).toContain('AUTH_JWT_ISSUER=https://your-autentika-host/auth/realms/your-realm');
   });
 });
