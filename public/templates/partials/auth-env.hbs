@@ -1,5 +1,5 @@
 {{#if (eq baseConfig.authMode "autentika")}}
-AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}
+AUTH_JWT_ISSUER=https://your-autentika-host/auth/realms/your-realm
 {{else}}
 AUTH_JWT_ISSUER=http://localhost:8090/realms/quickstart
 {{/if}}

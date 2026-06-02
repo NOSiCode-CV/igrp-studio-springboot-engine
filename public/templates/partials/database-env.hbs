@@ -1,4 +1,5 @@
 {{#if (eq baseConfig.database "Postgresql")}}
+POSTGRES_HOST=localhost
 POSTGRES_VERSION=17-alpine
 POSTGRES_SERVICE_NAME={{toLowerCase baseConfig.name}}-postgres
 POSTGRES_PORT=5432
