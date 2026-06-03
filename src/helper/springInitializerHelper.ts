@@ -6,7 +6,7 @@ import { getPaths } from '../index';
 import { custom } from '../../package.json';
 import { Dependency, SpringInitializerData } from '../interfaces/types';
 
-export const SPRING_BOOT_VERSION = custom?.springBootversion;
+export const SPRING_BOOT_VERSION = custom?.springBootVersion;
 export const SPRING_INITIALIZER_DEPENDENCIES_DATA_URL = `https://start.spring.io/dependencies?bootVersion=${SPRING_BOOT_VERSION}`;
 
 export async function getSpringInitializerDependencies(): Promise<Dependency[]> {
