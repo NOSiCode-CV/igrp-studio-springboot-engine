@@ -59,6 +59,14 @@ export const mapSqlTypeToGenericType = (sqlType: string): string => {
     double: 'double',
     date: 'date',
     time: 'time',
+    geometry: 'geometry',
+    geography: 'geometry',
+    point: 'geometry',
+    linestring: 'geometry',
+    polygon: 'geometry',
+    multipoint: 'geometry',
+    multilinestring: 'geometry',
+    multipolygon: 'geometry',
   };
 
   return typeMapping[sqlType.toLowerCase()] || 'string'; // Default to 'string' if type is not recognized

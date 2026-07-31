@@ -12,6 +12,16 @@
 	<artifactId>postgresql</artifactId>
 	<scope>runtime</scope>
 </dependency>
+<!-- PostGIS / JTS geometry support (required for model type "geometry") -->
+<dependency>
+	<groupId>org.locationtech.jts</groupId>
+	<artifactId>jts-core</artifactId>
+	<version>1.19.0</version>
+</dependency>
+<dependency>
+	<groupId>org.hibernate.orm</groupId>
+	<artifactId>hibernate-spatial</artifactId>
+</dependency>
 {{/if}}
 {{#if (eq baseConfig.database "Oracle")}}
 <dependency>

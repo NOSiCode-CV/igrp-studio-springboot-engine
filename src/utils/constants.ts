@@ -590,12 +590,14 @@ export const GENERIC_ATTRIBUTE_TYPES = [
   'url',
   'text',
   'json',
+  'geometry',
 ];
 
 export const CATEGORIZED_ATTRIBUTE_TYPES = {
   timing: ['date', 'datetime', 'time', 'instant'],
   numeric: ['integer', 'long', 'short', 'float', 'double', 'decimal', 'biginteger'],
   text: ['string', 'char', 'text'],
+  spatial: ['geometry'],
   media: ['file', 'binary'],
   json: ['json'],
   misc: ['uuid', 'boolean'],
@@ -813,6 +815,12 @@ export const GENERIC_TYPES: Map<
       python: { name: 'str', primitive: false },
       kotlin: { name: 'JsonNode', primitive: false },
     },
+    geometry: {
+      java: { name: 'Geometry', primitive: false, namespace: 'org.locationtech.jts.geom' },
+      dotnet: { name: 'Geometry', primitive: false },
+      python: { name: 'object', primitive: false },
+      kotlin: { name: 'Geometry', primitive: false, namespace: 'org.locationtech.jts.geom' },
+    },
   }),
 );
 
@@ -896,6 +904,15 @@ export const GENERIC_IMPORTS = (
             `import org.hibernate.annotations.JdbcTypeCode;` +
             '\n' +
             `import org.hibernate.type.SqlTypes;`,
+        },
+        dotnet: {},
+        python: {},
+        kotlin: {},
+      },
+      geometry: {
+        java: {
+          domain: `import org.locationtech.jts.geom.Geometry;`,
+          technical: `import org.locationtech.jts.geom.Geometry;`,
         },
         dotnet: {},
         python: {},

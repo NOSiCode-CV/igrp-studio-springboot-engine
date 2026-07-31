@@ -325,6 +325,40 @@ describe('Model generator', () => {
     await addModel(jsonModelBase, TECHNICAL_OUTPUT_DIR);
   });
 
+  it('should generate Geometry field and JTS import for geometry type', async () => {
+    const geometryModel: ModelConfig = {
+      id: 'geometry_type_test',
+      type: 'model',
+      name: 'EixoDaViaEntity',
+      tableName: 'eixo_da_via',
+      module: 'street',
+      attributes: [
+        {
+          type: 'integer',
+          name: 'id',
+          primaryKey: true,
+          generationType: 'IDENTITY',
+          nullable: false,
+        },
+        {
+          type: 'geometry',
+          name: 'geom',
+          nullable: false,
+        },
+        {
+          type: 'string',
+          name: 'nome',
+          length: 50,
+          nullable: false,
+        },
+      ],
+      crud: false,
+      audit: false,
+    };
+
+    await addModel(geometryModel, TECHNICAL_OUTPUT_DIR);
+  });
+
   it('should generate @Lob and columnDefinition="BLOB" for binary type attributes', async () => {
     const config: ModelConfig = {
       id: 'binary_type_test',
