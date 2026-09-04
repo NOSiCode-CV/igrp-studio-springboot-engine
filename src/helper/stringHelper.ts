@@ -100,6 +100,15 @@ export function wrapInCurlyBraces(str: string): string {
   return `{${str}}`;
 }
 
+/**
+ * Renders a shell/compose environment-variable reference: `envRef('simple_M2M_CLIENT_ID')`
+ * yields `${SIMPLE_M2M_CLIENT_ID}`. Templates cannot write `${` immediately before a
+ * mustache, because Handlebars reads the `{` as the start of the tag.
+ */
+export function envRef(raw: string): string {
+  return '${' + normalizeConst(raw) + '}';
+}
+
 export function normalizeConst(raw: string): string {
   return raw
       .toUpperCase()

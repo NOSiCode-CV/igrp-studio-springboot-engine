@@ -1,12 +1,6 @@
 TARGET_DATABASE={{toLowerCase baseConfig.name}}_db
 SPRING_DATASOURCE_URL=jdbc:postgresql://{{#if baseConfig.workspaceSlug}}{{baseConfig.workspaceSlug}}{{else}}workspace{{/if}}-database-postgres:5432/{{toLowerCase baseConfig.name}}_db
 SPRING_PROFILES_ACTIVE=development
-AUTH_PROVIDER={{#if (eq baseConfig.authMode "autentika")}}autentika{{else}}keycloak{{/if}}
-{{#if (eq baseConfig.authMode "autentika")}}
-AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}
-{{else}}
-AUTH_JWT_ISSUER=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/auth/realms/igrp
-{{/if}}
 ENABLE_SWAGGER=true
 SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL=true
 SPRINGDOC_SWAGGER_UI_URL=/gateway-api/{{toLowerCase baseConfig.name}}/v3/api-docs
@@ -16,5 +10,4 @@ LOGGING_LEVEL_ROOT=INFO
 LOGGING_LEVEL_SPRING_WEB=DEBUG
 LOGGING_LEVEL_APP=DEBUG
 {{> observability-env}}
-IGRP_ACCESS_M2M_SYNC_TOKEN=igrp-access-m2m-sync-token-1234
 SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver

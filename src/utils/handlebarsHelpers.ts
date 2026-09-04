@@ -39,6 +39,7 @@ import {
     lowercaseAndPluralize,
     lowerCaseFirstLetter,
     normalizeConst,
+    envRef,
     sanitizeHeaderName,
     toCamelCase,
     toFullCamelCaseFromSnakeCase,
@@ -88,6 +89,7 @@ Handlebars.registerHelper('toTitleCase', toTitleCase);
 Handlebars.registerHelper('toLowerCase', toLowerCase);
 Handlebars.registerHelper('lowerCaseFirstLetter', lowerCaseFirstLetter);
 Handlebars.registerHelper('toUpperCase', toUpperCase);
+Handlebars.registerHelper('envRef', envRef);
 Handlebars.registerHelper('lowercaseAndPluralize', lowercaseAndPluralize);
 Handlebars.registerHelper('fullCamelCaseAndPluralize', fullCamelCaseAndPluralize);
 Handlebars.registerHelper('sanitizeHeaderName', sanitizeHeaderName);

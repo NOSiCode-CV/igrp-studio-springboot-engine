@@ -103,16 +103,31 @@ describe('New API Module', () => {
     expect(igrpCompose).toContain('bibliotheque-db-prepare');
     expect(igrpCompose).toContain('workspace.slug: "demoteste"');
     expect(igrpCompose).toContain('workspace.id: "workspace-123"');
-    expect(igrpCompose).toContain('- AUTH_PROVIDER=${AUTH_PROVIDER}');
-    expect(igrpCompose).toContain('- AUTH_JWT_ISSUER=${AUTH_JWT_ISSUER}');
+    // Access Management v2: AUTH_PROVIDER is gone, and the issuer is the Access
+    // Management Authorization Server rather than the Keycloak realm.
+    expect(igrpCompose).not.toContain('AUTH_PROVIDER');
+    expect(igrpCompose).toContain(
+      '- AUTH_JWT_ISSUER=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/gateway-api/demoteste-access-management',
+    );
+    expect(igrpCompose).toContain('- SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}');
+    // spring.application.name must equal the registered M2M client id.
+    expect(igrpCompose).toContain('- SPRING_APPLICATION_NAME=${BIBLIOTHEQUE_M2M_CLIENT_ID}');
+    expect(igrpCompose).toContain('- IGRP_ACCESS_M2M_CLIENT_ID=${BIBLIOTHEQUE_M2M_CLIENT_ID}');
+    expect(igrpCompose).toContain(
+      '- IGRP_ACCESS_M2M_CLIENT_SECRET=${BIBLIOTHEQUE_M2M_CLIENT_SECRET}',
+    );
+    expect(igrpCompose).toContain(
+      '- IGRP_AUTHORIZATION_SERVICE_ADAPTER=${PROJECTS_AUTHORIZATION_SERVICE_ADAPTER:-igrp}',
+    );
 
     const igrpEnv = await readFile(projectPath, '.igrp.bibliotheque.env');
     expect(igrpEnv).not.toContain('IGRP_WORKSPACE_SLUG=');
     expect(igrpEnv).not.toContain('IGRP_WORKSPACE_ID=');
-    expect(igrpEnv).toContain('AUTH_PROVIDER=keycloak');
-    expect(igrpEnv).toContain(
-      'AUTH_JWT_ISSUER=http://${DOCKER_IP}:${NGINX_HTTP_PORT}/auth/realms/igrp',
-    );
+    // v2: auth no longer lives in the env file. AUTH_JWT_ISSUER moved to the compose
+    // (it is derived from the workspace slug) and AUTH_PROVIDER is gone entirely.
+    expect(igrpEnv).not.toContain('AUTH_PROVIDER');
+    expect(igrpEnv).not.toContain('AUTH_JWT_ISSUER');
+    expect(igrpEnv).not.toContain('IGRP_ACCESS_M2M_SYNC_TOKEN');
     expect(igrpEnv).toContain('OTEL_EXPORTER_OTLP_ENDPOINT=http://demoteste-otel-collector:4318');
 
     expect(dockerCompose).toContain('- AUTH_JWT_ISSUER=${AUTH_JWT_ISSUER}');
@@ -159,17 +174,19 @@ describe('New API Module', () => {
     await newApi(autentikaApiConfig, projectPath);
 
     const igrpEnv = await readFile(projectPath, '.igrp.autentikaapi.env');
-    expect(igrpEnv).toContain('AUTH_PROVIDER=autentika');
-    expect(igrpEnv).toContain('AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}');
+    expect(igrpEnv).not.toContain('AUTH_PROVIDER');
+    expect(igrpEnv).not.toContain('AUTH_JWT_ISSUER');
     expect(igrpEnv).not.toContain('AUTENTIKA_CLIENT_ID=');
     expect(igrpEnv).not.toContain('AUTENTIKA_CLIENT_SECRET=');
     expect(igrpEnv).not.toContain('AUTENTIKA_HOST=');
     expect(igrpEnv).not.toContain('AUTENTIKA_SCOPES=');
 
     const igrpCompose = await readFile(projectPath, 'igrp-compose-autentikaapi.yaml');
-    expect(igrpCompose).toContain('- AUTH_PROVIDER=${AUTH_PROVIDER}');
-    expect(igrpCompose).toContain('- AUTH_JWT_ISSUER=${AUTH_JWT_ISSUER}');
+    expect(igrpCompose).not.toContain('AUTH_PROVIDER');
+    // Autentika keeps its own issuer; only the keycloak path moves to Access Management.
+    expect(igrpCompose).toContain('- AUTH_JWT_ISSUER=${AUTENTIKA_ISSUER}');
     expect(igrpCompose).not.toContain('/auth/realms/igrp');
+    expect(igrpCompose).toContain('- IGRP_ACCESS_M2M_CLIENT_ID=${AUTENTIKAAPI_M2M_CLIENT_ID}');
 
     const standaloneEnv = await readFile(projectPath, '.env');
     expect(standaloneEnv).toContain('AUTH_PROVIDER=autentika');

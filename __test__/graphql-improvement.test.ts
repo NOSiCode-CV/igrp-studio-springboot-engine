@@ -1027,7 +1027,7 @@ describe('Primitive scalar types in mutation args', () => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 describe('Java compilation', () => {
-  const JAVA_25_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.2.10-hotspot';
+  const JAVA_26_HOME = 'C:\\Program Files\\Eclipse Adoptium\\jdk-26.0.2.10-hotspot';
 
   const compileProject = (projectPath: string): void => {
     try {
@@ -1035,7 +1035,7 @@ describe('Java compilation', () => {
         cwd: projectPath,
         stdio: 'pipe',
         timeout: 120_000,
-        env: {...process.env, JAVA_HOME: JAVA_25_HOME},
+        env: {...process.env, JAVA_HOME: JAVA_26_HOME},
       });
     } catch (err: any) {
       throw new Error(
